@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+ grc_db:
+    image: "postgres:13.5"
+    container_name: "grc_db"
+    ports:
+      - "5432:5432"
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=grc
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_HOST=grc_db
+ grc_app:
+  container_name: "grc_app"
+  build:
+   context: .
+  ports:
+  - 5000:5000
+  env_file: .env
+  volumes:
+  - ./:/app
+  entrypoint: dockerize -wait tcp://grc_db:5432
+  depends_on:
+    - grc_db
+  command: /app/run.sh
+
+volumes:
+  dbdata:
+
+#  mysqldb:
+#   image: mysql
+#   ports:
+#   - 3306:3306
+#   environment:
+#   - MYSQL_ROOT_PASSWORD=p@ssw0rd1
+#   volumes:
+#   - mysql:/var/lib/mysql
+#   - mysql_config:/etc/mysql
+
+# volumes:
+#   mysql:
+#   mysql_config:

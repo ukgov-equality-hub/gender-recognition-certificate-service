@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+
+{% block backLink %}{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <h1 class="govuk-heading-l">
+      Your application
+    </h1>
+  </div>
+  <!-- {{application}} -->
+  <div class="govuk-grid-column-two-thirds">
+    <p class="govuk-body">This is where you can provide your personal details and upload your documents.</p>
+    <div class="govuk-inset-text">
+      {% if application.confirmation.overseasCheck == 'Yes' %}
+        <p class="govuk-body">There are documents that you will need to post to us, such as your statutory declaration.</p>
+
+        <p class="govuk-body">What you need to send us depends on the information you provide during your application. You will be told which
+          documents you still need to send us at the end of the application.</p>
+      {% else %}
+        <p class="govuk-body">While most documents can be uploaded online, there are others that you will need to post to us, such as your
+          statutory declaration.</p>
+
+        <p class="govuk-body">What you need to send us depends on the information you provide during your application. You will be told which
+          documents you still need to send us at the end of the application.</p>
+      {% endif %}
+    </div>
+
+    <ol class="app-task-list app-task-list--no-numbers">
+      <li>
+        <h2 class="app-task-list__section">
+          Before you start
+        </h2>
+        <ul class="app-task-list__items">
+          <li class="app-task-list__item">
+            <span class="app-task-list__task-name">
+              <a class="govuk-link" href="declaration" aria-describedby="confirmation-status">
+                Confirmation
+              </a>
+            </span>
+            <strong id="confirmation-status" class="govuk-tag app-task-list__tag">Completed</strong>
+          </li>
+        </ul>
+      </li>
+
+      <!-- Fill in your details -->
+      <li>
+        <h2 class="app-task-list__section">
+           Fill in your details
+        </h2>
+        <ul class="app-task-list__items">
+          <li class="app-task-list__item">
+            <span class="app-task-list__task-name">
+              <a class="govuk-link" href="#" aria-describedby="personal-details-status">
+                Your personal details
+              </a>
+            </span>
+            <strong class="govuk-tag app-task-list__tag" id="personal-details-status">Completed</strong>
+          </li>
+          <li class="app-task-list__item">
+            <span class="app-task-list__task-name">
+              <a class="govuk-link" href="#" aria-describedby="birth-registration-status">
+                Your birth registration information
+              </a>
+            </span>
+            <strong class="govuk-tag govuk-tag--blue app-task-list__tag" id="birth-registration-status">In progress</strong>
+          </li>
+          <li class="app-task-list__item">
+            <span class="app-task-list__task-name">
+              <a class="govuk-link" href="#" aria-describedby="partnership-details-status">
+                Marriage or civil partnership details
+              </a>
+            </span>
+            <strong class="govuk-tag govuk-tag--grey app-task-list__tag" id="partnership-details-status">Not started</strong>
+          </li>
+        </ul>
+      </li>
+      <!-- /.Fill in your details -->
+
+
+
+    </ol>
+
+  </div>
+
+
+  <div class="govuk-grid-column-one-third">
+    <div class="gem-c-contextual-sidebar">
+      <div class="gem-c-related-navigation">
+
+        <h2 id="related-nav-related_items-298b5325"
+            class="gem-c-related-navigation__main-heading">
+          Returning to your application
+        </h2>
+
+        <p class="govuk-body-s">Your application is saved automatically as you progress.</p>
+
+        <p class="govuk-body-s">
+          <a href="save-and-return/exit-application"
+             class="govuk-link--no-visited-state">Exit and return later</a>.
+        </p>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

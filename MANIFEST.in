@@ -1,0 +1,4 @@
+include grc/schema.sql
+graft grc/static
+graft grc/templates
+global-exclude *.pyc

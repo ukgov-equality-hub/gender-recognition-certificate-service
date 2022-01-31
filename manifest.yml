@@ -1,0 +1,10 @@
+---
+applications:
+- name: geo-gender-recognition-certificate
+  memory: 512M
+  buildpacks:
+  - python_buildpack
+  # TODO: better to manual bind this (cf bind-service geo-gender-recognition-certificate postgres-13-dev)
+  # services:
+  # - postgres-13-dev
+  web:  prod.sh
