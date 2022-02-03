@@ -63,6 +63,5 @@ def send_security_code(email):
     #     }
     # )
 
-    # return response
     return True
 

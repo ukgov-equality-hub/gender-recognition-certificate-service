@@ -43,10 +43,14 @@ def securityCode():
             application = ValidateReferenceNumber(session['reference_number'])
             session['reference_number']  = application.reference_number
             session['application'] = application.data()
-            return redirect(url_for('startApplication.declaration'))
+            return redirect(url_for('taskList.index'))
     elif request.args.get('resend') == 'true':
-        response = send_security_code(session['email'])
-        flash('We’ve resent you a security code. This can take a few minutes to arrive.', 'email')
+        try:
+            send_security_code(session['email'])
+            flash('We’ve resent you a security code. This can take a few minutes to arrive.', 'email')
+        except BaseException as err:
+            error = err.args[0].json()
+            flash(error['errors'][0]['message'], 'error')
 
 
 

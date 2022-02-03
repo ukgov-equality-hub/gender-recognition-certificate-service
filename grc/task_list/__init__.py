@@ -15,6 +15,7 @@ taskList = Blueprint('taskList', __name__)
 @taskList.route('/task-list', methods=['GET', 'POST'])
 @LoginRequired
 def index():
+
     # form = ReturnToYourApplicationForm()
     # notifications_client = NotificationsAPIClient(current_app.config['NOTIFY_API'])
 

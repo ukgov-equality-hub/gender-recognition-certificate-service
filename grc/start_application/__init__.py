@@ -25,11 +25,12 @@ def index():
     if form.validate_on_submit():
         session.clear()
         session['email'] = form.email.data
-        send_security_code(form.email.data)
-
-        # response = send_security_code(form.email.data)
-
-        return redirect(url_for('startApplication.emailConfirmation'))
+        try:
+            send_security_code(form.email.data)
+            return redirect(url_for('startApplication.emailConfirmation'))
+        except BaseException as err:
+            error = err.args[0].json()
+            flash(error['errors'][0]['message'], 'error')
 
     return render_template('start-application/email-address.html', form=form)
 
@@ -47,10 +48,12 @@ def emailConfirmation():
 
             return redirect(url_for('startApplication.reference'))
     elif request.args.get('resend') == 'true':
-        response = send_security_code(session['email'])
-        flash('We’ve resent you a security code. This can take a few minutes to arrive.', 'email')
-
-
+        try:
+            send_security_code(session['email'])
+            flash('We’ve resent you a security code. This can take a few minutes to arrive.', 'email')
+        except BaseException as err:
+            error = err.args[0].json()
+            flash(error['errors'][0]['message'], 'error')
 
     return render_template('security-code.html', form=form, action=url_for('startApplication.emailConfirmation'), back=url_for('startApplication.index'), email=session['email'])
 
@@ -101,6 +104,6 @@ def declaration():
         session['application']["confirmation"]["declaration"] = form.check.data
         session['application'] = save_progress()
 
-        return redirect(url_for('startApplication.declaration'))
+        return redirect(url_for('taskList.index'))
 
     return render_template('start-application/declaration.html',  form=form, back=back)
