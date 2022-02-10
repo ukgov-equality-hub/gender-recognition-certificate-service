@@ -5,7 +5,7 @@ from werkzeug.exceptions import abort
 from flask import render_template
 import json
 
-from grc.models import db, Application
+from grc.models import ListStatus
 from grc.start_application.forms import SaveYourApplicationForm, ValidateEmailForm, OverseasCheckForm, OverseasApprovedCheckForm, DeclerationForm
 
 from grc.utils.security_code import send_security_code
@@ -45,8 +45,7 @@ def emailConfirmation():
         if form.validate_on_submit():
             session['reference_number'] = reference_number_generator(session['email'])
             session['application'] = save_progress()
-
-            return redirect(url_for('startApplication.reference'))
+            return redirect(url_for(session["application"]["confirmation"]["step"]))
     elif request.args.get('resend') == 'true':
         try:
             send_security_code(session['email'])
@@ -70,12 +69,17 @@ def overseas_check():
 
     if form.validate_on_submit():
         session['application']["confirmation"]["overseasCheck"] = form.check.data
+
+        # set current step in case user exits the app
+        if ListStatus[session["application"]["confirmation"]["progress"]] == ListStatus.IN_PROGRESS:
+            if form.check.data == 'Yes':
+                session["application"]["confirmation"]["step"] = 'startApplication.overseas_approved_check'
+            else:
+                session["application"]["confirmation"]["step"] = 'startApplication.declaration'
+
         session['application'] = save_progress()
 
-        if form.check.data == 'Yes':
-            return redirect(url_for('startApplication.overseas_approved_check'))
-        else:
-            return redirect(url_for('startApplication.declaration'))
+        return redirect(url_for(session["application"]["confirmation"]["step"]))
 
     return render_template('start-application/overseas-check.html',  form=form)
 
@@ -87,9 +91,14 @@ def overseas_approved_check():
 
     if form.validate_on_submit():
         session['application']["confirmation"]["overseasApprovedCheck"] = form.check.data
+
+        # set current step in case user exits the app
+        if ListStatus[session["application"]["confirmation"]["progress"]] == ListStatus.IN_PROGRESS:
+            session["application"]["confirmation"]["step"] = 'startApplication.declaration'
+
         session['application'] = save_progress()
 
-        return redirect(url_for('startApplication.declaration'))
+        return redirect(url_for(session["application"]["confirmation"]["step"]))
 
     return render_template('start-application/overseas-approved-check.html',  form=form)
 
@@ -100,10 +109,17 @@ def declaration():
     form = DeclerationForm()
     back = url_for('startApplication.overseas_check')
 
-    if form.validate_on_submit():
-        session['application']["confirmation"]["declaration"] = form.check.data
-        session['application'] = save_progress()
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            session['application']["confirmation"]["declaration"] = form.check.data
+            session["application"]["confirmation"]["progress"] = ListStatus.COMPLETED.name
+            session["application"]["confirmation"]["step"] = 'startApplication.declaration'
+            session['application'] = save_progress()
 
-        return redirect(url_for('taskList.index'))
+            return redirect(url_for('taskList.index'))
+
+    # update progress status
+    session["application"]["confirmation"]["progress"] = ListStatus.IN_REVIEW.name
+    session["application"] = save_progress()
 
     return render_template('start-application/declaration.html',  form=form, back=back)

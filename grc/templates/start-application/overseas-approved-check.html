@@ -102,7 +102,7 @@
           </legend>
           <div id="changed-name-hint"
                class="govuk-hint">
-               Official documentation could be the country of territory’s equivalent of a Gender Recognition Certificate
+            Official documentation could be the country of territory’s equivalent of a Gender Recognition Certificate
           </div>
           {% if form.check.errors %}
           <p id="check-issued-error"
@@ -117,7 +117,11 @@
                      id="where-do-you-live"
                      name="check"
                      type="radio"
-                     value="Yes">
+                     value="Yes"
+                     {{ 'checked'
+                     if
+                     session['application']["confirmation"]["overseasApprovedCheck"]=="Yes"
+                     }}>
               <label class="govuk-label govuk-radios__label"
                      for="check">
                 Yes
@@ -128,7 +132,11 @@
                      id="check-2"
                      name="check"
                      type="radio"
-                     value="No">
+                     value="No"
+                     {{ 'checked'
+                     if
+                     session['application']["confirmation"]["overseasApprovedCheck"]=="No"
+                     }}>
               <label class="govuk-label govuk-radios__label"
                      for="check-2">
                 No

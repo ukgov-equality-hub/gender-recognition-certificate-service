@@ -2,6 +2,7 @@ import os
 
 from flask import Flask
 from flask_migrate import Migrate
+from datetime import timedelta
 
 from grc.models import db
 from grc.config import Config, DevConfig,TestConfig
@@ -21,22 +22,15 @@ def create_app(test_config=None):
         config_object = TestConfig
 
     app.config.from_object(config_object)
-    # # if test_config is None:
-    # #     # load the instance config, if it exists, when not testing
-    # #     app.config.from_pyfile('config.py', silent=True)
-    # # else:
-    # #     # load the test config if passed in
-    # #     app.config.from_mapping(test_config)
-
-    # # ensure the instance folder exists
-    # try:
-    #     os.makedirs(app.instance_path)
-    # except OSError:
-    #     pass
 
     # database
     db.init_app(app)
     migrate.init_app(app, db)
+
+    # update session timeout time
+    @app.before_request
+    def make_before_request():
+        app.permanent_session_lifetime = timedelta(minutes=int(config_object.PERMANENT_SESSION_LIFETIME))
 
     # Homepage
     from grc.start_application import startApplication
@@ -48,10 +42,14 @@ def create_app(test_config=None):
     app.register_blueprint(saveAndReturn)
     app.add_url_rule('/save-and-return', endpoint='index')
 
-
     # Task List
     from grc.task_list import taskList
     app.register_blueprint(taskList)
     app.add_url_rule('/task-list', endpoint='index')
+
+    # Personal details
+    from grc.personal_details import personalDetails
+    app.register_blueprint(personalDetails)
+    app.add_url_rule('/personal_details', endpoint='index')
 
     return app

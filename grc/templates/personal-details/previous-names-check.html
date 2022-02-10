@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 
-{% block backLink %}<a href="{{url_for('startApplication.reference')}}"
+{% block backLink %}<a href="{{url_for('personalDetails.index')}}"
    class="govuk-back-link">Back</a>{% endblock %}
 
 {% block content %}
@@ -30,23 +30,42 @@
     </div>
     {% endif %}
 
-    <form method="POST"
-          action="{{url_for('startApplication.overseas_check')}}">
-      {{ form.csrf_token }}
 
+    <h1 class="govuk-heading-l">
+      Name changes
+    </h1>
+
+    <p class="govuk-body">If you have ever changed your name from what appears on your birth certificate, you’ll be
+      asked to upload
+      additional documents at the end of the application. </p>
+
+    <p class="govuk-body">This is to help match your birth records after your application is accepted.</p>
+
+    <p class="govuk-body">You should include documents for each time you have changed your name.</p>
+
+    <p class="govuk-body govuk-!-margin-bottom-2">These might include:</p>
+    <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-8">
+      <li>deed poll document, either enrolled or unenrolled</li>
+      <li>change of name document (Scotland)</li>
+      <li>marriage certificate</li>
+      <li>civil partnership certificate</li>
+    </ul>
+
+    <form method="POST"
+          action="{{url_for('personalDetails.previousNamesCheck')}}">
+      {{ form.csrf_token }}
 
       <div class="govuk-form-group {{ 'govuk-form-group--error' if form.check.errors }}">
         <fieldset class="govuk-fieldset">
-          <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+          <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
             <h1 class="govuk-fieldset__heading">
-              Have you ever been issued a Gender Recognition Certificate (or its equivalent) in another country?
+              Have you ever changed your name?
             </h1>
           </legend>
           {% if form.check.errors %}
           <p id="check-issued-error"
              class="govuk-error-message">
-            <span class="govuk-visually-hidden">Error:</span> Select if you you ever been issued a Gender Recognition
-            Certificate
+            <span class="govuk-visually-hidden">Error:</span> Select if you have ever changed your name
           </p>
           {% endif %}
           <div class="govuk-radios"
@@ -59,7 +78,7 @@
                      value="Yes"
                      {{ 'checked'
                      if
-                     session['application']["confirmation"]["overseasCheck"]=="Yes"
+                     session['application']['personalDetails']['previousNamesCheck']=="Yes"
                      }}>
               <label class="govuk-label govuk-radios__label"
                      for="check">
@@ -74,23 +93,25 @@
                      value="No"
                      {{ 'checked'
                      if
-                     session['application']["confirmation"]["overseasCheck"]=="No"
+                     session['application']['personalDetails']['previousNamesCheck']=="No"
                      }}>
               <label class="govuk-label govuk-radios__label"
                      for="check-2">
                 No
               </label>
             </div>
-
           </div>
-
         </fieldset>
       </div>
 
-      <button class="govuk-button"
-              data-module="govuk-button">
-        Continue
-      </button>
+      <div class="govuk-button-group">
+        <button class="govuk-button"
+                data-module="govuk-button">
+          Save and continue
+        </button>
+        <a href="{{url_for('taskList.index')}}"
+           class="govuk-link govuk-link--no-visited-state">Return to task list</a>
+      </div>
     </form>
 
 

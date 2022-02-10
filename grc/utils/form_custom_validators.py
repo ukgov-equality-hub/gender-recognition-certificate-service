@@ -1,7 +1,7 @@
 from flask import session
 from wtforms.validators import DataRequired, ValidationError
 from grc.utils.security_code import validate_security_code
-from grc.utils.reference_number import ValidateReferenceNumber
+from grc.utils.reference_number import validate_reference_number
 
 
 class RequiredIf(DataRequired):
@@ -43,10 +43,11 @@ class StrictRequiredIf(DataRequired):
 
     def __call__(self, form, field):
         other_field = form[self.other_field_name]
-
         if other_field is None:
             raise Exception('no field named "%s" in form' % self.other_field_name)
         if other_field.data == self.other_field_value:
+            super(StrictRequiredIf, self).__call__(form, field)
+        elif isinstance(other_field.data, list) and self.other_field_value in other_field.data:
             super(StrictRequiredIf, self).__call__(form, field)
 
 def validateSecurityCode(form, field):
@@ -54,5 +55,5 @@ def validateSecurityCode(form, field):
         raise ValidationError('A valid code is required')
 
 def validateReferenceNumber(form, field):
-    if ValidateReferenceNumber(field.data) is False:
+    if validate_reference_number(field.data) is False:
         raise ValidationError('A valid code is required')

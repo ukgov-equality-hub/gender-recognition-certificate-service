@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+
+{% block backLink %}<a href="{{url_for('personalDetails.hmrc')}}"
+   class="govuk-back-link">Back</a>{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+    <h1 class="govuk-heading-l">
+      <span class="govuk-caption-l">Check your answers: </span>
+      Your personal details
+    </h1>
+
+    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Name on certificate
+        </dt>
+        <dd class="govuk-summary-list__value">
+          Rosie Armstrong
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link"
+             href="{{url_for('personalDetails.index')}}">
+            Change</a>
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Changed name
+        </dt>
+        <dd class="govuk-summary-list__value">
+          No
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link"
+             href="{{url_for('personalDetails.previousNamesCheck')}}">
+            Change</a>
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Address
+        </dt>
+        <dd class="govuk-summary-list__value">
+          72 Guild Street<br>London<br>SE23 6FH
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link"
+             href="{{url_for('personalDetails.address')}}">
+            Change</a>
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Contact preferences
+        </dt>
+        <dd class="govuk-summary-list__value">
+          <ul class="govuk-list">
+            <li>Email: name@example.com</li>
+          </ul>
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link"
+             href="{{url_for('personalDetails.contactPreferences')}}">
+            Change</a>
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Another name for contacting you
+        </dt>
+        <dd class="govuk-summary-list__value">
+          Yes <br>
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link"
+             href="{{url_for('personalDetails.contactName')}}">
+            Change</a>
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Unavailable over the next 6 months
+        </dt>
+        <dd class="govuk-summary-list__value">
+          Yes <br>
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link"
+             href="{{url_for('personalDetails.contactDates')}}">
+            Change</a>
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Notify HMRC
+        </dt>
+        <dd class="govuk-summary-list__value">
+          Yes <br>
+          QQ 12 34 56 C
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link"
+             href="{{url_for('personalDetails.hmrc')}}">
+            Change</a>
+        </dd>
+      </div>
+    </dl>
+
+    <form method="POST"
+          action="{{url_for('personalDetails.checkYourAnswers')}}">
+      {{ form.csrf_token }}
+
+      <div class="govuk-button-group">
+
+        <button class="govuk-button"
+                data-module="govuk-button">
+          Save and continue
+        </button>
+
+        <a href="{{url_for('taskList.index')}}"
+           class="govuk-link govuk-link--no-visited-state">Return to task list</a>
+      </div>
+    </form>
+
+  </div>
+</div>
+{% endblock %}

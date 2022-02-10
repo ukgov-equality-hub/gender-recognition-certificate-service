@@ -36,11 +36,11 @@
         <ul class="app-task-list__items">
           <li class="app-task-list__item">
             <span class="app-task-list__task-name">
-              <a class="govuk-link" href="declaration" aria-describedby="confirmation-status">
+              <a class="govuk-link" href="{{url_for(session['application']['confirmation']['step'])}}" aria-describedby="confirmation-status">
                 Confirmation
               </a>
             </span>
-            <strong id="confirmation-status" class="govuk-tag app-task-list__tag">Completed</strong>
+            <strong id="confirmation-status" class="govuk-tag app-task-list__tag {{get_colour(list_status['confirmation'])}}">{{list_status['confirmation'].value}}</strong>
           </li>
         </ul>
       </li>
@@ -53,11 +53,11 @@
         <ul class="app-task-list__items">
           <li class="app-task-list__item">
             <span class="app-task-list__task-name">
-              <a class="govuk-link" href="#" aria-describedby="personal-details-status">
+              <a class="govuk-link" href="{{url_for(session['application']['personalDetails']['step'])}}" aria-describedby="personal-details-status">
                 Your personal details
               </a>
             </span>
-            <strong class="govuk-tag app-task-list__tag" id="personal-details-status">Completed</strong>
+            <strong class="govuk-tag app-task-list__tag {{get_colour(list_status['personalDetails'])}}" id="personal-details-status">{{list_status['personalDetails'].value}}</strong>
           </li>
           <li class="app-task-list__item">
             <span class="app-task-list__task-name">
@@ -65,7 +65,7 @@
                 Your birth registration information
               </a>
             </span>
-            <strong class="govuk-tag govuk-tag--blue app-task-list__tag" id="birth-registration-status">In progress</strong>
+            <strong class="govuk-tag app-task-list__tag {{get_colour(list_status['birthRegistration'])}}" id="birth-registration-status">{{list_status['birthRegistration'].value}}</strong>
           </li>
           <li class="app-task-list__item">
             <span class="app-task-list__task-name">
@@ -73,7 +73,7 @@
                 Marriage or civil partnership details
               </a>
             </span>
-            <strong class="govuk-tag govuk-tag--grey app-task-list__tag" id="partnership-details-status">Not started</strong>
+            <strong class="govuk-tag app-task-list__tag {{get_colour(list_status['partnershipDetails'])}}" id="partnership-details-status">{{list_status['partnershipDetails'].value}}</strong>
           </li>
         </ul>
       </li>
@@ -98,8 +98,8 @@
         <p class="govuk-body-s">Your application is saved automatically as you progress.</p>
 
         <p class="govuk-body-s">
-          <a href="save-and-return/exit-application"
-             class="govuk-link--no-visited-state">Exit and return later</a>.
+          <a href="{{url_for('saveAndReturn.exitApplication')}}"
+             class="govuk-link govuk-link--no-visited-state">Exit and return later</a>.
         </p>
       </div>
     </div>

@@ -8,9 +8,10 @@ from flask import render_template
 from grc.save_and_return.forms import ReturnToYourApplicationForm, ValidateCodeForm
 from notifications_python_client.notifications import NotificationsAPIClient
 from grc.utils.security_code import send_security_code
-from grc.utils.reference_number import ValidateReferenceNumber
+from grc.utils.reference_number import validate_reference_number, reference_number_string
 from grc.start_application.forms import ValidateEmailForm
 from grc.utils.decorators import EmailRequired, LoginRequired, Unauthorized
+from grc.utils.application_progress import save_progress
 
 saveAndReturn = Blueprint('saveAndReturn', __name__)
 
@@ -22,7 +23,7 @@ def index():
 
     if form.validate_on_submit():
         session.clear()
-        application = ValidateReferenceNumber(form.reference.data)
+        application = validate_reference_number(form.reference.data)
         session['reference_number']  = application.reference_number
         session['email'] = application.email
         response = send_security_code(application.email)
@@ -40,7 +41,7 @@ def securityCode():
 
     if request.method == 'POST':
         if form.validate_on_submit():
-            application = ValidateReferenceNumber(session['reference_number'])
+            application = validate_reference_number(session['reference_number'])
             session['reference_number']  = application.reference_number
             session['application'] = application.data()
             return redirect(url_for('taskList.index'))
@@ -55,3 +56,12 @@ def securityCode():
 
 
     return render_template('security-code.html', form=form, action=url_for('saveAndReturn.securityCode'), back=url_for('saveAndReturn.index'), email=session['email'])
+
+@saveAndReturn.route('/save-and-return/exit-application', methods=['GET'])
+@LoginRequired
+def exitApplication():
+    reference_number = reference_number_string(session['reference_number'])
+    save_progress()
+    session.clear()
+
+    return render_template('save-and-return/exit-application.html', reference_number=reference_number)

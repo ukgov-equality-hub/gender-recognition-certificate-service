@@ -1,6 +1,7 @@
 $govuk-new-link-styles: true;
 $govuk-assets-path: '/static/assets/';
 @import './../../node_modules/govuk-frontend/govuk/all';
+@import './related-navigation';
 
 html,
 body {

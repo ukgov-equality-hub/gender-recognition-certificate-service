@@ -7,12 +7,17 @@ import enum
 db = SQLAlchemy()
 
 class ApplicationStatus(enum.Enum):
-    STARTED = "STARTED"
-    SUBMITTED = "SUBMITTED"
     COMPLETED = "COMPLETED"
     DELETED = "DELETED"
+    STARTED = "STARTED"
+    SUBMITTED = "SUBMITTED"
 
-
+class ListStatus(enum.Enum):
+    COMPLETED = "COMPLETED"
+    IN_PROGRESS = "IN PROGRESS"
+    NOT_STARTED = "NOT STARTED"
+    CANNOT_START_YET = "CANNOT START YET"
+    IN_REVIEW = "IN REVIEW" # Value 'in progress' is used only at task list
 
 class Application(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -27,14 +32,39 @@ class Application(db.Model):
         if self.user_input:
             return self.user_input
         else:
-            print(111111111, self.reference_number)
             return {
                 "reference_number": self.reference_number,
                 "email": self.email,
                 "confirmation": {
                     "overseasCheck": "None",
                     "overseasApprovedCheck":"None",
-                    "declaration": "None"
+                    "declaration": "None",
+                    "progress": ListStatus.IN_PROGRESS.name,
+                    "step": "startApplication.reference"
+                },
+                "personalDetails": {
+                    "progress": ListStatus.NOT_STARTED.name,
+                    "step": "personalDetails.index"
+                },
+                "birthRegistration": {
+                    "progress": ListStatus.NOT_STARTED.name,
+                    "step": "birthRegistration.index"
+                },
+                "partnershipDetails": {
+                    "progress": ListStatus.NOT_STARTED.name,
+                    "step": "partnershipDetails.index"
+                },
+                "medicalReports": {
+                    "progress": ListStatus.NOT_STARTED.name,
+                    "step": "medicalReports.index"
+                },
+                "genderEvidence": {
+                    "progress": ListStatus.NOT_STARTED.name,
+                    "step": "genderEvidence.index"
+                },
+                "submitAndPay": {
+                    "progress": ListStatus.CANNOT_START_YET.name,
+                    "step": "submitAndPay.index"
                 }
             }
 

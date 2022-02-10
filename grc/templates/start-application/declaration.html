@@ -75,11 +75,21 @@
             <span class="govuk-visually-hidden">Error:</span> Confirm that you meet requirements
           </p>
           {% endif %}
-          <div class="govuk-checkboxes checkboxes-long-text" data-module="govuk-checkboxes">
+          <div class="govuk-checkboxes checkboxes-long-text"
+               data-module="govuk-checkboxes">
             <div class="govuk-checkboxes__item">
-              <input class="govuk-checkboxes__input" id="waste" name="check" type="checkbox" value="confirmed">
-              <label class="govuk-label govuk-checkboxes__label" for="check">
-                I confirm that I meet the requirements for applying for a Gender Recognition Certificate and I consent to the General Register Office contacting me about my application
+              <input class="govuk-checkboxes__input"
+                     id="waste"
+                     name="check"
+                     type="checkbox"
+                     value="confirmed"
+                     {{ 'checked'
+                     if
+                     session['application']['confirmation']['declaration']==true}}>
+              <label class="govuk-label govuk-checkboxes__label"
+                     for="check">
+                I confirm that I meet the requirements for applying for a Gender Recognition Certificate and I consent
+                to the General Register Office contacting me about my application
               </label>
             </div>
           </div>

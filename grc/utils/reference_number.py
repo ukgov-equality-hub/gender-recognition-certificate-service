@@ -30,7 +30,7 @@ def reference_number_string(reference_number):
     return reference_number[0:4] + "-" + reference_number[4:8]
 
 
-def ValidateReferenceNumber(reference):
+def validate_reference_number(reference):
     """Validate reference number
     """
 
