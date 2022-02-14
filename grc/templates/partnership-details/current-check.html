@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+
+{% block backLink %}<a href="{{url_for('taskList.index')}}"
+   class="govuk-back-link">Back</a>{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+    {% if form.errors %}
+    <div class="govuk-error-summary"
+         aria-labelledby="error-summary-title"
+         role="alert"
+         tabindex="-1"
+         data-module="govuk-error-summary">
+      <h2 class="govuk-error-summary__title"
+          id="error-summary-title">
+        There is a problem
+      </h2>
+      <div class="govuk-error-summary__body">
+        <ul class="govuk-list govuk-error-summary__list">
+          {% for error in form.errors %}
+          {% for e in form[error].errors %}
+          <li><a href="#{{error}}-issued-error">{{ e }}</a></li>
+          {% endfor %}
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    {% endif %}
+
+    <h1 class="govuk-heading-l">
+      Marriages and civil partnerships
+    </h1>
+
+    <p class="govuk-body">If you are or ever have been married or in a civil partnership then you will need to provide
+      us with additional documents.</p>
+
+    <p class="govuk-body govuk-!-margin-bottom-8">Answer the questions to find out what documents you will need to
+      provide.</p>
+
+    <form method="POST"
+          action="{{url_for('partnershipDetails.index')}}">
+      {{ form.csrf_token }}
+
+      <div class="govuk-form-group {{ 'govuk-form-group--error' if form.check.errors }}">
+        <fieldset class="govuk-fieldset">
+          <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+            <h1 class="govuk-fieldset__heading">
+              Are you currently married or in a civil partnership?
+            </h1>
+          </legend>
+          <div id="uk-check-hint"
+               class="govuk-hint">
+            If you are currently in the process of ending your marriage or civil partnership but it is not finalised,
+            you should still still select these options as your current status
+          </div>
+          {% if form.check.errors %}
+          <p id="check-issued-error"
+             class="govuk-error-message">
+            <span class="govuk-visually-hidden">Error:</span> Select if you are currently married or in a civil
+            partnership
+          </p>
+          {% endif %}
+          <div class="govuk-radios"
+               data-module="govuk-radios">
+            <div class="govuk-radios__item">
+              <input class="govuk-radios__input"
+                     id="where-do-you-live"
+                     name="check"
+                     type="radio"
+                     value="Married"
+                     {{ 'checked'
+                     if
+                     session['application']['partnershipDetails']['marriageCivilPartnership']=="Married"
+                     }}>
+              <label class="govuk-label govuk-radios__label"
+                     for="check">
+                Married
+              </label>
+            </div>
+            <div class="govuk-radios__item">
+              <input class="govuk-radios__input"
+                     id="check-2"
+                     name="check"
+                     type="radio"
+                     value="Civil partnership"
+                     {{ 'checked'
+                     if
+                     session['application']['partnershipDetails']['marriageCivilPartnership']=="Civil partnership"
+                     }}>
+              <label class="govuk-label govuk-radios__label"
+                     for="check-2">
+                Civil partnership
+              </label>
+            </div>
+            <div class="govuk-radios__divider">or</div>
+            <div class="govuk-radios__item">
+              <input class="govuk-radios__input"
+                     id="check-3"
+                     name="check"
+                     type="radio"
+                     value="Neither"
+                     {{ 'checked'
+                     if
+                     session['application']['partnershipDetails']['marriageCivilPartnership']=="Neither"
+                     }}>
+              <label class="govuk-label govuk-radios__label"
+                     for="check-3">
+                Neither
+              </label>
+            </div>
+          </div>
+        </fieldset>
+      </div>
+
+      <div class="govuk-button-group">
+        <button class="govuk-button"
+                data-module="govuk-button">
+          Save and continue
+        </button>
+        <a href="{{url_for('taskList.index')}}"
+           class="govuk-link govuk-link--no-visited-state">Return to task list</a>
+      </div>
+    </form>
+
+
+  </div>
+</div>
+{% endblock %}

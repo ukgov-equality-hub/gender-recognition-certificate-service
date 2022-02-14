@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+
+{% block backLink %}<a href="{{url_for('taskList.index')}}"
+   class="govuk-back-link">Back</a>{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+    <h1 class="govuk-heading-l">
+      <span class="govuk-caption-l">Check your answers: </span>
+      Marriage or civil partnership details
+    </h1>
+
+    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Currently married or in a civil partnership
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {{session["application"]["partnershipDetails"]["marriageCivilPartnership"]}}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link"
+             href="{{url_for('partnershipDetails.index')}}">
+            Change</a>
+        </dd>
+      </div>
+
+      {% if session["application"]["partnershipDetails"]["marriageCivilPartnership"] == 'Neither' %}
+        <div class="govuk-summary-list__row">
+          <dt class="govuk-summary-list__key">
+            Spouse or partner has died
+          </dt>
+          <dd class="govuk-summary-list__value">
+            {{session["application"]["partnershipDetails"]["partnerDied"]}}
+          </dd>
+          <dd class="govuk-summary-list__actions">
+            <a class="govuk-link"
+              href="{{url_for('partnershipDetails.partnerDied')}}">
+              Change</a>
+          </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+          <dt class="govuk-summary-list__key">
+            Married or in a civil partnership has ended
+          </dt>
+          <dd class="govuk-summary-list__value">
+            {{session["application"]["partnershipDetails"]["endedCheck"]}}
+          </dd>
+          <dd class="govuk-summary-list__actions">
+            <a class="govuk-link"
+              href="{{url_for('partnershipDetails.endedCheck')}}">
+              Change</a>
+          </dd>
+        </div>
+      {% else %}
+        <div class="govuk-summary-list__row">
+          <dt class="govuk-summary-list__key">
+            Remain married
+          </dt>
+          <dd class="govuk-summary-list__value">
+            {{session["application"]["partnershipDetails"]["stayTogether"]}}
+          </dd>
+          <dd class="govuk-summary-list__actions">
+            <a class="govuk-link"
+              href="{{url_for('partnershipDetails.stayTogether')}}">
+              Change</a>
+          </dd>
+        </div>
+
+        {% if session["application"]["partnershipDetails"]["stayTogether"] == 'Yes' %}
+        <div class="govuk-summary-list__row">
+          <dt class="govuk-summary-list__key">
+            Can provide a declaration of consent from your spouse
+          </dt>
+          <dd class="govuk-summary-list__value">
+            {{session["application"]["partnershipDetails"]["partnerAgrees"]}}
+          </dd>
+          <dd class="govuk-summary-list__actions">
+            <a class="govuk-link"
+              href="{{url_for('partnershipDetails.partnerAgrees')}}">
+              Change</a>
+          </dd>
+        </div>
+        {% endif %}
+
+        {% if session["application"]["partnershipDetails"]["stayTogether"] == 'No'  or
+              session["application"]["partnershipDetails"]["partnerAgrees"] == 'No' %}
+        <div class="govuk-summary-list__row">
+          <dt class="govuk-summary-list__key">
+            Interim GRC
+          </dt>
+          <dd class="govuk-summary-list__value">
+            {{session["application"]["partnershipDetails"]["interimCheck"]}}
+          </dd>
+          <dd class="govuk-summary-list__actions">
+            <a class="govuk-link"
+              href="{{url_for('partnershipDetails.interimCheck')}}">
+              Change</a>
+          </dd>
+        </div>
+        {% endif %}
+
+      {% endif %}
+    </dl>
+
+    <form method="POST"
+          action="{{url_for('partnershipDetails.checkYourAnswers')}}">
+      {{ form.csrf_token }}
+
+      <div class="govuk-button-group">
+
+        <button class="govuk-button"
+                data-module="govuk-button">
+          Save and continue
+        </button>
+
+        <a href="{{url_for('taskList.index')}}"
+           class="govuk-link govuk-link--no-visited-state">Return to task list</a>
+      </div>
+    </form>
+
+  </div>
+</div>
+{% endblock %}

@@ -61,7 +61,7 @@
           </li>
           <li class="app-task-list__item">
             <span class="app-task-list__task-name">
-              <a class="govuk-link" href="#" aria-describedby="birth-registration-status">
+              <a class="govuk-link" href="{{url_for(session['application']['birthRegistration']['step'])}}" aria-describedby="birth-registration-status">
                 Your birth registration information
               </a>
             </span>
@@ -69,7 +69,7 @@
           </li>
           <li class="app-task-list__item">
             <span class="app-task-list__task-name">
-              <a class="govuk-link" href="#" aria-describedby="partnership-details-status">
+              <a class="govuk-link" href="{{url_for(session['application']['partnershipDetails']['step'])}}" aria-describedby="partnership-details-status">
                 Marriage or civil partnership details
               </a>
             </span>

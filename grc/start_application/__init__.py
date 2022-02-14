@@ -76,6 +76,8 @@ def overseas_check():
                 session["application"]["confirmation"]["step"] = 'startApplication.overseas_approved_check'
             else:
                 session["application"]["confirmation"]["step"] = 'startApplication.declaration'
+        elif form.check.data == 'Yes':
+            session["application"]["confirmation"]["step"] = 'startApplication.overseas_approved_check'
 
         session['application'] = save_progress()
 
@@ -92,9 +94,8 @@ def overseas_approved_check():
     if form.validate_on_submit():
         session['application']["confirmation"]["overseasApprovedCheck"] = form.check.data
 
-        # set current step in case user exits the app
-        if ListStatus[session["application"]["confirmation"]["progress"]] == ListStatus.IN_PROGRESS:
-            session["application"]["confirmation"]["step"] = 'startApplication.declaration'
+        # next step is always decleration
+        session["application"]["confirmation"]["step"] = 'startApplication.declaration'
 
         session['application'] = save_progress()
 

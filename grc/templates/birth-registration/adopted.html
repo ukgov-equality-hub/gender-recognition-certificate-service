@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 
-{% block backLink %}<a href="{{url_for('personalDetails.contactName')}}"
+{% block backLink %}<a href="{{url_for(back)}}"
    class="govuk-back-link">Back</a>{% endblock %}
 
 {% block content %}
@@ -22,7 +22,7 @@
         <ul class="govuk-list govuk-error-summary__list">
           {% for error in form.errors %}
           {% for e in form[error].errors %}
-          <li><a href="#{{error}}">{{ e }}</a></li>
+          <li><a href="#{{error}}-issued-error">{{ e }}</a></li>
           {% endfor %}
           {% endfor %}
         </ul>
@@ -31,64 +31,42 @@
     {% endif %}
 
     <form method="POST"
-          action="{{url_for('personalDetails.contactDates')}}">
+          action="{{url_for('birthRegistration.adopted')}}">
       {{ form.csrf_token }}
 
-      <div class="govuk-form-group {{ 'govuk-form-group--error' if form.errors }}">
-        <fieldset class="govuk-fieldset"
-                  aria-describedby="check-hint">
+      <div class="govuk-form-group {{ 'govuk-form-group--error' if form.check.errors }}">
+        <fieldset class="govuk-fieldset">
           <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
             <h1 class="govuk-fieldset__heading">
-              Are there any dates you’ll be unavailable for more than a week over the next 6 months?
+              Were you adopted in the United Kingdom?
             </h1>
           </legend>
+          <div id="uk-check-hint"
+               class="govuk-hint">
+            This information will help us locate your original birth record.
+          </div>
           {% if form.check.errors %}
-          <p id="check" class="govuk-error-message">
-            <span class="govuk-visually-hidden">Error:</span> Select if you’ll be unavailable
+          <p id="check-issued-error"
+             class="govuk-error-message">
+            <span class="govuk-visually-hidden">Error:</span> Select if your were you adopted in the United Kingdom
           </p>
           {% endif %}
           <div class="govuk-radios"
                data-module="govuk-radios">
             <div class="govuk-radios__item">
               <input class="govuk-radios__input"
-                     id="check"
+                     id="where-do-you-live"
                      name="check"
                      type="radio"
                      value="Yes"
-                     data-aria-controls="conditional-check"
                      {{ 'checked'
                      if
-                     form.check.data
-                     is
-                     iterable
-                     and "Yes"
-                     in
-                     form.check.data
+                     session['application']['birthRegistration']['adopted']=="Yes"
                      }}>
               <label class="govuk-label govuk-radios__label"
                      for="check">
                 Yes
               </label>
-            </div>
-            <div class="govuk-radios__conditional govuk-radios__conditional--hidden"
-                 id="conditional-check">
-              <div class="govuk-form-group">
-                <label class="govuk-label"
-                       for="dates">
-                  Dates you’re unavailable
-                </label>
-                {% if form.dates.errors %}
-                <p id="dates-error"
-                   class="govuk-error-message">
-                  <span class="govuk-visually-hidden">Error:</span> Dates are required
-                </p>
-                {% endif %}
-                <textarea class="govuk-textarea {{ 'govuk-input--error' if form.dates.errors }}"
-                          id="dates"
-                          name="dates"
-                          rows="3">{{ form.dates.data if form.dates.data is not none}}</textarea>
-              </div>
-
             </div>
             <div class="govuk-radios__item">
               <input class="govuk-radios__input"
@@ -98,20 +76,31 @@
                      value="No"
                      {{ 'checked'
                      if
-                     form.check.data
-                     is
-                     iterable
-                     and "No"
-                     in
-                     form.check.data
+                     session['application']['birthRegistration']['adopted']=="No"
                      }}>
               <label class="govuk-label govuk-radios__label"
                      for="check-2">
                 No
               </label>
             </div>
+            <div class="govuk-radios__divider">or</div>
+            <div class="govuk-radios__item">
+              <input class="govuk-radios__input"
+                     id="check-3"
+                     name="check"
+                     type="radio"
+                     value="I don't know"
+                     {{ 'checked'
+                     if
+                     session['application']['birthRegistration']['adopted']=="I don't know"
+                     }}>
+              <label class="govuk-label govuk-radios__label"
+                     for="check-3">
+                     I don't know
+              </label>
+            </div>
           </div>
-          </fieldset>
+        </fieldset>
       </div>
 
       <div class="govuk-button-group">

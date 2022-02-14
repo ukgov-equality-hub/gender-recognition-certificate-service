@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+
+{% block backLink %}<a href="{{url_for('birthRegistration.placeOfBirth')}}"
+   class="govuk-back-link">Back</a>{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+    {% if form.errors %}
+    <div class="govuk-error-summary"
+         aria-labelledby="error-summary-title"
+         role="alert"
+         tabindex="-1"
+         data-module="govuk-error-summary">
+      <h2 class="govuk-error-summary__title"
+          id="error-summary-title">
+        There is a problem
+      </h2>
+      <div class="govuk-error-summary__body">
+        <ul class="govuk-list govuk-error-summary__list">
+          {% for error in form.errors %}
+          {% for e in form[error].errors %}
+          <li><a href="#{{error}}">{{ e }}</a></li>
+          {% endfor %}
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    {% endif %}
+
+
+    <form method="POST"
+          action="{{url_for('birthRegistration.mothersName')}}">
+      {{ form.csrf_token }}
+
+      <div class="govuk-form-group {{ 'govuk-form-group--error' if form.errors }}">
+        <fieldset class="govuk-fieldset">
+          <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+            <h1 class="govuk-fieldset__heading">
+              What is your mother’s name as listed on your birth or adoption certificate?
+            </h1>
+          </legend>
+
+          <div class="govuk-form-group">
+            <label class="govuk-label"
+                   for="first_name">
+              First name(s)</span>
+            </label>
+            {% if form.first_name.errors %}
+            <p id="first_name-issued-error"
+               class="govuk-error-message">
+              <span class="govuk-visually-hidden">Error:</span> First name is required
+            </p>
+            {% endif %}
+            <input class="govuk-input govuk-!-width-three-quarters
+                  {{ 'govuk-input--error' if form.first_name.errors }}"
+                   id="first_name"
+                   name="first_name"
+                   type="text"
+                   autocomplete="off"
+                   value="{{
+                     form.first_name.data
+                     if form.first_name.data is not none
+                   }}">
+          </div>
+
+          <div class="govuk-form-group">
+            <label class="govuk-label"
+                   for="last_name">
+              Last name</span>
+            </label>
+            {% if form.last_name.errors %}
+            <p id="last_name-issued-error"
+               class="govuk-error-message">
+              <span class="govuk-visually-hidden">Error:</span> Last name is required
+            </p>
+            {% endif %}
+            <input class="govuk-input govuk-!-width-three-quarters
+                  {{ 'govuk-input--error' if form.last_name.errors }}"
+                   id="last_name"
+                   name="last_name"
+                   type="text"
+                   autocomplete="off"
+                   value="{{
+                    form.last_name.data
+                    if form.last_name.data is not none
+                  }}">
+          </div>
+        </fieldset>
+      </div>
+
+      <div class="govuk-button-group">
+        <button class="govuk-button"
+                data-module="govuk-button">
+          Save and continue
+        </button>
+        <a href="{{url_for('taskList.index')}}"
+           class="govuk-link govuk-link--no-visited-state">Return to task list</a>
+      </div>
+    </form>
+
+
+  </div>
+</div>
+{% endblock %}

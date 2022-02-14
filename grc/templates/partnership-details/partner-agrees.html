@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 
-{% block backLink %}<a href="{{url_for('personalDetails.contactPreferences')}}"
+{% block backLink %}<a href="{{url_for('partnershipDetails.stayTogether')}}"
    class="govuk-back-link">Back</a>{% endblock %}
 
 {% block content %}
@@ -22,7 +22,7 @@
         <ul class="govuk-list govuk-error-summary__list">
           {% for error in form.errors %}
           {% for e in form[error].errors %}
-          <li><a href="#{{error}}">{{ e }}</a></li>
+          <li><a href="#{{error}}-issued-error">{{ e }}</a></li>
           {% endfor %}
           {% endfor %}
         </ul>
@@ -30,78 +30,67 @@
     </div>
     {% endif %}
 
-
     <h1 class="govuk-heading-l">
-      Contact name
+      Declaration of consent
     </h1>
 
-    <p class="govuk-body govuk-!-margin-bottom-8">For privacy, you may not want us to use the name you want listed on
-      your Gender Recognition Certificate when contacting you.</p>
+    {% if session["application"]["partnershipDetails"]["marriageCivilPartnership"] == 'Civil partnership' %}
+    <p class="govuk-body">If you plan to stay in your civil partnership, your civil partner will need to sign a <a
+         class="govuk-link"
+         href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852943/t466-eng.pdf"
+         rel="noreferrer noopener"
+         target="_blank">statutory declaration consenting to the civil partnership continuing (opens in new tab)</a>
+      after you receive a Gender Recognition Certificate.</p>
+
+    {% set questionText %}Can you provide a declaration of consent from your civil partner?{% endset %}
+    {% else %}
+    <p class="govuk-body">If you plan to stay married your spouse will need to sign a <a class="govuk-link"
+         href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852943/t466-eng.pdf"
+         rel="noreferrer noopener"
+         target="_blank">statutory declaration consenting to the marriage continuing (opens in new tab)</a> after you
+      receive a Gender Recognition Certificate.</p>
+
+    {% set questionText %}Can you provide a declaration of consent from your spouse?{% endset %}
+    {% endif %}
+
+    <p class="govuk-body govuk-!-margin-bottom-8">This will need to be witnessed by someone that can administer oaths.
+      All solicitors can do this.</p>
+
 
     <form method="POST"
-          action="{{url_for('personalDetails.contactName')}}">
+          action="{{url_for('partnershipDetails.partnerAgrees')}}">
       {{ form.csrf_token }}
 
-      <div class="govuk-form-group {{ 'govuk-form-group--error' if form.errors }}">
-        <fieldset class="govuk-fieldset"
-                  aria-describedby="check-hint">
+      <div class="govuk-form-group {{ 'govuk-form-group--error' if form.check.errors }}">
+        <fieldset class="govuk-fieldset">
           <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
             <h1 class="govuk-fieldset__heading">
-              Do you want us to use a different name?
+              {{questionText}}
             </h1>
           </legend>
           {% if form.check.errors %}
-          <p id="check" class="govuk-error-message">
-            <span class="govuk-visually-hidden">Error:</span> Select if you want us to use a different name
+          <p id="check-issued-error"
+             class="govuk-error-message">
+            <span class="govuk-visually-hidden">Error:</span> Select if you can provide a declaration of consent from
+            your spouse
           </p>
           {% endif %}
           <div class="govuk-radios"
                data-module="govuk-radios">
             <div class="govuk-radios__item">
               <input class="govuk-radios__input"
-                     id="check"
+                     id="where-do-you-live"
                      name="check"
                      type="radio"
                      value="Yes"
-                     data-aria-controls="conditional-check"
                      {{ 'checked'
                      if
-                     form.check.data
-                     is
-                     iterable
-                     and "Yes"
-                     in
-                     form.check.data
+                     session['application']['partnershipDetails']['partnerAgrees']=="Yes"
                      }}>
               <label class="govuk-label govuk-radios__label"
                      for="check">
                 Yes
               </label>
-            </div>
-            <div class="govuk-radios__conditional govuk-radios__conditional--hidden"
-                 id="conditional-check">
-              <div class="govuk-form-group">
-                <label class="govuk-label"
-                       for="name">
-                  Full name
-                </label>
-                {% if form.name.errors %}
-                <p id="name-error"
-                   class="govuk-error-message">
-                  <span class="govuk-visually-hidden">Error:</span> Full name is required
-                </p>
-                {% endif %}
-                <input class="govuk-input {{ 'govuk-input--error' if form.name.errors }}"
-                       id="name"
-                       name="name"
-                       type="text"
-                       spellcheck="false"
-                       autocomplete="off"
-                       value="{{
-                        form.name.data if form.name.data is not none
-                       }}">
-              </div>
-
             </div>
             <div class="govuk-radios__item">
               <input class="govuk-radios__input"
@@ -111,12 +100,7 @@
                      value="No"
                      {{ 'checked'
                      if
-                     form.check.data
-                     is
-                     iterable
-                     and "No"
-                     in
-                     form.check.data
+                     session['application']['partnershipDetails']['partnerAgrees']=="No"
                      }}>
               <label class="govuk-label govuk-radios__label"
                      for="check-2">
@@ -124,7 +108,7 @@
               </label>
             </div>
           </div>
-          </fieldset>
+        </fieldset>
       </div>
 
       <div class="govuk-button-group">

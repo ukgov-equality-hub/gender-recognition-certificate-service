@@ -50,6 +50,17 @@ def create_app(test_config=None):
     # Personal details
     from grc.personal_details import personalDetails
     app.register_blueprint(personalDetails)
-    app.add_url_rule('/personal_details', endpoint='index')
+    app.add_url_rule('/personal-details', endpoint='index')
+
+    # Birth registration
+    from grc.birth_registration import birthRegistration
+    app.register_blueprint(birthRegistration)
+    app.add_url_rule('/birth-registration', endpoint='index')
+
+    # Partnership details
+    from grc.partnership_details import partnershipDetails
+    app.register_blueprint(partnershipDetails)
+    app.add_url_rule('/partnership-details', endpoint='index')
+
 
     return app

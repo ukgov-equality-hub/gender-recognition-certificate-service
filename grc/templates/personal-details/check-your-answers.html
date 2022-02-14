@@ -19,7 +19,7 @@
           Name on certificate
         </dt>
         <dd class="govuk-summary-list__value">
-          Rosie Armstrong
+          {{session["application"]["personalDetails"]["first_name"]}} {{session["application"]["personalDetails"]["last_name"]}}
         </dd>
         <dd class="govuk-summary-list__actions">
           <a class="govuk-link"
@@ -32,7 +32,7 @@
           Changed name
         </dt>
         <dd class="govuk-summary-list__value">
-          No
+          {{session["application"]["personalDetails"]["previousNamesCheck"]}}
         </dd>
         <dd class="govuk-summary-list__actions">
           <a class="govuk-link"
@@ -45,7 +45,10 @@
           Address
         </dt>
         <dd class="govuk-summary-list__value">
-          72 Guild Street<br>London<br>SE23 6FH
+          {{session["application"]["personalDetails"]["address"]["address_line_one"]}}<br>
+          {{session["application"]["personalDetails"]["address"]["address_line_two"]}}<br>
+          {{session["application"]["personalDetails"]["address"]["town"]}}<br>
+          {{session["application"]["personalDetails"]["address"]["postcode"]}}
         </dd>
         <dd class="govuk-summary-list__actions">
           <a class="govuk-link"
@@ -59,7 +62,15 @@
         </dt>
         <dd class="govuk-summary-list__value">
           <ul class="govuk-list">
-            <li>Email: name@example.com</li>
+            {% if session["application"]["personalDetails"]["contactPreferences"]["email"] != '' %}
+              <li>Email: {{session["application"]["personalDetails"]["contactPreferences"]["email"]}}</li>
+            {% endif %}
+            {% if session["application"]["personalDetails"]["contactPreferences"]["phone"] != '' %}
+              <li>Phone: {{session["application"]["personalDetails"]["contactPreferences"]["phone"]}}</li>
+            {% endif %}
+            {% if session["application"]["personalDetails"]["contactPreferences"]["post"] != '' %}
+              <li>Post: {{session["application"]["personalDetails"]["contactPreferences"]["post"]}}</li>
+            {% endif %}
           </ul>
         </dd>
         <dd class="govuk-summary-list__actions">
@@ -73,7 +84,11 @@
           Another name for contacting you
         </dt>
         <dd class="govuk-summary-list__value">
-          Yes <br>
+          {{session["application"]["personalDetails"]["contactName"]["answer"]}} <br>
+
+          {% if session["application"]["personalDetails"]["contactName"]["answer"] == "Yes" %}
+            {{session["application"]["personalDetails"]["contactName"]["name"]}}
+          {% endif %}
         </dd>
         <dd class="govuk-summary-list__actions">
           <a class="govuk-link"
@@ -86,7 +101,11 @@
           Unavailable over the next 6 months
         </dt>
         <dd class="govuk-summary-list__value">
-          Yes <br>
+          {{session["application"]["personalDetails"]["contactDates"]["answer"]}} <br>
+
+          {% if session["application"]["personalDetails"]["contactDates"]["answer"] == "Yes" %}
+            {{session["application"]["personalDetails"]["contactDates"]["dates"]}}
+          {% endif %}
         </dd>
         <dd class="govuk-summary-list__actions">
           <a class="govuk-link"
@@ -99,8 +118,11 @@
           Notify HMRC
         </dt>
         <dd class="govuk-summary-list__value">
-          Yes <br>
-          QQ 12 34 56 C
+          {{session["application"]["personalDetails"]["hmrc"]["answer"]}} <br>
+
+          {% if session["application"]["personalDetails"]["hmrc"]["answer"] == "Yes" %}
+            {{session["application"]["personalDetails"]["hmrc"]["nino"]}}
+          {% endif %}
         </dd>
         <dd class="govuk-summary-list__actions">
           <a class="govuk-link"

@@ -57,6 +57,12 @@ def calculate_progress_status():
             # personal details
             list_status['personalDetails'] = calculate_progress_status_display_name(ListStatus[session['application']['personalDetails']['progress']])
 
+            # Birth registration
+            list_status['birthRegistration'] = calculate_progress_status_display_name(ListStatus[session['application']['birthRegistration']['progress']])
+
+            # Partnership details
+            list_status['partnershipDetails'] = calculate_progress_status_display_name(ListStatus[session['application']['partnershipDetails']['progress']])
+
             return list_status
 
     except ValueError:
