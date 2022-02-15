@@ -43,3 +43,6 @@ pip3 freeze requirements.txt
 
 ## How to generate good secret keys
 python -c 'import secrets; print(secrets.token_hex())'
+
+https://docs.cloud.service.gov.uk/deploying_services/s3/#connect-to-an-s3-bucket-from-outside-of-the-gov-uk-paas
+`cf service-key grc-s3-dev grc-s3-dev-key`

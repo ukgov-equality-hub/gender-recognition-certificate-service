@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+
+{% block backLink %}<a href="{{url_for('taskList.index')}}"
+   class="govuk-back-link">Back</a>{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+    {% if form.errors %}
+    <div class="govuk-error-summary"
+         aria-labelledby="error-summary-title"
+         role="alert"
+         tabindex="-1"
+         data-module="govuk-error-summary">
+      <h2 class="govuk-error-summary__title"
+          id="error-summary-title">
+        There is a problem
+      </h2>
+      <div class="govuk-error-summary__body">
+        <ul class="govuk-list govuk-error-summary__list">
+          {% for error in form.errors %}
+          {% for e in form[error].errors %}
+          <li><a href="#{{error}}">{{ e }}</a></li>
+          {% endfor %}
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    {% endif %}
+
+    <h1 class="govuk-heading-l">
+      Upload your medical reports
+    </h1>
+
+    <p class="govuk-body govuk-!-margin-bottom-2">This is where you can upload your 2 medical reports. These should be:
+    </p>
+    <ol class="govuk-list govuk-list--number">
+      <li>a medical report that explains in full, the specific details of your gender dysphoria diagnosis, written by a
+        registered medical practitioner or registered psychologist practising in the field of gender dysphoria</li>
+      <li>a medical report that explains in full, the specific details of your treatment, or planned treatment, such as
+        hormone treatments or surgery, written by a registered medical practitioner – this could be your GP or surgeon
+      </li>
+    </ol>
+
+    <p class="govuk-body">If you have not had and are not planning any treatment, then the second report should say why
+      not.</p>
+
+    <p class="govuk-body">There is a <a rel="noreferrer noopener"
+         target="_blank"
+         class="govuk-link"
+         href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/937304/t493-eng.pdf">list
+        of specialists in the field of gender dysphoria (opens in new tab)</a>. This is not a complete directory of
+      those in this field and it may not be up to date.</p>
+    <p class="govuk-body">The medical report does not need to be written by someone on this list, as long as it is
+      written by a medical practitioner or psychologist registered in the field of gender dysphoria.</p>
+    <p class="govuk-body">Each report should include the name, practice address and contact details of the person
+      writing the report.</p>
+    <div class="govuk-inset-text">
+      <p class="govuk-body">There is a <a class="govuk-link"
+           href="https://www.gov.uk/government/publications/form-t452-guidelines-for-registered-medical-practitioners-and-registered-psychologists-to-facilitate-completion-of-the-medical-report-proforma-for-g">form
+          that medical practitioners can use to make these reports</a></p>
+    </div>
+
+
+    <h2 class="govuk-heading-s">What the reports should include</h2>
+
+    <p class="govuk-body">The first report needs to show your diagnosis of gender dysphoria. It should include details
+      of:</p>
+    <ul class="govuk-list govuk-list--bullet">
+      <li>the diagnosis, including when it was made and by who</li>
+      <li>any evidence that was used to make the diagnosis </li>
+      <li>any medication prescribed and when</li>
+      <li>any planned non-surgical treatment</li>
+      <li>when a referral for surgery was made and if it hasn&rsquo;t, the reasons why </li>
+    </ul>
+
+    <p class="govuk-body">The second report needs to show details of your treatment, or planned treatment. It should
+      include details of:</p>
+    <ul class="govuk-list govuk-list--bullet">
+      <li>whether gender reassignment surgery has been carried out</li>
+      <li>each distinct surgical procedure and the date it was carried out</li>
+      <li>any non-surgical treatment given (such as hormone treatment)</li>
+      <li>any further surgical or non-surgical treatment planned </li>
+      <li>the reasons why, if there has been no treatment and none is planned</li>
+    </ul>
+    <p class="govuk-body govuk-!-margin-bottom-8">You are not required to have treatment to get a Gender Recognition
+      Certificate, but if you do not plan to have treatment, this report should say why you don&rsquo;t.</p>
+
+
+
+    <form method="POST"
+          action="{{url_for('upload.medicalReports')}}"
+          enctype="multipart/form-data">
+      {{ form.csrf_token }}
+
+      <div class="govuk-form-group {{ 'govuk-form-group--error' if form.errors }}">
+          <label class="govuk-label govuk-label--m"
+               for="documents">
+          Upload files
+        </label>
+        <div id="documents-hint"
+             class="govuk-hint">
+          The files must be a JPG, BMP, PNG, TIF or PDF and be smaller than 10MB
+        </div>
+        {% if form.documents.errors %}
+        <p id="documents-error"
+           class="govuk-error-message">
+          <span class="govuk-visually-hidden">Error:</span> You need to add allowed files
+        </p>
+        {% endif %}
+        <input class="govuk-file-upload govuk-!-margin-bottom-4 {{ 'govuk-input--error' if form.documents.errors }}"
+               id="documents"
+               name="documents"
+               multiple
+               accept=".jpg,.jpeg,.bmp,.png,.tif,.tiff,.pdf"
+               type="file">
+
+      </div>
+
+      <div class="govuk-button-group">
+        <button class="govuk-button"
+                data-module="govuk-button">
+          Save and continue
+        </button>
+        <a href="{{url_for('taskList.index')}}"
+           class="govuk-link govuk-link--no-visited-state">Return to task list</a>
+      </div>
+    </form>
+
+
+  </div>
+</div>
+{% endblock %}

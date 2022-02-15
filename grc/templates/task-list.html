@@ -80,6 +80,33 @@
       <!-- /.Fill in your details -->
 
 
+       <!-- Upload your documents -->
+       <li>
+        <h2 class="app-task-list__section">
+           Upload your documents
+        </h2>
+        <ul class="app-task-list__items">
+          <li class="app-task-list__item">
+            <span class="app-task-list__task-name">
+              <a class="govuk-link" href="{{url_for('upload.medicalReports')}}" aria-describedby="medical-reports-status">
+                Your medical reports
+              </a>
+            </span>
+            <strong class="govuk-tag app-task-list__tag {{get_colour(list_status['medicalReports'])}}" id="medical-reports-status">{{list_status['medicalReports'].value}}</strong>
+          </li>
+          <li class="app-task-list__item">
+            <span class="app-task-list__task-name">
+              <a class="govuk-link" href="{{url_for('upload.genderEvidence')}}" aria-describedby="birth-registration-status">
+                Evidence of living in your gender
+              </a>
+            </span>
+            <strong class="govuk-tag app-task-list__tag {{get_colour(list_status['genderEvidence'])}}" id="birth-registration-status">{{list_status['genderEvidence'].value}}</strong>
+          </li>
+        </ul>
+      </li>
+      <!-- /.Upload your documents -->
+
+
 
     </ol>
 

@@ -45,14 +45,8 @@ def calculate_progress_status():
                         "submitAndPay": ListStatus.CANNOT_START_YET
                         }
 
-            # calculate confirmation
+            # confirmation
             list_status['confirmation'] = calculate_progress_status_display_name(ListStatus[session['application']['confirmation']['progress']])
-            # if 'overseasCheck' in session['application']["confirmation"] and 'declaration' in session['application']["confirmation"] and  (session['application']["confirmation"]["overseasCheck"] == 'Yes' or "overseasApprovedCheck" in session['application']["confirmation"]) and session['application']["confirmation"]["declaration"] == True:
-            #     list_status['confirmation'] = ListStatus.COMPLETED
-            # elif 'overseasCheck' not in session['application']["confirmation"] and "declaration" not in session['application']["confirmation"]:
-            #     list_status['confirmation'] = ListStatus.NOT_STARTED
-            # else:
-            #     list_status['confirmation'] = ListStatus.IN_PROGRESS
 
             # personal details
             list_status['personalDetails'] = calculate_progress_status_display_name(ListStatus[session['application']['personalDetails']['progress']])
@@ -62,6 +56,15 @@ def calculate_progress_status():
 
             # Partnership details
             list_status['partnershipDetails'] = calculate_progress_status_display_name(ListStatus[session['application']['partnershipDetails']['progress']])
+
+            # Medical reports
+            list_status['medicalReports'] = calculate_progress_status_display_name(ListStatus[session['application']['medicalReports']['progress']])
+
+            # Gender evidence
+            list_status['genderEvidence'] = calculate_progress_status_display_name(ListStatus[session['application']['genderEvidence']['progress']])
+
+            # Submit and pay
+            list_status['submitAndPay'] = calculate_progress_status_display_name(ListStatus[session['application']['submitAndPay']['progress']])
 
             return list_status
 

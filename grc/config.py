@@ -1,19 +1,6 @@
 import logging
 import os
-from dotenv import load_dotenv
-from os.path import join, dirname
-from pathlib import Path
-
-
-# Note this will fail with warnings, not exception
-# if file does not exist. Therefore the config classes
-# below will break.
-# CI env variables are set in Heroku.
-
-# app_base_path = Path(dirname(__file__))
-# dotenv_path = join(str(app_base_path.parent), ".env")
-# load_dotenv(dotenv_path)
-
+from os.path import dirname
 
 class Config:
     BASE_DIRECTORY = dirname(dirname(os.path.abspath(__file__)))
@@ -27,6 +14,13 @@ class Config:
     SESSION_COOKIE_SECURE = True
     PERMANENT_SESSION_LIFETIME = int(os.environ.get("PERMANENT_SESSION_LIFETIME"))
     WTF_CSRF_ENABLED = True
+    AWS_ACCESS_KEY_ID=os.environ.get("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY=os.environ.get("AWS_SECRET_ACCESS_KEY")
+    AWS_REGION=os.environ.get("AWS_REGION")
+    AWS_S3_REGION_NAME=os.environ.get("AWS_REGION")
+    AWS_S3_SIGNATURE_VERSION="s3v4"
+    BUCKET_NAME=os.environ.get("BUCKET_NAME")
+
 
 
 class DevConfig(Config):

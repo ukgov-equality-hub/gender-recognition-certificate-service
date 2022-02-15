@@ -62,5 +62,10 @@ def create_app(test_config=None):
     app.register_blueprint(partnershipDetails)
     app.add_url_rule('/partnership-details', endpoint='index')
 
+    # Upload
+    from grc.upload import upload
+    app.register_blueprint(upload)
+    app.add_url_rule('/upload/medical-reports', endpoint='medicalReports')
+
 
     return app
