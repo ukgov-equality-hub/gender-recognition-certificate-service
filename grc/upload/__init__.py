@@ -6,11 +6,11 @@ from flask import render_template
 from werkzeug.utils import secure_filename
 
 from grc.models import ListStatus
-from grc.upload.forms import UploadForm
+from grc.upload.forms import UploadForm, DeleteForm
 
 from grc.utils.decorators import LoginRequired
 from grc.utils.application_progress import save_progress
-from grc.utils.s3 import upload_fileobj, create_presigned_url
+from grc.utils.s3 import upload_fileobj, create_presigned_url, delete_object
 
 
 upload = Blueprint('upload', __name__)
@@ -20,6 +20,7 @@ upload = Blueprint('upload', __name__)
 def medicalReports():
 
     form = UploadForm()
+    deleteform = DeleteForm()
 
     if form.validate_on_submit():
         if "files" not in session["application"]["medicalReports"]:
@@ -29,7 +30,7 @@ def medicalReports():
             print(document.filename)
             print(document)
             filename = secure_filename(document.filename)
-            object_name = session["application"]["reference_number"] + '/' +filename
+            object_name = session["application"]["reference_number"] + '/' + 'medicalReports' + '/' + filename
             print(upload_fileobj(document, object_name))
             session["application"]["medicalReports"]["files"].append(object_name)
 
@@ -40,7 +41,12 @@ def medicalReports():
 
         return redirect(url_for('taskList.index'))
 
-    return render_template('upload/medical-reports.html', form=form)
+    if request.method == 'GET' and "files" in session["application"]["medicalReports"] and len(session["application"]["medicalReports"]["files"]) == 0:
+         # set progress status
+        session["application"]["medicalReports"]["progress"] = ListStatus.IN_PROGRESS.name
+        session["application"] = save_progress()
+
+    return render_template('upload/medical-reports.html', form=form, deleteform=deleteform)
 
 
 @upload.route('/upload/gender-evidence', methods=['GET', 'POST'])
@@ -48,6 +54,7 @@ def medicalReports():
 def genderEvidence():
 
     form = UploadForm()
+    deleteform = DeleteForm()
 
     if form.validate_on_submit():
         if "files" not in session["application"]["genderEvidence"]:
@@ -57,7 +64,7 @@ def genderEvidence():
             print(document.filename)
             print(document)
             filename = secure_filename(document.filename)
-            object_name = session["application"]["reference_number"] + '/' +filename
+            object_name = session["application"]["reference_number"] + '/' + 'genderEvidence' + '/' + filename
             print(upload_fileobj(document, object_name))
             session["application"]["genderEvidence"]["files"].append(object_name)
 
@@ -68,11 +75,22 @@ def genderEvidence():
 
         return redirect(url_for('taskList.index'))
 
-    return render_template('upload/evidence.html', form=form)
+    return render_template('upload/evidence.html', form=form, deleteform=deleteform)
 
+@upload.route('/upload/remove-file', methods=['POST'])
+@LoginRequired
+def removeFile():
+    form = DeleteForm()
+
+    if form.validate_on_submit():
+        delete_object(form.file.data)
+        session["application"][form.section.data]["files"].remove(form.file.data)
+        session["application"] = save_progress()
+
+    return redirect(form.redirect_route.data)
 
 # @upload.route('/upload/get-file', methods=['GET'])
 # @LoginRequired
 # def downloadFile():
-#     file = create_presigned_url('WSRHYP0C/3by2.jpeg')
+#     file = create_presigned_url('')
 #     return redirect(file)

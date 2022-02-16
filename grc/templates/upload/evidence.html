@@ -91,8 +91,42 @@
         </button>
         <a href="{{url_for('taskList.index')}}"
            class="govuk-link govuk-link--no-visited-state">Return to task list</a>
+
       </div>
     </form>
+
+    {% if session["application"]["genderEvidence"]["files"] %}
+    <div class="govuk-form-group govuk-!-margin-top-9">
+      <label class="govuk-label govuk-label--m"
+             for="documents">
+        Uploaded files
+      </label>
+      <dl class="govuk-summary-list">
+        {% for item in session["application"]["genderEvidence"]["files"] %}
+          <form method="POST"
+                action="{{url_for('upload.removeFile')}}"
+                enctype="multipart/form-data">
+            {{ deleteform.csrf_token }}
+            <div class="govuk-summary-list__row">
+              <dd class="govuk-summary-list__value govuk-!-width-full">
+                {{item | replace(session["application"]["reference_number"]+ '/genderEvidence/',"")}}
+              </dd>
+              <dd class="govuk-summary-list__actions">
+                <input name="section" value="genderEvidence" type="hidden">
+                <input name="file" value="{{item}}" type="hidden">
+                <input name="redirect_route" value="{{url_for('upload.genderEvidence')}}" type="hidden">
+
+                <button class="govuk-button govuk-button--warning"
+                        data-module="govuk-button">
+                        Remove <span class="govuk-visually-hidden"> {{item | replace(session["application"]["reference_number"]+ '/genderEvidence/',"")}} file</span>
+                </button>
+              </dd>
+            </div>
+          </form>
+        {% endfor %}
+      </dl>
+    </div>
+    {% endif %}
 
 
   </div>

@@ -1,4 +1,5 @@
 import logging
+from urllib import response
 import boto3
 from botocore.exceptions import ClientError
 from flask import current_app
@@ -23,7 +24,6 @@ def upload_fileobj(file, object_name):
 def create_presigned_url(object_name, expiration=3600):
     """Generate a presigned URL to share an S3 object
 
-    :param bucket_name: string
     :param object_name: string
     :param expiration: Time in seconds for the presigned URL to remain valid
     :return: Presigned URL as string. If error, returns None.
@@ -43,3 +43,22 @@ def create_presigned_url(object_name, expiration=3600):
 
     # The response contains the presigned URL
     return url
+
+def delete_object(object_name):
+    """Generate a presigned URL to share an S3 object
+
+    :param object_name: string
+    :return: Presigned URL as string. If error, returns None.
+    """
+
+    # Generate a presigned URL for the S3 object
+    s3 = boto3.client('s3',region_name=current_app.config['AWS_REGION'], config=Config(signature_version='s3v4'))
+    try:
+        response = s3.delete_object(Bucket=current_app.config['BUCKET_NAME'],  Key=object_name)
+    except ClientError as e:
+        logging.error(e)
+        print(e)
+        return None
+
+    # The response
+    return response

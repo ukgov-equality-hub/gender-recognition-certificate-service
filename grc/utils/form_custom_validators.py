@@ -1,7 +1,7 @@
 from flask import session
 from wtforms.validators import DataRequired, ValidationError, StopValidation
 from werkzeug.datastructures import FileStorage
-from collections import Iterable
+from collections.abc import Iterable
 
 from grc.utils.security_code import validate_security_code
 from grc.utils.reference_number import validate_reference_number
@@ -59,7 +59,7 @@ def validateSecurityCode(form, field):
 
 def validateReferenceNumber(form, field):
     if validate_reference_number(field.data) is False:
-        raise ValidationError('A valid code is required')
+        raise ValidationError('Enter a valid reference number')
 
 
 class MultiFileAllowed(object):
