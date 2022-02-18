@@ -97,7 +97,7 @@ def address():
 def contactPreferences():
 
     form = ContactPreferencesForm()
-    address = session["application"]["personalDetails"]["address"]["address_line_one"] + ", " + session["application"]["personalDetails"]["address"]["address_line_two"] + ", " + session["application"]["personalDetails"]["address"]["address_line_one"] + ", " + session["application"]["personalDetails"]["address"]["town"] + ", " +  session["application"]["personalDetails"]["address"]["postcode"]
+    address = session["application"]["personalDetails"]["address"]["address_line_one"] + ", " + session["application"]["personalDetails"]["address"]["address_line_two"] + ", " + session["application"]["personalDetails"]["address"]["town"] + ", " +  session["application"]["personalDetails"]["address"]["postcode"]
 
     if request.method == 'POST':
         if 'email' not in form.options.data:

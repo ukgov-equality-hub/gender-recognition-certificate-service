@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 
-{% block backLink %}<a href="{{url_for('personalDetails.contactDates')}}"
+{% block backLink %}<a href="{{url_for('submitAndPay.index')}}"
    class="govuk-back-link">Back</a>{% endblock %}
 
 {% block content %}
@@ -30,20 +30,21 @@
     </div>
     {% endif %}
 
-    <h1 class="govuk-heading-l">
-      Notifying HMRC
-    </h1>
 
-    <p class="govuk-body">HMRC must be told if you have received a Gender Recognition Certificate.</p>
+    <h1 class="govuk-heading-l">Applying for help with the fee</h1>
 
-    <p class="govuk-body">This is so they can update your tax, tax credit and benefit records.</p>
+    <p class="govuk-body">You can <a
+         class="govuk-link"
+         href="https://www.gov.uk/government/publications/apply-for-help-with-court-and-tribunal-fees"
+         rel="external"
+         target="_blank">apply online for help paying this fee (opens in new tab)</a>.</p>
 
-    <p class="govuk-body">We can tell them on your behalf, otherwise <a class="govuk-link" href="https://www.gov.uk/tell-hmrc-change-of-details/gender-change" rel="external" target="_blank">you will need to send your Gender Recognition Certificate and National Insurance number to them yourself (opens in new tab)</a>.</p>
+    <p class="govuk-body govuk-!-margin-bottom-8">You can also download the EX160 form from that page and submit it with
+      your application.</p>
 
-    <p class="govuk-body govuk-!-margin-bottom-8">You will have to do this if you pay tax in the Isle of Man or Channel Islands as we can only pass information to UK authorities.</p>
 
     <form method="POST"
-          action="{{url_for('personalDetails.hmrc')}}">
+          action="{{url_for('submitAndPay.helpType')}}">
       {{ form.csrf_token }}
 
       <div class="govuk-form-group {{ 'govuk-form-group--error' if form.errors }}">
@@ -51,14 +52,13 @@
                   aria-describedby="check-hint">
           <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
             <h1 class="govuk-fieldset__heading">
-              Would you like us to tell HMRC after you receive a Gender Recognition Certificate
+              How are you applying for help paying the fee?
             </h1>
           </legend>
           {% if form.check.errors %}
           <p id="check"
              class="govuk-error-message">
-            <span class="govuk-visually-hidden">Error:</span> Select if you would like us to tell HMRC after you receive
-            a Gender Recognition Certificate
+            <span class="govuk-visually-hidden">Error:</span> Select how are you applying for help paying the fee
           </p>
           {% endif %}
           <div class="govuk-radios"
@@ -68,47 +68,47 @@
                      id="check"
                      name="check"
                      type="radio"
-                     value="Yes"
+                     value="Using the online service"
                      data-aria-controls="conditional-check"
                      {{ 'checked'
                      if
                      form.check.data
                      is
                      iterable
-                     and "Yes"
+                     and "Using the online service"
                      in
                      form.check.data
                      }}>
               <label class="govuk-label govuk-radios__label"
                      for="check">
-                Yes
+                Using the online service
               </label>
             </div>
             <div class="govuk-radios__conditional govuk-radios__conditional--hidden"
                  id="conditional-check">
               <div class="govuk-form-group">
                 <label class="govuk-label govuk-label--s"
-                       for="nino">
-                    National Insurance number
+                       for="referenceNumber">
+                  What is your Help with Fees reference number?
                 </label>
-                <div id="nino-hint" class="govuk-hint">
-                  It’s on your National Insurance card, benefit letter, payslip or P60. For example, ‘QQ 12 34 56 C’.
+                <div id="referenceNumber-online-ref-hint" class="govuk-hint">
+                  For example, HWF-123-456
                 </div>
-                {% if form.nino.errors %}
-                <p id="nino-error"
+                {% if form.referenceNumber.errors %}
+                <p id="referenceNumber-error"
                    class="govuk-error-message">
-                  <span class="govuk-visually-hidden">Error:</span> National Insurance number is required
+                  <span class="govuk-visually-hidden">Error:</span> Reference number is required
                 </p>
                 {% endif %}
-                <input class="govuk-input govuk-input--width-10 {{ 'govuk-input--error' if form.nino.errors }}"
-                       id="nino"
-                       name="nino"
+                <input class="govuk-input {{ 'govuk-input--error' if form.referenceNumber.errors }}"
+                       id="referenceNumber"
+                       name="referenceNumber"
                        type="text"
                        spellcheck="false"
                        autocomplete="off"
                        value="{{
-                 form.nino.data if form.nino.data is not none
-                }}">
+                        form.referenceNumber.data if form.referenceNumber.data is not none
+                       }}">
               </div>
 
             </div>
@@ -117,23 +117,23 @@
                      id="check-2"
                      name="check"
                      type="radio"
-                     value="No"
+                     value="Using the EX160 form"
                      {{ 'checked'
                      if
                      form.check.data
                      is
                      iterable
-                     and "No"
+                     and "Using the EX160 form"
                      in
                      form.check.data
                      }}>
               <label class="govuk-label govuk-radios__label"
                      for="check-2">
-                No
+                Using the EX160 form
               </label>
             </div>
           </div>
-          </fieldset>
+        </fieldset>
       </div>
 
       <div class="govuk-button-group">

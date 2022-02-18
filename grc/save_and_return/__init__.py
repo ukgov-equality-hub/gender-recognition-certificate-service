@@ -4,6 +4,7 @@ from flask import (
 )
 from werkzeug.exceptions import abort
 from flask import render_template
+from datetime import datetime, timedelta
 
 from grc.save_and_return.forms import ReturnToYourApplicationForm, ValidateCodeForm
 from notifications_python_client.notifications import NotificationsAPIClient
@@ -19,7 +20,6 @@ saveAndReturn = Blueprint('saveAndReturn', __name__)
 @Unauthorized
 def index():
     form = ReturnToYourApplicationForm()
-    notifications_client = NotificationsAPIClient(current_app.config['NOTIFY_API'])
 
     if form.validate_on_submit():
         session.clear()
@@ -60,6 +60,17 @@ def securityCode():
 @saveAndReturn.route('/save-and-return/exit-application', methods=['GET'])
 @LoginRequired
 def exitApplication():
+    # Send email
+    notifications_client = NotificationsAPIClient(current_app.config['NOTIFY_API'])
+    response = notifications_client.send_email_notification(
+        email_address=session["application"]['email'], # required string
+        template_id=current_app.config['NOTIFY_UNFINISHED_APPLICATION_EMAIL_TEMPLATE_ID'], # required UUID string
+        personalisation={
+            'expiry_days': datetime.strftime(datetime.now() + timedelta(days=90), '%d/%m/%Y %H:%M:%S'),
+            'grc_return_link': request.url_root + 'save-and-return'
+        }
+    )
+
     reference_number = reference_number_string(session['reference_number'])
     save_progress()
     session.clear()

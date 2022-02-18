@@ -1,0 +1,673 @@
+{% extends 'base.html' %}
+
+
+{% block backLink %}<a class="govuk-link"
+   href="{{url_for('birthRegistration.forces')}}"
+   class="govuk-back-link">Back</a>{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+    {% if form.errors %}
+    <div class="govuk-error-summary"
+         aria-labelledby="error-summary-title"
+         role="alert"
+         tabindex="-1"
+         data-module="govuk-error-summary">
+      <h2 class="govuk-error-summary__title"
+          id="error-summary-title">
+        There is a problem
+      </h2>
+      <div class="govuk-error-summary__body">
+        <ul class="govuk-list govuk-error-summary__list">
+          {% for error in form.errors %}
+          {% for e in form[error].errors %}
+          <li><a href="#{{error}}-issued-error">{{ e }}</a></li>
+          {% endfor %}
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    {% endif %}
+
+
+    <h1 class="govuk-heading-l">
+      Check your answers before sending your application
+    </h1>
+
+    <h2 class="govuk-heading-m">
+      Your personal details
+    </h2>
+
+    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Name on certificate
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {{session["application"]["personalDetails"]["first_name"]}}
+          {{session["application"]["personalDetails"]["last_name"]}}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link"
+             href="{{url_for('personalDetails.index')}}">
+            Change</a>
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Changed name
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {{session["application"]["personalDetails"]["previousNamesCheck"]}}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link"
+             href="{{url_for('personalDetails.previousNamesCheck')}}">
+            Change</a>
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Address
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {{session["application"]["personalDetails"]["address"]["address_line_one"]}}<br>
+          {{session["application"]["personalDetails"]["address"]["address_line_two"]}}<br>
+          {{session["application"]["personalDetails"]["address"]["town"]}}<br>
+          {{session["application"]["personalDetails"]["address"]["postcode"]}}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link"
+             href="{{url_for('personalDetails.address')}}">
+            Change</a>
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Contact preferences
+        </dt>
+        <dd class="govuk-summary-list__value">
+          <ul class="govuk-list">
+            {% if session["application"]["personalDetails"]["contactPreferences"]["email"] != '' %}
+            <li>Email: {{session["application"]["personalDetails"]["contactPreferences"]["email"]}}</li>
+            {% endif %}
+            {% if session["application"]["personalDetails"]["contactPreferences"]["phone"] != '' %}
+            <li>Phone: {{session["application"]["personalDetails"]["contactPreferences"]["phone"]}}</li>
+            {% endif %}
+            {% if session["application"]["personalDetails"]["contactPreferences"]["post"] != '' %}
+            <li>Post: {{session["application"]["personalDetails"]["contactPreferences"]["post"]}}</li>
+            {% endif %}
+          </ul>
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link"
+             href="{{url_for('personalDetails.contactPreferences')}}">
+            Change</a>
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Another name for contacting you
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {{session["application"]["personalDetails"]["contactName"]["answer"]}} <br>
+
+          {% if session["application"]["personalDetails"]["contactName"]["answer"] == "Yes" %}
+          {{session["application"]["personalDetails"]["contactName"]["name"]}}
+          {% endif %}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link"
+             href="{{url_for('personalDetails.contactName')}}">
+            Change</a>
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Unavailable over the next 6 months
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {{session["application"]["personalDetails"]["contactDates"]["answer"]}} <br>
+
+          {% if session["application"]["personalDetails"]["contactDates"]["answer"] == "Yes" %}
+          {{session["application"]["personalDetails"]["contactDates"]["dates"]}}
+          {% endif %}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link"
+             href="{{url_for('personalDetails.contactDates')}}">
+            Change</a>
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Notify HMRC
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {{session["application"]["personalDetails"]["hmrc"]["answer"]}} <br>
+
+          {% if session["application"]["personalDetails"]["hmrc"]["answer"] == "Yes" %}
+          {{session["application"]["personalDetails"]["hmrc"]["nino"]}}
+          {% endif %}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link"
+             href="{{url_for('personalDetails.hmrc')}}">
+            Change</a>
+        </dd>
+      </div>
+    </dl>
+
+    <h2 class="govuk-heading-m">
+      Birth registration details
+    </h2>
+
+    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Birth name
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {{session["application"]["birthRegistration"]["first_name"]}}
+          {{session["application"]["birthRegistration"]["last_name"]}}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link"
+             href="{{url_for('birthRegistration.index')}}">
+            Change</a>
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Sex registered at birth
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {{session["application"]["birthRegistration"]["sex"]}}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link"
+             href="{{url_for('birthRegistration.sexCheck')}}">
+            Change</a>
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Date of birth
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {{session["application"]["birthRegistration"]["dob"]["day"]}}/{{session["application"]["birthRegistration"]["dob"]["month"]}}/{{session["application"]["birthRegistration"]["dob"]["year"]}}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link"
+             href="{{url_for('birthRegistration.dob')}}">
+            Change</a>
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Birth registered in UK
+        </dt>
+        <dd class="govuk-summary-list__value">
+          <ul class="govuk-list">
+            {{session["application"]["birthRegistration"]["ukCheck"]}}
+          </ul>
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link"
+             href="{{url_for('birthRegistration.ukCheck')}}">
+            Change</a>
+        </dd>
+      </div>
+
+
+      {% if session["application"]["birthRegistration"]["ukCheck"] == 'Yes' %}
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Mother&rsquo;s name
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {{session["application"]["birthRegistration"]["mothers_first_name"]}}
+          {{session["application"]["birthRegistration"]["mothers_last_name"]}}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link"
+             href="{{url_for('birthRegistration.mothersName')}}">
+            Change</a>
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Father’s name listed
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {{session["application"]["birthRegistration"]["fathersNameCheck"]}}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link"
+             href="{{url_for('birthRegistration.fathersNameCheck')}}">
+            Change</a>
+        </dd>
+      </div>
+
+      {% if session["application"]["birthRegistration"]["fathersNameCheck"] == 'Yes' %}
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Father&rsquo;s name
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {{session["application"]["birthRegistration"]["fathers_first_name"]}}
+          {{session["application"]["birthRegistration"]["fathers_last_name"]}}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link"
+             href="{{url_for('birthRegistration.fathersName')}}">
+            Change</a>
+        </dd>
+      </div>
+      {% endif %}
+
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Place of birth
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {{session["application"]["birthRegistration"]["place_of_birth"]}}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link"
+             href="{{url_for('birthRegistration.placeOfBirth')}}">
+            Change</a>
+        </dd>
+      </div>
+
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Adopted
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {{session["application"]["birthRegistration"]["adopted"]}}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link"
+             href="{{url_for('birthRegistration.adopted')}}">
+            Change</a>
+        </dd>
+      </div>
+
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Forces registering service, British Consul or High Commission, or under Merchant Shipping or Civil Aviation
+          provisions
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {{session["application"]["birthRegistration"]["forces"]}}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link"
+             href="{{url_for('birthRegistration.forces')}}">
+            Change</a>
+        </dd>
+      </div>
+      {% else %}
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Registered birth country
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {{session["application"]["birthRegistration"]["country"]}}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link"
+             href="{{url_for('birthRegistration.country')}}">
+            Change</a>
+        </dd>
+      </div>
+      {% endif %}
+
+    </dl>
+
+    <h2 class="govuk-heading-m">
+      Marriage or civil partnership details
+    </h2>
+
+    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Currently married or in a civil partnership
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {{session["application"]["partnershipDetails"]["marriageCivilPartnership"]}}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link"
+             href="{{url_for('partnershipDetails.index')}}">
+            Change</a>
+        </dd>
+      </div>
+
+      {% if session["application"]["partnershipDetails"]["marriageCivilPartnership"] == 'Neither' %}
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Spouse or partner has died
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {{session["application"]["partnershipDetails"]["partnerDied"]}}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link"
+             href="{{url_for('partnershipDetails.partnerDied')}}">
+            Change</a>
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Married or in a civil partnership has ended
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {{session["application"]["partnershipDetails"]["endedCheck"]}}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link"
+             href="{{url_for('partnershipDetails.endedCheck')}}">
+            Change</a>
+        </dd>
+      </div>
+      {% else %}
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Remain married
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {{session["application"]["partnershipDetails"]["stayTogether"]}}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link"
+             href="{{url_for('partnershipDetails.stayTogether')}}">
+            Change</a>
+        </dd>
+      </div>
+
+      {% if session["application"]["partnershipDetails"]["stayTogether"] == 'Yes' %}
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Can provide a declaration of consent from your spouse
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {{session["application"]["partnershipDetails"]["partnerAgrees"]}}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link"
+             href="{{url_for('partnershipDetails.partnerAgrees')}}">
+            Change</a>
+        </dd>
+      </div>
+      {% endif %}
+
+      {% if session["application"]["partnershipDetails"]["stayTogether"] == 'No' or
+      session["application"]["partnershipDetails"]["partnerAgrees"] == 'No' %}
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Interim GRC
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {{session["application"]["partnershipDetails"]["interimCheck"]}}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link"
+             href="{{url_for('partnershipDetails.interimCheck')}}">
+            Change</a>
+        </dd>
+      </div>
+      {% endif %}
+
+      {% endif %}
+    </dl>
+
+    <h2 class="govuk-heading-m">
+      Your medical reports
+    </h2>
+
+
+    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Uploaded documents
+        </dt>
+        <dd class="govuk-summary-list__value">
+          <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0">
+            {% for item in session["application"]["medicalReports"]["files"] %}
+            <li>{{item | replace(session["application"]["reference_number"]+ '/medicalReports/',"")}}</li>
+            {% endfor %}
+          </ul>
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link"
+             href="{{url_for('upload.medicalReports')}}">
+            Change</a>
+        </dd>
+      </div>
+    </dl>
+
+
+    <h2 class="govuk-heading-m">
+      Evidence of living in your gender
+    </h2>
+
+    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Uploaded documents
+        </dt>
+        <dd class="govuk-summary-list__value">
+          <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0">
+            {% for item in session["application"]["genderEvidence"]["files"] %}
+            <li>{{item | replace(session["application"]["reference_number"]+ '/genderEvidence/',"")}}</li>
+            {% endfor %}
+          </ul>
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link"
+             href="{{url_for('upload.genderEvidence')}}">
+            Change</a>
+        </dd>
+      </div>
+    </dl>
+
+
+    <h2 class="govuk-heading-m">
+      Payment details
+    </h2>
+
+
+    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Payment method
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {{session["application"]["submitAndPay"]["method"]}}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link"
+             href="{{url_for('submitAndPay.index')}}">
+            Change</a>
+        </dd>
+      </div>
+
+      {% if session["application"]["submitAndPay"]["method"] == 'Help' %}
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Help type
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {% if session["application"]["submitAndPay"]["helpType"] == 'Using the online service' %}
+          Using the online service<br>
+          Reference: {{session["application"]["submitAndPay"]["referenceNumber"]}}
+          {% else %}
+          {{session["application"]["submitAndPay"]["helpType"]}}
+          {% endif %}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link"
+             href="{{url_for('submitAndPay.helpType')}}">
+            Change</a>
+        </dd>
+      </div>
+      {% endif %}
+
+    </dl>
+
+
+
+    <!-- documents to post  -->
+    <h2 class="govuk-heading-m">
+      Documents you&rsquo;ll need to post
+    </h2>
+    <p class="govuk-body govuk-!-margin-bottom-2">Based on your application the documents that will need to be posted
+      are:</p>
+    <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-9">
+
+     {% if session["application"]["birthRegistration"]["ukCheck"] == 'Yes' and
+      session["application" ]["birthRegistration"]["adopted"] != 'Yes' %}
+      <li>your original or a <a class="govuk-link"
+           href="https://www.gov.uk/certifying-a-document"
+           rel="external"
+           target="_blank">certified copy (opens in new tab)</a> of your full birth certificate</li>
+      {% endif %}
+
+
+      {% if session["application"]["birthRegistration"]["ukCheck"] == 'Yes' and
+      session["application"]["birthRegistration"]["adopted"] == 'Yes' %}
+      <li>your original or a <a class="govuk-link"
+           href="https://www.gov.uk/certifying-a-document"
+           rel="external"
+           target="_blank">certified copy (opens in new tab)</a> of your full adoption certificate</li>
+      {% endif %}
+
+      {% if session["application"]["birthRegistration"]["ukCheck"] == 'No' %}
+      <li>an official confirmation of date of birth and birth gender</li>
+      {% endif %}
+
+
+      {% if session["application"]["partnershipDetails"]["marriageCivilPartnership"] == 'Neither' %}
+      <li>a <a class="govuk-link"
+           href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852944/t467-eng.pdf"
+           rel="external"
+           target="_blank">statutory declaration for single applicants (opens in new tab)</a></li>
+      {% endif %}
+
+      {% if session["application"]["partnershipDetails"]["marriageCivilPartnership"] != 'Neither' %}
+      <li>a <a class="govuk-link"
+           href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852943/t466-eng.pdf"
+           rel="external"
+           target="_blank">statutory declaration for applicants who are married or in a
+          civil partnership (opens in new tab)</a></li>
+      {% endif %}
+
+      {% if session["application"]["partnershipDetails"]["marriageCivilPartnership"] == 'Married' and
+      session["application"]["partnershipDetails"]["stayTogether"] == 'Yes' %}
+      <li><a class="govuk-link"
+           href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852946/t469-eng.pdf"
+           rel="external"
+           target="_blank">your spouse&rsquo;s statutory declaration (opens in new tab)</a></li>
+      {% endif %}
+
+      {% if session["application"]["partnershipDetails"]["marriageCivilPartnership"] == 'Civil partnership' and
+      session["application"]["partnershipDetails"]["stayTogether"] == 'Yes' %}
+      <li><a class="govuk-link"
+           href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852946/t469-eng.pdf"
+           rel="external"
+           target="_blank">your civil partner&rsquo;s statutory declaration (opens in new tab)</a></li>
+      {% endif %}
+
+      {% if session["application"]["partnershipDetails"]["marriageCivilPartnership"] == 'Married' %}
+      <li>your original marriage certificate or a <a class="govuk-link"
+           href="https://www.gov.uk/certifying-a-document"
+           rel="external"
+           target="_blank">certified copy (opens in new tab)</a></li>
+      {% endif %}
+
+      {% if session["application"]["partnershipDetails"]["marriageCivilPartnership"] == 'Civil partnership' %}
+      <li>your original civil partnership certificate or a <a class="govuk-link"
+           href="https://www.gov.uk/certifying-a-document"
+           rel="external"
+           target="_blank">certified copy (opens in new tab)</a></li>
+      {% endif %}
+
+      {% if session["application"]["partnershipDetails"]["partnerDied"] == 'Yes' %}
+      <li>a copy of your spouse or civil partner&rsquo;s death certificate</li>
+      {% endif %}
+
+      {% if session["application"]["partnershipDetails"]["endedCheck"] == 'Yes' %}
+      <li>a copy of your decree(s) dissolving the marriage or civil partnership</li>
+      {% endif %}
+
+      {% if session["application"]["confirmation"]["overseasCheck"] == 'Yes' %}
+      <li>official documentation that shows that your affirmed gender has been recognised in an approved country or
+        territory</li>
+      {% endif %}
+
+      {% if session["application"]["submitAndPay"]["helpType"] == 'Using the EX160 form' %}
+      <li>an <a class="govuk-link"
+           href="https://www.gov.uk/government/publications/apply-for-help-with-court-and-tribunal-fees"
+           rel="external"
+           target="_blank">EX160 form (opens in new tab)</li>
+      {% endif %}
+    </ul>
+
+
+    <h2 class="govuk-heading-m">
+      Now send your application
+    </h2>
+
+
+    <form method="POST"
+          action="{{url_for('submitAndPay.checkYourAnswers')}}">
+      {{ form.csrf_token }}
+
+      <div class="govuk-form-group">
+        <div class="govuk-checkboxes checkboxes-long-text"
+             data-module="govuk-checkboxes">
+          {% if form.check.errors %}
+          <p id="check-issued-error"
+             class="govuk-error-message">
+            <span class="govuk-visually-hidden">Error:</span> Please certify that all information given in this
+            application is correct and that you understand making a false application is an offence.
+          </p>
+          {% endif %}
+          <div class="govuk-checkboxes__item">
+            <input class="govuk-checkboxes__input"
+                   id="check"
+                   name="check"
+                   type="checkbox"
+                   value="true"
+                   {{ 'checked'
+                   if
+                   session['application']['submitAndPay']['declaration']==true}}>
+            <label class="govuk-label govuk-checkboxes__label"
+                   for="check">
+              I certify that all information given in this application is correct and that I understand making a false
+              application is an offence.
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="govuk-button-group">
+        <button class="govuk-button"
+                data-module="govuk-button">
+          {% if session["application"]["submitAndPay"]["method"] == 'Help' %}
+          Submit application
+          {% else %}
+          Submit application and pay online
+        </button>
+        {% endif %}
+      </div>
+    </form>
+
+  </div>
+</div>
+{% endblock %}

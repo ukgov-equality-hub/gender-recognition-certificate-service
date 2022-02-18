@@ -10,6 +10,10 @@ class Config:
     LOG_LEVEL = logging.getLevelName(os.environ.get("LOG_LEVEL")) if "LOG_LEVEL" in os.environ else logging.INFO
     NOTIFY_API = os.environ.get("NOTIFY_API")
     NOTIFY_SECURITY_CODE_EMAIL_TEMPLATE_ID = os.environ.get("NOTIFY_SECURITY_CODE_EMAIL_TEMPLATE_ID")
+    NOTIFY_UNFINISHED_APPLICATION_EMAIL_TEMPLATE_ID = os.environ.get("NOTIFY_UNFINISHED_APPLICATION_EMAIL_TEMPLATE_ID")
+    NOTIFY_COMPLETED_APPLICATION_EMAIL_TEMPLATE_ID = os.environ.get("NOTIFY_COMPLETED_APPLICATION_EMAIL_TEMPLATE_ID")
+    GOVUK_PAY_API = os.environ.get("GOVUK_PAY_API")
+    GOVUK_PAY_API_KEY = os.environ.get("GOVUK_PAY_API_KEY")
     SECRET_KEY = os.environ.get("SECRET_KEY")
     SESSION_COOKIE_SECURE = True
     PERMANENT_SESSION_LIFETIME = int(os.environ.get("PERMANENT_SESSION_LIFETIME"))
@@ -27,8 +31,6 @@ class DevConfig(Config):
     DEBUG = True
     ENVIRONMENT = "DEVELOPMENT"
     LOG_LEVEL = logging.getLevelName(os.environ.get("LOG_LEVEL")) if "LOG_LEVEL" in os.environ else logging.DEBUG
-    NOTIFY_API = os.environ.get("NOTIFY_API")
-    NOTIFY_SECURITY_CODE_EMAIL_TEMPLATE_ID = os.environ.get("NOTIFY_SECURITY_CODE_EMAIL_TEMPLATE_ID")
     SERVER_NAME = "localhost:5000"
     SESSION_COOKIE_DOMAIN = False
     SESSION_COOKIE_SECURE = False

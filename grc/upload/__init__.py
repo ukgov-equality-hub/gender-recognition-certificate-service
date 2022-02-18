@@ -75,6 +75,11 @@ def genderEvidence():
 
         return redirect(url_for('taskList.index'))
 
+    if request.method == 'GET' and "files" in session["application"]["genderEvidence"] and len(session["application"]["genderEvidence"]["files"]) == 0:
+         # set progress status
+        session["application"]["genderEvidence"]["progress"] = ListStatus.IN_PROGRESS.name
+        session["application"] = save_progress()
+
     return render_template('upload/evidence.html', form=form, deleteform=deleteform)
 
 @upload.route('/upload/remove-file', methods=['POST'])

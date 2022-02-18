@@ -2,6 +2,7 @@ import os
 
 from flask import Flask
 from flask_migrate import Migrate
+from flask_uuid import FlaskUUID
 from datetime import timedelta
 
 from grc.models import db
@@ -9,6 +10,7 @@ from grc.config import Config, DevConfig,TestConfig
 
 
 migrate = Migrate()
+flask_uuid = FlaskUUID()
 
 def create_app(test_config=None):
     # create and configure the app
@@ -26,6 +28,8 @@ def create_app(test_config=None):
     # database
     db.init_app(app)
     migrate.init_app(app, db)
+
+    flask_uuid.init_app(app)
 
     # update session timeout time
     @app.before_request
@@ -67,5 +71,9 @@ def create_app(test_config=None):
     app.register_blueprint(upload)
     app.add_url_rule('/upload/medical-reports', endpoint='medicalReports')
 
+    # Submit and pay
+    from grc.submit_and_pay import submitAndPay
+    app.register_blueprint(submitAndPay)
+    app.add_url_rule('/submit-and-pay', endpoint='index')
 
     return app

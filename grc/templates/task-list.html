@@ -106,6 +106,29 @@
       </li>
       <!-- /.Upload your documents -->
 
+      <!-- Apply -->
+       <li>
+        <h2 class="app-task-list__section">
+          Apply
+        </h2>
+        <ul class="app-task-list__items">
+          <li class="app-task-list__item">
+            <span class="app-task-list__task-name">
+              {% if can_submit %}
+              <a class="govuk-link" href="{{url_for('submitAndPay.index')}}" aria-describedby="medical-reports-status">
+                Submit and pay
+              </a>
+              {% else %}
+                Submit and pay
+              {% endif %}
+            </span>
+            <strong class="govuk-tag app-task-list__tag {{get_colour(list_status['submitAndPay'])}}" id="medical-reports-status">{{list_status['submitAndPay'].value}}</strong>
+            <span class="govuk-hint govuk-!-margin-top-3 govuk-!-margin-bottom-0"><br>Once you have completed the other sections you can submit your application.</span>
+          </li>
+        </ul>
+      </li>
+      <!-- /.Apply -->
+
 
 
     </ol>

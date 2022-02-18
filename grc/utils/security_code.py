@@ -5,13 +5,13 @@ from notifications_python_client.notifications import NotificationsAPIClient
 from grc.models import db, SecurityCode
 
 
-
 def delete_all_user_codes(email):
     """Delete all security codes for a user
     """
     delete_q = SecurityCode.__table__.delete().where(SecurityCode.email == email)
     db.session.execute(delete_q)
     db.session.commit()
+
 
 def security_code_generator(email):
     """A 5 numbers code generator as string to be used from a user

@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 
-{% block backLink %}<a href="{{url_for('partnershipDetails.stayTogether')}}"
+{% block backLink %}<a href="{{url_for('taskList.index')}}"
    class="govuk-back-link">Back</a>{% endblock %}
 
 {% block content %}
@@ -31,48 +31,41 @@
     {% endif %}
 
     <h1 class="govuk-heading-l">
-      Declaration of consent
+      Payment
     </h1>
 
-    {% if session["application"]["partnershipDetails"]["marriageCivilPartnership"] == 'Civil partnership' %}
-    <p class="govuk-body">If you plan to stay in your civil partnership, your civil partner will need to sign a <a
-         class="govuk-link"
-         href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852943/t466-eng.pdf"
+    <p class="govuk-body">Applying for a Gender Recognition Certificate costs £5.</p>
+
+    <p class="govuk-body">You can <a class="govuk-link"
+         href="https://www.gov.uk/government/publications/apply-for-help-with-court-and-tribunal-fees"
          rel="external"
-         target="_blank">statutory declaration consenting to the civil partnership continuing (opens in new tab)</a>
-      after you receive a Gender Recognition Certificate.</p>
+         target="_blank">apply online for help paying this fee (opens in new tab)</a>.</p>
 
-    {% set questionText %}Can you provide a declaration of consent from your civil partner?{% endset %}
-    {% else %}
-    <p class="govuk-body">If you plan to stay married your spouse will need to sign a <a class="govuk-link"
-         href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852943/t466-eng.pdf"
-         rel="external"
-         target="_blank">statutory declaration consenting to the marriage continuing (opens in new tab)</a> after you
-      receive a Gender Recognition Certificate.</p>
+    <p class="govuk-body govuk-!-margin-bottom-8">You can also download the EX160 form from that page and submit it with
+      your application.</p>
 
-    {% set questionText %}Can you provide a declaration of consent from your spouse?{% endset %}
-    {% endif %}
-
-    <p class="govuk-body govuk-!-margin-bottom-8">This will need to be witnessed by someone that can administer oaths.
-      All solicitors can do this.</p>
 
 
     <form method="POST"
-          action="{{url_for('partnershipDetails.partnerAgrees')}}">
+          action="{{url_for('submitAndPay.index')}}">
       {{ form.csrf_token }}
 
       <div class="govuk-form-group {{ 'govuk-form-group--error' if form.check.errors }}">
         <fieldset class="govuk-fieldset">
           <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
             <h1 class="govuk-fieldset__heading">
-              {{questionText}}
+              Are you applying for help paying the fee
             </h1>
           </legend>
+          <div id="check-hint"
+               class="govuk-hint">
+            If you select yes, your application for a Gender Recognition Certificate will only be reviewed if your
+            application for help paying the fee is accepted.
+          </div>
           {% if form.check.errors %}
           <p id="check-issued-error"
              class="govuk-error-message">
-            <span class="govuk-visually-hidden">Error:</span> Select if you can provide a declaration of consent from
-            your spouse
+            <span class="govuk-visually-hidden">Error:</span> Select if you are applying for help paying the fee
           </p>
           {% endif %}
           <div class="govuk-radios"
@@ -82,10 +75,10 @@
                      id="where-do-you-live"
                      name="check"
                      type="radio"
-                     value="Yes"
+                     value="Help"
                      {{ 'checked'
                      if
-                     session['application']['partnershipDetails']['partnerAgrees']=="Yes"
+                     session['application']['submitAndPay']['method']=="Help"
                      }}>
               <label class="govuk-label govuk-radios__label"
                      for="check">
@@ -97,14 +90,14 @@
                      id="check-2"
                      name="check"
                      type="radio"
-                     value="No"
+                     value="Online"
                      {{ 'checked'
                      if
-                     session['application']['partnershipDetails']['partnerAgrees']=="No"
+                     session['application']['submitAndPay']['method']=="Online"
                      }}>
               <label class="govuk-label govuk-radios__label"
                      for="check-2">
-                No
+                     No, I will pay now
               </label>
             </div>
           </div>
@@ -114,10 +107,8 @@
       <div class="govuk-button-group">
         <button class="govuk-button"
                 data-module="govuk-button">
-          Save and continue
+          Continue
         </button>
-        <a href="{{url_for('taskList.index')}}"
-           class="govuk-link govuk-link--no-visited-state">Return to task list</a>
       </div>
     </form>
 

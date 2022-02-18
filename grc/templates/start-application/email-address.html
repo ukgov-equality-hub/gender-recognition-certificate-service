@@ -30,19 +30,19 @@
     </div>
     {% endif %}
 
+    <h1 class="govuk-heading-l">
+      Email address
+    </h1>
+
+    <p class="govuk-body">You need to provide an email address to apply for a Gender Recognition Certificate using this service.</p>
+
+    <p class="govuk-body">This is so we can save your progress and you can return to your application later.</p>
+
+    <p class="govuk-body govuk-!-margin-bottom-8">After providing an email address, we will give you a reference number. You will need both of these when if you return to your application.</p>
+
     <form method="POST"
           action="/">
       {{ form.csrf_token }}
-      <h1 class="govuk-heading-l">
-        Email address
-      </h1>
-
-      <p class="govuk-body">You need to provide an email address to apply for a Gender Recognition Certificate using this service.</p>
-
-      <p class="govuk-body">This is so we can save your progress and you can return to your application later.</p>
-
-      <p class="govuk-body govuk-!-margin-bottom-8">After providing an email address, we will give you a reference number. You will need both of these when if you return to your application.</p>
-
 
       <div class="govuk-form-group {{ 'govuk-form-group--error' if form.email.errors }}">
         <label class="govuk-label"

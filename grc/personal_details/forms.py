@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import EmailField, StringField, SubmitField, RadioField, RadioField, TelField
+from wtforms import EmailField, StringField, SubmitField, RadioField, TelField
 from wtforms.validators import DataRequired, Email
 from grc.utils.form_custom_validators import StrictRequiredIf
 from grc.utils.from_widgets import MultiCheckboxField

@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+
+{% block backLink %}{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+    <div class="govuk-panel govuk-panel--confirmation">
+      <h1 class="govuk-panel__title">
+        Application submitted
+      </h1>
+      <div class="govuk-panel__body">
+        You have 28 days to post all remaining documents to us
+      </div>
+    </div>
+
+
+    <p class="govuk-body">We have sent you a confirmation email.</p>
+
+    <h2 class="govuk-heading-m">
+      What you need to do next
+    </h2>
+
+    <p class="govuk-body">You should now post us any remaining documents. Include your name and return address with
+      them.</p>
+
+    <p class="govuk-body govuk-!-margin-bottom-2">Based on your application the documents that need to be posted are:</p>
+
+    <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-">
+      {% if session["application"]["birthRegistration"]["ukCheck"] == 'Yes' and
+      session["application" ]["birthRegistration"]["adopted"] != 'Yes' %}
+      <li>your original or a <a class="govuk-link"
+           href="https://www.gov.uk/certifying-a-document"
+           rel="external"
+           target="_blank">certified copy (opens in new tab)</a> of your full birth certificate</li>
+      {% endif %}
+
+      {% if session["application"]["birthRegistration"]["ukCheck"] == 'Yes' and
+      session["application"]["birthRegistration"]["adopted"] == 'Yes' %}
+      <li>your original or a <a class="govuk-link"
+           href="https://www.gov.uk/certifying-a-document"
+           rel="external"
+           target="_blank">certified copy (opens in new tab)</a> of your full adoption certificate</li>
+      {% endif %}
+
+      {% if session["application"]["birthRegistration"]["ukCheck"] == 'No' %}
+      <li>an official confirmation of date of birth and birth gender</li>
+      {% endif %}
+
+      {% if session["application"]["partnershipDetails"]["marriageCivilPartnership"] == 'Neither' %}
+      <li>a <a class="govuk-link"
+           href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852944/t467-eng.pdf"
+           rel="external"
+           target="_blank">statutory declaration for single applicants (opens in new tab)</a></li>
+      {% endif %}
+
+      {% if session["application"]["partnershipDetails"]["marriageCivilPartnership"] != 'Neither' %}
+      <li>a <a class="govuk-link"
+           href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852943/t466-eng.pdf"
+           rel="external"
+           target="_blank">statutory declaration for applicants who are married or in a
+          civil partnership (opens in new tab)</a></li>
+      {% endif %}
+
+      {% if session["application"]["partnershipDetails"]["marriageCivilPartnership"] == 'Married' and
+      session["application"]["partnershipDetails"]["stayTogether"] == 'Yes' %}
+      <li><a class="govuk-link"
+           href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852946/t469-eng.pdf"
+           rel="external"
+           target="_blank">your spouse&rsquo;s statutory declaration (opens in new tab)</a></li>
+      {% endif %}
+
+      {% if session["application"]["partnershipDetails"]["marriageCivilPartnership"] == 'Civil partnership' and
+      session["application"]["partnershipDetails"]["stayTogether"] == 'Yes' %}
+      <li><a class="govuk-link"
+           href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852946/t469-eng.pdf"
+           rel="external"
+           target="_blank">your civil partner&rsquo;s statutory declaration (opens in new tab)</a></li>
+      {% endif %}
+
+      {% if session["application"]["partnershipDetails"]["marriageCivilPartnership"] == 'Married' %}
+      <li>your original marriage certificate or a <a class="govuk-link"
+           href="https://www.gov.uk/certifying-a-document"
+           rel="external"
+           target="_blank">certified copy (opens in new tab)</a></li>
+      {% endif %}
+
+      {% if session["application"]["partnershipDetails"]["marriageCivilPartnership"] == 'Civil partnership' %}
+      <li>your original civil partnership certificate or a <a class="govuk-link"
+           href="https://www.gov.uk/certifying-a-document"
+           rel="external"
+           target="_blank">certified copy (opens in new tab)</a></li>
+      {% endif %}
+
+      {% if session["application"]["partnershipDetails"]["partnerDied"] == 'Yes' %}
+      <li>a copy of your spouse or civil partner&rsquo;s death certificate</li>
+      {% endif %}
+
+      {% if session["application"]["partnershipDetails"]["endedCheck"] == 'Yes' %}
+      <li>a copy of your decree(s) dissolving the marriage or civil partnership</li>
+      {% endif %}
+
+      {% if session["application"]["confirmation"]["overseasCheck"] == 'Yes' %}
+      <li>official documentation that shows that your affirmed gender has been recognised in an approved country or
+        territory</li>
+      {% endif %}
+
+      {% if session["application"]["submitAndPay"]["helpType"] == 'Using the EX160 form' %}
+      <li>an <a class="govuk-link"
+           href="https://www.gov.uk/government/publications/apply-for-help-with-court-and-tribunal-fees"
+           rel="external"
+           target="_blank">EX160 form (opens in new tab)</li>
+      {% endif %}
+    </ul>
+
+
+    <p class="govuk-body govuk-!-margin-bottom-2">They should be sent to:</p>
+    <div class="govuk-inset-text govuk-!-margin-top-0">
+      Gender Recognition Panel<br>
+      PO Box 9300<br>
+      Leicester<br>
+      LE1 8DJ
+    </div>
+
+    <p class="govuk-body">You can <a class="govuk-link"
+         rel="external"
+         href="https://www.gov.uk/order-copy-birth-death-marriage-certificate">order a
+        birth, death, marriage
+        or civil partnership certificate</a> online if you live in England and Wales. There&rsquo;s a different process
+      for <a class="govuk-link"
+         rel="external"
+         href="http://www.nrscotland.gov.uk/registration/how-to-order-an-official-extract-from-the-registers">getting
+        certificates in Scotland</a> and <a class="govuk-link"
+         rel="external"
+         href="http://www.nidirect.gov.uk/index/do-it-online/government-citizens-and-rights-online/order-a-birth-adoption-death-marriage-or-civil-partnership-certificate.htm">getting
+        certificates in Northern Ireland</a>.</p>
+
+    <p class="govuk-body">Once you&rsquo;ve supplied these documents your application will be reviewed by the Gender
+      Recognition Panel. You
+      will be contacted if the panel requires more information or documentation.</p>
+
+    <p class="govuk-body">You will then be told if you will be issued with a Gender Recognition Certificate, and what
+      you can do if your
+      application has not been accepted.</p>
+
+    <p class="govuk-body">Decisions take around 12 weeks on average.</p>
+
+
+    <p class="govuk-body govuk-!-margin-top-9"><a class="govuk-link" rel="external nofollow" href="#0">What did you think of this service?</a> (takes 30 seconds)</p>
+
+  </div>
+</div>
+{% endblock %}
