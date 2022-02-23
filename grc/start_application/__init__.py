@@ -41,11 +41,14 @@ def index():
 def emailConfirmation():
     form = ValidateEmailForm()
 
-    if request.method == 'POST':
-        if form.validate_on_submit():
-            session['reference_number'] = reference_number_generator(session['email'])
+    if request.method == 'POST' and form.validate_on_submit():
+        session['reference_number'] = reference_number_generator(session['email'])
+        if session['reference_number'] != False:
             session['application'] = save_progress()
             return redirect(url_for(session["application"]["confirmation"]["step"]))
+        else:
+            flash('There is a problem creating a new application', 'error')
+
     elif request.args.get('resend') == 'true':
         try:
             send_security_code(session['email'])

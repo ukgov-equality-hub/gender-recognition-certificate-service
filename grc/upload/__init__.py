@@ -82,6 +82,40 @@ def genderEvidence():
 
     return render_template('upload/evidence.html', form=form, deleteform=deleteform)
 
+
+@upload.route('/upload/name-change', methods=['GET', 'POST'])
+@LoginRequired
+def nameChange():
+
+    form = UploadForm()
+    deleteform = DeleteForm()
+
+    if form.validate_on_submit():
+        if "files" not in session["application"]["nameChange"]:
+            session["application"]["nameChange"]["files"] = []
+
+        for document in request.files.getlist("documents"):
+            print(document.filename)
+            print(document)
+            filename = secure_filename(document.filename)
+            object_name = session["application"]["reference_number"] + '/' + 'nameChange' + '/' + filename
+            print(upload_fileobj(document, object_name))
+            session["application"]["nameChange"]["files"].append(object_name)
+
+        # set progress status
+        session["application"]["nameChange"]["progress"] = ListStatus.COMPLETED.name
+
+        session["application"] = save_progress()
+
+        return redirect(url_for('taskList.index'))
+
+    if request.method == 'GET' and "files" in session["application"]["nameChange"] and len(session["application"]["nameChange"]["files"]) == 0:
+         # set progress status
+        session["application"]["nameChange"]["progress"] = ListStatus.IN_PROGRESS.name
+        session["application"] = save_progress()
+
+    return render_template('upload/name-change.html', form=form, deleteform=deleteform)
+
 @upload.route('/upload/remove-file', methods=['POST'])
 @LoginRequired
 def removeFile():

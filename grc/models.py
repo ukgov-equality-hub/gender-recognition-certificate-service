@@ -62,6 +62,10 @@ class Application(db.Model):
                     "progress": ListStatus.NOT_STARTED.name,
                     "step": "genderEvidence.index"
                 },
+                "nameChange": {
+                    "progress": ListStatus.CANNOT_START_YET.name,
+                    "step": "nameChange.index"
+                },
                 "submitAndPay": {
                     "progress": ListStatus.CANNOT_START_YET.name,
                     "step": "submitAndPay.index"

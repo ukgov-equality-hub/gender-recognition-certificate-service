@@ -102,6 +102,16 @@
             </span>
             <strong class="govuk-tag app-task-list__tag {{get_colour(list_status['genderEvidence'])}}" id="birth-registration-status">{{list_status['genderEvidence'].value}}</strong>
           </li>
+          {% if application.confirmation.overseasCheck == 'Yes' or (previousNamesCheck in  application.personalDetails and application.personalDetails.previousNamesCheck == "Yes") %}
+            <li class="app-task-list__item">
+              <span class="app-task-list__task-name">
+                <a class="govuk-link" href="{{url_for('upload.nameChange')}}" aria-describedby="birth-registration-status">
+                  Name change documents
+                </a>
+              </span>
+              <strong class="govuk-tag app-task-list__tag {{get_colour(list_status['nameChange'])}}" id="birth-registration-status">{{list_status['nameChange'].value}}</strong>
+            </li>
+          {% endif %}
         </ul>
       </li>
       <!-- /.Upload your documents -->

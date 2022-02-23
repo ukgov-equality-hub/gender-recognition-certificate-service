@@ -42,6 +42,7 @@ def calculate_progress_status():
                         "partnershipDetails": ListStatus.NOT_STARTED,
                         "medicalReports": ListStatus.NOT_STARTED,
                         "genderEvidence": ListStatus.NOT_STARTED,
+                        "nameChange": ListStatus.CANNOT_START_YET,
                         "submitAndPay": ListStatus.CANNOT_START_YET
                         }
 
@@ -63,14 +64,24 @@ def calculate_progress_status():
             # Gender evidence
             list_status['genderEvidence'] = calculate_progress_status_display_name(ListStatus[session['application']['genderEvidence']['progress']])
 
+            # Name change
+            if session['application']['nameChange']['progress'] == ListStatus.CANNOT_START_YET.name and ("previousNamesCheck" in session["application"]["personalDetails"] and session["application"]["personalDetails"]["previousNamesCheck"] == "Yes" or session["application"]["confirmation"]["overseasCheck"] == "Yes"):
+                session['application']['nameChange']['progress'] = ListStatus.NOT_STARTED.name
+                session['application'] = save_progress()
+            elif session['application']['nameChange']['progress'] != ListStatus.CANNOT_START_YET.name and "previousNamesCheck" in session["application"]["personalDetails"] and session["application"]["personalDetails"]["previousNamesCheck"] != "Yes" and session["application"]["confirmation"]["overseasCheck"] != "Yes":
+                session['application']['nameChange']['progress'] = ListStatus.CANNOT_START_YET.name
+                session['application'] = save_progress()
+
+            list_status['nameChange'] = calculate_progress_status_display_name(ListStatus[session['application']['nameChange']['progress']])
+
             # Submit and pay
-            if session['application']['submitAndPay']['progress']==ListStatus.CANNOT_START_YET.name and list_status['confirmation'] == ListStatus.COMPLETED and list_status['personalDetails'] == ListStatus.COMPLETED and list_status['birthRegistration'] == ListStatus.COMPLETED and list_status['partnershipDetails'] == ListStatus.COMPLETED and list_status['medicalReports'] == ListStatus.COMPLETED and list_status['genderEvidence'] == ListStatus.COMPLETED:
+            if session['application']['submitAndPay']['progress']==ListStatus.CANNOT_START_YET.name and list_status['confirmation'] == ListStatus.COMPLETED and list_status['personalDetails'] == ListStatus.COMPLETED and list_status['birthRegistration'] == ListStatus.COMPLETED and list_status['partnershipDetails'] == ListStatus.COMPLETED and list_status['medicalReports'] == ListStatus.COMPLETED and list_status['genderEvidence'] == ListStatus.COMPLETED and (session['application']['nameChange']['progress'] == ListStatus.CANNOT_START_YET.name or session['application']['nameChange']['progress'] == ListStatus.COMPLETED.name):
                 session['application']['submitAndPay']['progress'] = ListStatus.NOT_STARTED.name
-                save_progress()
+                session['application'] = save_progress()
                 list_status['submitAndPay'] = calculate_progress_status_display_name(ListStatus[session['application']['submitAndPay']['progress']])
-            elif session['application']['submitAndPay']['progress']!=ListStatus.CANNOT_START_YET.name and not (list_status['confirmation'] == ListStatus.COMPLETED and list_status['personalDetails'] == ListStatus.COMPLETED and list_status['birthRegistration'] == ListStatus.COMPLETED and list_status['partnershipDetails'] == ListStatus.COMPLETED and list_status['medicalReports'] == ListStatus.COMPLETED and list_status['genderEvidence'] == ListStatus.COMPLETED):
+            elif session['application']['submitAndPay']['progress']!=ListStatus.CANNOT_START_YET.name and not (list_status['confirmation'] == ListStatus.COMPLETED and list_status['personalDetails'] == ListStatus.COMPLETED and list_status['birthRegistration'] == ListStatus.COMPLETED and list_status['partnershipDetails'] == ListStatus.COMPLETED and list_status['medicalReports'] == ListStatus.COMPLETED and list_status['genderEvidence'] == ListStatus.COMPLETED and not(session['application']['nameChange']['progress'] != ListStatus.CANNOT_START_YET.name and session['application']['nameChange']['progress'] != ListStatus.COMPLETED.name)):
                 session['application']['submitAndPay']['progress'] = ListStatus.CANNOT_START_YET.name
-                save_progress()
+                session['application'] = save_progress()
 
             list_status['submitAndPay'] = calculate_progress_status_display_name(ListStatus[session['application']['submitAndPay']['progress']])
 
