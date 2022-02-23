@@ -55,11 +55,11 @@ class Application(db.Model):
                     "step": "partnershipDetails.index"
                 },
                 "medicalReports": {
-                    "progress": ListStatus.NOT_STARTED.name,
+                    "progress": ListStatus.CANNOT_START_YET.name,
                     "step": "medicalReports.index"
                 },
                 "genderEvidence": {
-                    "progress": ListStatus.NOT_STARTED.name,
+                    "progress": ListStatus.CANNOT_START_YET.name,
                     "step": "genderEvidence.index"
                 },
                 "nameChange": {

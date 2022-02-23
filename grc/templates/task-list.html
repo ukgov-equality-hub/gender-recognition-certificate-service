@@ -81,6 +81,7 @@
 
 
        <!-- Upload your documents -->
+       {% if application.confirmation.overseasCheck == "No" %}
        <li>
         <h2 class="app-task-list__section">
            Upload your documents
@@ -102,7 +103,7 @@
             </span>
             <strong class="govuk-tag app-task-list__tag {{get_colour(list_status['genderEvidence'])}}" id="birth-registration-status">{{list_status['genderEvidence'].value}}</strong>
           </li>
-          {% if application.confirmation.overseasCheck == 'Yes' or (previousNamesCheck in  application.personalDetails and application.personalDetails.previousNamesCheck == "Yes") %}
+          {% if application.personalDetails.previousNamesCheck is defined and application.personalDetails.previousNamesCheck == "Yes" %}
             <li class="app-task-list__item">
               <span class="app-task-list__task-name">
                 <a class="govuk-link" href="{{url_for('upload.nameChange')}}" aria-describedby="birth-registration-status">
@@ -114,6 +115,23 @@
           {% endif %}
         </ul>
       </li>
+      {%elif application.confirmation.overseasCheck == "Yes" and application.personalDetails.previousNamesCheck is defined and application.personalDetails.previousNamesCheck == "Yes" %}
+        <li>
+          <h2 class="app-task-list__section">
+            Upload your documents
+          </h2>
+          <ul class="app-task-list__items">
+              <li class="app-task-list__item">
+                <span class="app-task-list__task-name">
+                  <a class="govuk-link" href="{{url_for('upload.nameChange')}}" aria-describedby="birth-registration-status">
+                    Name change documents
+                  </a>
+                </span>
+                <strong class="govuk-tag app-task-list__tag {{get_colour(list_status['nameChange'])}}" id="birth-registration-status">{{list_status['nameChange'].value}}</strong>
+              </li>
+          </ul>
+        </li>
+      {% endif %}
       <!-- /.Upload your documents -->
 
       <!-- Apply -->

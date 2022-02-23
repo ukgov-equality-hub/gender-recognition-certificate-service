@@ -22,13 +22,10 @@ def index():
     if form.validate_on_submit():
         session["application"]["partnershipDetails"]["marriageCivilPartnership"] = form.check.data
 
-        if ListStatus[session["application"]["partnershipDetails"]["progress"]] == ListStatus.NOT_STARTED or ListStatus[session["application"]["partnershipDetails"]["progress"]] ==ListStatus.IN_PROGRESS:
-            if form.check.data == 'Neither':
-                session["application"]["partnershipDetails"]["step"] = 'partnershipDetails.partnerDied'
-            else:
-                session["application"]["partnershipDetails"]["step"] = 'partnershipDetails.stayTogether'
-        elif form.check.data == 'Neither':
+        if form.check.data == 'Neither':
             session["application"]["partnershipDetails"]["step"] = 'partnershipDetails.partnerDied'
+        else:
+            session["application"]["partnershipDetails"]["step"] = 'partnershipDetails.stayTogether'
 
         session["application"] = save_progress()
 
@@ -116,14 +113,7 @@ def partnerDied():
 
     if form.validate_on_submit():
         session["application"]["partnershipDetails"]["partnerDied"] = form.check.data
-
-       # set current step in case user exits the app
-        if ListStatus[session["application"]["partnershipDetails"]["progress"]] == ListStatus.IN_PROGRESS:
-            session["application"]["partnershipDetails"]["step"] = 'partnershipDetails.endedCheck'
-        else:
-            # go to summary
-            session["application"]["partnershipDetails"]["progress"] = ListStatus.IN_REVIEW.name
-            session["application"]["partnershipDetails"]["step"] = 'partnershipDetails.checkYourAnswers'
+        session["application"]["partnershipDetails"]["step"] = 'partnershipDetails.endedCheck'
 
         session["application"] = save_progress()
 
