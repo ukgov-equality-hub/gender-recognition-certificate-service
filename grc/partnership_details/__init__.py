@@ -122,6 +122,7 @@ def partnerDied():
             session["application"]["partnershipDetails"]["step"] = 'partnershipDetails.endedCheck'
         else:
             # go to summary
+            session["application"]["partnershipDetails"]["progress"] = ListStatus.IN_REVIEW.name
             session["application"]["partnershipDetails"]["step"] = 'partnershipDetails.checkYourAnswers'
 
         session["application"] = save_progress()
