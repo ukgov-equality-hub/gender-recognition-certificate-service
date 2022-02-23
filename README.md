@@ -26,9 +26,6 @@ cf conduit  postgres-13-dev
 ```
 
 
-
-
-
 # Help Section
 . venv/bin/activate
 
