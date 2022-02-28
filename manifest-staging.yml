@@ -1,6 +1,6 @@
 ---
 applications:
-- name: geo-gender-recognition-certificate
+- name: grc-staging
   memory: 256M
   buildpacks:
   - python_buildpack
