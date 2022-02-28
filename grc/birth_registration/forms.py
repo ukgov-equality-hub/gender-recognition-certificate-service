@@ -20,8 +20,8 @@ class SexForm(FlaskForm):
 class DobForm(FlaskForm):
     day = IntegerField('day', validators=[DataRequired(message='The date must include a day'),  NumberRange(min=1, max=31,message="Please enter a valid day")])
     month = IntegerField('month', validators=[DataRequired(message='The date must include a month'), NumberRange(min=1, max=12, message="Please enter a valid month")])
-    # We are assuming the person applying is 100s old or younger
-    year = IntegerField('year', validators=[DataRequired(message='The date must include a year'), NumberRange(min=int((datetime.now() - relativedelta(years=100)).strftime('%Y')), max=int((datetime.now() - relativedelta(years=1)).strftime('%Y')),message="Year needs to be a valid year in past")])
+    # We are assuming the person applying is 18 years old or older
+    year = IntegerField('year', validators=[DataRequired(message='The date must include a year'), NumberRange(min=int((datetime.now() - relativedelta(years=120)).strftime('%Y')), max=int((datetime.now() - relativedelta(years=18)).strftime('%Y')),message="Year needs to be a valid year in past. You need to be 18 years old to apply.")])
     submit = SubmitField('Save and continue')
 
 

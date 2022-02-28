@@ -27,11 +27,9 @@ def medicalReports():
             session["application"]["medicalReports"]["files"] = []
 
         for document in request.files.getlist("documents"):
-            print(document.filename)
-            print(document)
             filename = secure_filename(document.filename)
             object_name = session["application"]["reference_number"] + '/' + 'medicalReports' + '/' + filename
-            print(upload_fileobj(document, object_name))
+            upload_fileobj(document, object_name)
             session["application"]["medicalReports"]["files"].append(object_name)
 
         # set progress status
@@ -61,11 +59,9 @@ def genderEvidence():
             session["application"]["genderEvidence"]["files"] = []
 
         for document in request.files.getlist("documents"):
-            print(document.filename)
-            print(document)
             filename = secure_filename(document.filename)
             object_name = session["application"]["reference_number"] + '/' + 'genderEvidence' + '/' + filename
-            print(upload_fileobj(document, object_name))
+            upload_fileobj(document, object_name)
             session["application"]["genderEvidence"]["files"].append(object_name)
 
         # set progress status
@@ -95,11 +91,9 @@ def nameChange():
             session["application"]["nameChange"]["files"] = []
 
         for document in request.files.getlist("documents"):
-            print(document.filename)
-            print(document)
             filename = secure_filename(document.filename)
             object_name = session["application"]["reference_number"] + '/' + 'nameChange' + '/' + filename
-            print(upload_fileobj(document, object_name))
+            upload_fileobj(document, object_name)
             session["application"]["nameChange"]["files"].append(object_name)
 
         # set progress status

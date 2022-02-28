@@ -169,8 +169,13 @@ def confirmation():
     # NOTIFY SUCCESS
     notifications_client = NotificationsAPIClient(current_app.config['NOTIFY_API'])
 
+    if current_app.config['NOTIFY_OVERRIDE_EMAIL']:
+        send_to = current_app.config['NOTIFY_OVERRIDE_EMAIL']
+    else:
+        send_to = session["application"]['email']
+
     response = notifications_client.send_email_notification(
-        email_address=session["application"]['email'], # required string
+        email_address=send_to, # required string
         template_id=current_app.config['NOTIFY_COMPLETED_APPLICATION_EMAIL_TEMPLATE_ID'], # required UUID string
         personalisation={
             'documents_to_be_posted': render_template('documents.html'),

@@ -60,10 +60,17 @@ def securityCode():
 @saveAndReturn.route('/save-and-return/exit-application', methods=['GET'])
 @LoginRequired
 def exitApplication():
+
+
+    if current_app.config['NOTIFY_OVERRIDE_EMAIL']:
+        send_to = current_app.config['NOTIFY_OVERRIDE_EMAIL']
+    else:
+        send_to = session["application"]['email']
+
     # Send email
     notifications_client = NotificationsAPIClient(current_app.config['NOTIFY_API'])
     response = notifications_client.send_email_notification(
-        email_address=session["application"]['email'], # required string
+        email_address=send_to, # required string
         template_id=current_app.config['NOTIFY_UNFINISHED_APPLICATION_EMAIL_TEMPLATE_ID'], # required UUID string
         personalisation={
             'expiry_days': datetime.strftime(datetime.now() + timedelta(days=90), '%d/%m/%Y %H:%M:%S'),

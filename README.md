@@ -26,6 +26,14 @@ cf conduit  postgres-13-dev
 ```
 
 
+# Change space
+cf target -o "geo-gender-recognition-certificate" -s "production"
+cf target -o "geo-gender-recognition-certificate" -s "staging"
+cf target -o "geo-gender-recognition-certificate" -s "sandbox"
+
+cf push grc-production -m 1G
+
+
 # Help Section
 . venv/bin/activate
 

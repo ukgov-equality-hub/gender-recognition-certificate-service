@@ -72,7 +72,11 @@
         {% if form.documents.errors %}
         <p id="documents-error"
            class="govuk-error-message">
-          <span class="govuk-visually-hidden">Error:</span> You need to add allowed files
+           {% for error in form.errors %}
+           {% for e in form[error].errors %}
+           <span class="govuk-visually-hidden">Error:</span> {{e}}
+           {% endfor %}
+           {% endfor %}
         </p>
         {% endif %}
         <input class="govuk-file-upload govuk-!-margin-bottom-4 {{ 'govuk-input--error' if form.documents.errors }}"
