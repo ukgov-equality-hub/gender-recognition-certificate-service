@@ -1,3 +1,4 @@
+from email.policy import default
 from flask_wtf import FlaskForm
 from wtforms import EmailField, StringField, SubmitField, RadioField, BooleanField, IntegerField
 from wtforms.validators import DataRequired, Email
@@ -10,7 +11,7 @@ class SaveYourApplicationForm(FlaskForm):
 
 class ValidateEmailForm(FlaskForm):
     code = StringField('code', validators=[DataRequired(message='A valid code is required'), validateSecurityCode])
-    attempt = IntegerField('attempt')
+    attempt = IntegerField('attempt', default=0)
     submit = SubmitField('Continue')
 
 

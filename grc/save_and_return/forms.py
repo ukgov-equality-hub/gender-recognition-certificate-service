@@ -12,5 +12,5 @@ thread_local = threading.local()
 
 class ReturnToYourApplicationForm(FlaskForm):
     reference = StringField('reference', validators=[DataRequired(message='Enter a valid reference number'), validateReferenceNumber])
-    attempt = IntegerField('attempt')
+    attempt = IntegerField('attempt', default=0)
     submit = SubmitField('Continue')
