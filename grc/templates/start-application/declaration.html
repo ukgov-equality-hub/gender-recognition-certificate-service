@@ -35,20 +35,20 @@
       Confirm that you meet requirements
     </h1>
 
-    <p class="govuk-body govuk-!-margin-bottom-2">You can apply for a Gender Recognition Certificate if you:</p>
-
+    <p class="govuk-body govuk-!-margin-bottom-2">You can apply if you meet all of the following requirements:</p>
+    {% if session["application"]["confirmation"]["overseasCheck"] == 'Yes' %}
     <ul class="govuk-body govuk-list govuk-list--bullet">
-      <li>are 18 or over</li>
-      <li>you have a legal document showing your gender recognition from that country</li>
+      <li>you’re aged 18 or over</li>
+      <li>you have a document showing your affirmed gender is legally recognised in that country or territory</li>
     </ul>
-
+    {% else %}
     <ul class="govuk-body govuk-list govuk-list--bullet">
-      <li>are 18 or over</li>
-      <li>have been diagnosed with gender dysphoria </li>
-      <li>are living in your affirmed gender and have been for at least 2 years</li>
-      <li>you intend to live in your affirmed gender for the rest of your life</li>
+      <li>you’re aged 18 or over</li>
+      <li>you’ve been diagnosed with <a href="https://www.nhs.uk/conditions/gender-dysphoria/">gender dysphoria</a></li>
+      <li>you’ve been living in your affirmed gender for at least 2 years</li>
+      <li>you intend to live in this gender for the rest of your life</li>
     </ul>
-
+    {% endif %}
 
     <p class="govuk-body">If you were born in the UK, the Gender Recognition Panel will tell the relevant General
       Register Office about

@@ -12,6 +12,7 @@ from grc.utils.security_code import send_security_code
 from grc.utils.decorators import EmailRequired, LoginRequired, Unauthorized
 from grc.utils.reference_number import reference_number_generator, reference_number_string
 from grc.utils.application_progress import save_progress
+from grc.utils.threading import Threading
 
 
 startApplication = Blueprint('startApplication', __name__)
@@ -41,13 +42,17 @@ def index():
 def emailConfirmation():
     form = ValidateEmailForm()
 
-    if request.method == 'POST' and form.validate_on_submit():
-        session['reference_number'] = reference_number_generator(session['email'])
-        if session['reference_number'] != False:
-            session['application'] = save_progress()
-            return redirect(url_for(session["application"]["confirmation"]["step"]))
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            session['reference_number'] = reference_number_generator(session['email'])
+            if session['reference_number'] != False:
+                session['application'] = save_progress()
+                return redirect(url_for(session["application"]["confirmation"]["step"]))
+            else:
+                flash('There is a problem creating a new application', 'error')
         else:
-            flash('There is a problem creating a new application', 'error')
+            threading = Threading(form.attempt.data)
+            form.attempt.data = threading.throttle()
 
     elif request.args.get('resend') == 'true':
         try:

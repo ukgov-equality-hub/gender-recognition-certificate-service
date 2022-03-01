@@ -35,10 +35,25 @@
       Gender recognition in approved countries and territories
     </h1>
 
-    <p class="govuk-body">The documents you need to provide depends on where your affirmed gender has been recognised.
-    </p>
+    <p class="govuk-body">If you have had your affirmed gender recognised in an approved country or territory, then you
+      will need to provide official documentation that shows this.</p>
 
-    <p class="govuk-body">This is based on the following list of approved countries and territories.</p>
+    <p class="govuk-body">This could be:</p>
+
+    <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-8">
+      <li>a document that’s equal to a Gender Recognition Certificate</li>
+      <li>an updated birth certificate</li>
+      <li>a court order</li>
+      <li>an entry in a legal register</li>
+    </ul>
+
+    <h2 class="govuk-heading-l">
+      List of approved countries and territories
+    </h2>
+
+    <p class="govuk-body">If you have received gender recognition from somewhere else, or you can’t provide this
+      documentation then you
+      will need to provide medical reports and evidence of living in your gender for 2 years instead.</p>
 
     <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-8">
       <li>Australia <span class="govuk-hint">(Territories of Australian Capital Territory and Northern Territory and the
@@ -96,13 +111,14 @@
         <fieldset class="govuk-fieldset">
           <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
             <h1 class="govuk-fieldset__heading">
-              Do you have official documentation that shows that your affirmed gender has been recognised in one of
-              these countries or territories?
+              Do you have official documentation that shows your affirmed gender has been recognised in one of these
+              countries or territories?
             </h1>
           </legend>
           <div id="changed-name-hint"
                class="govuk-hint">
-            Official documentation could be the country of territory’s equivalent of a Gender Recognition Certificate
+            Select ‘No’ if you have received gender recognition from somewhere else, or you can’t provide this
+            documentation.
           </div>
           {% if form.check.errors %}
           <p id="check-issued-error"

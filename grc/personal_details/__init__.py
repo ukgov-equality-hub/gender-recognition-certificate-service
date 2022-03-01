@@ -131,7 +131,7 @@ def contactPreferences():
                 session["application"]["personalDetails"]["contactPreferences"]["post"] = ''
             # set current step in case user exits the app
             if ListStatus[session["application"]["personalDetails"]["progress"]] == ListStatus.IN_PROGRESS:
-                session["application"]["personalDetails"]["step"] = 'personalDetails.contactName'
+                session["application"]["personalDetails"]["step"] = 'personalDetails.contactDates'
 
             session["application"] = save_progress()
 

@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 
-{% block backLink %}<a href="{{url_for('personalDetails.contactName')}}"
+{% block backLink %}<a href="{{url_for('personalDetails.contactPreferences')}}"
    class="govuk-back-link">Back</a>{% endblock %}
 
 {% block content %}
@@ -39,11 +39,15 @@
                   aria-describedby="check-hint">
           <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
             <h1 class="govuk-fieldset__heading">
-              Are there any dates you’ll be unavailable for more than a week over the next 6 months?
+              Will you be away from your address for more than a week over the next 6 months?
             </h1>
           </legend>
+          <div class="govuk-hint">
+            We will not post anything to you during this time
+          </div>
           {% if form.check.errors %}
-          <p id="check" class="govuk-error-message">
+          <p id="check"
+             class="govuk-error-message">
             <span class="govuk-visually-hidden">Error:</span> Select if you’ll be unavailable
           </p>
           {% endif %}
@@ -111,7 +115,7 @@
               </label>
             </div>
           </div>
-          </fieldset>
+        </fieldset>
       </div>
 
       <div class="govuk-button-group">

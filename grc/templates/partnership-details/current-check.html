@@ -34,11 +34,10 @@
       Marriages and civil partnerships
     </h1>
 
-    <p class="govuk-body">If you are or ever have been married or in a civil partnership then you will need to provide
-      us with additional documents.</p>
-
-    <p class="govuk-body govuk-!-margin-bottom-8">Answer the questions to find out what documents you will need to
-      provide.</p>
+    <p class="govuk-body govuk-!-margin-bottom-8">If you’ve ever been married or in a civil partnership, you’ll need to
+      have an original or <a class="govuk-link"
+         href="https://www.gov.uk/certifying-a-document">certified copy</a> of any of your marriage
+      or civil partnership certificates.</p>
 
     <form method="POST"
           action="{{url_for('partnershipDetails.index')}}">
@@ -53,8 +52,8 @@
           </legend>
           <div id="uk-check-hint"
                class="govuk-hint">
-            If you are currently in the process of ending your marriage or civil partnership but it is not finalised,
-            you should still still select these options as your current status
+            If you are in the process of ending, or you plan to end your marriage or civil partnership, you should
+            select your current, legal status
           </div>
           {% if form.check.errors %}
           <p id="check-issued-error"

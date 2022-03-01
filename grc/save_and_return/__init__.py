@@ -6,13 +6,15 @@ from werkzeug.exceptions import abort
 from flask import render_template
 from datetime import datetime, timedelta
 
-from grc.save_and_return.forms import ReturnToYourApplicationForm, ValidateCodeForm
+from grc.save_and_return.forms import ReturnToYourApplicationForm
 from notifications_python_client.notifications import NotificationsAPIClient
 from grc.utils.security_code import send_security_code
 from grc.utils.reference_number import validate_reference_number, reference_number_string
 from grc.start_application.forms import ValidateEmailForm
 from grc.utils.decorators import EmailRequired, LoginRequired, Unauthorized
 from grc.utils.application_progress import save_progress
+from grc.utils.threading import Threading
+
 
 saveAndReturn = Blueprint('saveAndReturn', __name__)
 
@@ -28,8 +30,11 @@ def index():
         session['email'] = application.email
         response = send_security_code(application.email)
 
-
         return redirect(url_for('saveAndReturn.securityCode'))
+
+    else:
+        threading = Threading(form.attempt.data)
+        form.attempt.data = threading.throttle()
 
     return render_template('save-and-return/return.html', form=form)
 
@@ -45,6 +50,11 @@ def securityCode():
             session['reference_number']  = application.reference_number
             session['application'] = application.data()
             return redirect(url_for('taskList.index'))
+
+        else:
+            threading = Threading(form.attempt.data)
+            form.attempt.data = threading.throttle()
+
     elif request.args.get('resend') == 'true':
         try:
             send_security_code(session['email'])

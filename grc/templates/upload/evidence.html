@@ -31,29 +31,37 @@
     {% endif %}
 
     <h1 class="govuk-heading-l">
-      Living in your gender
+      Upload evidence of living in your gender
     </h1>
 
-    <p class="govuk-body">This is where you can upload evidence that you&rsquo;ve lived in your affirmed gender for the 2 years before your application.</p>
+    <p class="govuk-body">You’ll need copies of evidence to show that you’ve been living in your gender for the last 2
+      years.</p>
 
-      <p class="govuk-body govuk-!-margin-bottom-2">You should:</p>
-      <ul class="govuk-list govuk-list--bullet">
-        <li>upload a maximum of 8 documents &ndash; try to provide 4 from each year</li>
-        <li>make sure all documents are dated and include your name</li>
-        <li>try to include documents that are dated throughout the year</li>
-      </ul>
+    <p class="govuk-body govuk-!-margin-bottom-2">There are no specific requirements for this evidence, but try to find:
+    </p>
+    <ul class="govuk-list govuk-list--bullet">
+      <li>evidence from different points over the 2 years, with roughly 4 pieces of evidence from each year</li>
+      <li>at least one piece of recent evidence</li>
+      <li>evidence from a variety of different sources</li>
+    </ul>
 
-      <p class="govuk-body govuk-!-margin-bottom-2">Examples of what you could provide:</p>
-      <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-8">
-        <li>driving licence</li>
-        <li>passport</li>
-        <li>payslips, P60 or P45</li>
-        <li>benefits or tax letters and documents</li>
-        <li>bank statements and utility bills</li>
-        <li>letters from official, professional or business organisations like solicitors, accountants, dentists, doctors and employers</li>
-        <li>academic certificates or documentation</li>
-        <li>health care or identity cards including photo ID issued by an official organisation</li>
-      </ul>
+    <p class="govuk-body govuk-!-margin-bottom-2">Examples of what can upload include:</p>
+    <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-8">
+      <li>your driving licence</li>
+      <li>your passport</li>
+      <li>identity cards, like workplace IDs, railcards, health insurance cards, library cards or supermarket loyalty
+        cards</li>
+      <li>letters from solicitors, accountants, doctors, dentists or employers</li>
+      <li>bank statements</li>
+      <li>payslips, P60s and P45s</li>
+      <li>benefit letters</li>
+      <li>tax letters and documents, including council tax</li>
+      <li>utility bills, such as internet bills</li>
+      <li>rental agreements</li>
+      <li>academic certificates and documents</li>
+    </ul>
+
+    <p class="govuk-body">You might be asked to send in more evidence after you submit your application.</p>
 
     <form method="POST"
           action="{{url_for('upload.genderEvidence')}}"
@@ -61,7 +69,7 @@
       {{ form.csrf_token }}
 
       <div class="govuk-form-group {{ 'govuk-form-group--error' if form.errors }}">
-          <label class="govuk-label govuk-label--m"
+        <label class="govuk-label govuk-label--m"
                for="documents">
           Upload files
         </label>
@@ -72,11 +80,11 @@
         {% if form.documents.errors %}
         <p id="documents-error"
            class="govuk-error-message">
-           {% for error in form.errors %}
-           {% for e in form[error].errors %}
-           <span class="govuk-visually-hidden">Error:</span> {{e}}
-           {% endfor %}
-           {% endfor %}
+          {% for error in form.errors %}
+          {% for e in form[error].errors %}
+          <span class="govuk-visually-hidden">Error:</span> {{e}}
+          {% endfor %}
+          {% endfor %}
         </p>
         {% endif %}
         <input class="govuk-file-upload govuk-!-margin-bottom-4 {{ 'govuk-input--error' if form.documents.errors }}"
@@ -107,26 +115,33 @@
       </label>
       <dl class="govuk-summary-list">
         {% for item in session["application"]["genderEvidence"]["files"] %}
-          <form method="POST"
-                action="{{url_for('upload.removeFile')}}"
-                enctype="multipart/form-data">
-            {{ deleteform.csrf_token }}
-            <div class="govuk-summary-list__row">
-              <dd class="govuk-summary-list__value govuk-!-width-full">
-                {{item | replace(session["application"]["reference_number"]+ '/genderEvidence/',"")}}
-              </dd>
-              <dd class="govuk-summary-list__actions">
-                <input name="section" value="genderEvidence" type="hidden">
-                <input name="file" value="{{item}}" type="hidden">
-                <input name="redirect_route" value="{{url_for('upload.genderEvidence')}}" type="hidden">
+        <form method="POST"
+              action="{{url_for('upload.removeFile')}}"
+              enctype="multipart/form-data">
+          {{ deleteform.csrf_token }}
+          <div class="govuk-summary-list__row">
+            <dd class="govuk-summary-list__value govuk-!-width-full">
+              {{item | replace(session["application"]["reference_number"]+ '/genderEvidence/',"")}}
+            </dd>
+            <dd class="govuk-summary-list__actions">
+              <input name="section"
+                     value="genderEvidence"
+                     type="hidden">
+              <input name="file"
+                     value="{{item}}"
+                     type="hidden">
+              <input name="redirect_route"
+                     value="{{url_for('upload.genderEvidence')}}"
+                     type="hidden">
 
-                <button class="govuk-button govuk-button--warning"
-                        data-module="govuk-button">
-                        Remove <span class="govuk-visually-hidden"> {{item | replace(session["application"]["reference_number"]+ '/genderEvidence/',"")}} file</span>
-                </button>
-              </dd>
-            </div>
-          </form>
+              <button class="govuk-button govuk-button--warning"
+                      data-module="govuk-button">
+                Remove <span class="govuk-visually-hidden">
+                  {{item | replace(session["application"]["reference_number"]+ '/genderEvidence/',"")}} file</span>
+              </button>
+            </dd>
+          </div>
+        </form>
         {% endfor %}
       </dl>
     </div>

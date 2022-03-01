@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import EmailField, StringField, SubmitField, RadioField, BooleanField
+from wtforms import EmailField, StringField, SubmitField, RadioField, BooleanField, IntegerField
 from wtforms.validators import DataRequired, Email
 from grc.utils.form_custom_validators import validateSecurityCode
 
@@ -10,6 +10,7 @@ class SaveYourApplicationForm(FlaskForm):
 
 class ValidateEmailForm(FlaskForm):
     code = StringField('code', validators=[DataRequired(message='A valid code is required'), validateSecurityCode])
+    attempt = IntegerField('attempt')
     submit = SubmitField('Continue')
 
 

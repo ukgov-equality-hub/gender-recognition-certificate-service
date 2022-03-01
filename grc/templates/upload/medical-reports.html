@@ -34,61 +34,63 @@
       Upload your medical reports
     </h1>
 
-    <p class="govuk-body govuk-!-margin-bottom-2">This is where you can upload your 2 medical reports. These should be:
+    <p class="govuk-body">You need 2 reports written by 2 different medical doctors or clinical psychologists in the UK.
     </p>
-    <ol class="govuk-list govuk-list--number">
-      <li>a medical report that explains in full, the specific details of your gender dysphoria diagnosis, written by a
-        registered medical practitioner or registered psychologist practising in the field of gender dysphoria</li>
-      <li>a medical report that explains in full, the specific details of your treatment, or planned treatment, such as
-        hormone treatments or surgery, written by a registered medical practitioner – this could be your GP or surgeon
-      </li>
+
+    <p class="govuk-body">The reports both need to include the name, practice address and contact details of the person
+      who wrote the report.</p>
+
+    <p class="govuk-body govuk-!-margin-bottom-2">The first report needs to explain the details of your gender dysphoria
+      diagnosis, including:</p>
+
+    <ol class="govuk-list govuk-list--bullet">
+      <li>who made the diagnosis</li>
+      <li>when the diagnosis was made</li>
+      <li>any evidence that was used to make the diagnosis</li>
+      <li>any medication prescribed and when</li>
+      <li>any planned non-surgical treatment, like hormone therapy</li>
+      <li>if a referral for surgery was made, and if there was no referral then the reasons why</li>
     </ol>
 
     <p class="govuk-body">If you have not had and are not planning any treatment, then the second report should say why
       not.</p>
 
-    <p class="govuk-body">There is a <a rel="external"
-         target="_blank"
-         class="govuk-link"
-         href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/937304/t493-eng.pdf">list
-        of specialists in the field of gender dysphoria (opens in new tab)</a>. This is not a complete directory of
-      those in this field and it may not be up to date.</p>
-    <p class="govuk-body">The medical report does not need to be written by someone on this list, as long as it is
-      written by a medical practitioner or psychologist registered in the field of gender dysphoria.</p>
-    <p class="govuk-body">Each report should include the name, practice address and contact details of the person
-      writing the report.</p>
+    <p class="govuk-body">This report needs to be written by a registered medical doctor or clinical psychologist who
+      practises in the field of gender dysphoria. You can find one of these by:</p>
+
+    <ol class="govuk-list govuk-list--bullet">
+      <li>asking your GP for a referral</li>
+      <li>contacting someone on the <a class="govuk-link"
+           href="http://www.gov.uk/government/publications/gender-recognition-certificate-list-of-medical-practitioners-in-the-gender-dysphoria-field">list
+          of specialists in the field of gender dysphoria</a> – this is not a complete list and it is not up-to-date
+      </li>
+    </ol>
+
+    <p>The second report needs to explain the details of any treatment you’ve had or plan to have, including:</p>
+
+    <ol class="govuk-list govuk-list--bullet">
+      <li>whether you’ve had gender reassignment surgery</li>
+      <li>each distinct surgical procedure you’ve had and the date it was carried out</li>
+      <li>any non-surgical treatment you’ve had in the last 6 months, like hormone therapy</li>
+      <li>any future surgical or non-surgical treatment you have planned</li>
+      <li>if you have had no treatment and do not plan to have any, the reasons why</li>
+    </ol>
+
+    <p>This report can be written by any registered medical doctor or clinical psychologist, including your GP, a
+      surgeon or an endocrinologist.</p>
+
+    <p>It also needs to be as recent as possible. It may not be accepted if it was written over a year before you submit
+      it.</p>
+
+    <p>You’ll probably need to pay for these reports even if you use NHS medical practitioners, so ask in advance how
+      much you’ll be charged.</p>
+
     <div class="govuk-inset-text">
       <p class="govuk-body">There is a <a class="govuk-link"
            href="https://www.gov.uk/government/publications/form-t452-guidelines-for-registered-medical-practitioners-and-registered-psychologists-to-facilitate-completion-of-the-medical-report-proforma-for-g">form
-          that medical practitioners can use to make these reports</a></p>
+          that medical practitioners can use to write either of these reports (opens in new tab)</a>. This is not a
+        complete directory of those in this field and it may not be up to date.</p>
     </div>
-
-
-    <h2 class="govuk-heading-s">What the reports should include</h2>
-
-    <p class="govuk-body">The first report needs to show your diagnosis of gender dysphoria. It should include details
-      of:</p>
-    <ul class="govuk-list govuk-list--bullet">
-      <li>the diagnosis, including when it was made and by who</li>
-      <li>any evidence that was used to make the diagnosis </li>
-      <li>any medication prescribed and when</li>
-      <li>any planned non-surgical treatment</li>
-      <li>when a referral for surgery was made and if it hasn&rsquo;t, the reasons why </li>
-    </ul>
-
-    <p class="govuk-body">The second report needs to show details of your treatment, or planned treatment. It should
-      include details of:</p>
-    <ul class="govuk-list govuk-list--bullet">
-      <li>whether gender reassignment surgery has been carried out</li>
-      <li>each distinct surgical procedure and the date it was carried out</li>
-      <li>any non-surgical treatment given (such as hormone treatment)</li>
-      <li>any further surgical or non-surgical treatment planned </li>
-      <li>the reasons why, if there has been no treatment and none is planned</li>
-    </ul>
-    <p class="govuk-body govuk-!-margin-bottom-8">You are not required to have treatment to get a Gender Recognition
-      Certificate, but if you do not plan to have treatment, this report should say why you don&rsquo;t.</p>
-
-
 
     <form method="POST"
           action="{{url_for('upload.medicalReports')}}"
@@ -107,11 +109,11 @@
         {% if form.documents.errors %}
         <p id="documents-error"
            class="govuk-error-message">
-           {% for error in form.errors %}
-           {% for e in form[error].errors %}
-           <span class="govuk-visually-hidden">Error:</span> {{e}}
-           {% endfor %}
-           {% endfor %}
+          {% for error in form.errors %}
+          {% for e in form[error].errors %}
+          <span class="govuk-visually-hidden">Error:</span> {{e}}
+          {% endfor %}
+          {% endfor %}
         </p>
         {% endif %}
         <input class="govuk-file-upload govuk-!-margin-bottom-4 {{ 'govuk-input--error' if form.documents.errors }}"
@@ -141,26 +143,33 @@
       </label>
       <dl class="govuk-summary-list">
         {% for item in session["application"]["medicalReports"]["files"] %}
-          <form method="POST"
-                action="{{url_for('upload.removeFile')}}"
-                enctype="multipart/form-data">
-            {{ deleteform.csrf_token }}
-            <div class="govuk-summary-list__row">
-              <dd class="govuk-summary-list__value govuk-!-width-full">
-                {{item | replace(session["application"]["reference_number"]+ '/medicalReports/',"")}}
-              </dd>
-              <dd class="govuk-summary-list__actions">
-                <input name="section" value="medicalReports" type="hidden">
-                <input name="file" value="{{item}}" type="hidden">
-                <input name="redirect_route" value="{{url_for('upload.medicalReports')}}" type="hidden">
+        <form method="POST"
+              action="{{url_for('upload.removeFile')}}"
+              enctype="multipart/form-data">
+          {{ deleteform.csrf_token }}
+          <div class="govuk-summary-list__row">
+            <dd class="govuk-summary-list__value govuk-!-width-full">
+              {{item | replace(session["application"]["reference_number"]+ '/medicalReports/',"")}}
+            </dd>
+            <dd class="govuk-summary-list__actions">
+              <input name="section"
+                     value="medicalReports"
+                     type="hidden">
+              <input name="file"
+                     value="{{item}}"
+                     type="hidden">
+              <input name="redirect_route"
+                     value="{{url_for('upload.medicalReports')}}"
+                     type="hidden">
 
-                <button class="govuk-button govuk-button--warning"
-                        data-module="govuk-button">
-                        Remove <span class="govuk-visually-hidden"> {{item | replace(session["application"]["reference_number"]+ '/medicalReports/',"")}} file</span>
-                </button>
-              </dd>
-            </div>
-          </form>
+              <button class="govuk-button govuk-button--warning"
+                      data-module="govuk-button">
+                Remove <span class="govuk-visually-hidden">
+                  {{item | replace(session["application"]["reference_number"]+ '/medicalReports/',"")}} file</span>
+              </button>
+            </dd>
+          </div>
+        </form>
         {% endfor %}
       </dl>
     </div>

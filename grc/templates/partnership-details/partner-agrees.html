@@ -35,27 +35,24 @@
     </h1>
 
     {% if session["application"]["partnershipDetails"]["marriageCivilPartnership"] == 'Civil partnership' %}
-    <p class="govuk-body">If you plan to stay in your civil partnership, your civil partner will need to sign a <a
-         class="govuk-link"
-         href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852943/t466-eng.pdf"
-         rel="external"
-         target="_blank">statutory declaration consenting to the civil partnership continuing (opens in new tab)</a>
-      after you receive a Gender Recognition Certificate.</p>
+    <p class="govuk-body">If you intend to remain in a civil partnership, your civil partner needs to:</p>
 
-    {% set questionText %}Can you provide a declaration of consent from your civil partner?{% endset %}
+    <ul class="govuk-list govuk-list--bullet">
+      <li>download and fill in a <a class="govuk-link" href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852943/t466-eng.pdf" rel="noreferrer noopener" target="_blank">statutory declaration for spouses or civil partners (opens in new tab)</a></li>
+      <li>sign the statutory declaration in front of someone authorised to administer oaths – the declaration form explains who can act as a witness</li>
+    </ul>
+
+    {% set questionText %}Can you provide a statutory declaration of consent from your civil partner?{% endset %}
     {% else %}
-    <p class="govuk-body">If you plan to stay married your spouse will need to sign a <a class="govuk-link"
-         href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852943/t466-eng.pdf"
-         rel="external"
-         target="_blank">statutory declaration consenting to the marriage continuing (opens in new tab)</a> after you
-      receive a Gender Recognition Certificate.</p>
+    <p class="govuk-body">If you intend to remain married, your spouse needs to:</p>
 
-    {% set questionText %}Can you provide a declaration of consent from your spouse?{% endset %}
+    <ul class="govuk-list govuk-list--bullet">
+      <li>download and fill in a <a class="govuk-link" href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852943/t466-eng.pdf" rel="noreferrer noopener" target="_blank">statutory declaration for spouses (opens in new tab)</a></li>
+      <li>sign the statutory declaration in front of someone authorised to administer oaths – the declaration form explains who can act as a witness</li>
+    </ul>
+
+    {% set questionText %}Can you provide a statutory declaration of consent from your spouse?{% endset %}
     {% endif %}
-
-    <p class="govuk-body govuk-!-margin-bottom-8">This will need to be witnessed by someone that can administer oaths.
-      All solicitors can do this.</p>
-
 
     <form method="POST"
           action="{{url_for('partnershipDetails.partnerAgrees')}}">
