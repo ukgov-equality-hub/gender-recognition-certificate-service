@@ -54,20 +54,19 @@ def send_security_code(email):
     security_code = security_code_generator(email)
     notifications_client = NotificationsAPIClient(current_app.config['NOTIFY_API'])
 
-    # if current_app.config['NOTIFY_OVERRIDE_EMAIL']:
-    #     send_to = current_app.config['NOTIFY_OVERRIDE_EMAIL']
-    # else:
-    #     send_to = email
+    if current_app.config['NOTIFY_OVERRIDE_EMAIL']:
+        send_to = current_app.config['NOTIFY_OVERRIDE_EMAIL']
+    else:
+        send_to = email
 
-    # response = notifications_client.send_email_notification(
-    #     email_address=send_to, # required string
-    #     template_id=current_app.config['NOTIFY_SECURITY_CODE_EMAIL_TEMPLATE_ID'], # required UUID string
-    #     personalisation={
-    #         'security_code': security_code,
-    #         'security_code_timeout': datetime.strftime(datetime.now() + timedelta(minutes=5), '%d/%m/%Y %H:%M:%S'),
-    #     }
-    # )
+    response = notifications_client.send_email_notification(
+        email_address=send_to, # required string
+        template_id=current_app.config['NOTIFY_SECURITY_CODE_EMAIL_TEMPLATE_ID'], # required UUID string
+        personalisation={
+            'security_code': security_code,
+            'security_code_timeout': datetime.strftime(datetime.now() + timedelta(minutes=5), '%d/%m/%Y %H:%M:%S'),
+        }
+    )
 
-    # return response
+    return response
 
-    return True
