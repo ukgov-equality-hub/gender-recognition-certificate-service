@@ -1,4 +1,4 @@
-name: Deploy
+name: Deploy to PaaS sandbox
 
 on:
   push:
@@ -7,13 +7,13 @@ on:
 
 jobs:
   deploy:
-    name: Deploy
+    name: Deploy to PaaS sandbox
     runs-on: ubuntu-latest
 
     env:
-      CF_API: "https://api.london.cloud.service.gov.uk"
-      CF_ORG: "geo-gender-recognition-certificate"
-      CF_SPACE: "sandbox"
+      CF_API: 'https://api.london.cloud.service.gov.uk'
+      CF_ORG: 'geo-gender-recognition-certificate'
+      CF_SPACE: 'sandbox'
 
     permissions:
       contents: read

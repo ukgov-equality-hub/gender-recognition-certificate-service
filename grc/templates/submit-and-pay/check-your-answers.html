@@ -109,23 +109,6 @@
       </div>
       <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">
-          Another name for contacting you
-        </dt>
-        <dd class="govuk-summary-list__value">
-          {{session["application"]["personalDetails"]["contactName"]["answer"]}} <br>
-
-          {% if session["application"]["personalDetails"]["contactName"]["answer"] == "Yes" %}
-          {{session["application"]["personalDetails"]["contactName"]["name"]}}
-          {% endif %}
-        </dd>
-        <dd class="govuk-summary-list__actions">
-          <a class="govuk-link"
-             href="{{url_for('personalDetails.contactName')}}">
-            Change</a>
-        </dd>
-      </div>
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
           Unavailable over the next 6 months
         </dt>
         <dd class="govuk-summary-list__value">
