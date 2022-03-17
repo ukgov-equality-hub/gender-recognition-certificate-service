@@ -76,4 +76,9 @@ def create_app(test_config=None):
     app.register_blueprint(submitAndPay)
     app.add_url_rule('/submit-and-pay', endpoint='index')
 
+    # Document checker
+    from grc.document_checker import documentChecker
+    app.register_blueprint(documentChecker)
+    app.add_url_rule('/check-documents', endpoint='index')
+
     return app
