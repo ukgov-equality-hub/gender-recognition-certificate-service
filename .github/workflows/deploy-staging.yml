@@ -13,7 +13,7 @@ jobs:
     env:
       CF_API: 'https://api.london.cloud.service.gov.uk'
       CF_ORG: 'geo-gender-recognition-certificate'
-      CF_SPACE: 'grc-staging'
+      CF_SPACE: 'staging'
 
     permissions:
       contents: read
