@@ -39,9 +39,9 @@
           <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
             <h1 class="govuk-fieldset__heading">
               {% if session["application"]["partnershipDetails"]["marriageCivilPartnership"] == 'Civil partnership' %}
-                Do you plan to remain in your civil partnership after receiving your Gender Recognition Certificate?
+              Do you plan to remain in your civil partnership after receiving your Gender Recognition Certificate?
               {% else %}
-                Do you plan to remain married after receiving your Gender Recognition Certificate?
+              Do you plan to remain married after receiving your Gender Recognition Certificate?
               {% endif %}
             </h1>
           </legend>
@@ -63,10 +63,7 @@
                      if
                      session['application']['partnershipDetails']['stayTogether']=="Yes"
                      }}>
-              <label class="govuk-label govuk-radios__label"
-                     for="check">
-                Yes
-              </label>
+              <label for="check" class="govuk-label govuk-radios__label">Yes</label>
             </div>
             <div class="govuk-radios__item">
               <input class="govuk-radios__input"
@@ -78,26 +75,17 @@
                      if
                      session['application']['partnershipDetails']['stayTogether']=="No"
                      }}>
-              <label class="govuk-label govuk-radios__label"
-                     for="check-2">
-                No
-              </label>
+              <label for="check-2" class="govuk-label govuk-radios__label">No</label>
             </div>
           </div>
         </fieldset>
       </div>
 
       <div class="govuk-button-group">
-        <button class="govuk-button"
-                data-module="govuk-button">
-          Save and continue
-        </button>
-        <a href="{{url_for('taskList.index')}}"
-           class="govuk-link govuk-link--no-visited-state">Return to task list</a>
+        <button data-module="govuk-button" class="govuk-button">Save and continue</button>
+        <a href="{{url_for('taskList.index')}}" class="govuk-link govuk-link--no-visited-state">Return to task list</a>
       </div>
     </form>
-
-
   </div>
 </div>
 {% endblock %}

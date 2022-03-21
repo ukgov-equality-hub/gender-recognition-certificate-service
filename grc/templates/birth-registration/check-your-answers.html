@@ -73,7 +73,7 @@
       {% if session["application"]["birthRegistration"]["ukCheck"] == 'Yes' %}
         <div class="govuk-summary-list__row">
           <dt class="govuk-summary-list__key">
-            Mother&rsquo;s name
+            Mother's name
           </dt>
           <dd class="govuk-summary-list__value">
             {{session["application"]["birthRegistration"]["mothers_first_name"]}} {{session["application"]["birthRegistration"]["mothers_last_name"]}}
@@ -86,7 +86,7 @@
         </div>
         <div class="govuk-summary-list__row">
           <dt class="govuk-summary-list__key">
-            Father’s name listed
+            Father's name listed
           </dt>
           <dd class="govuk-summary-list__value">
             {{session["application"]["birthRegistration"]["fathersNameCheck"]}}
@@ -101,7 +101,7 @@
         {% if session["application"]["birthRegistration"]["fathersNameCheck"] == 'Yes' %}
         <div class="govuk-summary-list__row">
           <dt class="govuk-summary-list__key">
-            Father&rsquo;s name
+            Father's name
           </dt>
           <dd class="govuk-summary-list__value">
             {{session["application"]["birthRegistration"]["fathers_first_name"]}} {{session["application"]["birthRegistration"]["fathers_last_name"]}}

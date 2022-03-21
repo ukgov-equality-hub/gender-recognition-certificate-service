@@ -1,7 +1,7 @@
 $govuk-new-link-styles: true;
-$govuk-assets-path: '/static/assets/';
-@import './../../node_modules/govuk-frontend/govuk/all';
-@import './related-navigation';
+$govuk-assets-path: "/static/assets/";
+@import "./../../node_modules/govuk-frontend/govuk/all";
+@import "./related-navigation";
 @import "./patterns/interuption-card";
 
 html,
@@ -21,8 +21,6 @@ body {
   @include govuk-font($size: 48, $weight: bold);
 }
 
-
-
 // align text on multi line checkboxes
 .checkboxes-long-text {
   .govuk-checkboxes__input,
@@ -36,4 +34,5 @@ body {
   }
 }
 
-@import './task-list';
+@import "./task-list";
+@import "./admin";

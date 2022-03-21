@@ -208,7 +208,7 @@
       {% if session["application"]["birthRegistration"]["ukCheck"] == 'Yes' %}
       <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">
-          Mother&rsquo;s name
+          Mother's name
         </dt>
         <dd class="govuk-summary-list__value">
           {{session["application"]["birthRegistration"]["mothers_first_name"]}}
@@ -222,7 +222,7 @@
       </div>
       <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">
-          Father’s name listed
+          Father's name listed
         </dt>
         <dd class="govuk-summary-list__value">
           {{session["application"]["birthRegistration"]["fathersNameCheck"]}}
@@ -237,7 +237,7 @@
       {% if session["application"]["birthRegistration"]["fathersNameCheck"] == 'Yes' %}
       <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">
-          Father&rsquo;s name
+          Father's name
         </dt>
         <dd class="govuk-summary-list__value">
           {{session["application"]["birthRegistration"]["fathers_first_name"]}}
@@ -507,7 +507,7 @@
 
     <!-- documents to post  -->
     <h2 class="govuk-heading-m">
-      Documents you&rsquo;ll need to post
+      Documents you'll need to post
     </h2>
     <p class="govuk-body govuk-!-margin-bottom-2">Based on your application the documents that will need to be posted
       are:</p>
@@ -555,7 +555,7 @@
       <li><a class="govuk-link"
            href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852946/t469-eng.pdf"
            rel="external"
-           target="_blank">your spouse&rsquo;s statutory declaration (opens in new tab)</a></li>
+           target="_blank">your spouse's statutory declaration (opens in new tab)</a></li>
       {% endif %}
 
       {% if session["application"]["partnershipDetails"]["marriageCivilPartnership"] == 'Civil partnership' and
@@ -563,7 +563,7 @@
       <li><a class="govuk-link"
            href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852946/t469-eng.pdf"
            rel="external"
-           target="_blank">your civil partner&rsquo;s statutory declaration (opens in new tab)</a></li>
+           target="_blank">your civil partner's statutory declaration (opens in new tab)</a></li>
       {% endif %}
 
       {% if session["application"]["partnershipDetails"]["marriageCivilPartnership"] == 'Married' %}
@@ -581,7 +581,7 @@
       {% endif %}
 
       {% if session["application"]["partnershipDetails"]["partnerDied"] == 'Yes' %}
-      <li>a copy of your spouse or civil partner&rsquo;s death certificate</li>
+      <li>a copy of your spouse or civil partner's death certificate</li>
       {% endif %}
 
       {% if session["application"]["partnershipDetails"]["endedCheck"] == 'Yes' %}

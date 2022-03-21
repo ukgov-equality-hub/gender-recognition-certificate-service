@@ -1,120 +1,67 @@
 {% extends 'base.html' %}
-
-
-{% block backLink %}<a href="{{url_for('personalDetails.index')}}"
-   class="govuk-back-link">Back</a>{% endblock %}
+{% block backLink %}<a href="{{ url_for('personalDetails.index') }}" class="govuk-back-link">Back</a>{% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-
     {% if form.errors %}
-    <div class="govuk-error-summary"
-         aria-labelledby="error-summary-title"
-         role="alert"
-         tabindex="-1"
-         data-module="govuk-error-summary">
-      <h2 class="govuk-error-summary__title"
-          id="error-summary-title">
-        There is a problem
-      </h2>
+    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+      <h2 class="govuk-error-summary__title" id="error-summary-title">There is a problem</h2>
       <div class="govuk-error-summary__body">
         <ul class="govuk-list govuk-error-summary__list">
           {% for error in form.errors %}
-          {% for e in form[error].errors %}
-          <li><a href="#{{error}}-issued-error">{{ e }}</a></li>
-          {% endfor %}
+            {% for e in form[error].errors %}
+            <li><a href="#{{ error }}-issued-error">{{ e }}</a></li>
+            {% endfor %}
           {% endfor %}
         </ul>
       </div>
     </div>
     {% endif %}
 
-
-    <h1 class="govuk-heading-l">
-      Name changes
-    </h1>
-
-    <p class="govuk-body">If you have ever changed your name from what appears on your birth certificate, you’ll be
-      asked to upload
-      additional documents at the end of the application. </p>
-
-    <p class="govuk-body">This is to help match your birth records after your application is accepted.</p>
-
-    <p class="govuk-body">You should include documents for each time you have changed your name.</p>
-
-    <p class="govuk-body govuk-!-margin-bottom-2">These might include:</p>
+    <h1 class="govuk-heading-l">If you have ever changed your name to reflect your gender</h1>
+    <p class="govuk-body">You will need to send us documents that show this. If you have changed your name more than once, we will need to see documents for each instance.</p>
+    <p class="govuk-body">We ask for this so we can match your birth records after you receive a Gender Recognition Certificate.</p>
+    <p class="govuk-body govuk-!-margin-bottom-2">These documents are likely to be:</p>
     <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-8">
-      <li>deed poll document, either enrolled or unenrolled</li>
-      <li>change of name document (Scotland)</li>
-      <li>marriage certificate</li>
-      <li>civil partnership certificate</li>
+      <li>deed poll documents, either enrolled or unenrolled</li>
+      <li>change of name documents (Scotland)</li>
+      <li>statutory declarations</li>
     </ul>
 
-    <form method="POST"
-          action="{{url_for('personalDetails.previousNamesCheck')}}">
+    <form method="POST" action="{{ url_for('personalDetails.previousNamesCheck') }}">
       {{ form.csrf_token }}
 
       <div class="govuk-form-group {{ 'govuk-form-group--error' if form.check.errors }}">
         <fieldset class="govuk-fieldset">
           <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
             <h1 class="govuk-fieldset__heading">
-              Have you ever changed your name?
+              Have you ever changed your name to reflect your gender?
             </h1>
           </legend>
           {% if form.check.errors %}
-          <p id="check-issued-error"
-             class="govuk-error-message">
+          <p id="check-issued-error" class="govuk-error-message">
             <span class="govuk-visually-hidden">Error:</span> Select if you have ever changed your name
           </p>
           {% endif %}
-          <div class="govuk-radios"
-               data-module="govuk-radios">
+          <div class="govuk-radios" data-module="govuk-radios">
             <div class="govuk-radios__item">
-              <input class="govuk-radios__input"
-                     id="where-do-you-live"
-                     name="check"
-                     type="radio"
-                     value="Yes"
-                     {{ 'checked'
-                     if
-                     session['application']['personalDetails']['previousNamesCheck']=="Yes"
-                     }}>
-              <label class="govuk-label govuk-radios__label"
-                     for="check">
-                Yes
-              </label>
+              <input type="radio" id="where-do-you-live" name="check" value="Yes" {{ 'checked' if session['application']['personalDetails']['previousNamesCheck'] == "Yes" }} class="govuk-radios__input">
+              <label for="check" class="govuk-label govuk-radios__label">Yes</label>
             </div>
             <div class="govuk-radios__item">
-              <input class="govuk-radios__input"
-                     id="check-2"
-                     name="check"
-                     type="radio"
-                     value="No"
-                     {{ 'checked'
-                     if
-                     session['application']['personalDetails']['previousNamesCheck']=="No"
-                     }}>
-              <label class="govuk-label govuk-radios__label"
-                     for="check-2">
-                No
-              </label>
+              <input type="radio" id="check-2" name="check" value="No" {{ 'checked' if session['application']['personalDetails']['previousNamesCheck'] == "No" }} class="govuk-radios__input">
+              <label for="check-2" class="govuk-label govuk-radios__label">No</label>
             </div>
           </div>
         </fieldset>
       </div>
 
       <div class="govuk-button-group">
-        <button class="govuk-button"
-                data-module="govuk-button">
-          Save and continue
-        </button>
-        <a href="{{url_for('taskList.index')}}"
-           class="govuk-link govuk-link--no-visited-state">Return to task list</a>
+        <button class="govuk-button" data-module="govuk-button">Save and continue</button>
+        <a href="{{ url_for('taskList.index') }}" class="govuk-link govuk-link--no-visited-state">Return to task list</a>
       </div>
     </form>
-
-
   </div>
 </div>
 {% endblock %}

@@ -1,118 +1,74 @@
 {% extends 'base.html' %}
-
-
-{% block backLink %}<a href="{{url_for('taskList.index')}}"
-   class="govuk-back-link">Back</a>{% endblock %}
+{% block backLink %}<a href="{{ url_for('taskList.index') }}" class="govuk-back-link">Back</a>{% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
 
     {% if form.errors %}
-    <div class="govuk-error-summary"
-         aria-labelledby="error-summary-title"
-         role="alert"
-         tabindex="-1"
-         data-module="govuk-error-summary">
-      <h2 class="govuk-error-summary__title"
-          id="error-summary-title">
-        There is a problem
-      </h2>
+    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+      <h2 class="govuk-error-summary__title" id="error-summary-title">There is a problem</h2>
       <div class="govuk-error-summary__body">
         <ul class="govuk-list govuk-error-summary__list">
           {% for error in form.errors %}
-          {% for e in form[error].errors %}
-          <li><a href="#{{error}}">{{ e }}</a></li>
-          {% endfor %}
+            {% for e in form[error].errors %}
+            <li><a href="#{{ error }}">{{ e }}</a></li>
+            {% endfor %}
           {% endfor %}
         </ul>
       </div>
     </div>
     {% endif %}
 
-    <h1 class="govuk-heading-l">
-      Upload name change documents
-    </h1>
+    <h1 class="govuk-heading-l">Upload name change documents</h1>
+    <p class="govuk-body govuk-!-margin-bottom-8">This is where you can upload copies of all documents that show when you've changed your name to reflect your gender.</p>
+    <p class="govuk-body govuk-!-margin-bottom-2">Upload:</p>
+    <ul class="govuk-body govuk-list govuk-list--bullet govuk-!-margin-bottom-8">
+      <li>deed poll documents, either enrolled or unenrolled</li>
+      <li>change of name documents (Scotland)</li>
+      <li>statutory declarations</li>
+    </ul>
 
-    <p class="govuk-body govuk-!-margin-bottom-8">This is where you can upload copies of all documents that show when
-      you’ve changed your name. Name change documents can include deed polls and marriage and civil partnership
-      certificates.</p>
-
-    <form method="POST"
-          action="{{url_for('upload.nameChange')}}"
-          enctype="multipart/form-data">
+    <form method="POST" action="{{ url_for('upload.nameChange') }}" enctype="multipart/form-data">
       {{ form.csrf_token }}
 
       <div class="govuk-form-group {{ 'govuk-form-group--error' if form.errors }}">
-        <label class="govuk-label govuk-label--m"
-               for="documents">
-          Upload files
-        </label>
-        <div id="documents-hint"
-             class="govuk-hint">
-          The files must be a JPG, BMP, PNG, TIF or PDF and be smaller than 10MB
-        </div>
+        <label for="documents" class="govuk-label govuk-label--m">Upload files</label>
+        <div id="documents-hint" class="govuk-hint">The files must be a JPG, BMP, PNG, TIF or PDF and be smaller than 10MB</div>
         {% if form.documents.errors %}
-        <p id="documents-error"
-           class="govuk-error-message">
+        <p id="documents-error" class="govuk-error-message">
           {% for error in form.errors %}
-          {% for e in form[error].errors %}
-          <span class="govuk-visually-hidden">Error:</span> {{e}}
-          {% endfor %}
+            {% for e in form[error].errors %}
+            <span class="govuk-visually-hidden">Error:</span> {{ e }}
+            {% endfor %}
           {% endfor %}
         </p>
         {% endif %}
-        <input class="govuk-file-upload govuk-!-margin-bottom-4 {{ 'govuk-input--error' if form.documents.errors }}"
-               id="documents"
-               name="documents"
-               multiple
-               accept=".jpg,.jpeg,.bmp,.png,.tif,.tiff,.pdf"
-               type="file">
-
+        <input type="file" id="documents" name="documents" multiple accept=".jpg,.jpeg,.bmp,.png,.tif,.tiff,.pdf" class="govuk-file-upload govuk-!-margin-bottom-4 {{ 'govuk-input--error' if form.documents.errors }}">
       </div>
-
       <div class="govuk-button-group">
-        <button class="govuk-button"
-                data-module="govuk-button">
-          Save and continue
-        </button>
-        <a href="{{url_for('taskList.index')}}"
-           class="govuk-link govuk-link--no-visited-state">Return to task list</a>
-
+        <button class="govuk-button" data-module="govuk-button">Save and continue</button>
+        <a href="{{ url_for('taskList.index') }}" class="govuk-link govuk-link--no-visited-state">Return to task list</a>
       </div>
     </form>
 
-    {% if session["application"]["nameChange"]["files"] %}
+    {% if session['application']['nameChange']['files'] %}
     <div class="govuk-form-group govuk-!-margin-top-9">
-      <label class="govuk-label govuk-label--m"
-             for="documents">
-        Uploaded files
-      </label>
+      <label for="documents" class="govuk-label govuk-label--m">Uploaded files</label>
       <dl class="govuk-summary-list">
         {% for item in session["application"]["nameChange"]["files"] %}
-        <form method="POST"
-              action="{{url_for('upload.removeFile')}}"
-              enctype="multipart/form-data">
+        <form method="POST" action="{{ url_for('upload.removeFile') }}" enctype="multipart/form-data">
           {{ deleteform.csrf_token }}
           <div class="govuk-summary-list__row">
             <dd class="govuk-summary-list__value govuk-!-width-full">
-              {{item | replace(session["application"]["reference_number"]+ '/nameChange/',"")}}
+              {{ item | replace(session['application']['reference_number'] + '/nameChange/', '') }}
             </dd>
             <dd class="govuk-summary-list__actions">
-              <input name="section"
-                     value="nameChange"
-                     type="hidden">
-              <input name="file"
-                     value="{{item}}"
-                     type="hidden">
-              <input name="redirect_route"
-                     value="{{url_for('upload.nameChange')}}"
-                     type="hidden">
-
-              <button class="govuk-button govuk-button--warning"
-                      data-module="govuk-button">
-                Remove <span class="govuk-visually-hidden">
-                  {{item | replace(session["application"]["reference_number"]+ '/nameChange/',"")}} file</span>
+              <input type="hidden" name="section" value="nameChange">
+              <input type="hidden" name="file" value="{{ item }}">
+              <input type="hidden" name="redirect_route" value="{{ url_for('upload.nameChange') }}">
+              <button class="govuk-button govuk-button--warning" data-module="govuk-button">
+                Remove <span class="govuk-visually-hidden">{{ item | replace(session['application']['reference_number'] + '/nameChange/', '') }} file</span>
               </button>
             </dd>
           </div>
@@ -121,8 +77,6 @@
       </dl>
     </div>
     {% endif %}
-
-
   </div>
 </div>
 {% endblock %}

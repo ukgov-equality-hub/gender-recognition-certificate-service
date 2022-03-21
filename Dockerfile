@@ -3,7 +3,6 @@
 
 FROM python:3.8
 
-
 ENV DOCKERIZE_VERSION v0.6.1
 RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
     && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
@@ -16,7 +15,6 @@ EXPOSE 5000
 RUN mkdir -p /app/
 WORKDIR /app
 
-
 COPY requirements.txt requirements.txt
 RUN pip3 install -r requirements.txt
 
@@ -28,5 +26,6 @@ ADD . .
 RUN npm install
 RUN npm run build
 
+#RUN rm /app/admin -r
 CMD /app/run.sh
 # CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0"]
