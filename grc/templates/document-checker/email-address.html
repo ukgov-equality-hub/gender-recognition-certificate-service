@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block serviceTitle %}Check documents needed to apply for a GRC{% endblock %}
+
+{% block backLink %}<a href="{{url_for('documentChecker.your_documents')}}"
+   class="govuk-back-link">Back</a>{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+    {% if form.errors %}
+    <div class="govuk-error-summary"
+         aria-labelledby="error-summary-title"
+         role="alert"
+         tabindex="-1"
+         data-module="govuk-error-summary">
+      <h2 class="govuk-error-summary__title"
+          id="error-summary-title">
+        There is a problem
+      </h2>
+      <div class="govuk-error-summary__body">
+        <ul class="govuk-list govuk-error-summary__list">
+          {% for error in form.errors %}
+          {% for e in form[error].errors %}
+          <li><a href="#{{error}}">{{ e }}</a></li>
+          {% endfor %}
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    {% endif %}
+
+    <h1 class="govuk-heading-l">
+      Email address
+    </h1>
+
+    <p class="govuk-body">You need to provide an email address to receive your documents list.</p>
+
+    <form method="POST"
+          action="{{url_for('documentChecker.email')}}">
+      {{ form.csrf_token }}
+
+      <div class="govuk-form-group {{ 'govuk-form-group--error' if form.email.errors }}">
+        <label class="govuk-label"
+               for="email">
+          What is your email address?
+        </label>
+        {% if form.email.errors %}
+        <p id="email-issued-error"
+           class="govuk-error-message">
+          <span class="govuk-visually-hidden">Error:</span> Email address is required
+        </p>
+        {% endif %}
+        <input class="govuk-input govuk-input--width-20 {{ 'govuk-input--error' if form.email.errors }}"
+               id="email"
+               name="email"
+               type="email"
+               spellcheck="false"
+               autocomplete="email">
+      </div>
+
+      <button class="govuk-button"
+              data-module="govuk-button">
+        Continue
+      </button>
+    </form>
+
+  </div>
+</div>
+{% endblock %}
