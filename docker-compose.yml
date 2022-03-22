@@ -33,7 +33,7 @@ services:
       dockerfile: admin.Dockerfile
     ports:
       - 5001:5001
-    env_file: .env.admin
+    env_file: .admin.env
     volumes:
       - ./:/admin
     entrypoint: dockerize -wait tcp://grc_db:5432
