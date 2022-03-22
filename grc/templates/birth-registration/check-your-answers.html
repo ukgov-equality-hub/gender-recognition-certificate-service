@@ -76,7 +76,7 @@
             Mother's name
           </dt>
           <dd class="govuk-summary-list__value">
-            {{session["application"]["birthRegistration"]["mothers_first_name"]}} {{session["application"]["birthRegistration"]["mothers_last_name"]}}
+            {{session["application"]["birthRegistration"]["mothers_first_name"]}} {{session["application"]["birthRegistration"]["mothers_last_name"]}}, {{session["application"]["birthRegistration"]["mothers_maiden_name"]}}
           </dd>
           <dd class="govuk-summary-list__actions">
             <a class="govuk-link"
@@ -141,6 +141,22 @@
               Change</a>
           </dd>
         </div>
+
+        {% if session["application"]["birthRegistration"]["adopted"] == "Yes" %}
+        <div class="govuk-summary-list__row">
+          <dt class="govuk-summary-list__key">
+            Adopted in UK
+          </dt>
+          <dd class="govuk-summary-list__value">
+            {{session["application"]["birthRegistration"]["adopted_uk"]}}
+          </dd>
+          <dd class="govuk-summary-list__actions">
+            <a class="govuk-link"
+              href="{{url_for('birthRegistration.adopted')}}">
+              Change</a>
+          </dd>
+        </div>
+        {% endif %}
 
         <div class="govuk-summary-list__row">
           <dt class="govuk-summary-list__key">

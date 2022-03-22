@@ -35,33 +35,6 @@
       <li>evidence of living in your gender for 2 years – no more than 8 documents spread throughout those 2 years</li>
       {% endif %}
 
-
-    </ul>
-
-    <p class="govuk-body govuk-!-margin-bottom-2">Documents that need to be posted are:</p>
-    <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-">
-      {% if session["documentChecker"]["previousNamesCheck"] != 'No' %}
-      <li>your original or a <a class="govuk-link"
-           href="https://www.gov.uk/certifying-a-document"
-           rel="noreferrer noopener"
-           target="_blank">certified copy (opens in new tab)</a> of your full birth certificate</li>
-      {% endif %}
-
-      {#
-      <!-- {{
-          '' | safe
-          if data['uk-check'] != 'No' and data['adopted'] != 'Yes'
-        }}
-      {{
-          '<li>your original or a <a class="govuk-link" href="https://www.gov.uk/certifying-a-document" rel="noreferrer noopener" target="_blank">certified copy (opens in new tab)</a> of your full adoption certificate</li>' | safe
-          if data['uk-check'] != 'No' and data['adopted'] == 'Yes'
-        }}
-      {{
-          '<li>an official confirmation of date of birth and birth gender</li>' | safe
-          if data['uk-check'] == 'No'
-        }} -->
-      #}
-
       {% if session["documentChecker"]["partnershipDetails"]["marriageCivilPartnership"] == 'Neither' %}
       <li>a <a class="govuk-link"
            href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852944/t467-eng.pdf"
@@ -76,7 +49,6 @@
            target="_blank">statutory declaration for applicants who are married or in a
           civil partnership (opens in new tab)</a></li>
       {% endif %}
-
 
       {% if session["documentChecker"]["partnershipDetails"]["marriageCivilPartnership"] == 'Married' and
       session["documentChecker"]["partnershipDetails"]["stayTogether"] == 'Yes' %}
@@ -122,6 +94,31 @@
       {% endif %}
 
 
+    </ul>
+
+    <p class="govuk-body govuk-!-margin-bottom-2">Documents that need to be posted are:</p>
+    <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-">
+      {% if session["documentChecker"]["previousNamesCheck"] != 'No' %}
+      <li>your original or a <a class="govuk-link"
+           href="https://www.gov.uk/certifying-a-document"
+           rel="noreferrer noopener"
+           target="_blank">certified copy (opens in new tab)</a> of your full birth certificate</li>
+      {% endif %}
+
+      {#
+      <!-- {{
+          '' | safe
+          if data['uk-check'] != 'No' and data['adopted'] != 'Yes'
+        }}
+      {{
+          '<li>your original or a <a class="govuk-link" href="https://www.gov.uk/certifying-a-document" rel="noreferrer noopener" target="_blank">certified copy (opens in new tab)</a> of your full adoption certificate</li>' | safe
+          if data['uk-check'] != 'No' and data['adopted'] == 'Yes'
+        }}
+      {{
+          '<li>an official confirmation of date of birth and birth gender</li>' | safe
+          if data['uk-check'] == 'No'
+        }} -->
+      #}
     </ul>
 
     <p class="govuk-body">If your spouse or civil partner does not provide a statutory declaration of consent, then you
