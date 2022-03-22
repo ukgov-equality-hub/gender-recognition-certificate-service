@@ -15,3 +15,6 @@ build/
 node_modules
 instance/config.py
 .env
+.admin.env
+*.py.txt
+.vscode/settings.json

@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+{% from 'application.html' import userapplication %}
+{% block backLink %}{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <h1 class="govuk-heading-l">
+      GRC applications
+    </h1>
+  </div>
+
+  <div class="govuk-grid-column-full">
+    {% if message != "" %}
+    <div class="govuk-inset-text">{{ message }}</div>
+    {% endif %}
+
+    <div class="govuk-tabs" data-module="govuk-tabs">
+      <ul class="govuk-tabs__list" role="tablist">
+        <li class="govuk-tabs__list-item govuk-tabs__list-item--selected" role="presentation">
+          <a class="govuk-tabs__tab" href="#new" id="tab_new" role="tab" aria-controls="new" aria-selected="true" tabindex="0">
+            New applications
+          </a>
+        </li>
+        <li class="govuk-tabs__list-item" role="presentation">
+          <a class="govuk-tabs__tab" href="#downloaded" id="tab_downloaded" role="tab" aria-controls="downloaded" aria-selected="false" tabindex="-1">
+            Downloaded applications
+          </a>
+        </li>
+        <li class="govuk-tabs__list-item" role="presentation">
+          <a class="govuk-tabs__tab" href="#completed" id="tab_complete" role="tab" aria-controls="completed" aria-selected="false" tabindex="-1">
+            Complete applications
+          </a>
+        </li>
+      </ul>
+
+      <div class="govuk-tabs__panel" id="new" role="tabpanel" aria-labelledby="tab_new">
+        <h2 class="govuk-heading-m">New applications</h2>
+        {% if newApplications.count() == 0 %}
+        <div class="govuk-body">
+          <p>There are no new applications to download.</p>
+        </div>
+        {% else %}
+        <table class="govuk-table new-table">
+          <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+              <th scope="col" class="govuk-table__header" aria-sort="none">Applicant name</th>
+              <th scope="col" class="govuk-table__header" aria-sort="none">Submitted</th>
+              <th scope="col" class="govuk-table__header" aria-sort="none"><span class="govuk-visually-hidden">Actions</span></th>
+            </tr>
+          </thead>
+          <tbody class="govuk-table__body">
+            {% for application in newApplications %}
+            <tr class="govuk-table__row">
+              <td class="govuk-table__cell">{{ application.user_input.personalDetails.first_name }} {{ application.user_input.personalDetails.last_name }}</td>
+              <td class="govuk-table__cell">{{ application.updated | format_date }}</td>
+              <td class="govuk-table__cell">
+                <ul class="govuk-summary-list__actions-list" style="text-align: right">
+                  <li class="govuk-summary-list__actions-list-item">
+                    <a href="javascript:;" onclick="document.getElementById('newApplications_{{ loop.index }}').style.display = document.getElementById('newApplications_{{ loop.index }}').style.display == 'none' ? 'table-row' : 'none'" class="new-link">
+                      View
+                    </a>
+                  </li>
+                  <li class="govuk-summary-list__actions-list-item">
+                    <a href="/applications/{{ application.email }}/download" target="_blank" class="new-link">
+                      Download
+                    </a>
+                  </li>
+                </ul>
+              </td>
+            </tr>
+            <tr id="newApplications_{{ loop.index }}" class="govuk-table__row" style="display: none;">
+              <td colspan="3">
+                {{ userapplication(application.user_input) }}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% endif %}
+      </div>
+
+      <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="downloaded" role="tabpanel" aria-labelledby="tab_downloaded">
+        <h2 class="govuk-heading-m">Downloaded applications</h2>
+        {% if downloadedApplications.count() == 0 %}
+        <div class="govuk-body">
+          <p>There are no downloaded applications waiting to be completed.</p>
+        </div>
+        {% else %}
+        <table class="govuk-table downloaded-table">
+          <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+              <th scope="col" class="govuk-table__header" aria-sort="none">Applicant name</th>
+              <th scope="col" class="govuk-table__header" aria-sort="none">Submitted</th>
+              <th scope="col" class="govuk-table__header" aria-sort="descending">Downloaded</th>
+              <th scope="col" class="govuk-table__header" aria-sort="descending">Downloaded by</th>
+              <th scope="col" class="govuk-table__header" aria-sort="none"><span class="govuk-visually-hidden">Actions</span></th>
+            </tr>
+          </thead>
+          <tbody class="govuk-table__body">
+            {% for application in downloadedApplications %}
+            <tr class="govuk-table__row">
+              <td class="govuk-table__cell">{{ application.user_input.personalDetails.first_name }} {{ application.user_input.personalDetails.last_name }}</td>
+              <td class="govuk-table__cell">{{ application.updated | format_date }}</td>
+              <td class="govuk-table__cell">{{ application.downloaded | format_date }}</td>
+              <td class="govuk-table__cell">{{ application.downloadedBy }}</td>
+              <td class="govuk-table__cell">
+                <ul class="govuk-summary-list__actions-list" style="text-align: right">
+                  <li class="govuk-summary-list__actions-list-item">
+                    <a href="javascript:;" onclick="document.getElementById('downloadedApplications_{{ loop.index }}').style.display = document.getElementById('downloadedApplications_{{ loop.index }}').style.display == 'none' ? 'table-row' : 'none'" class="new-link">
+                      View
+                    </a>
+                  </li>
+                  <li class="govuk-summary-list__actions-list-item">
+                    <a href="/applications/{{ application.email }}/download" target="_blank" class="new-link">
+                      Re-download
+                    </a>
+                  </li>
+                  <li class="govuk-summary-list__actions-list-item">
+                    <a href="/applications/{{ application.email }}/completed" target="_blank" class="new-link">
+                      Complete
+                    </a>
+                  </li>
+                </ul>
+              </td>
+            </tr>
+            <tr id="downloadedApplications_{{ loop.index }}" class="govuk-table__row" style="display: none;">
+              <td colspan="5">
+                {{ userapplication(application.user_input) }}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% endif %}
+      </div>
+
+      <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="completed" role="tabpanel" aria-labelledby="tab_complete">
+        <h2 class="govuk-heading-m">Complete applications</h2>
+        {% if completedApplications.count() == 0 %}
+        <div class="govuk-body">
+          <p>Complete applications are automatically removed after 7 days.</p>
+          <p>There are no complete applications to view.</p>
+        </div>
+        {% else %}
+        <table class="govuk-table completed-table">
+          <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+              <th scope="col" class="govuk-table__header" aria-sort="none">Applicant name</th>
+              <th scope="col" class="govuk-table__header" aria-sort="none">Submitted</th>
+              <th scope="col" class="govuk-table__header" aria-sort="descending">Completed</th>
+              <th scope="col" class="govuk-table__header" aria-sort="descending">Completed by</th>
+              <th scope="col" class="govuk-table__header" aria-sort="none"><span class="govuk-visually-hidden">Actions</span></th>
+            </tr>
+          </thead>
+          <tbody class="govuk-table__body">
+            {% for application in completedApplications %}
+            <tr class="govuk-table__row">
+              <td class="govuk-table__cell">{{ application.user_input.personalDetails.first_name }} {{ application.user_input.personalDetails.last_name }}</td>
+              <td class="govuk-table__cell">{{ application.updated | format_date }}</td>
+              <td class="govuk-table__cell">{{ application.completed | format_date }}</td>
+              <td class="govuk-table__cell">{{ application.completedBy }}</td>
+              <td class="govuk-table__cell">
+                <ul class="govuk-summary-list__actions-list" style="text-align: right">
+                  <li class="govuk-summary-list__actions-list-item">
+                    <a href="javascript:;" onclick="document.getElementById('completedApplications_{{ loop.index }}').style.display = document.getElementById('completedApplications_{{ loop.index }}').style.display == 'none' ? 'table-row' : 'none'" class="new-link">
+                      View
+                    </a>
+                  </li>
+                  <li class="govuk-summary-list__actions-list-item">
+                    <a href="/applications/{{ application.email }}/download" target="_blank" class="new-link">
+                      Redownload
+                    </a>
+                  </li>
+                </ul>
+              </td>
+            </tr>
+            <tr id="completedApplications_{{ loop.index }}" class="govuk-table__row" style="display: none;">
+              <td colspan="5">
+                {{ userapplication(application.user_input) }}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

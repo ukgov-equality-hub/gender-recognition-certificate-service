@@ -3,10 +3,8 @@ from flask import (
 )
 from werkzeug.exceptions import abort
 from flask import render_template
-
 from grc.models import ListStatus
 from grc.personal_details.forms import NameForm, PreviousNamesCheck, AddressForm, ContactPreferencesForm, ContactNameForm,ContactDatesForm, HmrcForm, CheckYourAnsewers
-
 from grc.utils.decorators import LoginRequired
 from grc.utils.application_progress import save_progress
 

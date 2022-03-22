@@ -1,7 +1,7 @@
-version: '3.8'
+version: "3.8"
 
 services:
- grc_db:
+  grc_db:
     image: "postgres:13.5"
     container_name: "grc_db"
     ports:
@@ -13,19 +13,33 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
       - POSTGRES_HOST=grc_db
- grc_app:
-  container_name: "grc_app"
-  build:
-   context: .
-  ports:
-  - 5000:5000
-  env_file: .env
-  volumes:
-  - ./:/app
-  entrypoint: dockerize -wait tcp://grc_db:5432
-  depends_on:
-    - grc_db
-  command: /app/run.sh
+  grc_app:
+    container_name: "grc_app"
+    build:
+      context: .
+    ports:
+      - 5000:5000
+    env_file: .env
+    volumes:
+      - ./:/app
+    entrypoint: dockerize -wait tcp://grc_db:5432
+    depends_on:
+      - grc_db
+    command: /app/run.sh
+  grc_admin:
+    container_name: "grc_admin"
+    build:
+      context: .
+      dockerfile: admin.Dockerfile
+    ports:
+      - 5001:5001
+    env_file: .admin.env
+    volumes:
+      - ./:/admin
+    entrypoint: dockerize -wait tcp://grc_db:5432
+    depends_on:
+      - grc_db
+    command: /app/run_admin.sh
 
 volumes:
   dbdata:

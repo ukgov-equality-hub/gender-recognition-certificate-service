@@ -18,6 +18,27 @@ def LoginRequired(f):
         return f(*args, **kwargs)
     return decorated_function
 
+
+def AdminViewerRequired(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'signedIn' not in session or session['signedIn'] is None:
+            return redirect(url_for('admin.index'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+def AdminRequired(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'userType' not in session or session['userType'] is None:
+            return redirect(url_for('admin.index'))
+        elif session['userType'] != 'ADMIN':
+            return redirect(url_for('admin.index'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+
 def Unauthorized(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):

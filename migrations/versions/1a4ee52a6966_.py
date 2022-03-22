@@ -23,7 +23,7 @@ def upgrade():
     sa.Column('reference_number', sa.String(length=8), nullable=False),
     sa.Column('email', sa.String(length=180), nullable=False),
     sa.Column('user_input', postgresql.JSON(astext_type=sa.Text()), nullable=True),
-    sa.Column('status', sa.Enum('STARTED', 'SUBMITTED', 'COMPLETED', 'DELETED', name='application_status'), nullable=True),
+    sa.Column('status', sa.Enum('STARTED', 'SUBMITTED', 'COMPLETED', 'DELETED', 'DOWNLOADED', name='application_status'), nullable=True),
     sa.Column('created', sa.DateTime(), nullable=False),
     sa.Column('updated', sa.DateTime(), nullable=True),
     sa.PrimaryKeyConstraint('id'),

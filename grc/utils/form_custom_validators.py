@@ -1,3 +1,4 @@
+import re
 from flask import session
 from wtforms.validators import DataRequired, ValidationError, StopValidation
 from werkzeug.datastructures import FileStorage
@@ -53,13 +54,34 @@ class StrictRequiredIf(DataRequired):
         elif isinstance(other_field.data, list) and self.other_field_value in other_field.data:
             super(StrictRequiredIf, self).__call__(form, field)
 
+
 def validateSecurityCode(form, field):
     if validate_security_code(session['email'],field.data) is False:
         raise ValidationError('A valid code is required')
 
+
 def validateReferenceNumber(form, field):
     if validate_reference_number(field.data) is False:
         raise ValidationError('Enter a valid reference number')
+
+
+def validateEmailAddress(form, field):
+    from email.utils import parseaddr
+    if not '@' in parseaddr(field.data)[1]:
+        raise ValidationError('Enter a valid email address')
+
+
+def validatePasswordStrength(form, field):
+    def password_check(password):
+        length_error = len(password) < 8
+        digit_error = re.search(r"\d", password) is None
+        uppercase_error = re.search(r"[A-Z]", password) is None
+        lowercase_error = re.search(r"[a-z]", password) is None
+        symbol_error = re.search(r"\W", password) is None
+        return not (length_error or digit_error or uppercase_error or lowercase_error or symbol_error)
+
+    if password_check(field.data) is False:
+        raise ValidationError('Your password needs to contain 8 characters or more and include upper, lower case and special characters')
 
 
 class MultiFileAllowed(object):
