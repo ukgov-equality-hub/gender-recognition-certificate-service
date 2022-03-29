@@ -35,7 +35,7 @@ def index():
                         template_id=current_app.config['NOTIFY_ADMIN_FORGOT_PASSWORD_TEMPLATE_ID'],
                         personalisation={
                             'expires': datetime.strftime(datetime.now() + timedelta(minutes=30), '%d/%m/%Y %H:%M:%S'),
-                            'reset_link': 'http://localhost:5001/password_reset?token=' + jwt.encode({ 'id': user.id, 'email': user.email, 'expires': datetime.strftime(datetime.now() + timedelta(hours=1), '%d/%m/%Y %H:%M:%S') }, current_app.config['SECRET_KEY'], algorithm='HS256')
+                            'reset_link': request.base_url[: request.base_url.rindex('/') + 1]    + 'password_reset?token=' + jwt.encode({ 'id': user.id, 'email': user.email, 'expires': datetime.strftime(datetime.now() + timedelta(hours=1), '%d/%m/%Y %H:%M:%S') }, current_app.config['SECRET_KEY'], algorithm='HS256')
                         }
                     )
                 except Exception as e:

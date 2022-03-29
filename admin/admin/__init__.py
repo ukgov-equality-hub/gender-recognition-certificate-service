@@ -51,7 +51,7 @@ def index():
                                     template_id=current_app.config['NOTIFY_ADMIN_LOGIN_TEMPLATE_ID'],
                                     personalisation={
                                         'expires': datetime.strftime(datetime.now() + timedelta(minutes=30), '%d/%m/%Y %H:%M:%S'),
-                                        'login_link': 'http://localhost:5001?token=' + jwt.encode({ 'id': user.id, 'email': user.email, 'expires': datetime.strftime(datetime.now() + timedelta(hours=1), '%d/%m/%Y %H:%M:%S') }, current_app.config['SECRET_KEY'], algorithm='HS256')
+                                        'login_link': request.base_url + '?token=' + jwt.encode({ 'id': user.id, 'email': user.email, 'expires': datetime.strftime(datetime.now() + timedelta(hours=1), '%d/%m/%Y %H:%M:%S') }, current_app.config['SECRET_KEY'], algorithm='HS256')
                                     }
                                 )
                             except Exception as e:
@@ -128,7 +128,7 @@ def index():
                         template_id=current_app.config['NOTIFY_ADMIN_NEW_USER_TEMPLATE_ID'],
                         personalisation={
                             'temporary_password': temporary_password,
-                            'application_link': 'http://localhost:5001/'
+                            'application_link': request.base_url
                         }
                     )
                 except Exception as e:

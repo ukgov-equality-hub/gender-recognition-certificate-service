@@ -28,7 +28,7 @@ def medicalReports():
 
         for document in request.files.getlist("documents"):
             filename = secure_filename(document.filename)
-            object_name = session["application"]["reference_number"] + '/' + 'medicalReports' + '/' + filename
+            object_name = session["application"]["reference_number"] + '__' + 'medicalReports' + '__' + filename
             upload_fileobj(document, object_name)
             session["application"]["medicalReports"]["files"].append(object_name)
 
@@ -60,7 +60,7 @@ def genderEvidence():
 
         for document in request.files.getlist("documents"):
             filename = secure_filename(document.filename)
-            object_name = session["application"]["reference_number"] + '/' + 'genderEvidence' + '/' + filename
+            object_name = session["application"]["reference_number"] + '__' + 'genderEvidence' + '__' + filename
             upload_fileobj(document, object_name)
             session["application"]["genderEvidence"]["files"].append(object_name)
 
@@ -92,7 +92,7 @@ def nameChange():
 
         for document in request.files.getlist("documents"):
             filename = secure_filename(document.filename)
-            object_name = session["application"]["reference_number"] + '/' + 'nameChange' + '/' + filename
+            object_name = session["application"]["reference_number"] + '__' + 'nameChange' + '__' + filename
             upload_fileobj(document, object_name)
             session["application"]["nameChange"]["files"].append(object_name)
 

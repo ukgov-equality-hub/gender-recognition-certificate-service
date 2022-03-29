@@ -6,6 +6,7 @@ from flask import render_template
 from flask_weasyprint import HTML, render_pdf
 from grc.utils.decorators import AdminViewerRequired
 from grc.models import db, Application, ApplicationStatus
+from grc.utils.s3 import download_object
 
 applications = Blueprint('applications', __name__)
 
@@ -32,6 +33,14 @@ def index():
         downloadedApplications=downloadedApplications,
         completedApplications=completedApplications
     )
+
+
+@applications.route('/applications/<fileName>/downloadfile', methods=['GET'])
+@AdminViewerRequired
+def downloadfile(fileName):
+    data = download_object(fileName) #.replace('__', '/')
+    print(data, flush=True)
+    return redirect(url_for('applications.index', _anchor='downloaded'))
 
 
 @applications.route('/applications/<emailAddress>/download', methods=['GET'])
@@ -80,3 +89,23 @@ def completed(emailAddress):
 
     session['message'] = message
     return redirect(url_for('applications.index', _anchor='completed'))
+
+
+@applications.route('/applications/<emailAddress>/delete', methods=['GET'])
+@AdminViewerRequired
+def delete(emailAddress):
+    message = ""
+
+    application = Application.query.filter_by(
+        email=emailAddress
+    ).first()
+
+    if application is None:
+        message = "An application with that email address cannot be found"
+    else:
+        db.session.delete(application)
+        db.session.commit()
+        message = "application deleted"
+
+    session['message'] = message
+    return redirect(url_for('applications.index', _anchor='new'))

@@ -1,12 +1,12 @@
 {% macro userapplication(application) %}
-<h4 class="govuk-heading-l">Confirmation</h4>
+<h4 class="govuk-heading-m">Confirmation</h4>
 <ul class="govuk-list govuk-list--bullet">
   <li>Have you ever been issued a Gender Recognition Certificate (or it's equivalent) in another country? <strong>{{ application.confirmation.overseasCheck }}</strong></li>
   <li>Do you have official documentation that shows your affirmed gender has been recognised in one of these countries or territories? <strong>{{ application.confirmation.overseasApprovedCheck }}</strong></li>
   <li>I confirm that I meet the requirements for applying for a Gender Recognition Certificate and I consent to the General Register Office contacting me about my application: <strong>{{ application.confirmation.declaration }}</strong></li>
 </ul>
 
-<h4 class="govuk-heading-l">Your details</h4>
+<h4 class="govuk-heading-m">Your details</h4>
 <p class="govuk-body">Your personal details</p>
 <ul class="govuk-list govuk-list--bullet">
   <li>Name on certificate
@@ -99,25 +99,31 @@
   {% endif %}
 </ul>
 
-<h4 class="govuk-heading-l">Your documents</h4>
+<h4 class="govuk-heading-m">Your documents</h4>
 <ul class="govuk-list govuk-list--bullet">
   <li>Your medical reports
     <ul class="govuk-list govuk-list--bullet">
       {% for item in application.medicalReports.files %}
-      <li>{{ item | replace(application.reference_number + '/medicalReports/', '') }}</li>
+      <li><a href="/applications/{{ item | replace('/', '__') }}/downloadfile">{{ item | replace(application.reference_number + '/medicalReports/', '') }}|{{ item }}</a></li>
+
+
+      <img src="https://paas-s3-broker-prod-lon-8c01daaa-52ce-4479-ab3f-28a0c1f20aad.s3.amazonaws.com/0S5YGMFE/medicalReports/BLANK.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAWWG24HP6AKNAGRSI%2F20220325%2Feu-west-2%2Fs3%2Faws4_request&X-Amz-Date=20220325T112654Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=b4576e212b93fd460cac790d9470a56582545d147c78e876896c530dcebbc999">
+
+
+
       {% endfor %}
     </ul>
   </li>
   <li>Evidence of living in your gender
     <ul class="govuk-list govuk-list--bullet">
       {% for item in application.genderEvidence.files %}
-      <li>{{item | replace(application.reference_number + '/genderEvidence/', '') }}</li>
+      <li><a href="/applications/{{ item | replace('/', '__') }}/downloadfile">{{item | replace(application.reference_number + '/genderEvidence/', '') }}|{{ item }}</a></li>
       {% endfor %}
     </ul>
   </li>
 </ul>
 
-<h4 class="govuk-heading-l">Payment details</h4>
+<h4 class="govuk-heading-m">Payment details</h4>
 <ul class="govuk-list govuk-list--bullet">
   <li>Payment method: <strong>{{ application.submitAndPay.method }}</strong></li>
   {% if application.submitAndPay.method == 'Help' %}
@@ -132,7 +138,7 @@
   {% endif %}
 </ul>
 
-<h4 class="govuk-heading-l">Documents to post</h4>
+<h4 class="govuk-heading-m">Documents to post</h4>
 <ul class="govuk-list govuk-list--bullet">
   {% if application.birthRegistration.ukCheck == 'Yes' and application.birthRegistration.adopted != 'Yes' %}
   <li>your original or a certified copy of your full birth certificate</li>

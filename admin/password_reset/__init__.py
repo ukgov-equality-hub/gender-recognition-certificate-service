@@ -46,7 +46,7 @@ def index():
                 login_token = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=['HS256'])
                 if 'id' in login_token and 'email' in login_token and 'expires' in login_token:
                     dt = datetime.strptime(login_token['expires'], '%d/%m/%Y %H:%M:%S')
-                    if abs(datetime.now() - dt).seconds < 0:
+                    if datetime.now() > dt:
                         message = "Your token has expired, please try again"
                     else:
                         user = AdminUser.query.filter_by(

@@ -38,7 +38,9 @@ def create_app(test_config=None):
     # Filters
     @app.template_filter('format_date')
     def format_date_filter(dt):
-        return datetime.strftime(dt, '%d/%m/%Y %H:%M')
+        if dt:
+            return datetime.strftime(dt, '%d/%m/%Y %H:%M')
+        return ''
 
     # Admin page
     from admin.admin import admin

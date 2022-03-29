@@ -128,14 +128,17 @@ def calculate_progress_status_colour(value):
 def mark_complete():
     """ Update DB application JSON field and also session application
     """
-    application_record = Application.query.filter_by(reference_number=session['reference_number'],email=session['email']).first()
+    application_record = Application.query.filter_by(
+        reference_number=session['reference_number'],
+        email=session['email']
+    ).first()
 
     if application_record is not None:
         try:
             if 'application' in session:
                 application_record.user_input = session['application']
                 application_record.updated = datetime.now()
-                application_record.status = ApplicationStatus.COMPLETED
+                application_record.status = ApplicationStatus.SUBMITTED
                 db.session.commit()
                 session['application'] = application_record.data()
         except ValueError:
