@@ -59,6 +59,7 @@
     color: govuk-colour("blue");
     background-color: govuk-colour("white");
     font-weight: bold;
+    text-decoration: none;
 
     &:visited {
       color: govuk-colour("blue");
@@ -68,6 +69,7 @@
     &:hover, &:active {
       color: govuk-colour("blue");
       background-color: #eee;
+      text-decoration: none;
     }
   }
 

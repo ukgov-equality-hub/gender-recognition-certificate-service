@@ -5,6 +5,7 @@ from flask_uuid import FlaskUUID
 from datetime import datetime, timedelta
 from grc.models import db
 from grc.config import Config, DevConfig, TestConfig
+from grc.utils.s3 import download_object_data
 
 migrate = Migrate()
 flask_uuid = FlaskUUID()
@@ -38,7 +39,47 @@ def create_app(test_config=None):
     # Filters
     @app.template_filter('format_date')
     def format_date_filter(dt):
-        return datetime.strftime(dt, '%d/%m/%Y %H:%M')
+        if dt:
+            return datetime.strftime(dt, '%d/%m/%Y %H:%M')
+        return ''
+
+    @app.template_filter('image_data')
+    def image_data_filter(image_name):
+        if image_name:
+            data, width, height = download_object_data(image_name)
+            return data
+        return ''
+
+    @app.template_filter('image_width')
+    def image_width_filter(image_name):
+        if image_name:
+            data, width, height = download_object_data(image_name)
+            width, height = check_image_sizes(width, height)
+
+            return width
+        return ''
+
+    @app.template_filter('image_height')
+    def image_height_filter(image_name):
+        if image_name:
+            data, width, height = download_object_data(image_name)
+            width, height = check_image_sizes(width, height)
+
+            return height
+        return ''
+
+    def check_image_sizes(width, height):
+
+        # Check sizes...595 x 842 pt
+        ratio = 1.
+        if width > 550:
+            ratio = 550 / width
+        elif height > 800:
+            ratio = 800 / height
+        width *= ratio
+        height *= ratio
+        return int(width), int(height)
+
 
     # Admin page
     from admin.admin import admin

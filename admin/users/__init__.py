@@ -44,7 +44,7 @@ def index():
                         template_id=current_app.config['NOTIFY_ADMIN_NEW_USER_TEMPLATE_ID'],
                         personalisation={
                             'temporary_password': temporary_password,
-                            'application_link': 'http://localhost:5001/'
+                            'application_link': request.base_url
                         }
                     )
                 except Exception as e:
@@ -72,9 +72,12 @@ def index():
 def delete(emailAddress):
     message = ""
 
-    users = db.session.query(AdminUser).count()
+    users = AdminUser.query.filter_by(
+        userType='ADMIN'
+    ).count()
+
     if users == 1:
-        message = "Cannot delete the last user in the database"
+        message = "Cannot delete the last admin user in the database"
     else:
         user = AdminUser.query.filter_by(
             email=emailAddress
@@ -116,7 +119,7 @@ def resend(emailAddress):
                 template_id=current_app.config['NOTIFY_ADMIN_NEW_USER_TEMPLATE_ID'],
                 personalisation={
                     'temporary_password': temporary_password,
-                    'application_link': 'http://localhost:5001/'
+                    'application_link': request.base_url
                 }
             )
         except Exception as e:

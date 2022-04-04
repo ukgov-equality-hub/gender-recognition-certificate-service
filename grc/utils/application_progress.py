@@ -352,7 +352,7 @@ def mark_complete():
             if "application" in session:
                 application_record.user_input = session["application"]
                 application_record.updated = datetime.now()
-                application_record.status = ApplicationStatus.COMPLETED
+                application_record.status = ApplicationStatus.SUBMITTED
                 db.session.commit()
                 session["application"] = application_record.data()
         except ValueError:
