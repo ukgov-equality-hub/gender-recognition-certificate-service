@@ -1,5 +1,5 @@
 {% macro userapplication(application) %}
-<h4 class="govuk-heading-m">Confirmation</h4>
+<h4 class="govuk-heading-m" style="margin-top: 20px;">Confirmation</h4>
 <ul class="govuk-list govuk-list--bullet">
   <li>Have you ever been issued a Gender Recognition Certificate (or it's equivalent) in another country? <strong>{{ application.confirmation.overseasCheck }}</strong></li>
   <li>Do you have official documentation that shows your affirmed gender has been recognised in one of these countries or territories? <strong>{{ application.confirmation.overseasApprovedCheck }}</strong></li>
@@ -104,20 +104,20 @@
   <li>Your medical reports
     <ul class="govuk-list govuk-list--bullet">
       {% for item in application.medicalReports.files %}
-      <li><a href="/applications/{{ item | replace('/', '__') }}/downloadfile">{{ item | replace(application.reference_number + '/medicalReports/', '') }}|{{ item }}</a></li>
-
-
-      <img src="https://paas-s3-broker-prod-lon-8c01daaa-52ce-4479-ab3f-28a0c1f20aad.s3.amazonaws.com/0S5YGMFE/medicalReports/BLANK.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAWWG24HP6AKNAGRSI%2F20220325%2Feu-west-2%2Fs3%2Faws4_request&X-Amz-Date=20220325T112654Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=b4576e212b93fd460cac790d9470a56582545d147c78e876896c530dcebbc999">
-
-
-
+      <li><a href="/applications/{{ item }}/downloadfile" target="_blank">{{ item | replace(application.reference_number + '__medicalReports__', '') }}</a></li>
+      {% if '.pdf' not in item | lower %}
+      <img src="{{ item | image_data }}" width="{{ item | image_width }}" height="{{ item | image_height }}" style="max-width: 90%;">
+      {% endif %}
       {% endfor %}
     </ul>
   </li>
   <li>Evidence of living in your gender
     <ul class="govuk-list govuk-list--bullet">
       {% for item in application.genderEvidence.files %}
-      <li><a href="/applications/{{ item | replace('/', '__') }}/downloadfile">{{item | replace(application.reference_number + '/genderEvidence/', '') }}|{{ item }}</a></li>
+      <li><a href="https://geo-gender-recognition-certificate-admin.london.cloudapps.digital/applications/{{ item }}/downloadfile" target="_blank">{{item | replace(application.reference_number + '__genderEvidence__', '') }}</a></li>
+      {% if '.pdf' not in item | lower %}
+      <img src="{{ item | image_data }}" width="{{ item | image_width }}" height="{{ item | image_height }}" style="max-width: 90%;">
+      {% endif %}
       {% endfor %}
     </ul>
   </li>

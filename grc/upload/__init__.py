@@ -1,5 +1,5 @@
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, url_for, session, send_file
+    Blueprint, flash, g, redirect, render_template, current_app, request, url_for, session, send_file
 )
 from werkzeug.exceptions import abort
 from flask import render_template
@@ -12,13 +12,16 @@ from grc.utils.decorators import LoginRequired
 from grc.utils.application_progress import save_progress
 from grc.utils.s3 import upload_fileobj, create_presigned_url, delete_object
 
+import boto3
+#boto3.set_stream_logger('')
+from botocore.client import Config
+
 
 upload = Blueprint('upload', __name__)
 
 @upload.route('/upload/medical-reports', methods=['GET', 'POST'])
 @LoginRequired
 def medicalReports():
-
     form = UploadForm()
     deleteform = DeleteForm()
 
@@ -34,7 +37,6 @@ def medicalReports():
 
         # set progress status
         session["application"]["medicalReports"]["progress"] = ListStatus.COMPLETED.name
-
         session["application"] = save_progress()
 
         return redirect(url_for('taskList.index'))
@@ -50,7 +52,6 @@ def medicalReports():
 @upload.route('/upload/gender-evidence', methods=['GET', 'POST'])
 @LoginRequired
 def genderEvidence():
-
     form = UploadForm()
     deleteform = DeleteForm()
 
@@ -66,7 +67,6 @@ def genderEvidence():
 
         # set progress status
         session["application"]["genderEvidence"]["progress"] = ListStatus.COMPLETED.name
-
         session["application"] = save_progress()
 
         return redirect(url_for('taskList.index'))
@@ -82,7 +82,6 @@ def genderEvidence():
 @upload.route('/upload/name-change', methods=['GET', 'POST'])
 @LoginRequired
 def nameChange():
-
     form = UploadForm()
     deleteform = DeleteForm()
 
@@ -98,7 +97,6 @@ def nameChange():
 
         # set progress status
         session["application"]["nameChange"]["progress"] = ListStatus.COMPLETED.name
-
         session["application"] = save_progress()
 
         return redirect(url_for('taskList.index'))

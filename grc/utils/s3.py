@@ -1,116 +1,134 @@
 import io
-import sys
+import base64
 import logging
 import boto3
-boto3.set_stream_logger('')
+#boto3.set_stream_logger('')
 from botocore.exceptions import ClientError
 from flask import current_app
 from botocore.client import Config
+from werkzeug.utils import secure_filename
+
 
 def upload_fileobj(file, object_name):
-    s3 = boto3.client('s3', region_name=current_app.config['AWS_REGION'])  #, config=Config(signature_version='s3v4'))
+    s3 = boto3.client('s3', region_name=current_app.config['AWS_REGION'], config=Config(signature_version='s3v4'))
     try:
-        return s3.upload_fileobj(file, current_app.config['BUCKET_NAME'], object_name) #, ExtraArgs={ 'ACL': 'public-read' }) Access Denied error
+        file.seek(0)
+        s3.upload_fileobj(file, current_app.config['BUCKET_NAME'], object_name)  #, ExtraArgs={ 'ACL': 'public-read' })  # Access Denied error
+
     except ClientError as e:
         logging.error(e)
         print(e, flush=True)
         return False
 
+    return True
 
-def create_presigned_url(object_name, expiration=3600):
-    s3 = boto3.client('s3', region_name=current_app.config['AWS_REGION'])  #, config=Config(signature_version='s3v4'))
+
+def create_presigned_url(object_name, expiration=36000):
+    s3 = boto3.client('s3', region_name=current_app.config['AWS_REGION'], config=Config(signature_version='s3v4'))
 
     try:
-        url = s3.generate_presigned_url('get_object', Params={
-                                                        'Bucket': current_app.config['BUCKET_NAME'],
-                                                        'Key': object_name
-                                                    }, ExpiresIn=expiration)
+
+        '''s3_ = boto3.client(
+            's3',
+            #aws_access_key_id=current_app.config['AWS_ACCESS_KEY_ID'],
+            #aws_secret_access_key=current_app.config['AWS_SECRET_ACCESS_KEY'],
+            region_name=current_app.config['AWS_REGION'],
+            #endpoint_url='https://s3.' + current_app.config['AWS_REGION'] + '.amazonaws.com',
+            #config=Config('s3={'addressing_style': 'virtual'},' signature_version='s3v4')
+            config=Config(signature_version='s3v4')
+        )
+
+        #data = s3.get_object(Bucket=current_app.config['BUCKET_NAME'], Key=object_name)
+        #print('data', flush=True)
+        #print(data, flush=True)
+
+        #print('File size', flush=True)
+        #print(os.path.getsize('./' + object_name), flush=True)
+
+        print('Bucket: %s' % current_app.config['BUCKET_NAME'], flush=True)
+        print('Key: %s' % object_name, flush=True)
+        print('ExpiresIn: %s' % str(expiration), flush=True)'''
+
+        url = s3.generate_presigned_url(ClientMethod='get_object', Params={'Bucket': current_app.config['BUCKET_NAME'], 'Key': object_name}, ExpiresIn=expiration, HttpMethod='GET')
+
     except ClientError as e:
         logging.error(e)
         print(e, flush=True)
         return None
 
-    # The response contains the presigned URL
     return url
 
 
+def download_object_data(object_name):
+    data = None
+    width = 0
+    height = 0
+
+    try:
+        file_type = ''
+        if '.' in object_name:
+            file_type = object_name[object_name.rindex('.') + 1:]
+        file_type = file_type.lower()
+
+        if file_type == 'jpeg' or file_type == 'jpg' or file_type == 'png' or file_type == 'tif' or file_type == 'bmp':
+            byte_value = download_object(object_name)
+            if byte_value is not None:
+                from PIL import Image
+                img = Image.open(byte_value)
+                width, height = img.size
+
+                byte_value = byte_value.getvalue()
+
+                if file_type == 'tif' or file_type == 'bmp':
+                    img.thumbnail(img.size)
+                    img.save(byte_value, 'JPEG', quality=100)
+                    file_type = 'jpeg'
+
+                    #with io.BytesIO() as file_data:
+                    #    byte_value.save(file_data, format='JPEG')
+                    #    byte_value = file_data.getvalue()
+
+                byte_base64 = base64.b64encode(byte_value)
+                data = byte_base64.decode('utf-8')
+                if data:
+                    if file_type == 'jpg':
+                        file_type == 'jpeg'
+                    data = 'data:image/' + file_type + ';base64, ' + data
+
+    except ClientError as e:
+        logging.error(e)
+        print(e, flush=True)
+
+    return data, width, height
+
+
 def download_object(object_name):
-    s3 = boto3.client('s3', region_name=current_app.config['AWS_REGION'])  #, config=Config(signature_version='s3v4'))
+    s3 = boto3.client('s3', region_name=current_app.config['AWS_REGION'], config=Config(signature_version='s3v4'))
 
     print('Downloading', flush=True)
     print(object_name, flush=True)
     data = None
     try:
-        #object_name = object_name.replace('/', '__')
-        url = create_presigned_url('I15AED34/genderEvidence/Screenshot_2022-01-18_at_11.12.35.png')
-        print('presigned_url: %s' % url, flush=True)
+        bytes_buffer = io.BytesIO()
+        s3.download_fileobj(Bucket=current_app.config['BUCKET_NAME'], Key=object_name, Fileobj=bytes_buffer)
+        data = bytes_buffer  #.getvalue()
 
-        #contents = request.urlopen(url).read()
-        #print(contents, flush=True)
-
-
-
-
-
-        # 403 permissions error...
-        #data = s3.get_object(Bucket=current_app.config['BUCKET_NAME'], Key=object_name)
-        #data = data['Body'].read()
-        #print('data', flush=True)
-        #print(data, flush=True)
-
-        '''outfile = io.BytesIO()
-        s3.download_fileobj(Bucket=current_app.config['BUCKET_NAME'], Key=object_name, Fileobj=outfile)
-        outfile.seek(0)
-        print('outfile', flush=True)
-        print(outfile, flush=True)
-        print(sys.getsizeof(outfile), flush=True)'''
-
-        #for key in s3.list_objects(Bucket=current_app.config['BUCKET_NAME'])['Contents']:
-        #    print(key['Key'])
-
-
-
-        #my_bucket = s3.Bucket(current_app.config['BUCKET_NAME'])
-        #for my_bucket_object in my_bucket.objects.all():
-        #    print(my_bucket_object, flush=True)
-        '''
-        import boto3
-        s3 = boto3.resource('s3')
-        bucket = s3.Bucket('mybucket')
-
-        with open('filename', 'wb') as data:
-            bucket.download_fileobj('mykey', data)
-
-
-
-
-        import boto3
-        s3 = boto3.client('s3')
-
-        with open('filename', 'rb') as data:
-            s3.upload_fileobj(data, 'mybucket', 'mykey')
-        '''
-
-
-
-
-
-
-        #data = s3.download_file(Bucket=current_app.config['BUCKET_NAME'], Key=object_name, Filename='/Users/alistairknight/Desktop/' + object_name.replace('/', '__'))
     except ClientError as e:
         logging.error(e)
         print(e, flush=True)
         return None
 
-    # The response
     return data
 
 
 def delete_object(object_name):
-    s3 = boto3.client('s3', region_name=current_app.config['AWS_REGION'])  #, config=Config(signature_version='s3v4'))
+    s3 = boto3.client('s3', region_name=current_app.config['AWS_REGION'], config=Config(signature_version='s3v4'))
     try:
         return s3.delete_object(Bucket=current_app.config['BUCKET_NAME'], Key=object_name)
+
     except ClientError as e:
         logging.error(e)
         print(e, flush=True)
         return False
+
+    return True

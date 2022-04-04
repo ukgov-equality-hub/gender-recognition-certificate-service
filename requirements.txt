@@ -2,8 +2,8 @@ alembic==1.7.5
 attrs==21.2.0
 Babel==2.9.1
 blinker==1.4
-boto3==1.20.41
-botocore==1.23.41
+boto3==1.21.27
+botocore==1.24.28
 certifi==2021.10.8
 charset-normalizer==2.0.10
 click==8.0.3
@@ -52,4 +52,5 @@ urllib3==1.26.8
 waitress==2.0.0
 Werkzeug==2.0.2
 WTForms==3.0.0
-Flask-WeasyPrint==0.6
+xhtml2pdf==0.2.6
+Pillow==9.0.1

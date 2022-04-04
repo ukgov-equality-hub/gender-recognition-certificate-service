@@ -1,9 +1,8 @@
 from datetime import datetime
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, url_for, current_app, session
+    Blueprint, flash, g, redirect, render_template, request, url_for, current_app, session, make_response
 )
 from flask import render_template
-from flask_weasyprint import HTML, render_pdf
 from grc.utils.decorators import AdminViewerRequired
 from grc.models import db, Application, ApplicationStatus
 from grc.utils.s3 import download_object
@@ -35,21 +34,34 @@ def index():
     )
 
 
-@applications.route('/applications/<fileName>/downloadfile', methods=['GET'])
+@applications.route('/applications/<file_name>/downloadfile', methods=['GET'])
 @AdminViewerRequired
-def downloadfile(fileName):
-    data = download_object(fileName) #.replace('__', '/')
-    print(data, flush=True)
-    return redirect(url_for('applications.index', _anchor='downloaded'))
+def downloadfile(file_name):
+    data = download_object(file_name)
+
+    file_type = 'application/octet-stream'
+    if '.' in file_name:
+        file_type = file_name[file_name.rindex('.') + 1:]
+        if file_type == 'pdf':
+            file_type = 'application/pdf'
+        elif file_type == 'jpg':
+            file_type == 'image/jpeg'
+        else:
+            file_type = 'image/' + file_type
+
+    response = make_response(data.getvalue())
+    response.headers.set('Content-Type', file_type)
+    # response.headers.set('Content-Disposition', 'attachment', file_name=file_name)
+    return response
 
 
-@applications.route('/applications/<emailAddress>/download', methods=['GET'])
+@applications.route('/applications/<email_address>/download', methods=['GET'])
 @AdminViewerRequired
-def download(emailAddress):
+def download(email_address):
     message = ""
 
     application = Application.query.filter_by(
-        email=emailAddress
+        email=email_address
     ).first()
 
     if application is None:
@@ -62,20 +74,34 @@ def download(emailAddress):
         message = "application updated"
 
         html = render_template('download.html', application=application)
-        redirect(url_for('applications.index', _anchor='downloaded'))
-        return render_pdf(HTML(string=html))
+        #import pdfkit
+        #from flask_weasyprint import HTML, render_pdf
+        #redirect(url_for('applications.index', _anchor='downloaded'))
+        #return render_pdf(HTML(string=html))  # pdfkit.from_string(html)
+
+        import io
+        from xhtml2pdf import pisa
+        data = io.BytesIO()
+        pisa_status = pisa.CreatePDF(html, dest=data)
+        data.seek(0)
+        #return data.read()
+
+        response = make_response(data.read())
+        response.headers.set('Content-Type', 'application/pdf')
+        response.headers.set('Content-Disposition', 'attachment', file_name=application.reference_number + '.pdf')
+        return response
 
     session['message'] = message
     return redirect(url_for('applications.index', _anchor='downloaded'))
 
 
-@applications.route('/applications/<emailAddress>/completed', methods=['GET'])
+@applications.route('/applications/<email_address>/completed', methods=['GET'])
 @AdminViewerRequired
-def completed(emailAddress):
+def completed(email_address):
     message = ""
 
     application = Application.query.filter_by(
-        email=emailAddress
+        email=email_address
     ).first()
 
     if application is None:
@@ -91,13 +117,13 @@ def completed(emailAddress):
     return redirect(url_for('applications.index', _anchor='completed'))
 
 
-@applications.route('/applications/<emailAddress>/delete', methods=['GET'])
+@applications.route('/applications/<email_address>/delete', methods=['GET'])
 @AdminViewerRequired
-def delete(emailAddress):
+def delete(email_address):
     message = ""
 
     application = Application.query.filter_by(
-        email=emailAddress
+        email=email_address
     ).first()
 
     if application is None:
