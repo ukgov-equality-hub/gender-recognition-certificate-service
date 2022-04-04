@@ -69,6 +69,7 @@ def download_object_data(object_name):
         if '.' in object_name:
             file_type = object_name[object_name.rindex('.') + 1:]
         file_type = file_type.lower()
+        #return 'data:image/' + file_type + ';base64, ', 0, 0
 
         if file_type == 'jpeg' or file_type == 'jpg' or file_type == 'png' or file_type == 'tif' or file_type == 'bmp':
             byte_value = download_object(object_name)
@@ -80,9 +81,12 @@ def download_object_data(object_name):
                 byte_value = byte_value.getvalue()
 
                 if file_type == 'tif' or file_type == 'bmp':
-                    img.thumbnail(img.size)
-                    img.save(byte_value, 'JPEG', quality=100)
-                    file_type = 'jpeg'
+                    try:
+                        img.thumbnail(img.size)
+                        img.save(byte_value, 'JPEG', quality=100)
+                        file_type = 'jpeg'
+                    except Exception as e:
+                        print(e, flush=True)
 
                     #with io.BytesIO() as file_data:
                     #    byte_value.save(file_data, format='JPEG')
@@ -124,7 +128,7 @@ def download_object(object_name):
 def delete_object(object_name):
     s3 = boto3.client('s3', region_name=current_app.config['AWS_REGION'], config=Config(signature_version='s3v4'))
     try:
-        return s3.delete_object(Bucket=current_app.config['BUCKET_NAME'], Key=object_name)
+        s3.delete_object(Bucket=current_app.config['BUCKET_NAME'], Key=object_name)
 
     except ClientError as e:
         logging.error(e)
