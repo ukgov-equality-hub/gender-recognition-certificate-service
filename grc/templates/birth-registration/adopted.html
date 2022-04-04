@@ -38,17 +38,13 @@
         <fieldset class="govuk-fieldset">
           <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
             <h1 class="govuk-fieldset__heading">
-              Were you adopted in the United Kingdom?
+              Were you adopted?
             </h1>
           </legend>
-          <div id="uk-check-hint"
-               class="govuk-hint">
-            This information will help us locate your original birth record.
-          </div>
           {% if form.check.errors %}
           <p id="check-issued-error"
              class="govuk-error-message">
-            <span class="govuk-visually-hidden">Error:</span> Select if your were you adopted in the United Kingdom
+            <span class="govuk-visually-hidden">Error:</span> Select if your were you adopted
           </p>
           {% endif %}
           <div class="govuk-radios"
@@ -62,11 +58,66 @@
                      {{ 'checked'
                      if
                      session['application']['birthRegistration']['adopted']=="Yes"
-                     }}>
+                     }}
+                     data-aria-controls="conditional-check">
               <label class="govuk-label govuk-radios__label"
                      for="check">
                 Yes
               </label>
+            </div>
+            <div class="govuk-radios__conditional govuk-radios__conditional--hidden"
+                 id="conditional-check">
+              <div class="govuk-form-group">
+                <fieldset class="govuk-fieldset">
+                  <legend class="govuk-fieldset__legend">
+                    Were you adopted in the United Kingdom?
+                  </legend>
+                  <div id="adopted_uk-hint"
+                       class="govuk-hint">
+                    This information will help us locate your original birth record.
+                  </div>
+                  {% if form.adopted_uk.errors %}
+                  <p id="adopted_uk-issued-error"
+                     class="govuk-error-message">
+                    <span class="govuk-visually-hidden">Error:</span> Select if your were you adopted in the United
+                    Kingdom
+                  </p>
+                  {% endif %}
+                  <div class="govuk-radios"
+                       data-module="govuk-radios">
+                    <div class="govuk-radios__item">
+                      <input class="govuk-radios__input"
+                             id="adopted_uk_yes"
+                             name="adopted_uk"
+                             type="radio"
+                             value="Yes"
+                             {{ 'checked'
+                             if
+                             session['application']['birthRegistration']['adopted_uk']=="Yes"
+                             }}>
+                      <label class="govuk-label govuk-radios__label"
+                             for="check">
+                        Yes
+                      </label>
+                    </div>
+                    <div class="govuk-radios__item">
+                      <input class="govuk-radios__input"
+                             id="adopted_uk_no"
+                             name="adopted_uk"
+                             type="radio"
+                             value="No"
+                             {{ 'checked'
+                             if
+                             session['application']['birthRegistration']['adopted_uk']=="No"
+                             }}>
+                      <label class="govuk-label govuk-radios__label"
+                             for="check-2">
+                        No
+                      </label>
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
             </div>
             <div class="govuk-radios__item">
               <input class="govuk-radios__input"
@@ -81,22 +132,6 @@
               <label class="govuk-label govuk-radios__label"
                      for="check-2">
                 No
-              </label>
-            </div>
-            <div class="govuk-radios__divider">or</div>
-            <div class="govuk-radios__item">
-              <input class="govuk-radios__input"
-                     id="check-3"
-                     name="check"
-                     type="radio"
-                     value="I don't know"
-                     {{ 'checked'
-                     if
-                     session['application']['birthRegistration']['adopted']=="I don't know"
-                     }}>
-              <label class="govuk-label govuk-radios__label"
-                     for="check-3">
-                     I don't know
               </label>
             </div>
           </div>

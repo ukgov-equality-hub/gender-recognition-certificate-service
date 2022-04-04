@@ -88,6 +88,29 @@
                     if form.last_name.data is not none
                   }}">
           </div>
+
+          <div class="govuk-form-group">
+            <label class="govuk-label"
+                   for="maiden_name">
+              Your mother's maiden name</span>
+            </label>
+            {% if form.maiden_name.errors %}
+            <p id="maiden_name-issued-error"
+               class="govuk-error-message">
+              <span class="govuk-visually-hidden">Error:</span> Mother's maiden name is required is required
+            </p>
+            {% endif %}
+            <input class="govuk-input govuk-!-width-three-quarters
+                  {{ 'govuk-input--error' if form.maiden_name.errors }}"
+                   id="maiden_name"
+                   name="maiden_name"
+                   type="text"
+                   autocomplete="off"
+                   value="{{
+                    form.maiden_name.data
+                    if form.maiden_name.data is not none
+                  }}">
+          </div>
         </fieldset>
       </div>
 

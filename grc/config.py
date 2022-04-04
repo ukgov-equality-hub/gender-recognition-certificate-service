@@ -9,15 +9,36 @@ class Config:
     SQLALCHEMY_DATABASE_URI = os.environ.get("SQLALCHEMY_DATABASE_URI")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     DEFAULT_ADMIN_USER = os.environ.get("DEFAULT_ADMIN_USER")
-    LOG_LEVEL = logging.getLevelName(os.environ.get("LOG_LEVEL")) if "LOG_LEVEL" in os.environ else logging.INFO
-    NOTIFY_OVERRIDE_EMAIL = os.environ.get("NOTIFY_OVERRIDE_EMAIL") if "NOTIFY_OVERRIDE_EMAIL" in os.environ else False
+    LOG_LEVEL = (
+        logging.getLevelName(os.environ.get("LOG_LEVEL"))
+        if "LOG_LEVEL" in os.environ
+        else logging.INFO
+    )
+    NOTIFY_OVERRIDE_EMAIL = (
+        os.environ.get("NOTIFY_OVERRIDE_EMAIL")
+        if "NOTIFY_OVERRIDE_EMAIL" in os.environ
+        else False
+    )
     NOTIFY_API = os.environ.get("NOTIFY_API")
-    NOTIFY_SECURITY_CODE_EMAIL_TEMPLATE_ID = os.environ.get("NOTIFY_SECURITY_CODE_EMAIL_TEMPLATE_ID")
-    NOTIFY_UNFINISHED_APPLICATION_EMAIL_TEMPLATE_ID = os.environ.get("NOTIFY_UNFINISHED_APPLICATION_EMAIL_TEMPLATE_ID")
-    NOTIFY_COMPLETED_APPLICATION_EMAIL_TEMPLATE_ID = os.environ.get("NOTIFY_COMPLETED_APPLICATION_EMAIL_TEMPLATE_ID")
+    NOTIFY_SECURITY_CODE_EMAIL_TEMPLATE_ID = os.environ.get(
+        "NOTIFY_SECURITY_CODE_EMAIL_TEMPLATE_ID"
+    )
+    NOTIFY_UNFINISHED_APPLICATION_EMAIL_TEMPLATE_ID = os.environ.get(
+        "NOTIFY_UNFINISHED_APPLICATION_EMAIL_TEMPLATE_ID"
+    )
+    NOTIFY_COMPLETED_APPLICATION_EMAIL_TEMPLATE_ID = os.environ.get(
+        "NOTIFY_COMPLETED_APPLICATION_EMAIL_TEMPLATE_ID"
+    )
     NOTIFY_ADMIN_LOGIN_TEMPLATE_ID = os.environ.get("NOTIFY_ADMIN_LOGIN_TEMPLATE_ID")
-    NOTIFY_ADMIN_FORGOT_PASSWORD_TEMPLATE_ID = os.environ.get("NOTIFY_ADMIN_FORGOT_PASSWORD_TEMPLATE_ID")
-    NOTIFY_ADMIN_NEW_USER_TEMPLATE_ID = os.environ.get("NOTIFY_ADMIN_NEW_USER_TEMPLATE_ID")
+    NOTIFY_ADMIN_FORGOT_PASSWORD_TEMPLATE_ID = os.environ.get(
+        "NOTIFY_ADMIN_FORGOT_PASSWORD_TEMPLATE_ID"
+    )
+    NOTIFY_ADMIN_NEW_USER_TEMPLATE_ID = os.environ.get(
+        "NOTIFY_ADMIN_NEW_USER_TEMPLATE_ID"
+    )
+    NOTIFY_DOCUMENT_CHECKER_LIST_TEMPLATE_ID = os.environ.get(
+        "NOTIFY_DOCUMENT_CHECKER_LIST_TEMPLATE_ID"
+    )
     GOVUK_PAY_API = os.environ.get("GOVUK_PAY_API")
     GOVUK_PAY_API_KEY = os.environ.get("GOVUK_PAY_API_KEY")
     SECRET_KEY = os.environ.get("SECRET_KEY")
@@ -35,8 +56,12 @@ class Config:
 class DevConfig(Config):
     DEBUG = True
     ENVIRONMENT = "DEVELOPMENT"
-    LOG_LEVEL = logging.getLevelName(os.environ.get("LOG_LEVEL")) if "LOG_LEVEL" in os.environ else logging.DEBUG
-    #SERVER_NAME = "localhost:5000"
+    LOG_LEVEL = (
+        logging.getLevelName(os.environ.get("LOG_LEVEL"))
+        if "LOG_LEVEL" in os.environ
+        else logging.DEBUG
+    )
+    # SERVER_NAME = "localhost:5000"
     SESSION_COOKIE_DOMAIN = False
     SESSION_COOKIE_SECURE = False
 

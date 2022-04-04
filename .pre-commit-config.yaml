@@ -1,15 +1,16 @@
 repos:
--   repo: https://github.com/pre-commit/pre-commit-hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v2.1.0
     hooks:
-    - id: trailing-whitespace
-    - id: end-of-file-fixer
--   repo: https://github.com/ambv/black
-    rev: 19.10b0
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+  - repo: https://github.com/ambv/black
+    rev: 22.1.0
     hooks:
-    - id: black
-      language_version: python3
--   repo: https://gitlab.com/pycqa/flake8
-    rev: 3.8.1
-    hooks:
-    -   id: flake8
+      - id: black
+        language_version: python3
+  #TODO: Fix and enable
+  # - repo: https://gitlab.com/pycqa/flake8
+  #   rev: 4.0.1
+  #   hooks:
+  #     - id: flake8

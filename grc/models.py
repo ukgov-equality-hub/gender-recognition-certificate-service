@@ -27,7 +27,10 @@ class Application(db.Model):
     reference_number = db.Column(db.String(8), unique=True, nullable=False)
     email = db.Column(db.String(180), unique=True, nullable=False)
     user_input = db.Column(JSON)
-    status = db.Column(db.Enum(ApplicationStatus, name="application_status"), default=ApplicationStatus.STARTED)
+    status = db.Column(
+        db.Enum(ApplicationStatus, name="application_status"),
+        default=ApplicationStatus.STARTED,
+    )
     created = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     updated = db.Column(db.DateTime)
     downloaded = db.Column(db.DateTime)
@@ -47,36 +50,44 @@ class Application(db.Model):
                     "overseasApprovedCheck": "None",
                     "declaration": "None",
                     "progress": ListStatus.IN_PROGRESS.name,
-                    "step": "startApplication.reference"
+                    "step": "startApplication.reference",
                 },
                 "personalDetails": {
                     "progress": ListStatus.NOT_STARTED.name,
-                    "step": "personalDetails.index"
+                    "step": "personalDetails.index",
                 },
                 "birthRegistration": {
                     "progress": ListStatus.NOT_STARTED.name,
-                    "step": "birthRegistration.index"
+                    "step": "birthRegistration.index",
                 },
                 "partnershipDetails": {
                     "progress": ListStatus.NOT_STARTED.name,
-                    "step": "partnershipDetails.index"
+                    "step": "partnershipDetails.index",
                 },
                 "medicalReports": {
                     "progress": ListStatus.CANNOT_START_YET.name,
-                    "step": "medicalReports.index"
+                    "step": "upload.medicalReports",
                 },
                 "genderEvidence": {
                     "progress": ListStatus.CANNOT_START_YET.name,
-                    "step": "genderEvidence.index"
+                    "step": "upload.genderEvidence",
                 },
                 "nameChange": {
                     "progress": ListStatus.CANNOT_START_YET.name,
-                    "step": "nameChange.index"
+                    "step": "upload.nameChange",
+                },
+                "marriageDocuments": {
+                    "progress": ListStatus.CANNOT_START_YET.name,
+                    "step": "upload.marriageDocuments",
+                },
+                "statutoryDeclarations": {
+                    "progress": ListStatus.CANNOT_START_YET.name,
+                    "step": "upload.statutoryDeclarations",
                 },
                 "submitAndPay": {
                     "progress": ListStatus.CANNOT_START_YET.name,
-                    "step": "submitAndPay.index"
-                }
+                    "step": "submitAndPay.index",
+                },
             }
 
 

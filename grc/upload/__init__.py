@@ -17,9 +17,10 @@ import boto3
 from botocore.client import Config
 
 
-upload = Blueprint('upload', __name__)
+upload = Blueprint("upload", __name__)
 
-@upload.route('/upload/medical-reports', methods=['GET', 'POST'])
+
+@upload.route("/upload/medical-reports", methods=["GET", "POST"])
 @LoginRequired
 def medicalReports():
     form = UploadForm()
@@ -39,17 +40,25 @@ def medicalReports():
         session["application"]["medicalReports"]["progress"] = ListStatus.COMPLETED.name
         session["application"] = save_progress()
 
-        return redirect(url_for('taskList.index'))
+        return redirect(url_for("taskList.index"))
 
-    if request.method == 'GET' and "files" in session["application"]["medicalReports"] and len(session["application"]["medicalReports"]["files"]) == 0:
-         # set progress status
-        session["application"]["medicalReports"]["progress"] = ListStatus.IN_PROGRESS.name
+    if (
+        request.method == "GET"
+        and "files" in session["application"]["medicalReports"]
+        and len(session["application"]["medicalReports"]["files"]) == 0
+    ):
+        # set progress status
+        session["application"]["medicalReports"][
+            "progress"
+        ] = ListStatus.IN_PROGRESS.name
         session["application"] = save_progress()
 
-    return render_template('upload/medical-reports.html', form=form, deleteform=deleteform)
+    return render_template(
+        "upload/medical-reports.html", form=form, deleteform=deleteform
+    )
 
 
-@upload.route('/upload/gender-evidence', methods=['GET', 'POST'])
+@upload.route("/upload/gender-evidence", methods=["GET", "POST"])
 @LoginRequired
 def genderEvidence():
     form = UploadForm()
@@ -69,17 +78,23 @@ def genderEvidence():
         session["application"]["genderEvidence"]["progress"] = ListStatus.COMPLETED.name
         session["application"] = save_progress()
 
-        return redirect(url_for('taskList.index'))
+        return redirect(url_for("taskList.index"))
 
-    if request.method == 'GET' and "files" in session["application"]["genderEvidence"] and len(session["application"]["genderEvidence"]["files"]) == 0:
-         # set progress status
-        session["application"]["genderEvidence"]["progress"] = ListStatus.IN_PROGRESS.name
+    if (
+        request.method == "GET"
+        and "files" in session["application"]["genderEvidence"]
+        and len(session["application"]["genderEvidence"]["files"]) == 0
+    ):
+        # set progress status
+        session["application"]["genderEvidence"][
+            "progress"
+        ] = ListStatus.IN_PROGRESS.name
         session["application"] = save_progress()
 
-    return render_template('upload/evidence.html', form=form, deleteform=deleteform)
+    return render_template("upload/evidence.html", form=form, deleteform=deleteform)
 
 
-@upload.route('/upload/name-change', methods=['GET', 'POST'])
+@upload.route("/upload/name-change", methods=["GET", "POST"])
 @LoginRequired
 def nameChange():
     form = UploadForm()
@@ -99,16 +114,125 @@ def nameChange():
         session["application"]["nameChange"]["progress"] = ListStatus.COMPLETED.name
         session["application"] = save_progress()
 
-        return redirect(url_for('taskList.index'))
+        return redirect(url_for("taskList.index"))
 
-    if request.method == 'GET' and "files" in session["application"]["nameChange"] and len(session["application"]["nameChange"]["files"]) == 0:
-         # set progress status
+    if (
+        request.method == "GET"
+        and "files" in session["application"]["nameChange"]
+        and len(session["application"]["nameChange"]["files"]) == 0
+    ):
+        # set progress status
         session["application"]["nameChange"]["progress"] = ListStatus.IN_PROGRESS.name
         session["application"] = save_progress()
 
-    return render_template('upload/name-change.html', form=form, deleteform=deleteform)
+    return render_template("upload/name-change.html", form=form, deleteform=deleteform)
 
-@upload.route('/upload/remove-file', methods=['POST'])
+
+@upload.route("/upload/marriage-documents", methods=["GET", "POST"])
+@LoginRequired
+def marriageDocuments():
+
+    form = UploadForm()
+    deleteform = DeleteForm()
+
+    if form.validate_on_submit():
+        # backwards safety check
+        if "marriageDocuments" not in session["application"]:
+            session["application"]["marriageDocuments"] = []
+
+        if "files" not in session["application"]["marriageDocuments"]:
+            session["application"]["marriageDocuments"]["files"] = []
+
+        for document in request.files.getlist("documents"):
+            filename = secure_filename(document.filename)
+            object_name = (
+                session["application"]["reference_number"]
+                + "/"
+                + "marriageDocuments"
+                + "/"
+                + filename
+            )
+            upload_fileobj(document, object_name)
+            session["application"]["marriageDocuments"]["files"].append(object_name)
+
+        # set progress status
+        session["application"]["marriageDocuments"][
+            "progress"
+        ] = ListStatus.COMPLETED.name
+
+        session["application"] = save_progress()
+
+        return redirect(url_for("taskList.index"))
+
+    if (
+        request.method == "GET"
+        and "files" in session["application"]["marriageDocuments"]
+        and len(session["application"]["marriageDocuments"]["files"]) == 0
+    ):
+        # set progress status
+        session["application"]["marriageDocuments"][
+            "progress"
+        ] = ListStatus.IN_PROGRESS.name
+        session["application"] = save_progress()
+
+    return render_template(
+        "upload/marriage-documents.html", form=form, deleteform=deleteform
+    )
+
+
+@upload.route("/upload/statutory-declarations", methods=["GET", "POST"])
+@LoginRequired
+def statutoryDeclarations():
+
+    form = UploadForm()
+    deleteform = DeleteForm()
+
+    if form.validate_on_submit():
+        # backwards safety check
+        if "statutoryDeclarations" not in session["application"]:
+            session["application"]["statutoryDeclarations"] = []
+
+        if "files" not in session["application"]["statutoryDeclarations"]:
+            session["application"]["statutoryDeclarations"]["files"] = []
+
+        for document in request.files.getlist("documents"):
+            filename = secure_filename(document.filename)
+            object_name = (
+                session["application"]["reference_number"]
+                + "/"
+                + "statutoryDeclarations"
+                + "/"
+                + filename
+            )
+            upload_fileobj(document, object_name)
+            session["application"]["statutoryDeclarations"]["files"].append(object_name)
+
+        # set progress status
+        session["application"]["statutoryDeclarations"][
+            "progress"
+        ] = ListStatus.COMPLETED.name
+
+        session["application"] = save_progress()
+
+        return redirect(url_for("taskList.index"))
+
+    if (
+        request.method == "GET"
+        and "files" in session["application"]["statutoryDeclarations"]
+        and len(session["application"]["statutoryDeclarations"]["files"]) == 0
+    ):
+        # set progress status
+        session["application"]["statutoryDeclarations"][
+            "progress"
+        ] = ListStatus.IN_PROGRESS.name
+        session["application"] = save_progress()
+
+    return render_template(
+        "upload/statutory-declarations.html", form=form, deleteform=deleteform
+    )
+
+
+@upload.route("/upload/remove-file", methods=["POST"])
 @LoginRequired
 def removeFile():
     form = DeleteForm()
@@ -119,6 +243,7 @@ def removeFile():
         session["application"] = save_progress()
 
     return redirect(form.redirect_route.data)
+
 
 # @upload.route('/upload/get-file', methods=['GET'])
 # @LoginRequired

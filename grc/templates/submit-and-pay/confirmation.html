@@ -47,7 +47,10 @@
       <li>an official confirmation of date of birth and birth gender</li>
       {% endif %}
 
-      {% if session["application"]["partnershipDetails"]["marriageCivilPartnership"] == 'Neither' %}
+
+      {# TODO: Please check and remove all below #}
+      {#
+      <!-- {% if session["application"]["partnershipDetails"]["marriageCivilPartnership"] == 'Neither' %}
       <li>a <a class="govuk-link"
            href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852944/t467-eng.pdf"
            rel="external"
@@ -103,7 +106,8 @@
       {% if session["application"]["confirmation"]["overseasCheck"] == 'Yes' %}
       <li>official documentation that shows that your affirmed gender has been recognised in an approved country or
         territory</li>
-      {% endif %}
+      {% endif %} -->
+      #}
 
       {% if session["application"]["submitAndPay"]["helpType"] == 'Using the EX160 form' %}
       <li>an <a class="govuk-link"

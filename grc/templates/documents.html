@@ -10,7 +10,8 @@
 * an official confirmation of date of birth and birth gender
 {% endif %}
 
-{% if session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Neither' %}
+{#
+<!-- {% if session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Neither' %}
 * a statutory declaration for single applicants (https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852944/t467-eng.pdf)
 {% endif %}
 
@@ -44,7 +45,8 @@
 
 {% if session['application']['confirmation']['overseasCheck'] == 'Yes' %}
 * official documentation that shows that your affirmed gender has been recognised in an approved country or territory
-{% endif %}
+{% endif %} -->
+#}
 
 {% if session['application']['submitAndPay']['helpType'] == 'Using the EX160 form' %}
 * an EX160 form (https://www.gov.uk/government/publications/apply-for-help-with-court-and-tribunal-fees)
