@@ -71,7 +71,7 @@
             </tr>
             <tr id="newApplications_{{ loop.index }}" class="govuk-table__row" style="display: none;">
               <td colspan="3">
-                {{ userapplication(application.user_input) }}
+                {{ userapplication(application.user_input, 'html') }}
               </td>
             </tr>
             {% endfor %}
@@ -126,7 +126,7 @@
             </tr>
             <tr id="downloadedApplications_{{ loop.index }}" class="govuk-table__row" style="display: none;">
               <td colspan="5">
-                {{ userapplication(application.user_input) }}
+                {{ userapplication(application.user_input, 'html') }}
               </td>
             </tr>
             {% endfor %}
@@ -177,7 +177,7 @@
             </tr>
             <tr id="completedApplications_{{ loop.index }}" class="govuk-table__row" style="display: none;">
               <td colspan="5">
-                {{ userapplication(application.user_input) }}
+                {{ userapplication(application.user_input, 'html') }}
               </td>
             </tr>
             {% endfor %}

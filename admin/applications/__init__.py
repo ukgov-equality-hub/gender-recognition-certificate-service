@@ -1,8 +1,5 @@
 from datetime import datetime
-from flask import (
-    Blueprint, flash, g, redirect, render_template, request, url_for, current_app, session, make_response
-)
-from flask import render_template
+from flask import Blueprint, render_template, url_for, session, make_response
 from grc.utils.decorators import AdminViewerRequired
 from grc.models import db, Application, ApplicationStatus
 from grc.utils.s3 import download_object
@@ -84,7 +81,54 @@ def download(email_address):
         data = io.BytesIO()
         pisa_status = pisa.CreatePDF(html, dest=data)
         data.seek(0)
-        #return data.read()
+
+        # Attach any PDF's
+        def merge_pdfs(pdfs):
+            import io
+            import PyPDF2
+            merger = PyPDF2.PdfFileMerger()
+            for pdf_fileobj in pdfs:
+                merger.append(pdf_fileobj)
+
+            pdf = io.BytesIO()
+            merger.write(pdf)
+            merger.close()
+            pdf.seek(0)
+            return pdf
+
+        def add_pdf(object_name):
+            file_type = ''
+            if '.' in object_name:
+                file_type = object_name[object_name.rindex('.') + 1:]
+                if file_type.lower() == 'pdf':
+                    pdf_fileobj = download_object(object_name)
+                    pdfs.append(pdf_fileobj)
+                    print('Attaching ' + object_name)
+
+        pdfs = []
+        if 'medicalReports' in application.user_input and 'files' in application.user_input['medicalReports']:
+            for object_name in application.user_input['medicalReports']['files']:
+                add_pdf(object_name)
+
+        if 'genderEvidence' in application.user_input and 'files' in application.user_input['genderEvidence']:
+            for object_name in application.user_input['genderEvidence']['files']:
+                add_pdf(object_name)
+
+        if 'nameChange' in application.user_input and 'files' in application.user_input['nameChange']:
+            for object_name in application.user_input['nameChange']['files']:
+                add_pdf(object_name)
+
+        if 'marriageDocuments' in application.user_input and 'files' in application.user_input['marriageDocuments']:
+            for object_name in application.user_input['marriageDocuments']['files']:
+                add_pdf(object_name)
+
+        if 'statutoryDeclarations' in application.user_input and 'files' in application.user_input['statutoryDeclarations']:
+            for object_name in application.user_input['statutoryDeclarations']['files']:
+                add_pdf(object_name)
+
+        if len(pdfs) > 0:
+            pdfs.insert(0, data)
+            data = merge_pdfs(pdfs)
 
         response = make_response(data.read())
         response.headers.set('Content-Type', 'application/pdf')

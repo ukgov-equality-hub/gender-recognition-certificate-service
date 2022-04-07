@@ -6,7 +6,12 @@ from wtforms.validators import DataRequired, Email
 class UsersForm(FlaskForm):
     email = EmailField(
         'email',
-        validators=[DataRequired(message='Email address is required'), Email(message='A valid email address is required')]
+        validators=[
+            DataRequired(message='Email address is required'),
+            Email(message='A valid email address is required')
+        ]
     )
+
     userType = BooleanField('check')
+
     submit = SubmitField('Submit')

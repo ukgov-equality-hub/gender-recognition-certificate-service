@@ -1,4 +1,4 @@
-{% macro userapplication(application) %}
+{% macro userapplication(application, format) %}
 <h4 class="govuk-heading-m" style="margin-top: 20px;">Confirmation</h4>
 <ul class="govuk-list govuk-list--bullet">
   <li>Have you ever been issued a Gender Recognition Certificate (or it's equivalent) in another country? <strong>{{ application.confirmation.overseasCheck }}</strong></li>
@@ -69,6 +69,7 @@
     <ul class="govuk-list govuk-list--bullet">
       <li>First name: <strong>{{ application.birthRegistration.mothers_first_name }}</strong></li>
       <li>Last name: <strong>{{ application.birthRegistration.mothers_last_name }}</strong></li>
+      <li>Maiden name: <strong>{{ application.birthRegistration.mothers_maiden_name }}</strong></li>
     </ul>
   </li>
   {% if application.birthRegistration.fathersNameCheck == 'Yes' %}
@@ -101,26 +102,66 @@
 
 <h4 class="govuk-heading-m">Your documents</h4>
 <ul class="govuk-list govuk-list--bullet">
+  {% if 'files' in application.medicalReports %}
   <li>Your medical reports
     <ul class="govuk-list govuk-list--bullet">
       {% for item in application.medicalReports.files %}
-      <li><a href="/applications/{{ item }}/downloadfile" target="_blank">{{ item | replace(application.reference_number + '__medicalReports__', '') }}</a></li>
+      <li>{% if format == 'pdf' %}{{ item | replace(application.reference_number + '__medicalReports__', '') }}{% else %}<a href="/applications/{{ item }}/downloadfile" target="_blank">{{ item | replace(application.reference_number + '__medicalReports__', '') }}</a>{% endif %}</li>
       {% if '.pdf' not in item | lower %}
       <img src="{{ item | image_data }}" width="{{ item | image_width }}" height="{{ item | image_height }}" style="max-width: 90%;">
       {% endif %}
       {% endfor %}
     </ul>
   </li>
+  {% endif %}
+  {% if 'files' in application.genderEvidence %}
   <li>Evidence of living in your gender
     <ul class="govuk-list govuk-list--bullet">
       {% for item in application.genderEvidence.files %}
-      <li><a href="https://geo-gender-recognition-certificate-admin.london.cloudapps.digital/applications/{{ item }}/downloadfile" target="_blank">{{item | replace(application.reference_number + '__genderEvidence__', '') }}</a></li>
+      <li>{% if format == 'pdf' %}{{ item | replace(application.reference_number + '__genderEvidence__', '') }}{% else %}<a href="https://geo-gender-recognition-certificate-admin.london.cloudapps.digital/applications/{{ item }}/downloadfile" target="_blank">{{item | replace(application.reference_number + '__genderEvidence__', '') }}</a>{% endif %}</li>
       {% if '.pdf' not in item | lower %}
       <img src="{{ item | image_data }}" width="{{ item | image_width }}" height="{{ item | image_height }}" style="max-width: 90%;">
       {% endif %}
       {% endfor %}
     </ul>
   </li>
+  {% endif %}
+  {% if 'files' in application.nameChange %}
+  <li>Name change
+    <ul class="govuk-list govuk-list--bullet">
+      {% for item in application.nameChange.files %}
+      <li>{% if format == 'pdf' %}{{ item | replace(application.reference_number + '__nameChange__', '') }}{% else %}<a href="https://geo-gender-recognition-certificate-admin.london.cloudapps.digital/applications/{{ item }}/downloadfile" target="_blank">{{item | replace(application.reference_number + '__nameChange__', '') }}</a>{% endif %}</li>
+      {% if '.pdf' not in item | lower %}
+      <img src="{{ item | image_data }}" width="{{ item | image_width }}" height="{{ item | image_height }}" style="max-width: 90%;">
+      {% endif %}
+      {% endfor %}
+    </ul>
+  </li>
+  {% endif %}
+  {% if 'files' in application.marriageDocuments %}
+  <li>Marriage documents
+    <ul class="govuk-list govuk-list--bullet">
+      {% for item in application.marriageDocuments.files %}
+      <li>{% if format == 'pdf' %}{{ item | replace(application.reference_number + '__marriageDocuments__', '') }}{% else %}<a href="https://geo-gender-recognition-certificate-admin.london.cloudapps.digital/applications/{{ item }}/downloadfile" target="_blank">{{item | replace(application.reference_number + '__marriageDocuments__', '') }}</a>{% endif %}</li>
+      {% if '.pdf' not in item | lower %}
+      <img src="{{ item | image_data }}" width="{{ item | image_width }}" height="{{ item | image_height }}" style="max-width: 90%;">
+      {% endif %}
+      {% endfor %}
+    </ul>
+  </li>
+  {% endif %}
+  {% if 'files' in application.statutoryDeclarations %}
+  <li>Statutory documents
+    <ul class="govuk-list govuk-list--bullet">
+      {% for item in application.statutoryDeclarations.files %}
+      <li>{% if format == 'pdf' %}{{ item | replace(application.reference_number + '__statutoryDeclarations__', '') }}{% else %}<a href="https://geo-gender-recognition-certificate-admin.london.cloudapps.digital/applications/{{ item }}/downloadfile" target="_blank">{{item | replace(application.reference_number + '__statutoryDeclarations__', '') }}</a>{% endif %}</li>
+      {% if '.pdf' not in item | lower %}
+      <img src="{{ item | image_data }}" width="{{ item | image_width }}" height="{{ item | image_height }}" style="max-width: 90%;">
+      {% endif %}
+      {% endfor %}
+    </ul>
+  </li>
+  {% endif %}
 </ul>
 
 <h4 class="govuk-heading-m">Payment details</h4>

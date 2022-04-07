@@ -1,12 +1,7 @@
 import jwt
-from flask import (
-    Blueprint, flash, g, redirect, render_template, request, url_for, current_app, session
-)
-from werkzeug.exceptions import abort
+from flask import Blueprint, render_template, request, current_app, session
 from werkzeug.security import generate_password_hash
-from flask import render_template
-from notifications_python_client.notifications import NotificationsAPIClient
-from datetime import datetime, timedelta
+from datetime import datetime
 from admin.password_reset.forms import PasswordResetForm
 from grc.models import db, AdminUser
 

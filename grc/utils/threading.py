@@ -1,12 +1,8 @@
-from datetime import datetime
-from typing import List
-from flask import session
-from grc.models import db, Application, ListStatus, ApplicationStatus
-
 from math import exp
 import time
 import requests
 import threading
+
 
 class Threading():
     """ Exponentially make the app sleep to prevent attacks

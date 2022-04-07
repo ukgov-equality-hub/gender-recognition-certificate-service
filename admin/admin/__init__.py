@@ -2,11 +2,8 @@ import jwt
 import string
 import random
 from datetime import datetime, timedelta
-from flask import (
-    Blueprint, flash, g, redirect, render_template, request, url_for, current_app, session
-)
+from flask import Blueprint, redirect, render_template, request, url_for, current_app, session
 from werkzeug.security import check_password_hash, generate_password_hash
-from flask import render_template
 from notifications_python_client.notifications import NotificationsAPIClient
 from admin.admin.forms import LoginForm
 from grc.models import db, AdminUser
