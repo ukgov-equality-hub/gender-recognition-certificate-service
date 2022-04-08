@@ -57,12 +57,12 @@
               <td class="govuk-table__cell">
                 <ul class="govuk-summary-list__actions-list" style="text-align: right">
                   <li class="govuk-summary-list__actions-list-item">
-                    <a href="javascript:;" onclick="document.getElementById('newApplications_{{ loop.index }}').style.display = document.getElementById('newApplications_{{ loop.index }}').style.display == 'none' ? 'table-row' : 'none'" class="new-link">
+                    <a href="javascript:;" class="new-link" style="white-space: nowrap;" onclick="document.getElementById('newApplications_{{ loop.index }}').style.display = document.getElementById('newApplications_{{ loop.index }}').style.display == 'none' ? 'table-row' : 'none'">
                       View
                     </a>
                   </li>
                   <li class="govuk-summary-list__actions-list-item">
-                    <a href="/applications/{{ application.email }}/download" target="_blank" class="new-link">
+                    <a href="/applications/{{ application.email }}/download" target="_blank" class="new-link" style="white-space: nowrap;">
                       Download
                     </a>
                   </li>
@@ -107,17 +107,17 @@
               <td class="govuk-table__cell">
                 <ul class="govuk-summary-list__actions-list" style="text-align: right">
                   <li class="govuk-summary-list__actions-list-item">
-                    <a href="javascript:;" onclick="document.getElementById('downloadedApplications_{{ loop.index }}').style.display = document.getElementById('downloadedApplications_{{ loop.index }}').style.display == 'none' ? 'table-row' : 'none'" class="new-link">
+                    <a href="javascript:;" class="new-link" style="white-space: nowrap;" onclick="document.getElementById('downloadedApplications_{{ loop.index }}').style.display = document.getElementById('downloadedApplications_{{ loop.index }}').style.display == 'none' ? 'table-row' : 'none'">
                       View
                     </a>
                   </li>
                   <li class="govuk-summary-list__actions-list-item">
-                    <a href="/applications/{{ application.email }}/download" target="_blank" class="new-link">
+                    <a href="/applications/{{ application.email }}/download" target="_blank" class="new-link" style="white-space: nowrap;">
                       Re-download
                     </a>
                   </li>
                   <li class="govuk-summary-list__actions-list-item">
-                    <a href="/applications/{{ application.email }}/completed" target="_blank" class="new-link">
+                    <a href="/applications/{{ application.email }}/completed" target="_blank" class="new-link" style="white-space: nowrap;">
                       Complete
                     </a>
                   </li>
@@ -163,12 +163,12 @@
               <td class="govuk-table__cell">
                 <ul class="govuk-summary-list__actions-list" style="text-align: right">
                   <li class="govuk-summary-list__actions-list-item">
-                    <a href="javascript:;" onclick="document.getElementById('completedApplications_{{ loop.index }}').style.display = document.getElementById('completedApplications_{{ loop.index }}').style.display == 'none' ? 'table-row' : 'none'" class="new-link">
+                    <a href="javascript:;" class="new-link" style="white-space: nowrap;" onclick="document.getElementById('completedApplications_{{ loop.index }}').style.display = document.getElementById('completedApplications_{{ loop.index }}').style.display == 'none' ? 'table-row' : 'none'">
                       View
                     </a>
                   </li>
                   <li class="govuk-summary-list__actions-list-item">
-                    <a href="/applications/{{ application.email }}/download" target="_blank" class="new-link">
+                    <a href="/applications/{{ application.email }}/download" target="_blank" class="new-link" style="white-space: nowrap;">
                       Redownload
                     </a>
                   </li>
