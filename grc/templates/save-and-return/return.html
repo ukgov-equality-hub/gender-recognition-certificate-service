@@ -1,76 +1,54 @@
 {% extends 'base.html' %}
-
-
-{% block backLink %}<a href="/"
-   class="govuk-back-link">Back</a>{% endblock %}
+{% block backLink %}<a href="/" class="govuk-back-link">Back</a>{% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-
     {% if form.errors %}
-    <div class="govuk-error-summary"
-         aria-labelledby="error-summary-title"
-         role="alert"
-         tabindex="-1"
-         data-module="govuk-error-summary">
-      <h2 class="govuk-error-summary__title"
-          id="error-summary-title">
+    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+      <h2 id="error-summary-title" class="govuk-error-summary__title">
         There is a problem
       </h2>
       <div class="govuk-error-summary__body">
         <ul class="govuk-list govuk-error-summary__list">
           {% for error in form.errors %}
-          {% for e in form[error].errors %}
-          <li><a href="#{{error}}">{{ e }}</a></li>
-          {% endfor %}
+            {% for e in form[error].errors %}
+            <li><a href="#{{ error }}">{{ e }}</a></li>
+            {% endfor %}
           {% endfor %}
         </ul>
       </div>
     </div>
     {% endif %}
 
-    <form method="POST"
-          action="/save-and-return">
+    <form method="POST" action="/save-and-return">
       {{ form.csrf_token }}
       <h1 class="govuk-heading-l">
         Return to a saved application
       </h1>
 
       <p class="govuk-body">You need your reference number to return to your application.</p>
-
-      <p class="govuk-body govuk-!-margin-bottom-8">After you put your reference number in, we will send an email or
-        text to confirm it's you.</p>
-
+      <p class="govuk-body govuk-!-margin-bottom-8">After you put your reference number in, we will send an email or text to confirm it's you.</p>
 
       <div class="govuk-form-group {{ 'govuk-form-group--error' if form.reference.errors }}">
-        <label class="govuk-label govuk-label--m"
-               for="reference">
+        <label for="reference" class="govuk-label govuk-label--m">
           What is your reference number?
         </label>
         {% if form.reference.errors %}
-        <p id="reference-issued-error"
-           class="govuk-error-message">
+        <p id="reference-issued-error" class="govuk-error-message">
           <span class="govuk-visually-hidden">Error:</span> Enter a valid reference number
         </p>
         {% endif %}
-        <input class="govuk-input govuk-input--width-10 {{ 'govuk-input--error' if form.reference.errors }}"
-               id="reference"
-               name="reference"
-               type="text"
-               autocomplete="off">
+        <input id="reference" type="text" name="reference" autocomplete="off" class="govuk-input govuk-input--width-10 {{ 'govuk-input--error' if form.reference.errors }}">
       </div>
+      <input type="hidden" name="attempt" value="{{ form.attempt.data }}">
 
-      <input name="attempt"
-             value="{{form.attempt.data}}"
-             type="hidden">
-
-      <button class="govuk-button"
-              data-module="govuk-button">
-        Continue
-      </button>
+      <div class="govuk-button-group">
+        <button class="govuk-button" data-module="govuk-button">
+          Continue
+        </button>
+      </div>
     </form>
-
   </div>
 </div>
 {% endblock %}

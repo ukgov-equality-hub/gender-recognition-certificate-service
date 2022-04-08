@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 
-{% block backLink %}<a href="{{back}}"
+{% block backLink %}<a href="{{ back }}"
    class="govuk-back-link">Back</a>{% endblock %}
 
 {% block content %}
@@ -22,7 +22,7 @@
         <ul class="govuk-list govuk-error-summary__list">
           {% for error in form.errors %}
           {% for e in form[error].errors %}
-          <li><a href="#{{error}}">{{ e }}</a></li>
+          <li><a href="#{{ error }}">{{ e }}</a></li>
           {% endfor %}
           {% endfor %}
         </ul>
@@ -37,7 +37,7 @@
         Enter security code
       </h1>
 
-      <p class="govuk-body">We’ve sent a security code to "{{email}}".</p>
+      <p class="govuk-body">We’ve sent a security code to "{{ email }}".</p>
 
       <p class="govuk-body">This can take a few minutes to arrive.</p>
 
@@ -71,7 +71,7 @@
       </div>
 
       <input name="attempt"
-             value="{{form.attempt.data}}"
+             value="{{ form.attempt.data }}"
              type="hidden">
 
       <button class="govuk-button"

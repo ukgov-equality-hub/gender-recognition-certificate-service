@@ -1,6 +1,4 @@
 {% extends 'base.html' %}
-
-
 {% block backLink %}{% endblock %}
 
 {% block content %}
@@ -10,7 +8,7 @@
       Your application
     </h1>
   </div>
-  <!-- {{application}} -->
+  <!-- {{ application }} -->
   <div class="govuk-grid-column-two-thirds">
     <p class="govuk-body">This is where you can provide your personal details and upload your documents.</p>
     <div class="govuk-inset-text">
@@ -41,13 +39,13 @@
           <li class="app-task-list__item">
             <span class="app-task-list__task-name">
               <a class="govuk-link"
-                 href="{{url_for(session['application']['confirmation']['step'])}}"
+                 href="{{ url_for(session['application']['confirmation']['step']) }}"
                  aria-describedby="confirmation-status">
                 Confirmation
               </a>
             </span>
             <strong id="confirmation-status"
-                    class="govuk-tag app-task-list__tag {{get_colour(list_status['confirmation'])}}">{{list_status['confirmation'].value}}</strong>
+                    class="govuk-tag app-task-list__tag {{ get_colour(list_status['confirmation']) }}">{{ list_status['confirmation'].value }}</strong>
           </li>
         </ul>
       </li>
@@ -61,35 +59,35 @@
           <li class="app-task-list__item">
             <span class="app-task-list__task-name">
               <a class="govuk-link"
-                 href="{{url_for(session['application']['personalDetails']['step'])}}"
+                 href="{{ url_for(session['application']['personalDetails']['step']) }}"
                  aria-describedby="personal-details-status">
                 Your personal details
               </a>
             </span>
-            <strong class="govuk-tag app-task-list__tag {{get_colour(list_status['personalDetails'])}}"
-                    id="personal-details-status">{{list_status['personalDetails'].value}}</strong>
+            <strong class="govuk-tag app-task-list__tag {{ get_colour(list_status['personalDetails']) }}"
+                    id="personal-details-status">{{ list_status['personalDetails'].value }}</strong>
           </li>
           <li class="app-task-list__item">
             <span class="app-task-list__task-name">
               <a class="govuk-link"
-                 href="{{url_for(session['application']['birthRegistration']['step'])}}"
+                 href="{{ url_for(session['application']['birthRegistration']['step']) }}"
                  aria-describedby="birth-registration-status">
                 Your birth registration information
               </a>
             </span>
-            <strong class="govuk-tag app-task-list__tag {{get_colour(list_status['birthRegistration'])}}"
-                    id="birth-registration-status">{{list_status['birthRegistration'].value}}</strong>
+            <strong class="govuk-tag app-task-list__tag {{ get_colour(list_status['birthRegistration']) }}"
+                    id="birth-registration-status">{{ list_status['birthRegistration'].value }}</strong>
           </li>
           <li class="app-task-list__item">
             <span class="app-task-list__task-name">
               <a class="govuk-link"
-                 href="{{url_for(session['application']['partnershipDetails']['step'])}}"
+                 href="{{ url_for(session['application']['partnershipDetails']['step']) }}"
                  aria-describedby="partnership-details-status">
                 Marriage or civil partnership details
               </a>
             </span>
-            <strong class="govuk-tag app-task-list__tag {{get_colour(list_status['partnershipDetails'])}}"
-                    id="partnership-details-status">{{list_status['partnershipDetails'].value}}</strong>
+            <strong class="govuk-tag app-task-list__tag {{ get_colour(list_status['partnershipDetails']) }}"
+                    id="partnership-details-status">{{ list_status['partnershipDetails'].value }}</strong>
           </li>
         </ul>
       </li>
@@ -106,37 +104,37 @@
           <li class="app-task-list__item">
             <span class="app-task-list__task-name">
               <a class="govuk-link"
-                 href="{{url_for('upload.medicalReports')}}"
+                 href="{{ url_for('upload.medicalReports') }}"
                  aria-describedby="medical-reports-status">
                 Your medical reports
               </a>
             </span>
-            <strong class="govuk-tag app-task-list__tag {{get_colour(list_status['medicalReports'])}}"
-                    id="medical-reports-status">{{list_status['medicalReports'].value}}</strong>
+            <strong class="govuk-tag app-task-list__tag {{ get_colour(list_status['medicalReports']) }}"
+                    id="medical-reports-status">{{ list_status['medicalReports'].value }}</strong>
           </li>
           <li class="app-task-list__item">
             <span class="app-task-list__task-name">
               <a class="govuk-link"
-                 href="{{url_for('upload.genderEvidence')}}"
+                 href="{{ url_for('upload.genderEvidence') }}"
                  aria-describedby="genderEvidence">
                 Evidence of living in your gender
               </a>
             </span>
-            <strong class="govuk-tag app-task-list__tag {{get_colour(list_status['genderEvidence'])}}"
-                    id="genderEvidence">{{list_status['genderEvidence'].value}}</strong>
+            <strong class="govuk-tag app-task-list__tag {{ get_colour(list_status['genderEvidence']) }}"
+                    id="genderEvidence">{{ list_status['genderEvidence'].value }}</strong>
           </li>
           {% if application.personalDetails.previousNamesCheck is defined and
           application.personalDetails.previousNamesCheck == "Yes" %}
           <li class="app-task-list__item">
             <span class="app-task-list__task-name">
               <a class="govuk-link"
-                 href="{{url_for('upload.nameChange')}}"
+                 href="{{ url_for('upload.nameChange') }}"
                  aria-describedby="previousNamesCheck">
                 Name change documents
               </a>
             </span>
-            <strong class="govuk-tag app-task-list__tag {{get_colour(list_status['nameChange'])}}"
-                    id="previousNamesCheck">{{list_status['nameChange'].value}}</strong>
+            <strong class="govuk-tag app-task-list__tag {{ get_colour(list_status['nameChange']) }}"
+                    id="previousNamesCheck">{{ list_status['nameChange'].value }}</strong>
           </li>
           {% endif %}
           {%elif application.confirmation.overseasCheck == "Yes" and application.personalDetails.previousNamesCheck is
@@ -144,13 +142,13 @@
           <li class="app-task-list__item">
             <span class="app-task-list__task-name">
               <a class="govuk-link"
-                 href="{{url_for('upload.nameChange')}}"
+                 href="{{ url_for('upload.nameChange') }}"
                  aria-describedby="nameChange">
                 Name change documents
               </a>
             </span>
-            <strong class="govuk-tag app-task-list__tag {{get_colour(list_status['nameChange'])}}"
-                    id="nameChange">{{list_status['nameChange'].value}}</strong>
+            <strong class="govuk-tag app-task-list__tag {{ get_colour(list_status['nameChange']) }}"
+                    id="nameChange">{{ list_status['nameChange'].value }}</strong>
           </li>
           {% endif %}
 
@@ -162,26 +160,26 @@
           <li class="app-task-list__item">
             <span class="app-task-list__task-name">
               <a class="govuk-link"
-                 href="{{url_for('upload.marriageDocuments')}}"
+                 href="{{ url_for('upload.marriageDocuments') }}"
                  aria-describedby="marriageDocuments">
                 Marriage documents
               </a>
             </span>
-            <strong class="govuk-tag app-task-list__tag {{get_colour(list_status['marriageDocuments'])}}"
-                    id="marriageDocuments">{{list_status['marriageDocuments'].value}}</strong>
+            <strong class="govuk-tag app-task-list__tag {{ get_colour(list_status['marriageDocuments']) }}"
+                    id="marriageDocuments">{{ list_status['marriageDocuments'].value }}</strong>
           </li>
           {% endif %}
 
           <li class="app-task-list__item">
             <span class="app-task-list__task-name">
               <a class="govuk-link"
-                 href="{{url_for('upload.statutoryDeclarations')}}"
+                 href="{{ url_for('upload.statutoryDeclarations') }}"
                  aria-describedby="statutoryDeclarations">
                 Statutory declarations
               </a>
             </span>
-            <strong class="govuk-tag app-task-list__tag {{get_colour(list_status['statutoryDeclarations'])}}"
-                    id="statutoryDeclarations">{{list_status['statutoryDeclarations'].value}}</strong>
+            <strong class="govuk-tag app-task-list__tag {{ get_colour(list_status['statutoryDeclarations']) }}"
+                    id="statutoryDeclarations">{{ list_status['statutoryDeclarations'].value }}</strong>
           </li>
 
         </ul>
@@ -198,7 +196,7 @@
             <span class="app-task-list__task-name">
               {% if can_submit %}
               <a class="govuk-link"
-                 href="{{url_for('submitAndPay.index')}}"
+                 href="{{ url_for('submitAndPay.index') }}"
                  aria-describedby="medical-reports-status">
                 Submit and pay
               </a>
@@ -206,8 +204,8 @@
               Submit and pay
               {% endif %}
             </span>
-            <strong class="govuk-tag app-task-list__tag {{get_colour(list_status['submitAndPay'])}}"
-                    id="medical-reports-status">{{list_status['submitAndPay'].value}}</strong>
+            <strong class="govuk-tag app-task-list__tag {{ get_colour(list_status['submitAndPay']) }}"
+                    id="medical-reports-status">{{ list_status['submitAndPay'].value }}</strong>
             <span class="govuk-hint govuk-!-margin-top-3 govuk-!-margin-bottom-0"><br>Once you have completed the other
               sections you can submit your application.</span>
           </li>
@@ -234,7 +232,7 @@
         <p class="govuk-body-s">Your application is saved automatically as you progress.</p>
 
         <p class="govuk-body-s">
-          <a href="{{url_for('saveAndReturn.exitApplication')}}"
+          <a href="{{ url_for('saveAndReturn.exitApplication') }}"
              class="govuk-link govuk-link--no-visited-state">Exit and return later</a>.
         </p>
       </div>

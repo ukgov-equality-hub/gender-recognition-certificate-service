@@ -1,152 +1,126 @@
 {% extends 'base.html' %}
-
 {% block serviceTitle %}Check documents needed to apply for a GRC{% endblock %}
-
-{% block backLink %}<a href="{{url_for('documentChecker.overseas_approved_check')}}"
-   class="govuk-back-link">Back</a>{% endblock %}
+{% block backLink %}<a href="{{ url_for('documentChecker.overseas_approved_check') }}" class="govuk-back-link">Back</a>{% endblock %}
 
 {% block content %}
-
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-
     <h1 class="govuk-heading-l">
       Documents you need to provide
     </h1>
 
-    <p class="govuk-body">Based on your answers, these are the documents you&rsquo;ll need for your application.</p>
-
-    <p class="govuk-body">Some documents you will upload during the application process, while others will need to be
-      posted to us after
-      you&rsquo;ve submitted your application.</p>
-
-    <p class="govuk-body govuk-!-margin-bottom-2">Documents that need to be uploaded when making your application:</p>
+    <p class="govuk-body">
+      Based on your answers, these are the documents you'll need for your application.
+    </p>
+    <p class="govuk-body">
+      ome documents you will upload during the application process, while others will need to be posted to us after
+      you've submitted your application.
+    </p>
+    <p class="govuk-body govuk-!-margin-bottom-2">
+      Documents that need to be uploaded when making your application:
+    </p>
     <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-">
-      {% if session["documentChecker"]["previousNamesCheck"] != 'No' %}
+      {% if session['documentChecker']['previousNamesCheck'] != 'No' %}
       <li>copies of all change of name documents</li>
       {% endif %}
-
-      {% if session['documentChecker']["confirmation"]["overseasApprovedCheck"] != 'Yes' %}
-      <li>a medical report that explains in full, the specific details of your gender dysphoria diagnosis, written by a
-        registered medical practitioner or registered psychologist practising in the field of gender dysphoria</li>
-      <li>a medical report that explains in full, the specific details of your treatment, or planned treatment, such as
-        hormone treatments or surgery, written by a registered medical practitioner – this could be your GP or surgeon
+      {% if session['documentChecker']['confirmation']['overseasApprovedCheck'] != 'Yes' %}
+      <li>
+        a medical report that explains in full, the specific details of your gender dysphoria diagnosis, written by a
+        registered medical practitioner or registered psychologist practising in the field of gender dysphoria
       </li>
-      <li>evidence of living in your gender for 2 years – no more than 8 documents spread throughout those 2 years</li>
+      <li>
+        a medical report that explains in full, the specific details of your treatment, or planned treatment, such as
+        hormone treatments or surgery, written by a registered medical practitioner - this could be your GP or surgeon
+      </li>
+      <li>
+        evidence of living in your gender for 2 years - no more than 8 documents spread throughout those 2 years
+      </li>
       {% endif %}
-
-      {% if session["documentChecker"]["partnershipDetails"]["marriageCivilPartnership"] == 'Neither' %}
-      <li>a <a class="govuk-link"
-           href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852944/t467-eng.pdf"
-           rel="noreferrer noopener"
-           target="_blank">statutory declaration for single applicants (opens in new tab)</a></li>
+      {% if session['documentChecker']['partnershipDetails']['marriageCivilPartnership'] == 'Neither' %}
+      <li>
+        a <a href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852944/t467-eng.pdf" rel="noreferrer noopener" target="_blank" class="govuk-link">
+        statutory declaration for single applicants (opens in new tab)</a>
+      </li>
       {% endif %}
-
-      {% if session["documentChecker"]["partnershipDetails"]["marriageCivilPartnership"] != 'Neither' %}
-      <li>a <a class="govuk-link"
-           href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852943/t466-eng.pdf"
-           rel="noreferrer noopener"
-           target="_blank">statutory declaration for applicants who are married or in a
-          civil partnership (opens in new tab)</a></li>
+      {% if session['documentChecker']['partnershipDetails']['marriageCivilPartnership'] != 'Neither' %}
+      <li>
+        a <a href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852943/t466-eng.pdf" rel="noreferrer noopener" target="_blank" class="govuk-link">
+        statutory declaration for applicants who are married or in a civil partnership (opens in new tab)</a>
+      </li>
       {% endif %}
-
-      {% if session["documentChecker"]["partnershipDetails"]["marriageCivilPartnership"] == 'Married' and
-      session["documentChecker"]["partnershipDetails"]["stayTogether"] == 'Yes' %}
-      <li><a class="govuk-link"
-           href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852946/t469-eng.pdf"
-           rel="noreferrer noopener"
-           target="_blank">your spouse&rsquo;s statutory declaration (opens in new tab)</a></li>
+      {% if session['documentChecker']['partnershipDetails']['marriageCivilPartnership'] == 'Married' and session['documentChecker']['partnershipDetails']['stayTogether'] == 'Yes' %}
+      <li>
+        <a href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852946/t469-eng.pdf" rel="noreferrer noopener" target="_blank" class="govuk-link">
+        your spouse's statutory declaration (opens in new tab)</a>
+      </li>
       {% endif %}
-
-      {% if session["documentChecker"]["partnershipDetails"]["marriageCivilPartnership"] == 'Civil partnership' and
-      session["documentChecker"]["partnershipDetails"]["stayTogether"] == 'Yes' %}
-      <li><a class="govuk-link"
-           href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852946/t469-eng.pdf"
-           rel="noreferrer noopener"
-           target="_blank">your civil partner&rsquo;s statutory declaration (opens in new tab)</a></li>
+      {% if session['documentChecker']['partnershipDetails']['marriageCivilPartnership'] == 'Civil partnership' and session['documentChecker']['partnershipDetails']['stayTogether'] == 'Yes' %}
+      <li>
+        <a href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852946/t469-eng.pdf" rel="noreferrer noopener" target="_blank" class="govuk-link">
+        your civil partner's statutory declaration (opens in new tab)</a>
+      </li>
       {% endif %}
-
-      {% if session["documentChecker"]["partnershipDetails"]["marriageCivilPartnership"] == 'Married' %}
-      <li>your original marriage certificate or a <a class="govuk-link"
-           href="https://www.gov.uk/certifying-a-document"
-           rel="noreferrer noopener"
-           target="_blank">certified copy (opens in new tab)</a></li>
+      {% if session['documentChecker']['partnershipDetails']['marriageCivilPartnership'] == 'Married' %}
+      <li>
+        your original marriage certificate or a <a href="https://www.gov.uk/certifying-a-document" rel="noreferrer noopener" target="_blank" class="govuk-link">
+        certified copy (opens in new tab)</a>
+      </li>
       {% endif %}
-      {% if session["documentChecker"]["partnershipDetails"]["marriageCivilPartnership"] == 'Civil partnership' %}
-      <li>your original civil partnership certificate or a <a class="govuk-link"
-           href="https://www.gov.uk/certifying-a-document"
-           rel="noreferrer noopener"
-           target="_blank">certified copy (opens in new tab)</a></li>
+      {% if session['documentChecker']['partnershipDetails']['marriageCivilPartnership'] == 'Civil partnership' %}
+      <li>
+        your original civil partnership certificate or a <a href="https://www.gov.uk/certifying-a-document" rel="noreferrer noopener" target="_blank" class="govuk-link">
+        certified copy (opens in new tab)</a>
+      </li>
       {% endif %}
-
-      {% if session["documentChecker"]["partnershipDetails"]["partnerDied"] == 'Yes' %}
-      <li>a copy of your spouse or civil partner&rsquo;s death certificate</li>
+      {% if session['documentChecker']['partnershipDetails']['partnerDied'] == 'Yes' %}
+      <li>a copy of your spouse or civil partner's death certificate</li>
       {% endif %}
-
-      {% if session["documentChecker"]["partnershipDetails"]["endedCheck"] == 'Yes' %}
+      {% if session['documentChecker']['partnershipDetails']['endedCheck'] == 'Yes' %}
       <li>a copy of your decree(s) dissolving the marriage or civil partnership</li>
       {% endif %}
-
-
-      {% if session["documentChecker"]["confirmation"]["overseasApprovedCheck"] == 'Yes' %}
-      <li>official documentation that shows that your affirmed gender has been recognised in an approved country or
-        territory</li>
+      {% if session['documentChecker']['confirmation']['overseasApprovedCheck'] == 'Yes' %}
+      <li>official documentation that shows that your affirmed gender has been recognised in an approved country or territory</li>
       {% endif %}
-
-
     </ul>
 
     <p class="govuk-body govuk-!-margin-bottom-2">Documents that need to be posted are:</p>
     <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-">
-      {% if session["documentChecker"]["previousNamesCheck"] != 'No' %}
-      <li>your original or a <a class="govuk-link"
-           href="https://www.gov.uk/certifying-a-document"
-           rel="noreferrer noopener"
-           target="_blank">certified copy (opens in new tab)</a> of your full birth certificate</li>
+      {% if session['documentChecker']['previousNamesCheck'] != 'No' %}
+      <li>your original or a <a href="https://www.gov.uk/certifying-a-document" rel="noreferrer noopener" target="_blank" class="govuk-link">certified copy (opens in new tab)</a> of your full birth certificate</li>
       {% endif %}
 
       {#
-      <!-- {{
-          '' | safe
-          if data['uk-check'] != 'No' and data['adopted'] != 'Yes'
-        }}
-      {{
+      <!-- {{ '' | safe if data['uk-check'] != 'No' and data['adopted'] != 'Yes' }}
+      {{ 
           '<li>your original or a <a class="govuk-link" href="https://www.gov.uk/certifying-a-document" rel="noreferrer noopener" target="_blank">certified copy (opens in new tab)</a> of your full adoption certificate</li>' | safe
           if data['uk-check'] != 'No' and data['adopted'] == 'Yes'
         }}
-      {{
+      {{ 
           '<li>an official confirmation of date of birth and birth gender</li>' | safe
           if data['uk-check'] == 'No'
         }} -->
       #}
     </ul>
 
-    <p class="govuk-body">If your spouse or civil partner does not provide a statutory declaration of consent, then you
-      can still apply for
+    <p class="govuk-body">
+      If your spouse or civil partner does not provide a statutory declaration of consent, then you can still apply for
       a Gender Recognition Certificate without it, but you will be given an Interim Gender Recognition Certificate. This
-      can be used to end your marriage or civil partnership after which you’ll receive a full certificate.</p>
-
-    <p class="govuk-body">You can <a class="govuk-link"
-         href="https://www.gov.uk/order-copy-birth-death-marriage-certificate">order a
-        birth, death, marriage
-        or civil partnership certificate</a> online if you live in England and Wales. There&rsquo;s a different process
-      for <a class="govuk-link"
-         href="http://www.nrscotland.gov.uk/registration/how-to-order-an-official-extract-from-the-registers">getting
-        certificates in Scotland</a> and <a class="govuk-link"
-         href="http://www.nidirect.gov.uk/index/do-it-online/government-citizens-and-rights-online/order-a-birth-adoption-death-marriage-or-civil-partnership-certificate.htm">getting
-        certificates in Northern Ireland</a>.</p>
-
-    <p class="govuk-body govuk-!-margin-bottom-8">Once you have your documents ready you can <a
-         href="{{url_for('startApplication.index')}}"
-         class="govuk-link">apply for a
-        certificate</a>.</p>
-
-
-    <p class="govuk-body govuk-!-margin-bottom-1">If you want us to email you the list of documents please click the button below.</p>
-
-    <a href="{{url_for('documentChecker.email')}}"
-       class="govuk-button">Email documents list</a>
+      can be used to end your marriage or civil partnership after which you’ll receive a full certificate.
+    </p>
+    <p class="govuk-body">
+      You can <a href="https://www.gov.uk/order-copy-birth-death-marriage-certificate" class="govuk-link">order a birth, death, marriage
+      or civil partnership certificate</a> online if you live in England and Wales. There's a different process
+      for <a href="http://www.nrscotland.gov.uk/registration/how-to-order-an-official-extract-from-the-registers" class="govuk-link">getting
+      certificates in Scotland</a> and <a href="http://www.nidirect.gov.uk/index/do-it-online/government-citizens-and-rights-online/order-a-birth-adoption-death-marriage-or-civil-partnership-certificate.htm" class="govuk-link">
+      getting certificates in Northern Ireland</a>.
+    </p>
+    <p class="govuk-body govuk-!-margin-bottom-8">
+      Once you have your documents ready you can <a href="{{ url_for('startApplication.index') }}" class="govuk-link">apply for a certificate</a>.
+    </p>
+    <p class="govuk-body govuk-!-margin-bottom-1">
+      If you want us to email you the list of documents please click the button below.
+    </p>
+    <a href="{{ url_for('documentChecker.email') }}" class="govuk-button">Email documents list</a>
   </div>
 </div>
-
 {% endblock %}

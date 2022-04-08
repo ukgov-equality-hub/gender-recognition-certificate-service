@@ -5,25 +5,22 @@
 {% block content %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-
     <div class="govuk-panel govuk-panel--confirmation">
       <h1 class="govuk-panel__title">
         Email sent
       </h1>
     </div>
 
-    <p class="govuk-body">We have sent you a confirmation email.</p>
-
+    <p class="govuk-body">
+      We have sent you a confirmation email.
+    </p>
     <div class="govuk-body">
       You should receive an email with the required documents for applying for a gender recognition certification as
       soon as possible.
     </div>
-
-    <p class="govuk-body govuk-!-margin-bottom-8">Once you have your documents ready you can <a
-         href="{{url_for('startApplication.index')}}"
-         class="govuk-link">apply for a
-        certificate</a>.</p>
-
+    <p class="govuk-body govuk-!-margin-bottom-8">
+      Once you have your documents ready you can <a href="{{ url_for('startApplication.index') }}" class="govuk-link">apply for a certificate</a>.
+    </p>
   </div>
 </div>
 {% endblock %}

@@ -1,29 +1,20 @@
 {% extends 'base.html' %}
-
-
-{% block backLink %}<a href="{{url_for('partnershipDetails.stayTogether')}}"
-   class="govuk-back-link">Back</a>{% endblock %}
+{% block backLink %}<a href="{{ url_for('partnershipDetails.stayTogether') }}" class="govuk-back-link">Back</a>{% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-
     {% if form.errors %}
-    <div class="govuk-error-summary"
-         aria-labelledby="error-summary-title"
-         role="alert"
-         tabindex="-1"
-         data-module="govuk-error-summary">
-      <h2 class="govuk-error-summary__title"
-          id="error-summary-title">
+    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+      <h2 id="error-summary-title" class="govuk-error-summary__title">
         There is a problem
       </h2>
       <div class="govuk-error-summary__body">
         <ul class="govuk-list govuk-error-summary__list">
           {% for error in form.errors %}
-          {% for e in form[error].errors %}
-          <li><a href="#{{error}}-issued-error">{{ e }}</a></li>
-          {% endfor %}
+            {% for e in form[error].errors %}
+            <li><a href="#{{ error }}-issued-error">{{ e }}</a></li>
+            {% endfor %}
           {% endfor %}
         </ul>
       </div>
@@ -34,73 +25,47 @@
       Declaration of consent
     </h1>
 
-    {% if session["documentChecker"]["partnershipDetails"]["marriageCivilPartnership"] == 'Civil partnership' %}
+    {% if session['documentChecker']['partnershipDetails']['marriageCivilPartnership'] == 'Civil partnership' %}
     <p class="govuk-body">If you intend to remain in a civil partnership, your civil partner needs to:</p>
-
     <ul class="govuk-list govuk-list--bullet">
       <li>download and fill in a <a class="govuk-link" href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852943/t466-eng.pdf" rel="noreferrer noopener" target="_blank">statutory declaration for spouses or civil partners (opens in new tab)</a></li>
-      <li>sign the statutory declaration in front of someone authorised to administer oaths – the declaration form explains who can act as a witness</li>
+      <li>sign the statutory declaration in front of someone authorised to administer oaths - the declaration form explains who can act as a witness</li>
     </ul>
-
     {% set questionText %}Can you provide a statutory declaration of consent from your civil partner?{% endset %}
     {% else %}
     <p class="govuk-body">If you intend to remain married, your spouse needs to:</p>
-
     <ul class="govuk-list govuk-list--bullet">
       <li>download and fill in a <a class="govuk-link" href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852943/t466-eng.pdf" rel="noreferrer noopener" target="_blank">statutory declaration for spouses (opens in new tab)</a></li>
-      <li>sign the statutory declaration in front of someone authorised to administer oaths – the declaration form explains who can act as a witness</li>
+      <li>sign the statutory declaration in front of someone authorised to administer oaths - the declaration form explains who can act as a witness</li>
     </ul>
-
     {% set questionText %}Can you provide a statutory declaration of consent from your spouse?{% endset %}
     {% endif %}
 
-    <form method="POST"
-          action="{{url_for('partnershipDetails.partnerAgrees')}}">
+    <form method="POST" action="{{ url_for('partnershipDetails.partnerAgrees') }}">
       {{ form.csrf_token }}
 
       <div class="govuk-form-group {{ 'govuk-form-group--error' if form.check.errors }}">
         <fieldset class="govuk-fieldset">
           <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
             <h1 class="govuk-fieldset__heading">
-              {{questionText}}
+              {{ questionText }}
             </h1>
           </legend>
           {% if form.check.errors %}
-          <p id="check-issued-error"
-             class="govuk-error-message">
-            <span class="govuk-visually-hidden">Error:</span> Select if you can provide a declaration of consent from
-            your spouse
+          <p id="check-issued-error" class="govuk-error-message">
+            <span class="govuk-visually-hidden">Error:</span> Select if you can provide a declaration of consent from your spouse
           </p>
           {% endif %}
-          <div class="govuk-radios"
-               data-module="govuk-radios">
+          <div class="govuk-radios" data-module="govuk-radios">
             <div class="govuk-radios__item">
-              <input class="govuk-radios__input"
-                     id="where-do-you-live"
-                     name="check"
-                     type="radio"
-                     value="Yes"
-                     {{ 'checked'
-                     if
-                     session['documentChecker']['partnershipDetails']['partnerAgrees']=="Yes"
-                     }}>
-              <label class="govuk-label govuk-radios__label"
-                     for="check">
+              <input id="check" type="radio" name="check" value="Yes" class="govuk-radios__input" {{ 'checked' if session['documentChecker']['partnershipDetails']['partnerAgrees'] == 'Yes' }}>
+              <label for="check" class="govuk-label govuk-radios__label">
                 Yes
               </label>
             </div>
             <div class="govuk-radios__item">
-              <input class="govuk-radios__input"
-                     id="check-2"
-                     name="check"
-                     type="radio"
-                     value="No"
-                     {{ 'checked'
-                     if
-                     session['documentChecker']['partnershipDetails']['partnerAgrees']=="No"
-                     }}>
-              <label class="govuk-label govuk-radios__label"
-                     for="check-2">
+              <input id="check-2" type="radio" name="check" value="No" class="govuk-radios__input" {{ 'checked' if session['documentChecker']['partnershipDetails']['partnerAgrees'] == 'No' }}>
+              <label for="check-2" class="govuk-label govuk-radios__label">
                 No
               </label>
             </div>
@@ -109,16 +74,12 @@
       </div>
 
       <div class="govuk-button-group">
-        <button class="govuk-button"
-                data-module="govuk-button">
+        <button class="govuk-button" data-module="govuk-button">
           Save and continue
         </button>
-        <a href="{{url_for('taskList.index')}}"
-           class="govuk-link govuk-link--no-visited-state">Return to task list</a>
+        <a href="{{ url_for('taskList.index') }}" class="govuk-link govuk-link--no-visited-state">Return to task list</a>
       </div>
     </form>
-
-
   </div>
 </div>
 {% endblock %}

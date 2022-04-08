@@ -4,10 +4,9 @@
 {% block content %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-
     {% if form.errors %}
     <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
-      <h2 class="govuk-error-summary__title" id="error-summary-title">There is a problem</h2>
+      <h2 id="error-summary-title" class="govuk-error-summary__title">There is a problem</h2>
       <div class="govuk-error-summary__body">
         <ul class="govuk-list govuk-error-summary__list">
           {% for error in form.errors %}
@@ -20,7 +19,9 @@
     </div>
     {% endif %}
 
-    <h1 class="govuk-heading-l">Statutory declarations documents</h1>
+    <h1 class="govuk-heading-l">
+      Statutory declarations documents
+    </h1>
 
     <form method="POST" action="{{ url_for('upload.statutoryDeclarations') }}" enctype="multipart/form-data">
       {{ form.csrf_token }}
@@ -39,8 +40,11 @@
         {% endif %}
         <input type="file" id="documents" name="documents" multiple accept=".jpg,.jpeg,.bmp,.png,.tif,.tiff,.pdf" class="govuk-file-upload govuk-!-margin-bottom-4 {{ 'govuk-input--error' if form.documents.errors }}">
       </div>
+
       <div class="govuk-button-group">
-        <button class="govuk-button" data-module="govuk-button">Save and continue</button>
+        <button class="govuk-button" data-module="govuk-button">
+          Save and continue
+        </button>
         <a href="{{ url_for('taskList.index') }}" class="govuk-link govuk-link--no-visited-state">Return to task list</a>
       </div>
     </form>
@@ -49,19 +53,19 @@
     <div class="govuk-form-group govuk-!-margin-top-9">
       <label for="documents" class="govuk-label govuk-label--m">Uploaded files</label>
       <dl class="govuk-summary-list">
-        {% for item in session["application"]["statutoryDeclarations"]["files"] %}
+        {% for item in session['application']['statutoryDeclarations']['files'] %}
         <form method="POST" action="{{ url_for('upload.removeFile') }}" enctype="multipart/form-data">
           {{ deleteform.csrf_token }}
           <div class="govuk-summary-list__row">
             <dd class="govuk-summary-list__value govuk-!-width-full">
-              {{ item | replace(session['application']['reference_number'] + '/statutoryDeclarations/', '') }}
+              {{ item | replace(session['application']['reference_number'] + '__statutoryDeclarations__', '') }}
             </dd>
             <dd class="govuk-summary-list__actions">
               <input type="hidden" name="section" value="statutoryDeclarations">
               <input type="hidden" name="file" value="{{ item }}">
               <input type="hidden" name="redirect_route" value="{{ url_for('upload.statutoryDeclarations') }}">
               <button class="govuk-button govuk-button--warning" data-module="govuk-button">
-                Remove <span class="govuk-visually-hidden">{{ item | replace(session['application']['reference_number'] + '/statutoryDeclarations/', '') }} file</span>
+                Remove <span class="govuk-visually-hidden">{{ item | replace(session['application']['reference_number'] + '__statutoryDeclarations__', '') }} file</span>
               </button>
             </dd>
           </div>

@@ -1,6 +1,4 @@
 {% extends 'base.html' %}
-
-
 {% block backLink %}{% endblock %}
 
 {% block content %}
@@ -14,12 +12,12 @@
       </h1>
 
       <div class="govuk-inset-text callout govuk-!-margin-bottom-4">
-        <p class="govuk-body"> Your reference number is: <br><span class="callout__title">{{reference_number}}</span>
+        <p class="govuk-body"> Your reference number is: <br><span class="callout__title">{{ reference_number }}</span>
         </p>
       </div>
 
       <p class="govuk-body govuk-!-margin-bottom-8">You will need your reference number and memorable word to <a
-           href="{{url_for('saveAndReturn.index')}}">return to your application</a>.</p>
+           href="{{ url_for('saveAndReturn.index') }}">return to your application</a>.</p>
 
       <p class="govuk-body">It's safe to close this window.</p>
 
