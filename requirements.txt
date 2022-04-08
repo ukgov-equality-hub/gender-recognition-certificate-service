@@ -54,3 +54,4 @@ Werkzeug==2.0.2
 WTForms==3.0.0
 xhtml2pdf==0.2.6
 Pillow==9.0.1
+PyPDF2==1.26.0

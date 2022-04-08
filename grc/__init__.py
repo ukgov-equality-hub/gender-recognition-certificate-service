@@ -1,18 +1,17 @@
 import os
-
 from flask import Flask
 from flask_migrate import Migrate
 from flask_uuid import FlaskUUID
 from datetime import timedelta
-
 from grc.models import db
-from grc.config import Config, DevConfig,TestConfig
-
+from grc.config import Config, DevConfig, TestConfig
 
 migrate = Migrate()
 flask_uuid = FlaskUUID()
 
+
 def create_app(test_config=None):
+
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
 

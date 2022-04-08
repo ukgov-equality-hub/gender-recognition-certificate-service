@@ -1,134 +1,71 @@
 {% extends 'base.html' %}
-
-
-{% block backLink %}<a href="{{url_for('submitAndPay.index')}}"
-   class="govuk-back-link">Back</a>{% endblock %}
+{% block backLink %}<a href="{{ url_for('submitAndPay.index') }}" class="govuk-back-link">Back</a>{% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-
     {% if form.errors %}
-    <div class="govuk-error-summary"
-         aria-labelledby="error-summary-title"
-         role="alert"
-         tabindex="-1"
-         data-module="govuk-error-summary">
-      <h2 class="govuk-error-summary__title"
-          id="error-summary-title">
+    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+      <h2 id="error-summary-title" class="govuk-error-summary__title">
         There is a problem
       </h2>
       <div class="govuk-error-summary__body">
         <ul class="govuk-list govuk-error-summary__list">
           {% for error in form.errors %}
-          {% for e in form[error].errors %}
-          <li><a href="#{{error}}">{{ e }}</a></li>
-          {% endfor %}
+            {% for e in form[error].errors %}
+            <li><a href="#{{ error }}">{{ e }}</a></li>
+            {% endfor %}
           {% endfor %}
         </ul>
       </div>
     </div>
     {% endif %}
 
-
     <h1 class="govuk-heading-l">Applying for help with the fee</h1>
+    <p class="govuk-body">You can <a href="https://www.gov.uk/government/publications/apply-for-help-with-court-and-tribunal-fees" target="_blank" rel="external" class="govuk-link">apply online for help paying this fee (opens in new tab)</a>.</p>
+    <p class="govuk-body govuk-!-margin-bottom-8">You can also download the EX160 form from that page and submit it with your application.</p>
 
-    <p class="govuk-body">You can <a
-         class="govuk-link"
-         href="https://www.gov.uk/government/publications/apply-for-help-with-court-and-tribunal-fees"
-         rel="external"
-         target="_blank">apply online for help paying this fee (opens in new tab)</a>.</p>
-
-    <p class="govuk-body govuk-!-margin-bottom-8">You can also download the EX160 form from that page and submit it with
-      your application.</p>
-
-
-    <form method="POST"
-          action="{{url_for('submitAndPay.helpType')}}">
+    <form method="POST" action="{{ url_for('submitAndPay.helpType') }}">
       {{ form.csrf_token }}
 
       <div class="govuk-form-group {{ 'govuk-form-group--error' if form.errors }}">
-        <fieldset class="govuk-fieldset"
-                  aria-describedby="check-hint">
+        <fieldset class="govuk-fieldset" aria-describedby="check-hint">
           <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
             <h1 class="govuk-fieldset__heading">
               How are you applying for help paying the fee?
             </h1>
           </legend>
           {% if form.check.errors %}
-          <p id="check"
-             class="govuk-error-message">
+          <p id="check" class="govuk-error-message">
             <span class="govuk-visually-hidden">Error:</span> Select how are you applying for help paying the fee
           </p>
           {% endif %}
-          <div class="govuk-radios"
-               data-module="govuk-radios">
+          <div class="govuk-radios" data-module="govuk-radios">
             <div class="govuk-radios__item">
-              <input class="govuk-radios__input"
-                     id="check"
-                     name="check"
-                     type="radio"
-                     value="Using the online service"
-                     data-aria-controls="conditional-check"
-                     {{ 'checked'
-                     if
-                     form.check.data
-                     is
-                     iterable
-                     and "Using the online service"
-                     in
-                     form.check.data
-                     }}>
-              <label class="govuk-label govuk-radios__label"
-                     for="check">
+              <input id="check" type="radio" name="check" value="Using the online service" class="govuk-radios__input" data-aria-controls="conditional-check" {{ 'checked' if form.check.data is iterable and 'Using the online service' in form.check.data }}>
+              <label for="check" class="govuk-label govuk-radios__label">
                 Using the online service
               </label>
             </div>
-            <div class="govuk-radios__conditional govuk-radios__conditional--hidden"
-                 id="conditional-check">
+            <div id="conditional-check" class="govuk-radios__conditional govuk-radios__conditional--hidden">
               <div class="govuk-form-group">
-                <label class="govuk-label govuk-label--s"
-                       for="referenceNumber">
+                <label for="referenceNumber" class="govuk-label govuk-label--s">
                   What is your Help with Fees reference number?
                 </label>
                 <div id="referenceNumber-online-ref-hint" class="govuk-hint">
                   For example, HWF-123-456
                 </div>
                 {% if form.referenceNumber.errors %}
-                <p id="referenceNumber-error"
-                   class="govuk-error-message">
+                <p id="referenceNumber-error" class="govuk-error-message">
                   <span class="govuk-visually-hidden">Error:</span> Reference number is required
                 </p>
                 {% endif %}
-                <input class="govuk-input {{ 'govuk-input--error' if form.referenceNumber.errors }}"
-                       id="referenceNumber"
-                       name="referenceNumber"
-                       type="text"
-                       spellcheck="false"
-                       autocomplete="off"
-                       value="{{
-                        form.referenceNumber.data if form.referenceNumber.data is not none
-                       }}">
+                <input id="referenceNumber" type="text" name="referenceNumber" value="{{ form.referenceNumber.data if form.referenceNumber.data is not none }}" spellcheck="false" autocomplete="off" class="govuk-input {{ 'govuk-input--error' if form.referenceNumber.errors }}">
               </div>
-
             </div>
             <div class="govuk-radios__item">
-              <input class="govuk-radios__input"
-                     id="check-2"
-                     name="check"
-                     type="radio"
-                     value="Using the EX160 form"
-                     {{ 'checked'
-                     if
-                     form.check.data
-                     is
-                     iterable
-                     and "Using the EX160 form"
-                     in
-                     form.check.data
-                     }}>
-              <label class="govuk-label govuk-radios__label"
-                     for="check-2">
+              <input id="check-2" type="radio" name="check" value="Using the EX160 form" class="govuk-radios__input" {{ 'checked' if form.check.data is iterable and 'Using the EX160 form' in form.check.data }}>
+              <label for="check-2" class="govuk-label govuk-radios__label">
                 Using the EX160 form
               </label>
             </div>
@@ -137,16 +74,12 @@
       </div>
 
       <div class="govuk-button-group">
-        <button class="govuk-button"
-                data-module="govuk-button">
+        <button class="govuk-button" data-module="govuk-button">
           Save and continue
         </button>
-        <a href="{{url_for('taskList.index')}}"
-           class="govuk-link govuk-link--no-visited-state">Return to task list</a>
+        <a href="{{ url_for('taskList.index') }}" class="govuk-link govuk-link--no-visited-state">Return to task list</a>
       </div>
     </form>
-
-
   </div>
 </div>
 {% endblock %}

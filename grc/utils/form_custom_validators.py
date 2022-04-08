@@ -1,9 +1,8 @@
 import re
 from flask import session
-from wtforms.validators import DataRequired, ValidationError, StopValidation
+from wtforms.validators import DataRequired, InputRequired, ValidationError, StopValidation, Optional
 from werkzeug.datastructures import FileStorage
 from collections.abc import Iterable
-
 from grc.utils.security_code import validate_security_code
 from grc.utils.reference_number import validate_reference_number
 
@@ -56,7 +55,7 @@ class StrictRequiredIf(DataRequired):
 
 
 def validateSecurityCode(form, field):
-    if validate_security_code(session['email'],field.data) is False:
+    if validate_security_code(session['email'], field.data) is False:
         raise ValidationError('A valid code is required')
 
 
@@ -74,24 +73,30 @@ def validateEmailAddress(form, field):
 def validatePasswordStrength(form, field):
     def password_check(password):
         length_error = len(password) < 8
-        digit_error = re.search(r"\d", password) is None
-        uppercase_error = re.search(r"[A-Z]", password) is None
-        lowercase_error = re.search(r"[a-z]", password) is None
-        symbol_error = re.search(r"\W", password) is None
+        digit_error = re.search(r'\d', password) is None
+        uppercase_error = re.search(r'[A-Z]', password) is None
+        lowercase_error = re.search(r'[a-z]', password) is None
+        symbol_error = re.search(r'\W', password) is None
         return not (length_error or digit_error or uppercase_error or lowercase_error or symbol_error)
 
     if password_check(field.data) is False:
         raise ValidationError('Your password needs to contain 8 characters or more and include upper, lower case and special characters')
 
 
-class MultiFileAllowed(object):
+def validateAdopted(form, field):
 
+    # Custom validator for the "Are you adopted", StrictRequiredIf doesn't play nice with this question
+    if form['check'].data == 'Yes':
+        if field.data is None or field.data == '':
+            raise ValidationError('Select if your were you adopted in the United Kingdom')
+
+
+class MultiFileAllowed(object):
     def __init__(self, upload_set, message=None):
         self.upload_set = upload_set
         self.message = message
 
     def __call__(self, form, field):
-
         if not (all(isinstance(item, FileStorage) for item in field.data) and field.data):
             return
 
@@ -112,13 +117,12 @@ class MultiFileAllowed(object):
                 ))
 
 
-
 def FileSizeLimit(max_size_in_mb):
     max_bytes = max_size_in_mb*1024*1024
 
     def file_length_check(form, field):
         for data in field.data:
             if len(data.read()) > max_bytes:
-                raise ValidationError(f"File size must be less than {max_size_in_mb}MB")
+                raise ValidationError(f'File size must be less than {max_size_in_mb}MB')
 
     return file_length_check

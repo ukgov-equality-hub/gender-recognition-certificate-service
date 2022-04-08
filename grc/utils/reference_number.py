@@ -1,13 +1,8 @@
 import random, string
-from datetime import datetime, timedelta
 from grc.models import db, Application
 
 
 def reference_number_generator(email):
-    """An 8 alphanumeric characters code generator as string to be used as
-    an application reference number
-    """
-
     email_record = Application.query.filter_by(email=email).first()
 
     if email_record is None:
@@ -28,25 +23,17 @@ def reference_number_generator(email):
     else:
         return False
 
-def reference_number_string(reference_number):
-    """It returns a visual representation of reference number
-    """
 
-    return reference_number[0:4] + "-" + reference_number[4:8]
+def reference_number_string(reference_number):
+    return reference_number[0:4] + '-' + reference_number[4: 8]
 
 
 def validate_reference_number(reference):
-    """Validate reference number
-    """
-
-    reference = reference.replace("-", "").upper()
+    reference = reference.replace('-', '').upper()
     record = Application.query.filter_by(reference_number=reference).first()
 
     if record is None:
-        print ("An application with " + reference + " reference number does not exist")
+        print("An application with " + reference + " reference number does not exist")
         return False
     else:
         return record
-
-
-

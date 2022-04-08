@@ -1,29 +1,20 @@
 {% extends 'base.html' %}
-
-
-{% block backLink %}<a href="{{url_for('taskList.index')}}"
-   class="govuk-back-link">Back</a>{% endblock %}
+{% block backLink %}<a href="{{ url_for('taskList.index') }}" class="govuk-back-link">Back</a>{% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-
     {% if form.errors %}
-    <div class="govuk-error-summary"
-         aria-labelledby="error-summary-title"
-         role="alert"
-         tabindex="-1"
-         data-module="govuk-error-summary">
-      <h2 class="govuk-error-summary__title"
-          id="error-summary-title">
+    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+      <h2 id="error-summary-title" class="govuk-error-summary__title">
         There is a problem
       </h2>
       <div class="govuk-error-summary__body">
         <ul class="govuk-list govuk-error-summary__list">
           {% for error in form.errors %}
-          {% for e in form[error].errors %}
-          <li><a href="#{{error}}-issued-error">{{ e }}</a></li>
-          {% endfor %}
+            {% for e in form[error].errors %}
+            <li><a href="#{{ error }}-issued-error">{{ e }}</a></li>
+            {% endfor %}
           {% endfor %}
         </ul>
       </div>
@@ -34,13 +25,12 @@
       Marriages and civil partnerships
     </h1>
 
-    <p class="govuk-body govuk-!-margin-bottom-8">If you've ever been married or in a civil partnership, you'll need to
-      have an original or <a class="govuk-link"
-         href="https://www.gov.uk/certifying-a-document">certified copy</a> of any of your marriage
-      or civil partnership certificates.</p>
+    <p class="govuk-body govuk-!-margin-bottom-8">
+      If you've ever been married or in a civil partnership, you'll need to have an original or
+      <a href="https://www.gov.uk/certifying-a-document" class="govuk-link">certified copy</a> of any of your marriage or civil partnership certificates.
+    </p>
 
-    <form method="POST"
-          action="{{url_for('partnershipDetails.index')}}">
+    <form method="POST" action="{{ url_for('partnershipDetails.index') }}">
       {{ form.csrf_token }}
 
       <div class="govuk-form-group {{ 'govuk-form-group--error' if form.check.errors }}">
@@ -50,63 +40,32 @@
               Are you currently married or in a civil partnership?
             </h1>
           </legend>
-          <div id="uk-check-hint"
-               class="govuk-hint">
+          <div id="uk-check-hint" class="govuk-hint">
             If you are in the process of ending, or you plan to end your marriage or civil partnership, you should
             select your current, legal status
           </div>
           {% if form.check.errors %}
-          <p id="check-issued-error"
-             class="govuk-error-message">
-            <span class="govuk-visually-hidden">Error:</span> Select if you are currently married or in a civil
-            partnership
+          <p id="check-issued-error" class="govuk-error-message">
+            <span class="govuk-visually-hidden">Error:</span> Select if you are currently married or in a civil partnership
           </p>
           {% endif %}
-          <div class="govuk-radios"
-               data-module="govuk-radios">
+          <div class="govuk-radios" data-module="govuk-radios">
             <div class="govuk-radios__item">
-              <input class="govuk-radios__input"
-                     id="where-do-you-live"
-                     name="check"
-                     type="radio"
-                     value="Married"
-                     {{ 'checked'
-                     if
-                     session['application']['partnershipDetails']['marriageCivilPartnership']=="Married"
-                     }}>
-              <label class="govuk-label govuk-radios__label"
-                     for="check">
+              <input id="check" type="radio" name="check" value="Married" class="govuk-radios__input" {{ 'checked' if session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Married' }}>
+              <label for="check" class="govuk-label govuk-radios__label">
                 Married
               </label>
             </div>
             <div class="govuk-radios__item">
-              <input class="govuk-radios__input"
-                     id="check-2"
-                     name="check"
-                     type="radio"
-                     value="Civil partnership"
-                     {{ 'checked'
-                     if
-                     session['application']['partnershipDetails']['marriageCivilPartnership']=="Civil partnership"
-                     }}>
-              <label class="govuk-label govuk-radios__label"
-                     for="check-2">
+              <input id="check-2" type="radio" name="check" value="Civil partnership" class="govuk-radios__input" {{ 'checked' if session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Civil partnership' }}>
+              <label for="check-2" class="govuk-label govuk-radios__label">
                 Civil partnership
               </label>
             </div>
             <div class="govuk-radios__divider">or</div>
             <div class="govuk-radios__item">
-              <input class="govuk-radios__input"
-                     id="check-3"
-                     name="check"
-                     type="radio"
-                     value="Neither"
-                     {{ 'checked'
-                     if
-                     session['application']['partnershipDetails']['marriageCivilPartnership']=="Neither"
-                     }}>
-              <label class="govuk-label govuk-radios__label"
-                     for="check-3">
+              <input id="check-3" type="radio" name="check" value="Neither" class="govuk-radios__input" {{ 'checked' if session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Neither' }}>
+              <label for="check-3" class="govuk-label govuk-radios__label">
                 Neither
               </label>
             </div>
@@ -115,16 +74,12 @@
       </div>
 
       <div class="govuk-button-group">
-        <button class="govuk-button"
-                data-module="govuk-button">
+        <button class="govuk-button" data-module="govuk-button">
           Save and continue
         </button>
-        <a href="{{url_for('taskList.index')}}"
-           class="govuk-link govuk-link--no-visited-state">Return to task list</a>
+        <a href="{{ url_for('taskList.index') }}" class="govuk-link govuk-link--no-visited-state">Return to task list</a>
       </div>
     </form>
-
-
   </div>
 </div>
 {% endblock %}

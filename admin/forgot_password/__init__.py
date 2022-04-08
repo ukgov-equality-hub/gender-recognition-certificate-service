@@ -1,14 +1,9 @@
 import jwt
 from datetime import datetime, timedelta
-from flask import (
-    Blueprint, flash, g, redirect, render_template, request, url_for, current_app, session
-)
-from werkzeug.exceptions import abort
-from werkzeug.security import generate_password_hash
-from flask import render_template
+from flask import Blueprint, render_template, request, current_app
 from notifications_python_client.notifications import NotificationsAPIClient
 from admin.forgot_password.forms import ForgotPasswordForm
-from grc.models import db, AdminUser
+from grc.models import AdminUser
 
 forgot_password = Blueprint('forgot_password', __name__)
 

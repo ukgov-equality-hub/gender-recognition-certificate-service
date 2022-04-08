@@ -1,6 +1,4 @@
-from flask import (
-    Blueprint, redirect, url_for, session
-)
+from flask import Blueprint, redirect, url_for, session
 
 signout = Blueprint('signout', __name__)
 

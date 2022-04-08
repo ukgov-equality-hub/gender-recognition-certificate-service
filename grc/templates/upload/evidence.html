@@ -1,29 +1,20 @@
 {% extends 'base.html' %}
-
-
-{% block backLink %}<a href="{{url_for('taskList.index')}}"
-   class="govuk-back-link">Back</a>{% endblock %}
+{% block backLink %}<a href="{{ url_for('taskList.index') }}" class="govuk-back-link">Back</a>{% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-
     {% if form.errors %}
-    <div class="govuk-error-summary"
-         aria-labelledby="error-summary-title"
-         role="alert"
-         tabindex="-1"
-         data-module="govuk-error-summary">
-      <h2 class="govuk-error-summary__title"
-          id="error-summary-title">
+    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+      <h2 id="error-summary-title" class="govuk-error-summary__title">
         There is a problem
       </h2>
       <div class="govuk-error-summary__body">
         <ul class="govuk-list govuk-error-summary__list">
           {% for error in form.errors %}
-          {% for e in form[error].errors %}
-          <li><a href="#{{error}}">{{ e }}</a></li>
-          {% endfor %}
+            {% for e in form[error].errors %}
+            <li><a href="#{{ error }}">{{ e }}</a></li>
+            {% endfor %}
           {% endfor %}
         </ul>
       </div>
@@ -34,23 +25,18 @@
       Upload evidence of living in your gender
     </h1>
 
-    <p class="govuk-body">You'll need copies of evidence to show that you've been living in your gender for the last 2
-      years.</p>
-
-    <p class="govuk-body govuk-!-margin-bottom-2">There are no specific requirements for this evidence, but try to find:
-    </p>
+    <p class="govuk-body">You'll need copies of evidence to show that you've been living in your gender for the last 2 years.</p>
+    <p class="govuk-body govuk-!-margin-bottom-2">There are no specific requirements for this evidence, but try to find:</p>
     <ul class="govuk-list govuk-list--bullet">
       <li>evidence from different points over the 2 years, with roughly 4 pieces of evidence from each year</li>
       <li>at least one piece of recent evidence</li>
       <li>evidence from a variety of different sources</li>
     </ul>
-
     <p class="govuk-body govuk-!-margin-bottom-2">Examples of what can upload include:</p>
     <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-8">
       <li>your driving licence</li>
       <li>your passport</li>
-      <li>identity cards, like workplace IDs, railcards, health insurance cards, library cards or supermarket loyalty
-        cards</li>
+      <li>identity cards, like workplace IDs, railcards, health insurance cards, library cards or supermarket loyalty cards</li>
       <li>letters from solicitors, accountants, doctors, dentists or employers</li>
       <li>bank statements</li>
       <li>payslips, P60s and P45s</li>
@@ -60,84 +46,57 @@
       <li>rental agreements</li>
       <li>academic certificates and documents</li>
     </ul>
-
     <p class="govuk-body">You might be asked to send in more evidence after you submit your application.</p>
 
-    <form method="POST"
-          action="{{url_for('upload.genderEvidence')}}"
-          enctype="multipart/form-data">
+    <form method="POST" action="{{ url_for('upload.genderEvidence') }}" enctype="multipart/form-data">
       {{ form.csrf_token }}
 
       <div class="govuk-form-group {{ 'govuk-form-group--error' if form.errors }}">
-        <label class="govuk-label govuk-label--m"
-               for="documents">
+        <label for="documents" class="govuk-label govuk-label--m">
           Upload files
         </label>
-        <div id="documents-hint"
-             class="govuk-hint">
+        <div id="documents-hint" class="govuk-hint">
           The files must be a JPG, BMP, PNG, TIF or PDF and be smaller than 10MB
         </div>
         {% if form.documents.errors %}
-        <p id="documents-error"
-           class="govuk-error-message">
+        <p id="documents-error" class="govuk-error-message">
           {% for error in form.errors %}
-          {% for e in form[error].errors %}
-          <span class="govuk-visually-hidden">Error:</span> {{e}}
-          {% endfor %}
+            {% for e in form[error].errors %}
+            <span class="govuk-visually-hidden">Error:</span> {{ e }}
+            {% endfor %}
           {% endfor %}
         </p>
         {% endif %}
-        <input class="govuk-file-upload govuk-!-margin-bottom-4 {{ 'govuk-input--error' if form.documents.errors }}"
-               id="documents"
-               name="documents"
-               multiple
-               accept=".jpg,.jpeg,.bmp,.png,.tif,.tiff,.pdf"
-               type="file">
-
+        <input id="documents" type="file" name="documents" multiple accept=".jpg,.jpeg,.bmp,.png,.tif,.tiff,.pdf" class="govuk-file-upload govuk-!-margin-bottom-4 {{ 'govuk-input--error' if form.documents.errors }}">
       </div>
 
       <div class="govuk-button-group">
-        <button class="govuk-button"
-                data-module="govuk-button">
+        <button class="govuk-button" data-module="govuk-button">
           Save and continue
         </button>
-        <a href="{{url_for('taskList.index')}}"
-           class="govuk-link govuk-link--no-visited-state">Return to task list</a>
-
+        <a class="govuk-link govuk-link--no-visited-state" href="{{ url_for('taskList.index') }}">Return to task list</a>
       </div>
     </form>
 
-    {% if session["application"]["genderEvidence"]["files"] %}
+    {% if session['application']['genderEvidence']['files'] %}
     <div class="govuk-form-group govuk-!-margin-top-9">
-      <label class="govuk-label govuk-label--m"
-             for="documents">
+      <label for="documents" class="govuk-label govuk-label--m">
         Uploaded files
       </label>
       <dl class="govuk-summary-list">
-        {% for item in session["application"]["genderEvidence"]["files"] %}
-        <form method="POST"
-              action="{{url_for('upload.removeFile')}}"
-              enctype="multipart/form-data">
+        {% for item in session['application']['genderEvidence']['files'] %}
+        <form method="POST" action="{{ url_for('upload.removeFile') }}" enctype="multipart/form-data">
           {{ deleteform.csrf_token }}
           <div class="govuk-summary-list__row">
             <dd class="govuk-summary-list__value govuk-!-width-full">
-              {{item | replace(session["application"]["reference_number"]+ '/genderEvidence/',"")}}
+              {{ item | replace(session['application']['reference_number'] + '__genderEvidence__', '') }}
             </dd>
             <dd class="govuk-summary-list__actions">
-              <input name="section"
-                     value="genderEvidence"
-                     type="hidden">
-              <input name="file"
-                     value="{{item}}"
-                     type="hidden">
-              <input name="redirect_route"
-                     value="{{url_for('upload.genderEvidence')}}"
-                     type="hidden">
-
-              <button class="govuk-button govuk-button--warning"
-                      data-module="govuk-button">
-                Remove <span class="govuk-visually-hidden">
-                  {{item | replace(session["application"]["reference_number"]+ '/genderEvidence/',"")}} file</span>
+              <input type="hidden" name="section" value="genderEvidence">
+              <input type="hidden" name="file" value="{{ item }}">
+              <input type="hidden" name="redirect_route" value="{{ url_for('upload.genderEvidence') }}">
+              <button class="govuk-button govuk-button--warning" data-module="govuk-button">
+                Remove <span class="govuk-visually-hidden">{{ item | replace(session['application']['reference_number'] + '__genderEvidence__', '') }} file</span>
               </button>
             </dd>
           </div>
@@ -146,8 +105,6 @@
       </dl>
     </div>
     {% endif %}
-
-
   </div>
 </div>
 {% endblock %}

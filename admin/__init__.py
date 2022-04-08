@@ -72,8 +72,8 @@ def create_app(test_config=None):
 
         # Check sizes...595 x 842 pt
         ratio = 1.
-        if width > 550:
-            ratio = 550 / width
+        if width > 580:
+            ratio = 580 / width
         elif height > 800:
             ratio = 800 / height
         width *= ratio

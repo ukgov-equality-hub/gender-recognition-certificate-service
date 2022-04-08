@@ -1,16 +1,11 @@
 {% extends 'base.html' %}
-
-
-{% block backLink %}<a href="{{url_for('birthRegistration.forces')}}"
-   class="govuk-back-link">Back</a>{% endblock %}
+{% block backLink %}<a href="{{ url_for('birthRegistration.forces') }}" class="govuk-back-link">Back</a>{% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-
     <h1 class="govuk-heading-l">
-      <span class="govuk-caption-l">Check your answers: </span>
-      Birth registration details
+      <span class="govuk-caption-l">Check your answers:</span> Birth registration details
     </h1>
 
     <dl class="govuk-summary-list govuk-!-margin-bottom-9">
@@ -19,12 +14,10 @@
           Birth name
         </dt>
         <dd class="govuk-summary-list__value">
-          {{session["application"]["birthRegistration"]["first_name"]}} {{session["application"]["birthRegistration"]["last_name"]}}
+          {{ session['application']['birthRegistration']['first_name'] }} {{ session['application']['birthRegistration']['last_name'] }}
         </dd>
         <dd class="govuk-summary-list__actions">
-          <a class="govuk-link"
-             href="{{url_for('birthRegistration.index')}}">
-            Change</a>
+          <a href="{{ url_for('birthRegistration.index') }}" class="govuk-link">Change</a>
         </dd>
       </div>
       <div class="govuk-summary-list__row">
@@ -32,12 +25,10 @@
           Sex registered at birth
         </dt>
         <dd class="govuk-summary-list__value">
-          {{session["application"]["birthRegistration"]["sex"]}}
+          {{ session['application']['birthRegistration']['sex'] }}
         </dd>
         <dd class="govuk-summary-list__actions">
-          <a class="govuk-link"
-             href="{{url_for('birthRegistration.sexCheck')}}">
-            Change</a>
+          <a href="{{ url_for('birthRegistration.sexCheck') }}" class="govuk-link">Change</a>
         </dd>
       </div>
       <div class="govuk-summary-list__row">
@@ -45,12 +36,10 @@
           Date of birth
         </dt>
         <dd class="govuk-summary-list__value">
-          {{session["application"]["birthRegistration"]["dob"]["day"]}}/{{session["application"]["birthRegistration"]["dob"]["month"]}}/{{session["application"]["birthRegistration"]["dob"]["year"]}}
+          {{ session['application']['birthRegistration']['dob']['day'] }}/{{ session['application']['birthRegistration']['dob']['month'] }}/{{ session['application']['birthRegistration']['dob']['year'] }}
         </dd>
         <dd class="govuk-summary-list__actions">
-          <a class="govuk-link"
-             href="{{url_for('birthRegistration.dob')}}">
-            Change</a>
+          <a href="{{ url_for('birthRegistration.dob') }}" class="govuk-link">Change</a>
         </dd>
       </div>
       <div class="govuk-summary-list__row">
@@ -59,152 +48,120 @@
         </dt>
         <dd class="govuk-summary-list__value">
           <ul class="govuk-list">
-            {{session["application"]["birthRegistration"]["ukCheck"]}}
+            {{ session['application']['birthRegistration']['ukCheck'] }}
           </ul>
         </dd>
         <dd class="govuk-summary-list__actions">
-          <a class="govuk-link"
-             href="{{url_for('birthRegistration.ukCheck')}}">
-            Change</a>
+          <a href="{{ url_for('birthRegistration.ukCheck') }}" class="govuk-link">Change</a>
         </dd>
       </div>
-
-
-      {% if session["application"]["birthRegistration"]["ukCheck"] == 'Yes' %}
-        <div class="govuk-summary-list__row">
-          <dt class="govuk-summary-list__key">
-            Mother's name
-          </dt>
-          <dd class="govuk-summary-list__value">
-            {{session["application"]["birthRegistration"]["mothers_first_name"]}} {{session["application"]["birthRegistration"]["mothers_last_name"]}}, {{session["application"]["birthRegistration"]["mothers_maiden_name"]}}
-          </dd>
-          <dd class="govuk-summary-list__actions">
-            <a class="govuk-link"
-              href="{{url_for('birthRegistration.mothersName')}}">
-              Change</a>
-          </dd>
-        </div>
-        <div class="govuk-summary-list__row">
-          <dt class="govuk-summary-list__key">
-            Father's name listed
-          </dt>
-          <dd class="govuk-summary-list__value">
-            {{session["application"]["birthRegistration"]["fathersNameCheck"]}}
-          </dd>
-          <dd class="govuk-summary-list__actions">
-            <a class="govuk-link"
-              href="{{url_for('birthRegistration.fathersNameCheck')}}">
-              Change</a>
-          </dd>
-        </div>
-
-        {% if session["application"]["birthRegistration"]["fathersNameCheck"] == 'Yes' %}
-        <div class="govuk-summary-list__row">
-          <dt class="govuk-summary-list__key">
-            Father's name
-          </dt>
-          <dd class="govuk-summary-list__value">
-            {{session["application"]["birthRegistration"]["fathers_first_name"]}} {{session["application"]["birthRegistration"]["fathers_last_name"]}}
-          </dd>
-          <dd class="govuk-summary-list__actions">
-            <a class="govuk-link"
-              href="{{url_for('birthRegistration.fathersName')}}">
-              Change</a>
-          </dd>
-        </div>
-        {% endif %}
-
-        <div class="govuk-summary-list__row">
-          <dt class="govuk-summary-list__key">
-            Place of birth
-          </dt>
-          <dd class="govuk-summary-list__value">
-            {{session["application"]["birthRegistration"]["place_of_birth"]}}
-          </dd>
-          <dd class="govuk-summary-list__actions">
-            <a class="govuk-link"
-              href="{{url_for('birthRegistration.placeOfBirth')}}">
-              Change</a>
-          </dd>
-        </div>
-
-        <div class="govuk-summary-list__row">
-          <dt class="govuk-summary-list__key">
-            Adopted
-          </dt>
-          <dd class="govuk-summary-list__value">
-            {{session["application"]["birthRegistration"]["adopted"]}}
-          </dd>
-          <dd class="govuk-summary-list__actions">
-            <a class="govuk-link"
-              href="{{url_for('birthRegistration.adopted')}}">
-              Change</a>
-          </dd>
-        </div>
-
-        {% if session["application"]["birthRegistration"]["adopted"] == "Yes" %}
-        <div class="govuk-summary-list__row">
-          <dt class="govuk-summary-list__key">
-            Adopted in UK
-          </dt>
-          <dd class="govuk-summary-list__value">
-            {{session["application"]["birthRegistration"]["adopted_uk"]}}
-          </dd>
-          <dd class="govuk-summary-list__actions">
-            <a class="govuk-link"
-              href="{{url_for('birthRegistration.adopted')}}">
-              Change</a>
-          </dd>
-        </div>
-        {% endif %}
-
-        <div class="govuk-summary-list__row">
-          <dt class="govuk-summary-list__key">
-            Forces registering service, British Consul or High Commission, or under Merchant Shipping or Civil Aviation provisions
-          </dt>
-          <dd class="govuk-summary-list__value">
-            {{session["application"]["birthRegistration"]["forces"]}}
-          </dd>
-          <dd class="govuk-summary-list__actions">
-            <a class="govuk-link"
-              href="{{url_for('birthRegistration.forces')}}">
-              Change</a>
-          </dd>
-        </div>
+      {% if session['application']['birthRegistration']['ukCheck'] == 'Yes' %}
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Mother's name
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {{ session['application']['birthRegistration']['mothers_first_name'] }} {{ session['application']['birthRegistration']['mothers_last_name'] }}, {{ session['application']['birthRegistration']['mothers_maiden_name'] }}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a href="{{ url_for('birthRegistration.mothersName') }}" class="govuk-link">Change</a>
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Father's name listed
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {{ session['application']['birthRegistration']['fathersNameCheck'] }}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a href="{{ url_for('birthRegistration.fathersNameCheck') }}" class="govuk-link">Change</a>
+        </dd>
+      </div>
+      {% if session['application']['birthRegistration']['fathersNameCheck'] == 'Yes' %}
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Father's name
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {{ session['application']['birthRegistration']['fathers_first_name'] }} {{ session['application']['birthRegistration']['fathers_last_name'] }}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a href="{{ url_for('birthRegistration.fathersName') }}" class="govuk-link">Change</a>
+        </dd>
+      </div>
+      {% endif %}
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Place of birth
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {{ session['application']['birthRegistration']['place_of_birth'] }}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a href="{{ url_for('birthRegistration.placeOfBirth') }}" class="govuk-link">Change</a>
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Adopted
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {{ session['application']['birthRegistration']['adopted'] }}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a href="{{ url_for('birthRegistration.adopted') }}" class="govuk-link">Change</a>
+        </dd>
+      </div>
+      {% if session['application']['birthRegistration']['adopted'] == 'Yes' %}
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Adopted in UK
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {{ session['application']['birthRegistration']['adopted_uk'] }}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a href="{{ url_for('birthRegistration.adopted') }}" class="govuk-link">Change</a>
+        </dd>
+      </div>
+      {% endif %}
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Forces registering service, British Consul or High Commission, or under Merchant Shipping or Civil Aviation provisions
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {{ session['application']['birthRegistration']['forces'] }}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a href="{{ url_for('birthRegistration.forces') }}" class="govuk-link">Change</a>
+        </dd>
+      </div>
       {% else %}
       <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">
           Registered birth country
         </dt>
         <dd class="govuk-summary-list__value">
-          {{session["application"]["birthRegistration"]["country"]}}
+          {{ session['application']['birthRegistration']['country'] }}
         </dd>
         <dd class="govuk-summary-list__actions">
-          <a class="govuk-link"
-            href="{{url_for('birthRegistration.country')}}">
-            Change</a>
+          <a href="{{ url_for('birthRegistration.country') }}" class="govuk-link">Change</a>
         </dd>
       </div>
       {% endif %}
-
     </dl>
 
-    <form method="POST"
-          action="{{url_for('birthRegistration.checkYourAnswers')}}">
+    <form method="POST" action="{{ url_for('birthRegistration.checkYourAnswers') }}">
       {{ form.csrf_token }}
 
       <div class="govuk-button-group">
-
-        <button class="govuk-button"
-                data-module="govuk-button">
+        <button class="govuk-button" data-module="govuk-button">
           Save and continue
         </button>
-
-        <a href="{{url_for('taskList.index')}}"
-           class="govuk-link govuk-link--no-visited-state">Return to task list</a>
+        <a href="{{ url_for('taskList.index') }}" class="govuk-link govuk-link--no-visited-state">Return to task list</a>
       </div>
     </form>
-
   </div>
 </div>
 {% endblock %}

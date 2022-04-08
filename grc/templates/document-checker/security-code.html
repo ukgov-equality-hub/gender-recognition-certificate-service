@@ -1,86 +1,61 @@
 {% extends 'base.html' %}
 {% block serviceTitle %}Check documents needed to apply for a GRC{% endblock %}
-
-{% block backLink %}<a href="{{url_for('documentChecker.email')}}"
-   class="govuk-back-link">Back</a>{% endblock %}
+{% block backLink %}<a href="{{ url_for('documentChecker.email') }}" class="govuk-back-link">Back</a>{% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-
     {% if form.errors %}
-    <div class="govuk-error-summary"
-         aria-labelledby="error-summary-title"
-         role="alert"
-         tabindex="-1"
-         data-module="govuk-error-summary">
-      <h2 class="govuk-error-summary__title"
-          id="error-summary-title">
+    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+      <h2 id="error-summary-title" class="govuk-error-summary__title">
         There is a problem
       </h2>
       <div class="govuk-error-summary__body">
         <ul class="govuk-list govuk-error-summary__list">
           {% for error in form.errors %}
-          {% for e in form[error].errors %}
-          <li><a href="#{{error}}">{{ e }}</a></li>
-          {% endfor %}
+            {% for e in form[error].errors %}
+            <li><a href="#{{ error }}">{{ e }}</a></li>
+            {% endfor %}
           {% endfor %}
         </ul>
       </div>
     </div>
     {% endif %}
 
-    <form method="POST"
-          action="{{url_for('documentChecker.emailConfirmation')}}">
+    <form method="POST" action="{{ url_for('documentChecker.emailConfirmation') }}">
       {{ form.csrf_token }}
       <h1 class="govuk-heading-l">
         Enter security code
       </h1>
 
-      <p class="govuk-body">We've sent a security code to "{{email}}".</p>
-
+      <p class="govuk-body">We’ve sent a security code to "{{ email }}".</p>
       <p class="govuk-body">This can take a few minutes to arrive.</p>
-
       <p class="govuk-body govuk-!-margin-bottom-2">If you do not get an email:</p>
       <ul class="govuk-list govuk-list--bullet">
         <li>check your spam or junk folder</li>
         <li>check you have entered the correct email</li>
       </ul>
 
-      <p class="govuk-body govuk-!-margin-bottom-8">If it's still not there, we can <a href="{{ url_for('documentChecker.emailConfirmation') }}?resend=true"
-           class="govuk-link--no-visited-state">resend the email</a>.</p>
-
-
+      <p class="govuk-body govuk-!-margin-bottom-8">If it's still not there, we can <a href="{{ url_for('documentChecker.emailConfirmation') }}?resend=true" class="govuk-link--no-visited-state">resend the email</a>.</p>
       <div class="govuk-form-group {{ 'govuk-form-group--error' if form.code.errors }}">
-        <label class="govuk-label govuk-label--m"
-               for="code">
+        <label for="code" class="govuk-label govuk-label--m">
           Security code
         </label>
         {% if form.code.errors %}
-        <p id="code-issued-error"
-           class="govuk-error-message">
+        <p id="code-issued-error" class="govuk-error-message">
           <span class="govuk-visually-hidden">Error:</span> A valid code is required
         </p>
         {% endif %}
-        <input class="govuk-input govuk-input--width-5 {{ 'govuk-input--error' if form.code.errors }}"
-               id="code"
-               name="code"
-               type="text"
-               autocomplete="off">
+        <input id="code" type="text" name="code" autocomplete="off"> class="govuk-input govuk-input--width-5 {{ 'govuk-input--error' if form.code.errors }}"
       </div>
+      <input type="hidden" name="attempt" value="{{ form.attempt.data }}">
 
-      <input name="attempt"
-             value="{{form.attempt.data}}"
-             type="hidden">
-
-      <button class="govuk-button"
-              data-module="govuk-button">
-        Continue
-      </button>
-
+      <div class="govuk-button-group">
+        <button class="govuk-button" data-module="govuk-button">
+          Continue
+        </button>
+      </div>
     </form>
-
-
   </div>
 </div>
 {% endblock %}

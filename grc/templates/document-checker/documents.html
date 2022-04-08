@@ -1,61 +1,57 @@
 Documents that need to be uploaded when making your application:
 
-{% if session["documentChecker"]["previousNamesCheck"] != 'No' %}
+{% if session['documentChecker']['previousNamesCheck'] != 'No' %}
 * copies of all change of name documents
 {% endif %}
 
-{% if session['documentChecker']["confirmation"]["overseasApprovedCheck"] != 'Yes' %}
+{% if session['documentChecker']['confirmation']['overseasApprovedCheck'] != 'Yes' %}
 * a medical report that explains in full, the specific details of your gender dysphoria diagnosis, written by a
 registered medical practitioner or registered psychologist practising in the field of gender dysphoria
 * a medical report that explains in full, the specific details of your treatment, or planned treatment, such as
-hormone treatments or surgery, written by a registered medical practitioner – this could be your GP or surgeon
+hormone treatments or surgery, written by a registered medical practitioner - this could be your GP or surgeon
 
-* evidence of living in your gender for 2 years – no more than 8 documents spread throughout those 2 years
+* evidence of living in your gender for 2 years - no more than 8 documents spread throughout those 2 years
 {% endif %}
 
 Documents that need to be posted are:
 
-{% if session["documentChecker"]["previousNamesCheck"] != 'No' %}
+{% if session['documentChecker']['previousNamesCheck'] != 'No' %}
 * your original or a certified copy (https://www.gov.uk/certifying-a-document) of your full birth certificate
 {% endif %}
 
-{% if session["documentChecker"]["partnershipDetails"]["marriageCivilPartnership"] == 'Neither' %}
+{% if session['documentChecker']['partnershipDetails']['marriageCivilPartnership'] == 'Neither' %}
 * a statutory declaration for single applicants (https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852944/t467-eng.pdf)
 {% endif %}
 
-{% if session["documentChecker"]["partnershipDetails"]["marriageCivilPartnership"] != 'Neither' %}
-* a statutory declaration for applicants who are married or in a
-  civil partnership (https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852943/t466-eng.pdf)
+{% if session['documentChecker']['partnershipDetails']['marriageCivilPartnership'] != 'Neither' %}
+* a statutory declaration for applicants who are married or in a civil partnership (https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852943/t466-eng.pdf)
 {% endif %}
 
-
-{% if session["documentChecker"]["partnershipDetails"]["marriageCivilPartnership"] == 'Married' and
-session["documentChecker"]["partnershipDetails"]["stayTogether"] == 'Yes' %}
-* your spouse&rsquo;s statutory declaration (https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852946/t469-eng.pdf)
+{% if session['documentChecker']['partnershipDetails']['marriageCivilPartnership'] == 'Married' and session['documentChecker']['partnershipDetails']['stayTogether'] == 'Yes' %}
+* your spouse's statutory declaration (https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852946/t469-eng.pdf)
 {% endif %}
 
-{% if session["documentChecker"]["partnershipDetails"]["marriageCivilPartnership"] == 'Civil partnership' and
-session["documentChecker"]["partnershipDetails"]["stayTogether"] == 'Yes' %}
-* your civil partner&rsquo;s statutory declaration (https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852946/t469-eng.pdf)
+{% if session['documentChecker']['partnershipDetails']['marriageCivilPartnership'] == 'Civil partnership' and session['documentChecker']['partnershipDetails']['stayTogether'] == 'Yes' %}
+* your civil partner's statutory declaration (https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852946/t469-eng.pdf)
 {% endif %}
 
-{% if session["documentChecker"]["partnershipDetails"]["marriageCivilPartnership"] == 'Married' %}
+{% if session['documentChecker']['partnershipDetails']['marriageCivilPartnership'] == 'Married' %}
 * your original marriage certificate or a certified copy (https://www.gov.uk/certifying-a-document)
 {% endif %}
-{% if session["documentChecker"]["partnershipDetails"]["marriageCivilPartnership"] == 'Civil partnership' %}
+
+{% if session['documentChecker']['partnershipDetails']['marriageCivilPartnership'] == 'Civil partnership' %}
 * your original civil partnership certificate or a certified copy (https://www.gov.uk/certifying-a-document)
 {% endif %}
 
-{% if session["documentChecker"]["partnershipDetails"]["partnerDied"] == 'Yes' %}
-* a copy of your spouse or civil partner&rsquo;s death certificate
+{% if session['documentChecker']['partnershipDetails']['partnerDied'] == 'Yes' %}
+* a copy of your spouse or civil partner's death certificate
 {% endif %}
 
-{% if session["documentChecker"]["partnershipDetails"]["endedCheck"] == 'Yes' %}
+{% if session['documentChecker']['partnershipDetails']['endedCheck'] == 'Yes' %}
 * a copy of your decree(s) dissolving the marriage or civil partnership
 {% endif %}
 
-
-{% if session["documentChecker"]["confirmation"]["overseasApprovedCheck"] == 'Yes' %}
+{% if session['documentChecker']['confirmation']['overseasApprovedCheck'] == 'Yes' %}
 * official documentation that shows that your affirmed gender has been recognised in an approved country or
 territory
 {% endif %}
