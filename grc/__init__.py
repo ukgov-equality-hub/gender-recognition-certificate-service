@@ -1,8 +1,8 @@
 import os
+from datetime import timedelta
 from flask import Flask
 from flask_migrate import Migrate
 from flask_uuid import FlaskUUID
-from datetime import timedelta
 from grc.models import db
 from grc.config import Config, DevConfig, TestConfig
 

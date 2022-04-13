@@ -81,24 +81,11 @@ def download_object_data(object_name):
                 byte_value = byte_value.getvalue()
 
                 if file_type == 'tif' or file_type == 'bmp':
-                    '''#try:
-                    img.thumbnail(img.size)
-                    img.save(byte_value, 'JPEG', quality=100)
-                    byte_value = byte_value.getvalue()
-                    file_type = 'jpeg'
-                    #except Exception as e:
-                    #    print(e, flush=True)'''
-                    print('HERE', flush=True)
                     jpg = io.BytesIO()
                     img.save(jpg, 'JPEG', quality=100)
                     byte_value = jpg.getvalue()
                     jpg.close()
                     file_type = 'jpeg'
-
-                    #with io.BytesIO() as file_data:
-                    #    byte_value.save(file_data, format='JPEG')
-                    #    byte_value = file_data.getvalue()
-                    #    file_type = 'jpeg'
 
                 byte_base64 = base64.b64encode(byte_value)
                 data = byte_base64.decode('utf-8')
@@ -117,8 +104,7 @@ def download_object_data(object_name):
 def download_object(object_name):
     s3 = boto3.client('s3', region_name=current_app.config['AWS_REGION'], config=Config(signature_version='s3v4'))
 
-    print('Downloading', flush=True)
-    print(object_name, flush=True)
+    print('Downloading %s' % object_name, flush=True)
     data = None
     try:
         bytes_buffer = io.BytesIO()

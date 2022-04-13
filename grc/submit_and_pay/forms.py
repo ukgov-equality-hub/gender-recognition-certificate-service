@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import EmailField, StringField, SubmitField, RadioField, RadioField, BooleanField, IntegerField
 from wtforms.validators import DataRequired, NumberRange
-from grc.utils.form_custom_validators import StrictRequiredIf
+from grc.utils.form_custom_validators import StrictRequiredIf, validatePostcode
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
@@ -31,7 +31,7 @@ class HelpTypeForm(FlaskForm):
     submit = SubmitField('Continue')
 
 
-class CheckYourAnsewers(FlaskForm):
+class CheckYourAnswers(FlaskForm):
     check = BooleanField(
         'check',
         validators=[DataRequired(message='Please certify that all information given in this application is correct and that you understand making a false application is an offence.')]
@@ -100,7 +100,7 @@ class PaymentDetailsForm(FlaskForm):
 
     postcode = StringField(
         'postcode',
-        validators=[DataRequired(message='Postcode is required')]
+        validators=[DataRequired(message='A valid postcode is required'), validatePostcode]
     )
 
     email = EmailField(

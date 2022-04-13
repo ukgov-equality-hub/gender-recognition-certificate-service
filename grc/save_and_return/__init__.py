@@ -1,5 +1,6 @@
-from flask import Blueprint, flash, redirect, render_template, request, url_for, current_app, session
 from datetime import datetime, timedelta
+from dateutil import tz
+from flask import Blueprint, flash, redirect, render_template, request, url_for, current_app, session
 from grc.save_and_return.forms import ReturnToYourApplicationForm
 from notifications_python_client.notifications import NotificationsAPIClient
 from grc.utils.security_code import send_security_code
@@ -77,12 +78,13 @@ def exitApplication():
     else:
         send_to = session['application']['email']
 
+    local = datetime.now().replace(tzinfo=tz.gettz('UTC')).astimezone(tz.gettz('Europe/London'))
     notifications_client = NotificationsAPIClient(current_app.config['NOTIFY_API'])
     notifications_client.send_email_notification(
         email_address=send_to,
         template_id=current_app.config['NOTIFY_UNFINISHED_APPLICATION_EMAIL_TEMPLATE_ID'],
         personalisation={
-            'expiry_days': datetime.strftime(datetime.now() + timedelta(days=90), '%d/%m/%Y %H:%M:%S'),
+            'expiry_days': datetime.strftime(local + timedelta(days=90), '%d/%m/%Y %H:%M:%S'),
             'grc_return_link': request.url_root + 'save-and-return'
         }
     )

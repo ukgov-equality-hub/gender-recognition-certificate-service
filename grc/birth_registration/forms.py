@@ -3,7 +3,7 @@ from wtforms import StringField, SubmitField, RadioField, IntegerField
 from wtforms.validators import DataRequired, NumberRange
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
-from grc.utils.form_custom_validators import StrictRequiredIf, validateAdopted
+from grc.utils.form_custom_validators import StrictRequiredIf, validateAdopted, validateDOB
 
 
 class NameForm(FlaskForm):
@@ -35,7 +35,8 @@ class DobForm(FlaskForm):
         'day',
         validators=[
             DataRequired(message='The date must include a day'),
-            NumberRange(min=1, max=31, message='Please enter a valid day')
+            NumberRange(min=1, max=31, message='Please enter a valid day'),
+            validateDOB
         ]
     )
 
@@ -43,7 +44,8 @@ class DobForm(FlaskForm):
         'month',
         validators=[
             DataRequired(message='The date must include a month'),
-            NumberRange(min=1, max=12, message='Please enter a valid month')
+            NumberRange(min=1, max=12, message='Please enter a valid month'),
+            validateDOB
         ]
     )
 
@@ -52,11 +54,12 @@ class DobForm(FlaskForm):
         'year',
         validators=[
             DataRequired(message='The date must include a year'),
-            NumberRange(
-                min=int((datetime.now() - relativedelta(years=120)).strftime('%Y')),
-                max=int((datetime.now() - relativedelta(years=18)).strftime('%Y')),
-                message='Year needs to be a valid year in past. You need to be 18 years old to apply.'
-            )
+            #NumberRange(
+            #    min=int((datetime.now() - relativedelta(years=120)).strftime('%Y')),
+            #    max=int((datetime.now() - relativedelta(years=18)).strftime('%Y')),
+            #    message='Year needs to be a valid year in past. You need to be 18 years old to apply.'
+            #),
+            validateDOB
         ]
     )
 
@@ -146,5 +149,5 @@ class ForcesForm(FlaskForm):
     submit = SubmitField('Save and continue')
 
 
-class CheckYourAnsewers(FlaskForm):
+class CheckYourAnswers(FlaskForm):
     submit = SubmitField('Save and continue')

@@ -1,6 +1,6 @@
 from flask import Blueprint, redirect, render_template, request, url_for, session
 from grc.models import ListStatus
-from grc.birth_registration.forms import  NameForm, SexForm, DobForm, UkCheckForm, CountryForm, PlaceOfBirthForm, MothersNameForm, FatherNameCheckForm, AdoptedForm, ForcesForm, CheckYourAnsewers
+from grc.birth_registration.forms import  NameForm, SexForm, DobForm, UkCheckForm, CountryForm, PlaceOfBirthForm, MothersNameForm, FatherNameCheckForm, AdoptedForm, ForcesForm, CheckYourAnswers
 from grc.utils.decorators import LoginRequired
 from grc.utils.application_progress import save_progress
 
@@ -334,7 +334,7 @@ def forces():
 @birthRegistration.route('/birth-registration/check-your-answers', methods=['GET', 'POST'])
 @LoginRequired
 def checkYourAnswers():
-    form = CheckYourAnsewers()
+    form = CheckYourAnswers()
 
     if 'birthRegistration' not in session['application'] or (
         session['application']['birthRegistration']['progress'] != ListStatus.IN_REVIEW.name

@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import MultipleFileField, SubmitField, HiddenField
+from wtforms import MultipleFileField, BooleanField, SubmitField, HiddenField
 from wtforms.validators import DataRequired
 from grc.utils.form_custom_validators import MultiFileAllowed, FileSizeLimit
 
@@ -9,6 +9,8 @@ class UploadForm(FlaskForm):
         'documents',
         validators=[MultiFileAllowed(['jpg', 'png', 'jpeg', 'tif', 'bmp', 'pdf'], message='You need to add allowed files'), FileSizeLimit(10)]
     )
+
+    more_files = BooleanField('more_files')
 
     submit = SubmitField('Save and continue')
 

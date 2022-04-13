@@ -18,3 +18,4 @@ instance/config.py
 .admin.env
 *.py.txt
 .vscode/settings.json
+.unotes/*

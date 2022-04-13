@@ -31,7 +31,7 @@
       <li>statutory declarations</li>
     </ul>
 
-    <form method="POST" action="{{ url_for('upload.nameChange') }}" enctype="multipart/form-data">
+    <form method="POST" action="{{ url_for('upload.nameChange') }}" enctype="multipart/form-data" onsubmit="document.getElementById('documents').style.display = 'none'; document.getElementById('loading').style.display = 'inline-block';">
       {{ form.csrf_token }}
 
       <div class="govuk-form-group {{ 'govuk-form-group--error' if form.errors }}">
@@ -46,7 +46,15 @@
           {% endfor %}
         </p>
         {% endif %}
-        <input type="file" id="documents" name="documents" multiple accept=".jpg,.jpeg,.bmp,.png,.tif,.tiff,.pdf" class="govuk-file-upload govuk-!-margin-bottom-4 {{ 'govuk-input--error' if form.documents.errors }}">
+
+        <img id="loading" src="{{ url_for('static', filename='assets/images/loading.gif') }}" width="41" height="41" style="display: none; margin-bottom: 20px;">
+        <input id="documents" type="file" name="documents" multiple accept=".jpg,.jpeg,.bmp,.png,.tif,.tiff,.pdf" class="govuk-file-upload govuk-!-margin-bottom-4 {{ 'govuk-input--error' if form.documents.errors }}">
+        <div class="govuk-checkboxes__item">
+          <input id="more_files" type="checkbox" name="more_files" value="Yes" class="govuk-checkboxes__input">
+          <label for="more_files" class="govuk-label govuk-checkboxes__label">
+            I have more files to upload.
+          </label>
+        </div>
       </div>
 
       <div class="govuk-button-group">

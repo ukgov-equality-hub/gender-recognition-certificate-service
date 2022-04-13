@@ -5,7 +5,7 @@ import json
 import uuid
 from notifications_python_client.notifications import NotificationsAPIClient
 from grc.models import ListStatus
-from grc.submit_and_pay.forms import MethodCheckForm, HelpTypeForm, CheckYourAnsewers
+from grc.submit_and_pay.forms import MethodCheckForm, HelpTypeForm, CheckYourAnswers
 from grc.utils.decorators import LoginRequired
 from grc.utils.application_progress import save_progress, mark_complete
 
@@ -71,7 +71,7 @@ def helpType():
 @submitAndPay.route('/submit-and-pay/check-your-answers', methods=['GET', 'POST'])
 @LoginRequired
 def checkYourAnswers():
-    form = CheckYourAnsewers()
+    form = CheckYourAnswers()
 
     if 'submitAndPay' not in session['application'] or (session['application']['submitAndPay']['progress'] != ListStatus.IN_REVIEW.name and session['application']['submitAndPay']['progress'] != ListStatus.COMPLETED.name):
         return redirect(url_for('taskList.index'))
@@ -167,4 +167,6 @@ def confirmation():
         }
     )
 
-    return render_template('submit-and-pay/confirmation.html')
+    html = render_template('submit-and-pay/confirmation.html')
+    session.clear()
+    return html

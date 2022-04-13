@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import EmailField, StringField, SubmitField, RadioField, TelField
 from wtforms.validators import DataRequired
-from grc.utils.form_custom_validators import StrictRequiredIf
+from grc.utils.form_custom_validators import StrictRequiredIf, validateNino, validatePostcode
 from grc.utils.form_widgets import MultiCheckboxField
 
 
@@ -46,7 +46,7 @@ class AddressForm(FlaskForm):
 
     postcode = StringField(
         'postcode',
-        validators=[DataRequired(message='Postcode is required')]
+        validators=[DataRequired(message='A valid postcode is required'), validatePostcode]
     )
 
     submit = SubmitField('Save and continue')
@@ -110,11 +110,11 @@ class HmrcForm(FlaskForm):
 
     nino = StringField(
         'nino',
-        validators=[StrictRequiredIf('check', 'Yes', message='National Insurance number is required')]
+        validators=[StrictRequiredIf('check', 'Yes', message='A valid National Insurance number is required'), validateNino]
     )
 
     submit = SubmitField('Save and continue')
 
 
-class CheckYourAnsewers(FlaskForm):
+class CheckYourAnswers(FlaskForm):
     submit = SubmitField('Save and continue')

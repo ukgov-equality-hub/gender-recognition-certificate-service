@@ -1,6 +1,6 @@
 from flask import Blueprint, redirect, render_template, request, url_for, session
 from grc.models import ListStatus
-from grc.personal_details.forms import NameForm, PreviousNamesCheck, AddressForm, ContactPreferencesForm, ContactNameForm,ContactDatesForm, HmrcForm, CheckYourAnsewers
+from grc.personal_details.forms import NameForm, PreviousNamesCheck, AddressForm, ContactPreferencesForm, ContactNameForm,ContactDatesForm, HmrcForm, CheckYourAnswers
 from grc.utils.decorators import LoginRequired
 from grc.utils.application_progress import save_progress
 
@@ -283,7 +283,7 @@ def hmrc():
 @personalDetails.route('/personal-details/check-your-answers', methods=['GET', 'POST'])
 @LoginRequired
 def checkYourAnswers():
-    form = CheckYourAnsewers()
+    form = CheckYourAnswers()
 
     if 'personalDetails' not in session['application'] or (session['application']['personalDetails']['progress'] != ListStatus.IN_REVIEW.name and session['application']['personalDetails']['progress'] != ListStatus.COMPLETED.name):
         return redirect(url_for('taskList.index'))

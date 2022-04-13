@@ -28,7 +28,8 @@ def medicalReports():
         session['application']['medicalReports']['progress'] = ListStatus.COMPLETED.name
         session['application'] = save_progress()
 
-        return redirect(url_for('taskList.index'))
+        if not form.more_files.data == True:
+            return redirect(url_for('taskList.index'))
 
     if request.method == 'GET' and 'files' in session['application']['medicalReports'] and len(session['application']['medicalReports']['files']) == 0:
         session['application']['medicalReports']['progress'] = ListStatus.IN_PROGRESS.name
@@ -60,7 +61,8 @@ def genderEvidence():
         session['application']['genderEvidence']['progress'] = ListStatus.COMPLETED.name
         session['application'] = save_progress()
 
-        return redirect(url_for('taskList.index'))
+        if not form.more_files.data == True:
+            return redirect(url_for('taskList.index'))
 
     if request.method == 'GET' and 'files' in session['application']['genderEvidence'] and len(session['application']['genderEvidence']['files']) == 0:
         session['application']['genderEvidence']['progress'] = ListStatus.IN_PROGRESS.name
@@ -92,7 +94,8 @@ def nameChange():
         session['application']['nameChange']['progress'] = ListStatus.COMPLETED.name
         session['application'] = save_progress()
 
-        return redirect(url_for('taskList.index'))
+        if not form.more_files.data == True:
+            return redirect(url_for('taskList.index'))
 
     if request.method == 'GET' and 'files' in session['application']['nameChange'] and len(session['application']['nameChange']['files']) == 0:
         session['application']['nameChange']['progress'] = ListStatus.IN_PROGRESS.name
@@ -127,7 +130,8 @@ def marriageDocuments():
         session['application']['marriageDocuments']['progress'] = ListStatus.COMPLETED.name
         session['application'] = save_progress()
 
-        return redirect(url_for('taskList.index'))
+        if not form.more_files.data == True:
+            return redirect(url_for('taskList.index'))
 
     if request.method == 'GET' and 'files' in session['application']['marriageDocuments'] and len(session['application']['marriageDocuments']['files']) == 0:
         session['application']['marriageDocuments']['progress'] = ListStatus.IN_PROGRESS.name
@@ -162,7 +166,8 @@ def statutoryDeclarations():
         session['application']['statutoryDeclarations']['progress'] = ListStatus.COMPLETED.name
         session['application'] = save_progress()
 
-        return redirect(url_for('taskList.index'))
+        if not form.more_files.data == True:
+            return redirect(url_for('taskList.index'))
 
     if request.method == 'GET' and 'files' in session['application']['statutoryDeclarations'] and len(session['application']['statutoryDeclarations']['files']) == 0:
         session['application']['statutoryDeclarations']['progress'] = ListStatus.IN_PROGRESS.name
