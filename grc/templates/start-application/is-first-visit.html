@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block backLink %}
+    <a href="{{ url_for('startApplication.index') }}"
+       class="govuk-back-link">
+        Back
+    </a>
+{% endblock %}
+
+{% block content %}
+    {% import "govuk-design-system-templates/error-summary.html" as error_summary %}
+    {% import "govuk-design-system-templates/radios.html" as radios %}
+    {% import "govuk-design-system-templates/text-input.html" as textInput %}
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ error_summary.renderFor(form) }}
+
+            <form method="POST" action="{{ url_for('startApplication.isFirstVisit') }}">
+                {{ form.csrf_token }}
+
+                {{ radios.renderFor(
+                    form,
+                    fieldName='isFirstVisit',
+                    question="Have you already started an application?",
+                    radiosOptions={
+                        'errorMessageOptions': {
+                            'classes': 'govuk-!-margin-top-0'
+                        },
+                        'conditionalOptions': [
+                            ('HAS_REFERENCE',
+                            textInput.renderFor(
+                                form,
+                                fieldName='reference',
+                                textInputForOptions={
+                                    'labelOptions':{
+                                        'htmlOrText': 'Reference number'
+                                    },
+                                    'errorMessageOptions': {
+                                        'classes': 'govuk-!-margin-top-0'
+                                    },
+                                    'classes': 'govuk-input--width-10'
+                                }
+                            ))
+                        ]
+                    }
+                ) }}
+
+                <div class="govuk-button-group">
+                    <button class="govuk-button" data-module="govuk-button">
+                        Continue
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+{% endblock %}

@@ -1,9 +1,9 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for, session
 import json
-from grc.models import ListStatus
-from grc.start_application.forms import SaveYourApplicationForm, ValidateEmailForm, OverseasCheckForm, OverseasApprovedCheckForm, DeclerationForm
+from grc.models import ListStatus, Application
+from grc.start_application.forms import SaveYourApplicationForm, ValidateEmailForm, OverseasCheckForm, OverseasApprovedCheckForm, DeclerationForm, IsFirstVisitForm
 from grc.utils.security_code import send_security_code
-from grc.utils.decorators import EmailRequired, LoginRequired, Unauthorized
+from grc.utils.decorators import EmailRequired, LoginRequired, Unauthorized, ValidatedEmailRequired
 from grc.utils.reference_number import reference_number_generator, reference_number_string
 from grc.utils.application_progress import save_progress
 from grc.utils.threading import Threading
@@ -40,13 +40,8 @@ def emailConfirmation():
 
     if request.method == 'POST':
         if form.validate_on_submit():
-            session['reference_number'] = reference_number_generator(session['email'])
-            if session['reference_number'] != False:
-                session['application'] = save_progress()
-
-                return redirect(url_for(session['application']['confirmation']['step']))
-            else:
-                flash('There is a problem creating a new application', 'error')
+            session['validatedEmail'] = session['email']
+            return redirect(url_for('startApplication.isFirstVisit'))
         else:
             threading = Threading(form.attempt.data)
             form.attempt.data = threading.throttle()
@@ -66,6 +61,83 @@ def emailConfirmation():
         back=url_for('startApplication.index'),
         email=session['email']
     )
+
+
+@startApplication.route('/is-first-visit', methods=['GET', 'POST'])
+@ValidatedEmailRequired
+@Unauthorized
+def isFirstVisit():
+    form = IsFirstVisitForm()
+
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            if form.isFirstVisit.data == 'FIRST_VISIT':
+                session['reference_number'] = reference_number_generator(session['email'])
+                if session['reference_number'] != False:
+                    session['application'] = save_progress()
+                    return redirect(url_for(session['application']['confirmation']['step']))
+
+                else:
+                    flash('There is a problem creating a new application', 'error')
+                    return render_template('start-application/is-first-visit.html', form=form)
+
+            elif form.isFirstVisit.data == 'LOST_REFERENCE':
+                # Show page saying "Unfortunately you will need to start a new application" / "Continue"
+                return redirect(url_for('startApplication.lostReference'))
+
+            elif form.isFirstVisit.data == 'HAS_REFERENCE':
+                application = loadApplicationFromDatabaseByReferenceNumber(form.reference.data)
+                if application is None:
+                    # This should already be caught by the 'validateReferenceNumber' custom form validator
+                    return returnToIsFirstVisitPageWithInvalidReferenceError(form)
+
+                else:
+                    if not application.email:
+                        # This application has already been submitted - show the user a friendly page explaining this
+                        return render_template(
+                            'start-application/application-already-submitted.html',
+                            reference=reference_number_string(form.reference.data)
+                        )
+
+                    elif application.email == session['validatedEmail']:
+                        # The reference number is associated with their email address - load the application
+                        session['reference_number'] = application.reference_number
+                        session['application'] = application.data()
+                        return redirect(url_for('taskList.index'))
+
+                    else:
+                        # This reference number is owned by another email address - pretend it doesn't exist
+                        return returnToIsFirstVisitPageWithInvalidReferenceError(form)
+
+    return render_template(
+        'start-application/is-first-visit.html',
+        form=form
+    )
+
+
+def loadApplicationFromDatabaseByReferenceNumber(reference):
+    return Application.query.filter_by(reference_number=reference).first()
+
+
+def returnToIsFirstVisitPageWithInvalidReferenceError(form):
+    form.reference.errors.append('Enter a valid reference number')
+    return render_template('start-application/is-first-visit.html', form=form)
+
+
+@startApplication.route('/lost-reference', methods=['GET', 'POST'])
+@ValidatedEmailRequired
+@Unauthorized
+def lostReference():
+    if request.method == 'POST':
+        session['reference_number'] = reference_number_generator(session['email'])
+        if session['reference_number'] != False:
+            session['application'] = save_progress()
+            return redirect(url_for(session['application']['confirmation']['step']))
+
+        else:
+            flash('There is a problem creating a new application', 'error')
+
+    return render_template('start-application/lost-reference.html')
 
 
 @startApplication.route('/reference-number', methods=['GET'])
