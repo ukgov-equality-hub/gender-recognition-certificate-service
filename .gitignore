@@ -14,8 +14,16 @@ build/
 *.egg-info/
 node_modules
 instance/config.py
+*.py.txt
+
+# Developer-specific settings
+.vscode/settings.json
+.idea
+
+# Secrets
 .env
 .admin.env
 *.py.txt
 .vscode/settings.json
 .unotes/*
+hosting/LoginToGovPaas.sh
