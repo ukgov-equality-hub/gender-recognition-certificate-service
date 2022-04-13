@@ -20,7 +20,9 @@ def reference_number_generator(email):
 
 
 def reference_number_string(reference_number):
-    return reference_number[0:4] + '-' + reference_number[4: 8]
+    trimmed_reference = reference_number.replace('-', '').upper()
+    formatted_reference = trimmed_reference[0:4] + '-' + trimmed_reference[4: 8]
+    return formatted_reference
 
 
 def validate_reference_number(reference):

@@ -116,7 +116,8 @@ def isFirstVisit():
 
 
 def loadApplicationFromDatabaseByReferenceNumber(reference):
-    return Application.query.filter_by(reference_number=reference).first()
+    trimmed_reference = reference.replace('-', '').upper()
+    return Application.query.filter_by(reference_number=trimmed_reference).first()
 
 
 def returnToIsFirstVisitPageWithInvalidReferenceError(form):
