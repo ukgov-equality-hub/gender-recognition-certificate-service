@@ -116,7 +116,7 @@ def isFirstVisit():
 
 
 def loadApplicationFromDatabaseByReferenceNumber(reference):
-    trimmed_reference = reference.replace('-', '').upper()
+    trimmed_reference = reference.replace('-', '').replace(' ', '').upper()
     return Application.query.filter_by(reference_number=trimmed_reference).first()
 
 
