@@ -13,61 +13,10 @@ from grc.utils.threading import Threading
 saveAndReturn = Blueprint('saveAndReturn', __name__)
 
 
-@saveAndReturn.route('/save-and-return', methods=['GET', 'POST'])
+@saveAndReturn.route('/save-and-return', methods=['GET'])
 @Unauthorized
 def index():
-    form = ReturnToYourApplicationForm()
-
-    if form.validate_on_submit():
-        session.clear()
-        application = validate_reference_number(form.reference.data)
-        session['reference_number'] = application.reference_number
-        session['email'] = application.email
-        send_security_code(application.email)
-
-        return redirect(url_for('saveAndReturn.securityCode'))
-    else:
-        threading = Threading(form.attempt.data)
-        form.attempt.data = threading.throttle()
-
-    return render_template(
-        'save-and-return/return.html',
-        form=form
-    )
-
-
-@saveAndReturn.route('/save-and-return/security-code', methods=['GET', 'POST'])
-@EmailRequired
-@Unauthorized
-def securityCode():
-    form = ValidateEmailForm()
-
-    if request.method == 'POST':
-        if form.validate_on_submit():
-            application = validate_reference_number(session['reference_number'])
-            session['reference_number'] = application.reference_number
-            session['application'] = application.data()
-
-            return redirect(url_for('taskList.index'))
-        else:
-            threading = Threading(form.attempt.data)
-            form.attempt.data = threading.throttle()
-
-    elif request.args.get('resend') == 'true':
-        try:
-            send_security_code(session['email'])
-            flash('We’ve resent you a security code. This can take a few minutes to arrive.', 'email')
-        except BaseException as err:
-            error = err.args[0].json()
-            flash(error['errors'][0]['message'], 'error')
-
-    return render_template(
-        'security-code.html',
-        form=form,
-        action=url_for('saveAndReturn.securityCode'),
-        back=url_for('saveAndReturn.index'),
-        email=session['email']
-    )
+    return redirect(url_for('startApplication.index'))
 
 
 @saveAndReturn.route('/save-and-return/exit-application', methods=['GET'])
