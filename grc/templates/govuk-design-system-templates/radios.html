@@ -1,0 +1,37 @@
+{% macro renderFor(form, fieldName, question, radiosOptions) %}
+    {% import "govuk-design-system-templates/error-message.html" as errorMessage %}
+
+    <div class="govuk-form-group {{ 'govuk-form-group--error' if form[fieldName].errors }}">
+        <fieldset class="govuk-fieldset">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                <h1 class="govuk-fieldset__heading">
+                    {{ question }}
+                </h1>
+            </legend>
+
+            {{ errorMessage.renderFor(fieldName, form[fieldName].errors, radiosOptions.errorMessageOptions) }}
+
+            <div class="govuk-radios" data-module="govuk-radios">
+                {% for choiceId, choiceLabel in form[fieldName].choices %}
+                    {% set index = form[fieldName].choices.index((choiceId, choiceLabel)) %}
+                    <div class="govuk-radios__item">
+                        <input id="{{ fieldName }}-{{ index }}" type="radio" name="{{ fieldName }}"
+                               value="{{ choiceId }}" class="govuk-radios__input" {{ 'checked' if form[fieldName].data == choiceId }}
+                               data-aria-controls="conditional-{{ fieldName }}-{{ index }}">
+                        <label for="{{ fieldName }}-{{ index }}" class="govuk-label govuk-radios__label">
+                            {{ choiceLabel }}
+                        </label>
+                    </div>
+                    {% for optionChoiceId, conditionalHtml in radiosOptions.conditionalOptions %}
+                        {%  if optionChoiceId == choiceId %}
+                            <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-{{ fieldName }}-{{ index }}">
+                                {{ conditionalHtml }}
+                            </div>
+                        {%  endif %}
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        </fieldset>
+    </div>
+
+{% endmacro %}
