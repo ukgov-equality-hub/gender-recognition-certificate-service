@@ -27,3 +27,5 @@ instance/config.py
 .vscode/settings.json
 .unotes/*
 hosting/LoginToGovPaas.sh
+Notes/*
+notes/*

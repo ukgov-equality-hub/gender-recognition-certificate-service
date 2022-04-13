@@ -80,6 +80,10 @@ class Application(db.Model):
                     "progress": ListStatus.CANNOT_START_YET.name,
                     "step": "upload.marriageDocuments",
                 },
+                "overseasCertificate": {
+                    "progress": ListStatus.CANNOT_START_YET.name,
+                    "step": "overseasCertificate.index"
+                },
                 "statutoryDeclarations": {
                     "progress": ListStatus.NOT_STARTED.name,
                     "step": "upload.statutoryDeclarations",

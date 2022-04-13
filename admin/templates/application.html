@@ -150,6 +150,18 @@
     </ul>
   </li>
   {% endif %}
+  {% if 'files' in application.overseasCertificate %}
+  <li>Marriage documents
+    <ul class="govuk-list govuk-list--bullet">
+      {% for item in application.overseasCertificate.files %}
+      <li>{% if format == 'pdf' %}{{ item | replace(application.reference_number + '__overseasCertificate__', '') }}{% else %}<a href="https://geo-gender-recognition-certificate-admin.london.cloudapps.digital/applications/{{ item }}/downloadfile" target="_blank">{{item | replace(application.reference_number + '__overseasCertificate__', '') }}</a>{% endif %}</li>
+      {% if '.pdf' not in item | lower %}
+      <img src="{{ item | image_data }}" width="{{ item | image_width }}" height="{{ item | image_height }}" style="max-width: 90%;">
+      {% endif %}
+      {% endfor %}
+    </ul>
+  </li>
+  {% endif %}
   {% if 'files' in application.statutoryDeclarations %}
   <li>Statutory documents
     <ul class="govuk-list govuk-list--bullet">
