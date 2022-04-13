@@ -40,10 +40,11 @@ class StrictRequiredIf(DataRequired):
     """
     field_flags = ('requiredif',)
 
-    def __init__(self, other_field_name, other_field_value, message=None, *args, **kwargs):
+    def __init__(self, other_field_name, other_field_value, message=None, validators=None, *args, **kwargs):
         self.other_field_name = other_field_name
         self.other_field_value = other_field_value
         self.message = message
+        self.validators = validators
 
     def __call__(self, form, field):
         other_field = form[self.other_field_name]
@@ -51,6 +52,9 @@ class StrictRequiredIf(DataRequired):
             raise Exception('no field named "%s" in form' % self.other_field_name)
         if other_field.data == self.other_field_value:
             super(StrictRequiredIf, self).__call__(form, field)
+            if self.validators:
+                for validator in self.validators:
+                    validator(form, field)
         elif isinstance(other_field.data, list) and self.other_field_value in other_field.data:
             super(StrictRequiredIf, self).__call__(form, field)
 
