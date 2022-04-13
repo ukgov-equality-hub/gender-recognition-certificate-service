@@ -10,6 +10,15 @@ def EmailRequired(f):
     return decorated_function
 
 
+def ValidatedEmailRequired(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'validatedEmail' not in session or session['validatedEmail'] is None:
+            return redirect(url_for('startApplication.index'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+
 def LoginRequired(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
