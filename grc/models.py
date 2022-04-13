@@ -25,8 +25,8 @@ class ListStatus(enum.Enum):
 class Application(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     reference_number = db.Column(db.String(8), unique=True, nullable=False)
-    email = db.Column(db.String(180), unique=True, nullable=False)
-    user_input = db.Column(JSON)
+    email = db.Column(db.String(180), nullable=True)
+    user_input = db.Column(JSON, nullable=True)
     status = db.Column(
         db.Enum(ApplicationStatus, name="application_status"),
         default=ApplicationStatus.STARTED,
