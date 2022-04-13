@@ -217,3 +217,10 @@ def declaration():
         form=form,
         back=back
     )
+
+
+@startApplication.route('/clearsession', methods=['GET'])
+@LoginRequired
+def clearsession():
+    session.clear()
+    return redirect(url_for('startApplication.index'))
