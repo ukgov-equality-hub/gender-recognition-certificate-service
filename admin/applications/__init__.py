@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import Blueprint, render_template, url_for, session, make_response
+from flask import Blueprint, render_template, redirect, url_for, session, make_response
 from grc.utils.decorators import AdminViewerRequired
 from grc.models import db, Application, ApplicationStatus
 from grc.utils.s3 import download_object
@@ -68,13 +68,8 @@ def download(email_address):
         application.downloaded = datetime.now()
         application.downloadedBy = session['signedIn']
         db.session.commit()
-        message = "application updated"
 
         html = render_template('download.html', application=application)
-        #import pdfkit
-        #from flask_weasyprint import HTML, render_pdf
-        #redirect(url_for('applications.index', _anchor='downloaded'))
-        #return render_pdf(HTML(string=html))  # pdfkit.from_string(html)
 
         import io
         from xhtml2pdf import pisa
@@ -101,8 +96,8 @@ def download(email_address):
             if '.' in object_name:
                 file_type = object_name[object_name.rindex('.') + 1:]
                 if file_type.lower() == 'pdf':
-                    pdf_fileobj = download_object(object_name)
-                    pdfs.append(pdf_fileobj)
+                    data = download_object(object_name)
+                    pdfs.append(data)
                     print('Attaching ' + object_name)
 
         pdfs = []
@@ -130,6 +125,7 @@ def download(email_address):
             pdfs.insert(0, data)
             data = merge_pdfs(pdfs)
 
+        message = "application updated"
         response = make_response(data.read())
         response.headers.set('Content-Type', 'application/pdf')
         response.headers.set('Content-Disposition', 'attachment', file_name=application.reference_number + '.pdf')
@@ -156,6 +152,58 @@ def completed(email_address):
         application.completedBy = session['signedIn']
         db.session.commit()
         message = "application updated"
+
+    session['message'] = message
+    return redirect(url_for('applications.index', _anchor='completed'))
+
+
+@applications.route('/applications/<email_address>/attachments', methods=['GET'])
+@AdminViewerRequired
+def attachments(email_address):
+    message = ""
+
+    application = Application.query.filter_by(
+        email=email_address
+    ).first()
+
+    if application is None:
+        message = "An application with that email address cannot be found"
+    else:
+        import io
+        import zipfile
+
+        zip_buffer = io.BytesIO()
+        with zipfile.ZipFile(zip_buffer, 'x', zipfile.ZIP_DEFLATED, False) as zipper:
+            if 'medicalReports' in application.user_input and 'files' in application.user_input['medicalReports']:
+                for object_name in application.user_input['medicalReports']['files']:
+                    data = download_object(object_name)
+                    zipper.writestr(object_name, data.getvalue())
+
+            if 'genderEvidence' in application.user_input and 'files' in application.user_input['genderEvidence']:
+                for object_name in application.user_input['genderEvidence']['files']:
+                    data = download_object(object_name)
+                    zipper.writestr(object_name, data.getvalue())
+
+            if 'nameChange' in application.user_input and 'files' in application.user_input['nameChange']:
+                for object_name in application.user_input['nameChange']['files']:
+                    data = download_object(object_name)
+                    zipper.writestr(object_name, data.getvalue())
+
+            if 'marriageDocuments' in application.user_input and 'files' in application.user_input['marriageDocuments']:
+                for object_name in application.user_input['marriageDocuments']['files']:
+                    data = download_object(object_name)
+                    zipper.writestr(object_name, data.getvalue())
+
+            if 'statutoryDeclarations' in application.user_input and 'files' in application.user_input['statutoryDeclarations']:
+                for object_name in application.user_input['statutoryDeclarations']['files']:
+                    data = download_object(object_name)
+                    zipper.writestr(object_name, data.getvalue())
+
+        message = "attachments zipped"
+        response = make_response(zip_buffer.getvalue())
+        response.headers.set('Content-Type', 'application/zip')
+        response.headers.set('Content-Disposition', 'attachment', file_name=application.reference_number + '.zip')
+        return response
 
     session['message'] = message
     return redirect(url_for('applications.index', _anchor='completed'))

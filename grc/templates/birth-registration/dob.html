@@ -50,7 +50,7 @@
                 <label for="day" class="govuk-label govuk-date-input__label">
                   Day
                 </label>
-                <input id="day" type="text" name="day" value="{{ form.day.data if form.day.data is not none }}" pattern="[0-9]*" inputmode="numeric" class="govuk-input govuk-date-input__input govuk-input--width-2  {{ 'govuk-input--error' if form.day.errors }}">
+                <input id="day" type="text" name="day" value="{{ form.day.data if form.day.data is not none }}" pattern="[0-9]*" inputmode="numeric" class="govuk-input govuk-date-input__input govuk-input--width-2  {{ 'govuk-input--error' if form.day.errors or form.year.errors[0] == 'You have entered a invalid date' or form.year.errors[0] == 'You need to be 18 years old to apply' }}">
               </div>
             </div>
             <div class="govuk-date-input__item">
@@ -58,7 +58,7 @@
                 <label for="month" class="govuk-label govuk-date-input__label">
                   Month
                 </label>
-                <input id="month" type="text" name="month" value="{{ form.month.data if form.month.data is not none }}" pattern="[0-9]*" inputmode="numeric" class="govuk-input govuk-date-input__input govuk-input--width-2  {{ 'govuk-input--error' if form.month.errors }}">
+                <input id="month" type="text" name="month" value="{{ form.month.data if form.month.data is not none }}" pattern="[0-9]*" inputmode="numeric" class="govuk-input govuk-date-input__input govuk-input--width-2  {{ 'govuk-input--error' if form.month.errors or form.year.errors[0] == 'You have entered a invalid date' or form.year.errors[0] == 'You need to be 18 years old to apply' }}">
               </div>
             </div>
             <div class="govuk-date-input__item">

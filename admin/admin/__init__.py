@@ -2,6 +2,7 @@ import jwt
 import string
 import random
 from datetime import datetime, timedelta
+from dateutil import tz
 from flask import Blueprint, redirect, render_template, request, url_for, current_app, session
 from werkzeug.security import check_password_hash, generate_password_hash
 from notifications_python_client.notifications import NotificationsAPIClient
@@ -42,12 +43,13 @@ def index():
 
                             # Email out 2FA link
                             try:
+                                local = datetime.now().replace(tzinfo=tz.gettz('UTC')).astimezone(tz.gettz('Europe/London'))
                                 notifications_client = NotificationsAPIClient(current_app.config['NOTIFY_API'])
                                 notifications_client.send_email_notification(
                                     email_address=user.email,
                                     template_id=current_app.config['NOTIFY_ADMIN_LOGIN_TEMPLATE_ID'],
                                     personalisation={
-                                        'expires': datetime.strftime(datetime.now() + timedelta(minutes=30), '%d/%m/%Y %H:%M:%S'),
+                                        'expires': datetime.strftime(local + timedelta(hours=1), '%d/%m/%Y %H:%M:%S'),
                                         'login_link': request.base_url + '?token=' + jwt.encode({ 'id': user.id, 'email': user.email, 'expires': datetime.strftime(datetime.now() + timedelta(hours=1), '%d/%m/%Y %H:%M:%S') }, current_app.config['SECRET_KEY'], algorithm='HS256')
                                     }
                                 )
@@ -97,7 +99,8 @@ def index():
                             session.pop('userType', None)
                         else:
                             signedIn = login_token['email']
-                            user.dateLastLogin = datetime.strftime(datetime.now(), '%d/%m/%Y %H:%M:%S')
+                            local = datetime.now().replace(tzinfo=tz.gettz('UTC')).astimezone(tz.gettz('Europe/London'))
+                            user.dateLastLogin = datetime.strftime(local, '%d/%m/%Y %H:%M:%S')
                             db.session.commit()
 
                             session['signedIn'] = signedIn

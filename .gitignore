@@ -23,4 +23,7 @@ instance/config.py
 # Secrets
 .env
 .admin.env
+*.py.txt
+.vscode/settings.json
+.unotes/*
 hosting/LoginToGovPaas.sh

@@ -81,7 +81,7 @@ class Application(db.Model):
                     "step": "upload.marriageDocuments",
                 },
                 "statutoryDeclarations": {
-                    "progress": ListStatus.CANNOT_START_YET.name,
+                    "progress": ListStatus.NOT_STARTED.name,
                     "step": "upload.statutoryDeclarations",
                 },
                 "submitAndPay": {

@@ -3,6 +3,7 @@ from flask import session
 from wtforms.validators import DataRequired, InputRequired, ValidationError, StopValidation, Optional
 from werkzeug.datastructures import FileStorage
 from collections.abc import Iterable
+from datetime import datetime, date
 from grc.utils.security_code import validate_security_code
 from grc.utils.reference_number import validate_reference_number
 
@@ -89,6 +90,47 @@ def validateAdopted(form, field):
     if form['check'].data == 'Yes':
         if field.data is None or field.data == '':
             raise ValidationError('Select if your were you adopted in the United Kingdom')
+
+
+def validatePostcode(form, field):
+
+    # https://stackoverflow.com/questions/164979/regex-for-matching-uk-postcodes
+    if not (field.data is None or field.data == ''):
+        data = field.data
+        match = re.search('^([A-Za-z][A-Ha-hJ-Yj-y]?[0-9][A-Za-z0-9]? ?[0-9][A-Za-z]{2}|[Gg][Ii][Rr] ?0[Aa]{2})$', data)
+        if match is None:
+            raise ValidationError('Your post code is not valid')
+
+
+def validateDOB(form, field):
+    d = form['day'].data or 0
+    m = form['month'].data or 0
+    y = form['year'].data or 0
+    if d > 0 and m > 0 and y > 0:
+        try:
+            dt = datetime(y, m, d, 00, 00)
+        except Exception as e:
+            if field.name == 'year':
+                raise ValidationError('You have entered a invalid date')
+            return
+
+        def age(dt):
+            today = date.today()
+            return today.year - dt.year - ((today.month, today.day) < (dt.month, dt.day))
+
+        if age(dt) < 18 and field.name == 'year':
+            raise ValidationError('You need to be 18 years old to apply')
+
+
+def validateNino(form, field):
+
+    # https://www.gov.uk/hmrc-internal-manuals/national-insurance-manual/nim39110
+    # https://stackoverflow.com/questions/17928496/use-regex-to-validate-a-uk-national-insurance-no-nino-in-an-html5-pattern-attri
+    if not (field.data is None or field.data == ''):
+        data = field.data.replace(' ', '').upper()
+        match = re.search('^(?!BG)(?!GB)(?!NK)(?!KN)(?!TN)(?!NT)(?!ZZ)(?:[A-CEGHJ-PR-TW-Z][A-CEGHJ-NPR-TW-Z])(?:\s*\d\s*){6}[A-D]{1}$', data)
+        if match is None:
+            raise ValidationError('Your national insurance number is not valid')
 
 
 class MultiFileAllowed(object):

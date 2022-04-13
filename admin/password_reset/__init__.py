@@ -1,7 +1,7 @@
 import jwt
+from datetime import datetime
 from flask import Blueprint, render_template, request, current_app, session
 from werkzeug.security import generate_password_hash
-from datetime import datetime
 from admin.password_reset.forms import PasswordResetForm
 from grc.models import db, AdminUser
 

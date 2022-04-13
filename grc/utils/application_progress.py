@@ -46,7 +46,7 @@ def calculate_progress_status():
                 'submitAndPay': ListStatus.CANNOT_START_YET,
             }
 
-            # TODO: This checks has been added for backwards compatibility with existing application.
+            '''# TODO: This checks has been added for backwards compatibility with existing application.
             # Please remove in later time
             if 'marriageDocuments' not in session['application']:
                 session['application']['marriageDocuments'] = {
@@ -59,14 +59,14 @@ def calculate_progress_status():
                     'progress': ListStatus.NOT_STARTED.name,
                     'step': 'upload.statutoryDeclarations'
                 }
-            # ./end
+            # ./end'''
 
-            # confirmation
+            # Confirmation
             list_status['confirmation'] = calculate_progress_status_display_name(
                 ListStatus[session['application']['confirmation']['progress']]
             )
 
-            # personal details
+            # Personal details
             list_status['personalDetails'] = calculate_progress_status_display_name(
                 ListStatus[session['application']['personalDetails']['progress']]
             )

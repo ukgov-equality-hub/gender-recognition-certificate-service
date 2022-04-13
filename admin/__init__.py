@@ -1,8 +1,9 @@
 import os
+from datetime import datetime, timedelta
+from dateutil import tz
 from flask import Flask
 from flask_migrate import Migrate
 from flask_uuid import FlaskUUID
-from datetime import datetime, timedelta
 from grc.models import db
 from grc.config import Config, DevConfig, TestConfig
 from grc.utils.s3 import download_object_data
@@ -40,6 +41,7 @@ def create_app(test_config=None):
     @app.template_filter('format_date')
     def format_date_filter(dt):
         if dt:
+            dt = dt.replace(tzinfo=tz.gettz('UTC')).astimezone(tz.gettz('Europe/London'))
             return datetime.strftime(dt, '%d/%m/%Y %H:%M')
         return ''
 

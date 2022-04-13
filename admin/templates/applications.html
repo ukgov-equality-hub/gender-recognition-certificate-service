@@ -18,19 +18,13 @@
     <div class="govuk-tabs" data-module="govuk-tabs">
       <ul class="govuk-tabs__list" role="tablist">
         <li class="govuk-tabs__list-item govuk-tabs__list-item--selected" role="presentation">
-          <a class="govuk-tabs__tab" href="#new" id="tab_new" role="tab" aria-controls="new" aria-selected="true" tabindex="0">
-            New applications
-          </a>
+          <a class="govuk-tabs__tab" href="#new" id="tab_new" role="tab" aria-controls="new" aria-selected="true" tabindex="0">New applications</a>
         </li>
         <li class="govuk-tabs__list-item" role="presentation">
-          <a class="govuk-tabs__tab" href="#downloaded" id="tab_downloaded" role="tab" aria-controls="downloaded" aria-selected="false" tabindex="-1">
-            Downloaded applications
-          </a>
+          <a class="govuk-tabs__tab" href="#downloaded" id="tab_downloaded" role="tab" aria-controls="downloaded" aria-selected="false" tabindex="-1">Downloaded applications</a>
         </li>
         <li class="govuk-tabs__list-item" role="presentation">
-          <a class="govuk-tabs__tab" href="#completed" id="tab_complete" role="tab" aria-controls="completed" aria-selected="false" tabindex="-1">
-            Complete applications
-          </a>
+          <a class="govuk-tabs__tab" href="#completed" id="tab_complete" role="tab" aria-controls="completed" aria-selected="false" tabindex="-1">Complete applications</a>
         </li>
       </ul>
 
@@ -57,14 +51,13 @@
               <td class="govuk-table__cell">
                 <ul class="govuk-summary-list__actions-list" style="text-align: right">
                   <li class="govuk-summary-list__actions-list-item">
-                    <a href="javascript:;" class="new-link" style="white-space: nowrap;" onclick="document.getElementById('newApplications_{{ loop.index }}').style.display = document.getElementById('newApplications_{{ loop.index }}').style.display == 'none' ? 'table-row' : 'none'">
-                      View
-                    </a>
+                    <a href="javascript:;" class="new-link" style="white-space: nowrap;" onclick="document.getElementById('newApplications_{{ loop.index }}').style.display = document.getElementById('newApplications_{{ loop.index }}').style.display == 'none' ? 'table-row' : 'none'">View</a>
                   </li>
                   <li class="govuk-summary-list__actions-list-item">
-                    <a href="/applications/{{ application.email }}/download" target="_blank" class="new-link" style="white-space: nowrap;">
-                      Download
-                    </a>
+                    <a href="/applications/{{ application.email }}/download" target="_blank" class="new-link" style="white-space: nowrap;">Download application</a>
+                  </li>
+                  <li class="govuk-summary-list__actions-list-item">
+                    <a href="/applications/{{ application.email }}/attachments" target="_blank" class="new-link" style="white-space: nowrap;">Download attachments</a>
                   </li>
                 </ul>
               </td>
@@ -90,21 +83,21 @@
         <table class="govuk-table downloaded-table">
           <thead class="govuk-table__head">
             <tr class="govuk-table__row">
-              <th scope="col" class="govuk-table__header" aria-sort="none">Applicant name</th>
-              <th scope="col" class="govuk-table__header" aria-sort="none">Submitted</th>
+              <th scope="col" colspan="2" class="govuk-table__header" aria-sort="none">Applicant name</th>
+              <!--<th scope="col" class="govuk-table__header" aria-sort="none">Submitted</th>
               <th scope="col" class="govuk-table__header" aria-sort="descending">Downloaded</th>
-              <th scope="col" class="govuk-table__header" aria-sort="descending">Downloaded by</th>
+              <th scope="col" class="govuk-table__header" aria-sort="descending">Downloaded by</th>-->
               <th scope="col" class="govuk-table__header" aria-sort="none"><span class="govuk-visually-hidden">Actions</span></th>
             </tr>
           </thead>
           <tbody class="govuk-table__body">
             {% for application in downloadedApplications %}
             <tr class="govuk-table__row">
-              <td class="govuk-table__cell">{{ application.user_input.personalDetails.first_name }} {{ application.user_input.personalDetails.last_name }}</td>
-              <td class="govuk-table__cell">{{ application.updated | format_date }}</td>
+              <td class="govuk-table__cell" style="border-bottom: none;">{{ application.user_input.personalDetails.first_name }} {{ application.user_input.personalDetails.last_name }}</td>
+              <!--<td class="govuk-table__cell">{{ application.updated | format_date }}</td>
               <td class="govuk-table__cell">{{ application.downloaded | format_date }}</td>
-              <td class="govuk-table__cell">{{ application.downloadedBy }}</td>
-              <td class="govuk-table__cell">
+              <td class="govuk-table__cell">{{ application.downloadedBy }}</td>-->
+              <td class="govuk-table__cell" style="border-bottom: none;">
                 <ul class="govuk-summary-list__actions-list" style="text-align: right">
                   <li class="govuk-summary-list__actions-list-item">
                     <a href="javascript:;" class="new-link" style="white-space: nowrap;" onclick="document.getElementById('downloadedApplications_{{ loop.index }}').style.display = document.getElementById('downloadedApplications_{{ loop.index }}').style.display == 'none' ? 'table-row' : 'none'">
@@ -112,20 +105,26 @@
                     </a>
                   </li>
                   <li class="govuk-summary-list__actions-list-item">
-                    <a href="/applications/{{ application.email }}/download" target="_blank" class="new-link" style="white-space: nowrap;">
-                      Re-download
-                    </a>
+                    <a href="/applications/{{ application.email }}/download" target="_blank" class="new-link" style="white-space: nowrap;">Re-download application</a>
                   </li>
                   <li class="govuk-summary-list__actions-list-item">
-                    <a href="/applications/{{ application.email }}/completed" target="_blank" class="new-link" style="white-space: nowrap;">
-                      Complete
-                    </a>
+                    <a href="/applications/{{ application.email }}/attachments" target="_blank" class="new-link" style="white-space: nowrap;">Download attachments</a>
+                  </li>
+                  <li class="govuk-summary-list__actions-list-item">
+                    <a href="/applications/{{ application.email }}/completed" target="_blank" class="new-link" style="white-space: nowrap;">Complete</a>
                   </li>
                 </ul>
               </td>
             </tr>
+            <tr class="govuk-table__row">
+              <td colspan="2" class="govuk-table__cell">
+                <span style="font-size: smaller; font-weight: bold;">Submitted</span> {{ application.updated | format_date }},
+                <span style="font-size: smaller; font-weight: bold;">downloaded</span> {{ application.downloaded | format_date }}
+                <span style="font-size: smaller; font-weight: bold;">by</span> {{ application.downloadedBy }}
+              </td>
+            </tr>
             <tr id="downloadedApplications_{{ loop.index }}" class="govuk-table__row" style="display: none;">
-              <td colspan="5">
+              <td colspan="2">
                 {{ userapplication(application.user_input, 'html') }}
               </td>
             </tr>
@@ -146,37 +145,43 @@
         <table class="govuk-table completed-table">
           <thead class="govuk-table__head">
             <tr class="govuk-table__row">
-              <th scope="col" class="govuk-table__header" aria-sort="none">Applicant name</th>
-              <th scope="col" class="govuk-table__header" aria-sort="none">Submitted</th>
+              <th scope="col" colspan="2" class="govuk-table__header" aria-sort="none">Applicant name</th>
+              <!--<th scope="col" class="govuk-table__header" aria-sort="none">Submitted</th>
               <th scope="col" class="govuk-table__header" aria-sort="descending">Completed</th>
-              <th scope="col" class="govuk-table__header" aria-sort="descending">Completed by</th>
+              <th scope="col" class="govuk-table__header" aria-sort="descending">Completed by</th>-->
               <th scope="col" class="govuk-table__header" aria-sort="none"><span class="govuk-visually-hidden">Actions</span></th>
             </tr>
           </thead>
           <tbody class="govuk-table__body">
             {% for application in completedApplications %}
             <tr class="govuk-table__row">
-              <td class="govuk-table__cell">{{ application.user_input.personalDetails.first_name }} {{ application.user_input.personalDetails.last_name }}</td>
-              <td class="govuk-table__cell">{{ application.updated | format_date }}</td>
+              <td class="govuk-table__cell" style="border-bottom: none;">{{ application.user_input.personalDetails.first_name }} {{ application.user_input.personalDetails.last_name }}</td>
+              <!--<td class="govuk-table__cell">{{ application.updated | format_date }}</td>
               <td class="govuk-table__cell">{{ application.completed | format_date }}</td>
-              <td class="govuk-table__cell">{{ application.completedBy }}</td>
-              <td class="govuk-table__cell">
+              <td class="govuk-table__cell">{{ application.completedBy }}</td>-->
+              <td class="govuk-table__cell" style="border-bottom: none;">
                 <ul class="govuk-summary-list__actions-list" style="text-align: right">
                   <li class="govuk-summary-list__actions-list-item">
-                    <a href="javascript:;" class="new-link" style="white-space: nowrap;" onclick="document.getElementById('completedApplications_{{ loop.index }}').style.display = document.getElementById('completedApplications_{{ loop.index }}').style.display == 'none' ? 'table-row' : 'none'">
-                      View
-                    </a>
+                    <a href="javascript:;" class="new-link" style="white-space: nowrap;" onclick="document.getElementById('completedApplications_{{ loop.index }}').style.display = document.getElementById('completedApplications_{{ loop.index }}').style.display == 'none' ? 'table-row' : 'none'">View</a>
                   </li>
                   <li class="govuk-summary-list__actions-list-item">
-                    <a href="/applications/{{ application.email }}/download" target="_blank" class="new-link" style="white-space: nowrap;">
-                      Redownload
-                    </a>
+                    <a href="/applications/{{ application.email }}/download" target="_blank" class="new-link" style="white-space: nowrap;">Re-download application</a>
+                  </li>
+                  <li class="govuk-summary-list__actions-list-item">
+                    <a href="/applications/{{ application.email }}/attachments" target="_blank" class="new-link" style="white-space: nowrap;">Download attachments</a>
                   </li>
                 </ul>
               </td>
             </tr>
+            <tr class="govuk-table__row">
+              <td colspan="2" class="govuk-table__cell">
+                <span style="font-size: smaller; font-weight: bold;">Submitted</span> {{ application.updated | format_date }},
+                <span style="font-size: smaller; font-weight: bold;">Completed</span> {{ application.completed | format_date }},
+                <span style="font-size: smaller; font-weight: bold;">by</span> {{ application.completedBy }}
+              </td>
+            </tr>
             <tr id="completedApplications_{{ loop.index }}" class="govuk-table__row" style="display: none;">
-              <td colspan="5">
+              <td colspan="2">
                 {{ userapplication(application.user_input, 'html') }}
               </td>
             </tr>
