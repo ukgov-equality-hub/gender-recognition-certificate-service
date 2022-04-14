@@ -25,16 +25,15 @@ class ValidateEmailForm(FlaskForm):
 class IsFirstVisitForm(FlaskForm):
     isFirstVisit = RadioField(
         choices=[
-            ('FIRST_VISIT', "No, this is my first visit"),
-            ('HAS_REFERENCE', "Yes, I have started an application and have my reference number"),
-            ('LOST_REFERENCE', "Yes, I have started an application, but I have lost my reference number")
+            ('FIRST_VISIT', "No"),
+            ('HAS_REFERENCE', "Yes, and I have my reference number"),
+            ('LOST_REFERENCE', "Yes, but I have lost my reference number")
         ],
         validators=[DataRequired(message='Select if you have already started an application')]
     )
 
     reference = StringField(
         validators=[StrictRequiredIf('isFirstVisit', 'HAS_REFERENCE', message='Enter a reference number', validators=[validateReferenceNumber])],
-        default=''
     )
 
 

@@ -71,7 +71,7 @@ def isFirstVisit():
 
     if request.method == 'POST':
         if form.validate_on_submit():
-            if form.isFirstVisit.data == 'FIRST_VISIT':
+            if form.isFirstVisit.data == 'FIRST_VISIT' or form.isFirstVisit.data == 'LOST_REFERENCE':
                 session['reference_number'] = reference_number_generator(session['email'])
                 if session['reference_number'] != False:
                     session['application'] = save_progress()
@@ -80,10 +80,6 @@ def isFirstVisit():
                 else:
                     flash('There is a problem creating a new application', 'error')
                     return render_template('start-application/is-first-visit.html', form=form)
-
-            elif form.isFirstVisit.data == 'LOST_REFERENCE':
-                # Show page saying "Unfortunately you will need to start a new application" / "Continue"
-                return redirect(url_for('startApplication.lostReference'))
 
             elif form.isFirstVisit.data == 'HAS_REFERENCE':
                 application = loadApplicationFromDatabaseByReferenceNumber(form.reference.data)
@@ -123,22 +119,6 @@ def loadApplicationFromDatabaseByReferenceNumber(reference):
 def returnToIsFirstVisitPageWithInvalidReferenceError(form):
     form.reference.errors.append('Enter a valid reference number')
     return render_template('start-application/is-first-visit.html', form=form)
-
-
-@startApplication.route('/lost-reference', methods=['GET', 'POST'])
-@ValidatedEmailRequired
-@Unauthorized
-def lostReference():
-    if request.method == 'POST':
-        session['reference_number'] = reference_number_generator(session['email'])
-        if session['reference_number'] != False:
-            session['application'] = save_progress()
-            return redirect(url_for(session['application']['confirmation']['step']))
-
-        else:
-            flash('There is a problem creating a new application', 'error')
-
-    return render_template('start-application/lost-reference.html')
 
 
 @startApplication.route('/reference-number', methods=['GET'])
