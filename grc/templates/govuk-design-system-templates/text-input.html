@@ -1,11 +1,13 @@
 {% macro render(textInputOptions) %}
+    {% import "govuk-design-system-templates/label.html" as label %}
+    {% import "govuk-design-system-templates/hint.html" as hint %}
+    {% import "govuk-design-system-templates/error-message.html" as errorMessage %}
+    {% import "govuk-design-system-templates/_attributes.html" as attributes %}
 
     <div class="govuk-form-group {{ 'govuk-form-group--error' if textInputOptions.errors }}">
-        {% import "govuk-design-system-templates/label.html" as label %}
-        {% import "govuk-design-system-templates/error-message.html" as errorMessage %}
-        {% import "govuk-design-system-templates/_attributes.html" as attributes %}
-
         {{ label.render(textInputOptions.labelOptions) }}
+
+        {{ hint.render(textInputOptions.hintOptions) }}
 
         {{ errorMessage.renderFor(textInputOptions.id, textInputOptions.errors, textInputOptions.errorMessageOptions) }}
 
@@ -13,7 +15,7 @@
            id="{{ textInputOptions.id }}"
            name="{{ textInputOptions.name }}"
            type="{{ textInputOptions.type if textInputOptions.type else 'text' }}"
-           value="{{ textInputOptions.value }}"
+           value="{{ textInputOptions.value if textInputOptions.value else '' }}"
            {% if textInputOptions.describedBy %} aria-describedby="{{ textInputOptions.describedBy }}" {% endif %}
            {% if textInputOptions.autocomplete %} autocomplete="{{ textInputOptions.autocomplete }}" {% endif %}
            {% if textInputOptions.pattern %} pattern="{{ textInputOptions.pattern }}" {% endif %}
@@ -35,6 +37,7 @@
         'errors': form[fieldName].errors,
 
         'labelOptions': textInputForOptions.labelOptions,
+        'hintOptions': textInputForOptions.hintOptions,
         'errorMessageOptions': textInputForOptions.errorMessageOptions,
         'classes': textInputForOptions.classes,
         'type': textInputForOptions.type,

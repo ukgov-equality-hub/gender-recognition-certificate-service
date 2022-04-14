@@ -1,5 +1,6 @@
 {% macro renderFor(form, fieldName, question, radiosOptions) %}
     {% import "govuk-design-system-templates/error-message.html" as errorMessage %}
+    {% import "govuk-design-system-templates/hint.html" as hint %}
 
     <div class="govuk-form-group {{ 'govuk-form-group--error' if form[fieldName].errors }}">
         <fieldset class="govuk-fieldset">
@@ -8,6 +9,8 @@
                     {{ question }}
                 </h1>
             </legend>
+
+            {{ hint.render(radiosOptions.hintOptions) }}
 
             {{ errorMessage.renderFor(fieldName, form[fieldName].errors, radiosOptions.errorMessageOptions) }}
 
@@ -22,13 +25,16 @@
                             {{ choiceLabel }}
                         </label>
                     </div>
-                    {% for optionChoiceId, conditionalHtml in radiosOptions.conditionalOptions %}
-                        {%  if optionChoiceId == choiceId %}
-                            <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-{{ fieldName }}-{{ index }}">
-                                {{ conditionalHtml }}
-                            </div>
-                        {%  endif %}
-                    {% endfor %}
+
+                    {% if radiosOptions.conditionalOptions %}
+                        {% for optionChoiceId, conditionalHtml in radiosOptions.conditionalOptions %}
+                            {%  if optionChoiceId == choiceId %}
+                                <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-{{ fieldName }}-{{ index }}">
+                                    {{ conditionalHtml }}
+                                </div>
+                            {%  endif %}
+                        {% endfor %}
+                    {% endif %}
                 {% endfor %}
             </div>
         </fieldset>
