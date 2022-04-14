@@ -7,16 +7,12 @@ from grc.utils.form_widgets import MultiCheckboxField
 
 class NameForm(FlaskForm):
     first_name = StringField(
-        'first_name',
-        validators=[DataRequired(message='First name is required')]
+        validators=[DataRequired(message='Enter your first name(s)')]
     )
 
     last_name = StringField(
-        'last_name',
-        validators=[DataRequired(message='Last name is required')]
+        validators=[DataRequired(message='Enter your last name')]
     )
-
-    submit = SubmitField('Save and continue')
 
 
 class PreviousNamesCheck(FlaskForm):
