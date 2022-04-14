@@ -1,5 +1,4 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for, session
-import json
 from grc.models import ListStatus, Application
 from grc.start_application.forms import SaveYourApplicationForm, ValidateEmailForm, OverseasCheckForm, OverseasApprovedCheckForm, DeclerationForm, IsFirstVisitForm
 from grc.utils.security_code import send_security_code
@@ -186,20 +185,31 @@ def declaration():
 
     if request.method == 'POST':
         if form.validate_on_submit():
-            session['application']['confirmation']['declaration'] = form.check.data
+            session['application']['confirmation']['declaration'] = form.consent.data
             session['application']['confirmation']['progress'] = ListStatus.COMPLETED.name
             session['application']['confirmation']['step'] = 'startApplication.declaration'
             session['application'] = save_progress()
 
             return redirect(url_for('taskList.index'))
 
-    session['application']['confirmation']['progress'] = ListStatus.IN_REVIEW.name
-    session['application'] = save_progress()
+        session['application']['confirmation']['progress'] = ListStatus.IN_REVIEW.name
+        session['application'] = save_progress()
 
-    return render_template(
-        'start-application/declaration.html',
-        form=form,
-        back=back
+        return render_template(
+            'start-application/declaration.html',
+            form=form,
+            back=back
+        )
+
+    else:
+        session['application']['confirmation']['progress'] = ListStatus.IN_REVIEW.name
+        session['application'] = save_progress()
+        form.consent.data = session['application']['confirmation']['declaration'] == True
+
+        return render_template(
+            'start-application/declaration.html',
+            form=form,
+            back=back
     )
 
 

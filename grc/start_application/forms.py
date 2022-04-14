@@ -52,9 +52,6 @@ class OverseasApprovedCheckForm(FlaskForm):
 
 
 class DeclerationForm(FlaskForm):
-    check = BooleanField(
-        'check',
-        validators=[DataRequired(message='Confirm that you meet requirements')]
+    consent = BooleanField(
+        validators=[DataRequired(message='You must consent to the General Register Office contacting you')]
     )
-
-    submit = SubmitField('Continue')

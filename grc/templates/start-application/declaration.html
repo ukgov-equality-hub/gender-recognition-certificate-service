@@ -1,85 +1,51 @@
 {% extends 'base.html' %}
-{% block backLink %}<a href="{{ back }}" class="govuk-back-link">Back</a>{% endblock %}
+
+{% block backLink %}
+    <a href="{{ back }}" class="govuk-back-link">Back</a>
+{% endblock %}
 
 {% block content %}
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
-    {% if form.errors %}
-    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
-      <h2 id="error-summary-title" class="govuk-error-summary__title">
-        There is a problem
-      </h2>
-      <div class="govuk-error-summary__body">
-        <ul class="govuk-list govuk-error-summary__list">
-          {% for error in form.errors %}
-            {% for e in form[error].errors %}
-            <li><a href="#{{ error }}-issued-error">{{ e }}</a></li>
-            {% endfor %}
-          {% endfor %}
-        </ul>
-      </div>
+    {% import "govuk-design-system-templates/error-summary.html" as error_summary %}
+    {% import "govuk-design-system-templates/checkbox-single.html" as checkbox_single %}
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            {{ error_summary.renderFor(form) }}
+
+            <h1 class="govuk-heading-l">
+                Notifying the General Register Office
+            </h1>
+
+            <p class="govuk-body">
+                If you were born in the UK, the Gender Recognition Panel will tell the relevant General Register Office about your application.
+            </p>
+            <p class="govuk-body">
+                This will include telling them if you are married or in a civil partnership registered in England and Wales or
+                Scotland and you are applying for gender recognition while remaining married or in a civil partnership.
+            </p>
+            <p class="govuk-body govuk-!-margin-bottom-8">
+                After you receive your certificate, the General Register Office will contact you about your new
+                birth certificate and, if appropriate, a new certificate for your marriage or civil partnership.
+            </p>
+
+            <form method="POST" action="{{ url_for('startApplication.declaration') }}">
+                {{ form.csrf_token }}
+
+                {{ checkbox_single.renderFor(
+                    form,
+                    fieldName='consent',
+                    question="Do you consent to the General Register Office contacting you about your application?",
+                    label='I consent',
+                    checkboxOptions={
+                        'questionClasses': 'govuk-fieldset__legend--m'
+                    }
+                ) }}
+
+                <button class="govuk-button" data-module="govuk-button">
+                    Continue
+                </button>
+            </form>
+        </div>
     </div>
-    {% endif %}
-
-    <h1 class="govuk-heading-l">
-      Confirm that you meet requirements
-    </h1>
-
-    <p class="govuk-body govuk-!-margin-bottom-2">You can apply if you meet all of the following requirements:</p>
-    {% if session['application']['confirmation']['overseasCheck'] == 'Yes' %}
-    <ul class="govuk-body govuk-list govuk-list--bullet">
-      <li>you're aged 18 or over</li>
-      <li>you have a document showing your affirmed gender is legally recognised in that country or territory</li>
-    </ul>
-    {% else %}
-    <ul class="govuk-body govuk-list govuk-list--bullet">
-      <li>you're aged 18 or over</li>
-      <li>you've been diagnosed with <a href="https://www.nhs.uk/conditions/gender-dysphoria/">gender dysphoria</a></li>
-      <li>you've been living in your affirmed gender for at least 2 years</li>
-      <li>you intend to live in this gender for the rest of your life</li>
-    </ul>
-    {% endif %}
-
-    <p class="govuk-body">
-      If you were born in the UK, the Gender Recognition Panel will tell the relevant General Register Office about your application.
-    </p>
-    <p class="govuk-body">
-      This will include telling them if you are married or in a civil partnership registered in England and Wales or
-      Scotland and you are applying for gender recognition while remaining married or in a civil partnership.
-    </p>
-    <p class="govuk-body govuk-!-margin-bottom-8">
-      After you receive you certificate, the General Register Office will contact you
-      about your new birth certificate and, if appropriate, a new certificate for your marriage or civil partnership.
-    </p>
-
-    <form method="POST" action="{{ url_for('startApplication.declaration') }}">
-      {{ form.csrf_token }}
-
-      <div class="govuk-form-group {{ 'govuk-form-group--error' if form.check.errors }}">
-        <fieldset class="govuk-fieldset">
-          {% if form.check.errors %}
-          <p id="check-issued-error" class="govuk-error-message">
-            <span class="govuk-visually-hidden">Error:</span> Confirm that you meet requirements
-          </p>
-          {% endif %}
-          <div class="govuk-checkboxes checkboxes-long-text" data-module="govuk-checkboxes">
-            <div class="govuk-checkboxes__item">
-              <input id="waste" type="checkbox" name="check" value="true" class="govuk-checkboxes__input" {{ 'checked' if session['application']['confirmation']['declaration'] == true }}>
-              <label for="check" class="govuk-label govuk-checkboxes__label">
-                I confirm that I meet the requirements for applying for a Gender Recognition Certificate and I consent
-                to the General Register Office contacting me about my application
-              </label>
-            </div>
-          </div>
-        </fieldset>
-      </div>
-
-      <div class="govuk-button-group">
-        <button class="govuk-button" data-module="govuk-button">
-          Continue
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
 {% endblock %}
