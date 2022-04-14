@@ -97,7 +97,7 @@ def address():
         session['application']['personalDetails']['address']['postcode'] = form.postcode.data
 
         if ListStatus[session['application']['personalDetails']['progress']] == ListStatus.IN_PROGRESS:
-            session['application']['personalDetails']['step'] = 'personalDetails.contactPreferences'
+            session['application']['personalDetails']['step'] = 'personalDetails.contactDates'
 
         session['application'] = save_progress()
 
@@ -227,8 +227,8 @@ def contactDates():
     form = ContactDatesForm()
 
     if request.method == 'POST':
-        if form.check.data != 'Yes':
-            form.dates.data = None
+        if form.contactDatesCheck.data != 'Yes':
+            form.dates.data = ''
 
         if form.validate_on_submit():
             if 'personalDetails' not in session['application']:
@@ -240,23 +240,18 @@ def contactDates():
                     'dates': ''
                 }
 
-            if 'Yes' in form.check.data:
-                session['application']['personalDetails']['contactDates']['dates'] = form.dates.data
-            else:
-                session['application']['personalDetails']['contactDates']['dates'] = ''
-
-            session['application']['personalDetails']['contactDates']['answer'] = form.check.data
+            session['application']['personalDetails']['contactDates']['dates'] = form.dates.data
+            session['application']['personalDetails']['contactDates']['answer'] = form.contactDatesCheck.data
 
             if ListStatus[session['application']['personalDetails']['progress']] == ListStatus.IN_PROGRESS:
-                session['application']['personalDetails']['step'] = 'personalDetails.hmrc'
+                session['application']['personalDetails']['step'] = 'personalDetails.contactPreferences'
 
             session['application'] = save_progress()
 
             return redirect(url_for(session['application']['personalDetails']['step']))
 
     if request.method == 'GET' and 'contactDates' in session['application']['personalDetails']:
-        form.check.data = []
-        form.check.data.append(session['application']['personalDetails']['contactDates']['answer'])
+        form.contactDatesCheck.data = session['application']['personalDetails']['contactDates']['answer']
         form.dates.data = session['application']['personalDetails']['contactDates']['dates']
 
     return render_template(

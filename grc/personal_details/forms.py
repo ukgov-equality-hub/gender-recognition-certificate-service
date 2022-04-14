@@ -89,17 +89,17 @@ class ContactNameForm(FlaskForm):
 
 
 class ContactDatesForm(FlaskForm):
-    check = RadioField(
-        'check',
-        choices=[('Yes'), ('No')],
-        validators=[DataRequired(message='Select if you’ll be unavailable')]
+    contactDatesCheck = RadioField(
+        choices=[
+            ('Yes', 'Yes'),
+            ('No', 'No')
+        ],
+        validators=[DataRequired(message="Select if you don't want us to contact you at any point in the next 6 months")]
     )
 
     dates = StringField(
-        'dates', validators=[StrictRequiredIf('check', 'Yes', message='Dates are required')]
+        validators=[StrictRequiredIf('contactDatesCheck', 'Yes', message="Enter the dates you don't want us to contact you by post")]
     )
-
-    submit = SubmitField('Save and continue')
 
 
 class HmrcForm(FlaskForm):
