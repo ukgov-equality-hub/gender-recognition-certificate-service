@@ -38,13 +38,10 @@ class IsFirstVisitForm(FlaskForm):
 
 
 class OverseasCheckForm(FlaskForm):
-    check = RadioField(
-        'check',
-        choices=[('Yes'), ('No')],
+    overseasCheck = RadioField(
+        choices=[('Yes', 'Yes'), ('No', 'No')],
         validators=[DataRequired(message='Select if you ever been issued a Gender Recognition Certificate')]
     )
-
-    submit = SubmitField('Continue')
 
 
 class OverseasApprovedCheckForm(FlaskForm):

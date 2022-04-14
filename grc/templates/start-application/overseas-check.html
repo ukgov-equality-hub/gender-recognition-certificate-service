@@ -1,65 +1,35 @@
 {% extends 'base.html' %}
-{% block backLink %}<a href="{{ url_for('startApplication.reference') }}" class="govuk-back-link">Back</a>{% endblock %}
+
+{% block backLink %}
+    <a href="{{ url_for('startApplication.reference') }}" class="govuk-back-link">Back</a>
+{% endblock %}
 
 {% block content %}
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
-    {% if form.errors %}
-    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
-      <h2 id="error-summary-title" class="govuk-error-summary__title">
-        There is a problem
-      </h2>
-      <div class="govuk-error-summary__body">
-        <ul class="govuk-list govuk-error-summary__list">
-          {% for error in form.errors %}
-            {% for e in form[error].errors %}
-            <li><a href="#{{ error }}-issued-error">{{ e }}</a></li>
-            {% endfor %}
-          {% endfor %}
-        </ul>
-      </div>
+    {% import "govuk-design-system-templates/error-summary.html" as error_summary %}
+    {% import "govuk-design-system-templates/radios.html" as radios %}
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            {{ error_summary.renderFor(form) }}
+
+            <form method="POST" action="{{ url_for('startApplication.overseas_check') }}">
+                {{ form.csrf_token }}
+
+                {{ radios.renderFor(
+                    form,
+                    fieldName='overseasCheck',
+                    question="Have you ever been issued a Gender Recognition Certificate (or its equivalent) in another country?",
+                    radiosOptions={
+                        'questionIsPageHeading': true
+                    }
+                ) }}
+
+                <button class="govuk-button" data-module="govuk-button">
+                    Continue
+                </button>
+            </form>
+
+        </div>
     </div>
-    {% endif %}
-
-    <form method="POST" action="{{ url_for('startApplication.overseas_check') }}">
-      {{ form.csrf_token }}
-
-      <div class="govuk-form-group {{ 'govuk-form-group--error' if form.check.errors }}">
-        <fieldset class="govuk-fieldset">
-          <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-            <h1 class="govuk-fieldset__heading">
-              Have you ever been issued a Gender Recognition Certificate (or it's equivalent) in another country?
-            </h1>
-          </legend>
-          {% if form.check.errors %}
-          <p id="check-issued-error" class="govuk-error-message">
-            <span class="govuk-visually-hidden">Error:</span> Select if you you ever been issued a Gender Recognition
-            Certificate
-          </p>
-          {% endif %}
-          <div class="govuk-radios" data-module="govuk-radios">
-            <div class="govuk-radios__item">
-              <input id="check" type="radio" name="check" value="Yes" class="govuk-radios__input" {{ 'checked' if session['application']['confirmation']['overseasCheck'] == 'Yes' }}>
-              <label for="check" class="govuk-label govuk-radios__label">
-                Yes
-              </label>
-            </div>
-            <div class="govuk-radios__item">
-              <input id="check-2" type="radio" name="check" value="No" class="govuk-radios__input" {{ 'checked' if session['application']['confirmation']['overseasCheck'] == 'No' }}>
-              <label for="check-2" class="govuk-label govuk-radios__label">
-                No
-              </label>
-            </div>
-          </div>
-        </fieldset>
-      </div>
-
-      <div class="govuk-button-group">
-        <button class="govuk-button" data-module="govuk-button">
-          Continue
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
 {% endblock %}

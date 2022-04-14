@@ -136,23 +136,25 @@ def overseas_check():
     form = OverseasCheckForm()
 
     if form.validate_on_submit():
-        session['application']['confirmation']['overseasCheck'] = form.check.data
+        session['application']['confirmation']['overseasCheck'] = form.overseasCheck.data
 
         if ListStatus[session['application']['confirmation']['progress']] == ListStatus.IN_PROGRESS:
-            if form.check.data == 'Yes':
+            if form.overseasCheck.data == 'Yes':
                 session['application']['confirmation']['step'] = 'startApplication.overseas_approved_check'
             else:
                 session['application']['confirmation']['step'] = 'startApplication.declaration'
-        elif form.check.data == 'Yes':
+        elif form.overseasCheck.data == 'Yes':
             session['application']['confirmation']['step'] = 'startApplication.overseas_approved_check'
 
         session['application'] = save_progress()
 
         return redirect(url_for(session['application']['confirmation']['step']))
 
-    return render_template(
-        'start-application/overseas-check.html',
-        form=form
+    else:
+        form.overseasCheck.data = session['application']['confirmation']['overseasCheck']
+        return render_template(
+            'start-application/overseas-check.html',
+            form=form
     )
 
 
