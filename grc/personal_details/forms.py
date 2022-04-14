@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import EmailField, StringField, SubmitField, RadioField, TelField
+from wtforms import EmailField, StringField, SubmitField, RadioField, TelField, BooleanField
 from wtforms.validators import DataRequired
 from grc.utils.form_custom_validators import StrictRequiredIf, validateNino, validatePostcode
 from grc.utils.form_widgets import MultiCheckboxField
@@ -54,23 +54,22 @@ class AddressForm(FlaskForm):
 
 
 class ContactPreferencesForm(FlaskForm):
-    options = MultiCheckboxField(
-        'options',
-        choices=[('email'), ('phone'), ('post')],
-        validators=[DataRequired(message='Please select how would you like to be contacted')]
+    contact_options = MultiCheckboxField(
+        choices=[
+            ('EMAIL', 'Email'),
+            ('PHONE', 'Phone call'),
+            ('POST', 'Post')
+        ],
+        validators=[DataRequired(message='Select how would you like to be contacted')]
     )
 
     email = EmailField(
-        'email',
-        validators=[StrictRequiredIf('options', 'email', message='Email address is required')]
-    )  # Email(message='A valid email address is required')
-
-    phone = TelField(
-        'phone',
-        validators=[StrictRequiredIf('options', 'phone', message='Phone number is required')]
+        validators=[StrictRequiredIf('contact_options', 'EMAIL', message='Enter your email address')]
     )
 
-    submit = SubmitField('Save and continue')
+    phone = TelField(
+        validators=[StrictRequiredIf('contact_options', 'PHONE', message='Enter your phone number')]
+    )
 
 
 class ContactNameForm(FlaskForm):

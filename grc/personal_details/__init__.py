@@ -122,9 +122,9 @@ def contactPreferences():
     address = session['application']['personalDetails']['address']['address_line_one'] + ', ' + session['application']['personalDetails']['address']['address_line_two'] + ', ' + session['application']['personalDetails']['address']['town'] + ', ' +  session['application']['personalDetails']['address']['postcode']
 
     if request.method == 'POST':
-        if 'email' not in form.options.data:
+        if 'EMAIL' not in form.contact_options.data:
             form.email.data = None
-        if 'phone' not in form.options.data:
+        if 'PHONE' not in form.contact_options.data:
             form.phone.data = None
 
         if form.validate_on_submit():
@@ -138,34 +138,34 @@ def contactPreferences():
                     'post': ''
                 }
 
-            if 'email' in form.options.data:
+            if 'EMAIL' in form.contact_options.data:
                 session['application']['personalDetails']['contactPreferences']['email'] = form.email.data
             else:
                 session['application']['personalDetails']['contactPreferences']['email'] = ''
-            if 'phone' in form.options.data:
+            if 'PHONE' in form.contact_options.data:
                 session['application']['personalDetails']['contactPreferences']['phone'] = form.phone.data
             else:
                 session['application']['personalDetails']['contactPreferences']['phone'] = ''
-            if 'post' in form.options.data:
+            if 'POST' in form.contact_options.data:
                 session['application']['personalDetails']['contactPreferences']['post'] = address
             else:
                 session['application']['personalDetails']['contactPreferences']['post'] = ''
 
             if ListStatus[session['application']['personalDetails']['progress']] == ListStatus.IN_PROGRESS:
-                session['application']['personalDetails']['step'] = 'personalDetails.contactDates'
+                session['application']['personalDetails']['step'] = 'personalDetails.hmrc'
 
             session['application'] = save_progress()
 
             return redirect(url_for(session['application']['personalDetails']['step']))
 
     if request.method == 'GET' and 'contactPreferences' in session['application']['personalDetails']:
-        form.options.data = []
-        if  len(session['application']['personalDetails']['contactPreferences']['email']) > 0:
-            form.options.data.append('email')
-        if  len(session['application']['personalDetails']['contactPreferences']['phone']) > 0:
-            form.options.data.append('phone')
-        if  len(session['application']['personalDetails']['contactPreferences']['post']) > 0:
-            form.options.data.append('post')
+        form.contact_options.data = []
+        if session['application']['personalDetails']['contactPreferences']['email']:
+            form.contact_options.data.append('EMAIL')
+        if session['application']['personalDetails']['contactPreferences']['phone']:
+            form.contact_options.data.append('PHONE')
+        if session['application']['personalDetails']['contactPreferences']['post']:
+            form.contact_options.data.append('POST')
 
         form.email.data = session['application']['personalDetails']['contactPreferences']['email']
         form.phone.data = session['application']['personalDetails']['contactPreferences']['phone']
