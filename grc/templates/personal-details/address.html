@@ -1,94 +1,88 @@
 {% extends 'base.html' %}
-{% block backLink %}<a href="{{ url_for('personalDetails.previousNamesCheck') }}" class="govuk-back-link">Back</a>{% endblock %}
+
+{% block backLink %}
+    <a href="{{ url_for('personalDetails.previousNamesCheck') }}" class="govuk-back-link">Back</a>
+{% endblock %}
 
 {% block content %}
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
-    {% if form.errors %}
-    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
-      <h2 id="error-summary-title" class="govuk-error-summary__title">
-        There is a problem
-      </h2>
-      <div class="govuk-error-summary__body">
-        <ul class="govuk-list govuk-error-summary__list">
-          {% for error in form.errors %}
-            {% for e in form[error].errors %}
-            <li><a href="#{{ error }}">{{ e }}</a></li>
-            {% endfor %}
-          {% endfor %}
-        </ul>
-      </div>
+    {% import "govuk-design-system-templates/error-summary.html" as error_summary %}
+    {% import "govuk-design-system-templates/text-input.html" as textInput %}
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            {{ error_summary.renderFor(form) }}
+
+            <form method="POST" action="{{ url_for('personalDetails.address') }}">
+                {{ form.csrf_token }}
+
+                <div class="govuk-form-group {{ 'govuk-form-group--error' if form.errors }}">
+                    <fieldset class="govuk-fieldset">
+                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                            <h1 class="govuk-fieldset__heading">
+                                What is your address?
+                            </h1>
+                        </legend>
+                        <div id="address-hint" class="govuk-hint">
+                            This should be the address that you want us to send your Gender Recognition Certificate to.
+                        </div>
+
+                        {% macro addressLineOneLabel() %}
+                            Building and street <span class="govuk-visually-hidden">line 1 of 2</span>
+                        {% endmacro %}
+                        {{ textInput.renderFor(
+                            form,
+                            fieldName='address_line_one',
+                            textInputForOptions={
+                                'labelOptions':{ 'htmlOrText': addressLineOneLabel() },
+                                'autocomplete': 'address-line1'
+                            }
+                        ) }}
+
+                        {% macro addressLineTwoLabel() %}
+                            <span class="govuk-visually-hidden">Building and street line 2 of 2</span>
+                        {% endmacro %}
+                        {{ textInput.renderFor(
+                            form,
+                            fieldName='address_line_two',
+                            textInputForOptions={
+                                'labelOptions':{ 'htmlOrText': addressLineTwoLabel() },
+                                'autocomplete': 'address-line2'
+                            }
+                        ) }}
+
+                        {{ textInput.renderFor(
+                            form,
+                            fieldName='town',
+                            textInputForOptions={
+                                'labelOptions':{ 'htmlOrText': 'Town or city' },
+                                'autocomplete': 'address-level2',
+                                'classes': 'govuk-!-width-two-thirds'
+                            }
+                        ) }}
+
+                        {{ textInput.renderFor(
+                            form,
+                            fieldName='postcode',
+                            textInputForOptions={
+                                'labelOptions':{ 'htmlOrText': 'Postcode' },
+                                'autocomplete': 'postal-code',
+                                'classes': 'govuk-input--width-10'
+                            }
+                        ) }}
+                    </fieldset>
+                </div>
+
+                <div class="govuk-button-group">
+                    <button class="govuk-button" data-module="govuk-button">
+                        Save and continue
+                    </button>
+                    <a href="{{ url_for('taskList.index') }}" class="govuk-link govuk-link--no-visited-state">
+                        Return to task list
+                    </a>
+                </div>
+            </form>
+
+        </div>
     </div>
-    {% endif %}
-
-    <form method="POST" action="{{ url_for('personalDetails.address') }}">
-      {{ form.csrf_token }}
-
-      <div class="govuk-form-group {{ 'govuk-form-group--error' if form.errors }}">
-        <fieldset class="govuk-fieldset">
-          <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-            <h1 class="govuk-fieldset__heading">
-              What is your address?
-            </h1>
-          </legend>
-          <div id="address-hint" class="govuk-hint">
-            This should be the address that you want us to send your Gender Recognition Certificate to.
-          </div>
-
-          <div class="govuk-form-group">
-            <label for="address_line_one" class="govuk-label">
-              Building and street <span class="govuk-visually-hidden">line 1 of 2</span>
-            </label>
-            {% if form.address_line_one.errors %}
-            <p id="address_line_one-error" class="govuk-error-message">
-              <span class="govuk-visually-hidden">Error:</span> Building is required
-            </p>
-            {% endif %}
-            <input id="address_line_one" type="text" name="address_line_one" value="{{ form.address_line_one.data if form.address_line_one.data is not none }}" autocomplete="address-line1" class="govuk-input {{ 'govuk-input--error' if form.address_line_one.errors }}">
-          </div>
-          <div class="govuk-form-group">
-            <label for="address_line_two" class="govuk-label">
-              <span class="govuk-visually-hidden">Building and street line 2 of 2
-            </label>
-            {% if form.address_line_two.errors %}
-            <p id="address_line_two-error" class="govuk-error-message">
-              <span class="govuk-visually-hidden">Error:</span> Street is required
-            </p>
-            {% endif %}
-            <input id="address_line_two" type="text" name="address_line_two" value="{{ form.address_line_two.data if form.address_line_two.data is not none }}" autocomplete="address-line2" class="govuk-input {{ 'govuk-input--error' if form.address_line_two.errors }}">
-          </div>
-          <div class="govuk-form-group">
-            <label for="town" class="govuk-label">
-              Town or city
-            </label>
-            {% if form.town.errors %}
-            <p id="town-error" class="govuk-error-message">
-              <span class="govuk-visually-hidden">Error:</span> Town or city is required
-            </p>
-            {% endif %}
-            <input id="town" type="text" name="town" value="{{ form.town.data if form.town.data is not none }}" autocomplete="address-level2" class="govuk-input govuk-!-width-two-thirds {{ 'govuk-input--error' if form.town.errors }}">
-          </div>
-          <div class="govuk-form-group">
-            <label for="postcode" class="govuk-label">
-              Postcode
-            </label>
-            {% if form.postcode.errors %}
-            <p id="postcode-error" class="govuk-error-message">
-              <span class="govuk-visually-hidden">Error:</span> Postcode is required
-            </p>
-            {% endif %}
-            <input id="postcode" type="text" name="postcode" value="{{ form.postcode.data if form.postcode.data is not none }}" autocomplete="postal-code" class="govuk-input govuk-input--width-10 {{ 'govuk-input--error' if form.postcode.errors }}">
-          </div>
-        </fieldset>
-      </div>
-
-      <div class="govuk-button-group">
-        <button class="govuk-button" data-module="govuk-button">
-          Save and continue
-        </button>
-        <a href="{{ url_for('taskList.index') }}" class="govuk-link govuk-link--no-visited-state">Return to task list</a>
-      </div>
-    </form>
-  </div>
-</div>
 {% endblock %}

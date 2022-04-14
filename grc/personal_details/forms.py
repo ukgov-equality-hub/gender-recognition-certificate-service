@@ -37,26 +37,20 @@ class PreviousNamesCheck(FlaskForm):
 
 class AddressForm(FlaskForm):
     address_line_one = StringField(
-        'address_line_one',
-        validators=[DataRequired(message='Building is required')]
+        validators=[DataRequired(message='Enter your building')]
     )
 
     address_line_two = StringField(
-        'address_line_two',
-        validators=[DataRequired(message='Street is required')]
+        validators=[DataRequired(message='Enter your street')]
     )
 
     town = StringField(
-        'town',
-        validators=[DataRequired(message='Town or city is required')]
+        validators=[DataRequired(message='Enter your town or city')]
     )
 
     postcode = StringField(
-        'postcode',
-        validators=[DataRequired(message='A valid postcode is required'), validatePostcode]
+        validators=[DataRequired(message='Enter your postcode'), validatePostcode]
     )
-
-    submit = SubmitField('Save and continue')
 
 
 class ContactPreferencesForm(FlaskForm):
