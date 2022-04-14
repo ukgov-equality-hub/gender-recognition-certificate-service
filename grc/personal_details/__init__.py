@@ -64,7 +64,7 @@ def previousNamesCheck():
     form = PreviousNamesCheck()
 
     if form.validate_on_submit():
-        session['application']['personalDetails']['previousNamesCheck'] = form.check.data
+        session['application']['personalDetails']['previousNamesCheck'] = form.previousNameCheck.data
 
         if ListStatus[session['application']['personalDetails']['progress']] == ListStatus.IN_PROGRESS:
             session['application']['personalDetails']['step'] = 'personalDetails.address'
@@ -72,6 +72,9 @@ def previousNamesCheck():
         session['application'] = save_progress()
 
         return redirect(url_for(session['application']['personalDetails']['step']))
+
+    if request.method == 'GET':
+        form.previousNameCheck.data = session['application']['personalDetails']['previousNamesCheck'] if 'previousNamesCheck' in session['application']['personalDetails'] else None
 
     return render_template(
         'personal-details/previous-names-check.html',

@@ -26,12 +26,13 @@ class AffirmedGenderForm(FlaskForm):
 
 
 class PreviousNamesCheck(FlaskForm):
-    check = RadioField(
-        'check', choices=[('Yes'), ('No')],
-        validators=[DataRequired(message='Select if you have ever changed your name')]
+    previousNameCheck = RadioField(
+        choices=[
+            ('Yes', 'Yes'),
+            ('No', 'No')
+        ],
+        validators=[DataRequired(message='Select if you have ever changed your name to reflect your gender')]
     )
-
-    submit = SubmitField('Save and continue')
 
 
 class AddressForm(FlaskForm):
