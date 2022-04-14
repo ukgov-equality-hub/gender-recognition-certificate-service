@@ -45,13 +45,10 @@ class OverseasCheckForm(FlaskForm):
 
 
 class OverseasApprovedCheckForm(FlaskForm):
-    check = RadioField(
-        'check',
-        choices=[('Yes'), ('No')],
+    overseasApprovedCheck = RadioField(
+        choices=[('Yes', 'Yes'), ('No', 'No')],
         validators=[DataRequired(message='Select if you have official documentation')]
     )
-
-    submit = SubmitField('Continue')
 
 
 class DeclerationForm(FlaskForm):

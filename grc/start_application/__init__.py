@@ -164,16 +164,18 @@ def overseas_approved_check():
     form = OverseasApprovedCheckForm()
 
     if form.validate_on_submit():
-        session['application']['confirmation']['overseasApprovedCheck'] = form.check.data
+        session['application']['confirmation']['overseasApprovedCheck'] = form.overseasApprovedCheck.data
         session['application']['confirmation']['step'] = 'startApplication.declaration'
         session['application'] = save_progress()
 
         return redirect(url_for(session['application']['confirmation']['step']))
 
-    return render_template(
-        'start-application/overseas-approved-check.html',
-        form=form
-    )
+    else:
+        form.overseasApprovedCheck.data = session['application']['confirmation']['overseasApprovedCheck']
+        return render_template(
+            'start-application/overseas-approved-check.html',
+            form=form
+        )
 
 
 @startApplication.route('/declaration', methods=['GET', 'POST'])
