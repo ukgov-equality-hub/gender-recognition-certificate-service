@@ -16,12 +16,10 @@ class SaveYourApplicationForm(FlaskForm):
 class ValidateEmailForm(FlaskForm):
     code = StringField(
         'code',
-        validators=[DataRequired(message='A valid code is required'), validateSecurityCode]
+        validators=[DataRequired(message='Enter the security code that we emailed you'), validateSecurityCode]
     )
 
     attempt = IntegerField('attempt', default=0)
-
-    submit = SubmitField('Continue')
 
 
 class IsFirstVisitForm(FlaskForm):

@@ -61,7 +61,7 @@ class StrictRequiredIf(DataRequired):
 
 def validateSecurityCode(form, field):
     if validate_security_code(session['email'], field.data) is False:
-        raise ValidationError('A valid code is required')
+        raise ValidationError('Enter a valid security code')
 
 
 def validateReferenceNumber(form, field):
