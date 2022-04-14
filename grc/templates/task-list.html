@@ -101,7 +101,7 @@
         </h2>
 
         <ul class="app-task-list__items">
-          {% if application.confirmation.overseasCheck == "No" %}
+          {% if application.confirmation.overseasCheck == 'No' %}
           <li class="app-task-list__item">
             <span class="app-task-list__task-name">
               <a href="{{ url_for('upload.medicalReports') }}" class="govuk-link" aria-describedby="medical-reports-status">
@@ -122,7 +122,7 @@
               {{ list_status['genderEvidence'].value }}
             </strong>
           </li>
-          {% if application.personalDetails.previousNamesCheck is defined and application.personalDetails.previousNamesCheck == "Yes" %}
+          {% if application.personalDetails.previousNamesCheck is defined and application.personalDetails.previousNamesCheck == 'Yes' %}
           <li class="app-task-list__item">
             <span class="app-task-list__task-name">
               <a href="{{ url_for('upload.nameChange') }}" class="govuk-link" aria-describedby="previousNamesCheck">
@@ -155,6 +155,18 @@
             </span>
             <strong id="marriageDocuments" class="govuk-tag app-task-list__tag {{ get_colour(list_status['marriageDocuments']) }}">
               {{ list_status['marriageDocuments'].value }}
+            </strong>
+          </li>
+          {% endif %}
+          {% if application.confirmation.overseasApprovedCheck == 'Yes' %}
+          <li class="app-task-list__item">
+            <span class="app-task-list__task-name">
+              <a href="{{ url_for('upload.overseasCertificate') }}" class="govuk-link" aria-describedby="overseasCertificate">
+                Overseas certificate documents
+              </a>
+            </span>
+            <strong id="overseasCertificate" class="govuk-tag app-task-list__tag {{ get_colour(list_status['overseasCertificate']) }}">
+              {{ list_status['overseasCertificate'].value }}
             </strong>
           </li>
           {% endif %}

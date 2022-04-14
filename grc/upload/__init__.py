@@ -16,6 +16,9 @@ def medicalReports():
     deleteform = DeleteForm()
 
     if form.validate_on_submit():
+        if 'medicalReports' not in session['application']:
+            session['application']['medicalReports'] = []
+
         if 'files' not in session['application']['medicalReports']:
             session['application']['medicalReports']['files'] = []
 
@@ -49,6 +52,9 @@ def genderEvidence():
     deleteform = DeleteForm()
 
     if form.validate_on_submit():
+        if 'genderEvidence' not in session['application']:
+            session['application']['genderEvidence'] = []
+
         if 'files' not in session['application']['genderEvidence']:
             session['application']['genderEvidence']['files'] = []
 
@@ -82,6 +88,9 @@ def nameChange():
     deleteform = DeleteForm()
 
     if form.validate_on_submit():
+        if 'nameChange' not in session['application']:
+            session['application']['nameChange'] = []
+
         if 'files' not in session['application']['nameChange']:
             session['application']['nameChange']['files'] = []
 
@@ -139,6 +148,42 @@ def marriageDocuments():
 
     return render_template(
         'upload/marriage-documents.html',
+        form=form,
+        deleteform=deleteform
+    )
+
+
+@upload.route('/upload/overseas-certificate', methods=['GET', 'POST'])
+@LoginRequired
+def overseasCertificate():
+    form = UploadForm()
+    deleteform = DeleteForm()
+
+    if form.validate_on_submit():
+        if 'overseasCertificate' not in session['application']:
+            session['application']['overseasCertificate'] = []
+
+        if 'files' not in session['application']['overseasCertificate']:
+            session['application']['overseasCertificate']['files'] = []
+
+        for document in request.files.getlist('documents'):
+            filename = secure_filename(document.filename)
+            object_name = session['application']['reference_number'] + '__' + 'overseasCertificate' + '__' + filename
+            upload_fileobj(document, object_name)
+            session['application']['overseasCertificate']['files'].append(object_name)
+
+        session['application']['overseasCertificate']['progress'] = ListStatus.COMPLETED.name
+        session['application'] = save_progress()
+
+        if not form.more_files.data == True:
+            return redirect(url_for('taskList.index'))
+
+    if request.method == 'GET' and 'files' in session['application']['overseasCertificate'] and len(session['application']['overseasCertificate']['files']) == 0:
+        session['application']['overseasCertificate']['progress'] = ListStatus.IN_PROGRESS.name
+        session['application'] = save_progress()
+
+    return render_template(
+        'upload/overseas-certificate.html',
         form=form,
         deleteform=deleteform
     )

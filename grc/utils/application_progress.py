@@ -42,24 +42,10 @@ def calculate_progress_status():
                 'genderEvidence': ListStatus.NOT_STARTED,
                 'nameChange': ListStatus.CANNOT_START_YET,
                 'marriageDocuments': ListStatus.CANNOT_START_YET,
+                'overseasCertificate': ListStatus.CANNOT_START_YET,
                 'statutoryDeclarations': ListStatus.NOT_STARTED,
                 'submitAndPay': ListStatus.CANNOT_START_YET,
             }
-
-            '''# TODO: This checks has been added for backwards compatibility with existing application.
-            # Please remove in later time
-            if 'marriageDocuments' not in session['application']:
-                session['application']['marriageDocuments'] = {
-                    'progress': ListStatus.CANNOT_START_YET.name,
-                    'step': 'upload.marriageDocuments'
-                }
-
-            if 'statutoryDeclarations' not in session['application']:
-                session['application']['statutoryDeclarations'] = {
-                    'progress': ListStatus.NOT_STARTED.name,
-                    'step': 'upload.statutoryDeclarations'
-                }
-            # ./end'''
 
             # Confirmation
             list_status['confirmation'] = calculate_progress_status_display_name(
@@ -163,6 +149,15 @@ def calculate_progress_status():
                 ListStatus[session['application']['marriageDocuments']['progress']]
             )
 
+            # Overseas certificate
+            if session['application']['overseasCertificate']['progress'] == ListStatus.CANNOT_START_YET.name and session['application']['confirmation']['overseasApprovedCheck'] == 'Yes':
+                session['application']['overseasCertificate']['progress'] = ListStatus.NOT_STARTED.name
+                session['application'] = save_progress()
+
+            list_status['overseasCertificate'] = calculate_progress_status_display_name(
+                ListStatus[session['application']['overseasCertificate']['progress']]
+            )
+
             # Statutory declarations
             list_status['statutoryDeclarations'] = calculate_progress_status_display_name(
                 ListStatus[session['application']['statutoryDeclarations']['progress']]
@@ -191,6 +186,10 @@ def calculate_progress_status():
                 and (
                     session['application']['marriageDocuments']['progress'] == ListStatus.CANNOT_START_YET.name
                     or session['application']['marriageDocuments']['progress'] == ListStatus.COMPLETED.name
+                )
+                and (
+                    session['application']['overseasCertificate']['progress'] == ListStatus.CANNOT_START_YET.name
+                    or session['application']['overseasCertificate']['progress'] == ListStatus.COMPLETED.name
                 )
             ):
                 session['application']['submitAndPay']['progress'] = ListStatus.NOT_STARTED.name
