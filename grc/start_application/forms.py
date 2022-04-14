@@ -6,14 +6,11 @@ from grc.utils.form_custom_validators import validateSecurityCode, validateRefer
 
 class SaveYourApplicationForm(FlaskForm):
     email = EmailField(
-        'email',
         validators=[
             DataRequired(message='Email address is required'),
             Email(message='A valid email address is required')
-        ]
+        ],
     )
-
-    submit = SubmitField('Continue')
 
 
 class ValidateEmailForm(FlaskForm):
