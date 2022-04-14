@@ -6,7 +6,7 @@ from grc.models import ListStatus
 taskList = Blueprint('taskList', __name__)
 
 
-@taskList.route('/task-list', methods=['GET', 'POST'])
+@taskList.route('/task-list', methods=['GET'])
 @LoginRequired
 def index():
     list_status = calculate_progress_status()

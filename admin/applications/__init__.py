@@ -117,6 +117,10 @@ def download(email_address):
             for object_name in application.user_input['marriageDocuments']['files']:
                 add_pdf(object_name)
 
+        if 'overseasCertificate' in application.user_input and 'files' in application.user_input['overseasCertificate']:
+            for object_name in application.user_input['overseasCertificate']['files']:
+                add_pdf(object_name)
+
         if 'statutoryDeclarations' in application.user_input and 'files' in application.user_input['statutoryDeclarations']:
             for object_name in application.user_input['statutoryDeclarations']['files']:
                 add_pdf(object_name)
@@ -191,6 +195,11 @@ def attachments(email_address):
 
             if 'marriageDocuments' in application.user_input and 'files' in application.user_input['marriageDocuments']:
                 for object_name in application.user_input['marriageDocuments']['files']:
+                    data = download_object(object_name)
+                    zipper.writestr(object_name, data.getvalue())
+
+            if 'overseasCertificate' in application.user_input and 'files' in application.user_input['overseasCertificate']:
+                for object_name in application.user_input['overseasCertificate']['files']:
                     data = download_object(object_name)
                     zipper.writestr(object_name, data.getvalue())
 
