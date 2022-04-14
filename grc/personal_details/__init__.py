@@ -1,6 +1,6 @@
 from flask import Blueprint, redirect, render_template, request, url_for, session
 from grc.models import ListStatus
-from grc.personal_details.forms import NameForm, PreviousNamesCheck, AddressForm, ContactPreferencesForm, ContactNameForm,ContactDatesForm, HmrcForm, CheckYourAnswers
+from grc.personal_details.forms import NameForm, AffirmedGenderForm, PreviousNamesCheck, AddressForm, ContactPreferencesForm, ContactNameForm,ContactDatesForm, HmrcForm, CheckYourAnswers
 from grc.utils.decorators import LoginRequired
 from grc.utils.application_progress import save_progress
 
@@ -18,7 +18,7 @@ def index():
 
         if ListStatus[session['application']['personalDetails']['progress']] == ListStatus.NOT_STARTED:
             session['application']['personalDetails']['progress'] = ListStatus.IN_PROGRESS.name
-            session['application']['personalDetails']['step'] = 'personalDetails.previousNamesCheck'
+            session['application']['personalDetails']['step'] = 'personalDetails.affirmedGender'
 
         session['application'] = save_progress()
 
@@ -30,6 +30,30 @@ def index():
 
     return render_template(
         'personal-details/name.html',
+        form=form
+    )
+
+
+@personalDetails.route('/personal-details/affirmed-gender', methods=['GET', 'POST'])
+@LoginRequired
+def affirmedGender():
+    form = AffirmedGenderForm()
+
+    if form.validate_on_submit():
+        session['application']['personalDetails']['affirmed_gender'] = form.affirmedGender.data
+
+        if ListStatus[session['application']['personalDetails']['progress']] == ListStatus.IN_PROGRESS:
+            session['application']['personalDetails']['step'] = 'personalDetails.previousNamesCheck'
+
+        session['application'] = save_progress()
+
+        return redirect(url_for(session['application']['personalDetails']['step']))
+
+    if request.method == 'GET':
+        form.affirmedGender.data = session['application']['personalDetails']['affirmed_gender'] if 'affirmed_gender' in session['application']['personalDetails'] else None
+
+    return render_template(
+        'personal-details/affirmed-gender.html',
         form=form
     )
 

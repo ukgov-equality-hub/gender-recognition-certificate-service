@@ -15,6 +15,16 @@ class NameForm(FlaskForm):
     )
 
 
+class AffirmedGenderForm(FlaskForm):
+    affirmedGender = RadioField(
+        choices=[
+            ('MALE', 'Male'),
+            ('FEMALE', 'Female')
+        ],
+        validators=[DataRequired(message='Select your affirmed gender')]
+    )
+
+
 class PreviousNamesCheck(FlaskForm):
     check = RadioField(
         'check', choices=[('Yes'), ('No')],
