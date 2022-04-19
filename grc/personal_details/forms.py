@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import EmailField, StringField, SubmitField, RadioField, TelField, BooleanField
 from wtforms.validators import DataRequired
-from grc.utils.form_custom_validators import StrictRequiredIf, validateNino, validatePostcode
+from grc.utils.form_custom_validators import StrictRequiredIf, validateNationalInsuranceNumber, validatePostcode
 from grc.utils.form_widgets import MultiCheckboxField
 
 
@@ -102,18 +102,17 @@ class ContactDatesForm(FlaskForm):
 
 
 class HmrcForm(FlaskForm):
-    check = RadioField(
-        'check',
-        choices=[('Yes'),('No')],
+    tell_hmrc = RadioField(
+        choices=[
+            ('Yes', 'Yes'),
+            ('No', 'No')
+        ],
         validators=[DataRequired(message='Select if you would like us to tell HMRC after you receive a Gender Recognition Certificate')]
     )
 
-    nino = StringField(
-        'nino',
-        validators=[StrictRequiredIf('check', 'Yes', message='A valid National Insurance number is required'), validateNino]
+    national_insurance_number = StringField(
+        validators=[StrictRequiredIf('tell_hmrc', 'Yes', message='Enter your National Insurance number'), validateNationalInsuranceNumber]
     )
-
-    submit = SubmitField('Save and continue')
 
 
 class CheckYourAnswers(FlaskForm):

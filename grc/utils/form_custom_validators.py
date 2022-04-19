@@ -128,7 +128,7 @@ def validateDOB(form, field):
             raise ValidationError('You need to be less than 110 years old to apply')
 
 
-def validateNino(form, field):
+def validateNationalInsuranceNumber(form, field):
 
     # https://www.gov.uk/hmrc-internal-manuals/national-insurance-manual/nim39110
     # https://stackoverflow.com/questions/17928496/use-regex-to-validate-a-uk-national-insurance-no-nino-in-an-html5-pattern-attri
@@ -136,7 +136,7 @@ def validateNino(form, field):
         data = field.data.replace(' ', '').upper()
         match = re.search('^(?!BG)(?!GB)(?!NK)(?!KN)(?!TN)(?!NT)(?!ZZ)(?:[A-CEGHJ-PR-TW-Z][A-CEGHJ-NPR-TW-Z])(?:\s*\d\s*){6}[A-D]{1}$', data)
         if match is None:
-            raise ValidationError('Your national insurance number is not valid')
+            raise ValidationError('Enter a valid National Insurance number')
 
 
 class MultiFileAllowed(object):

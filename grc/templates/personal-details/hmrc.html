@@ -1,90 +1,80 @@
 {% extends 'base.html' %}
-{% block backLink %}<a href="{{ url_for('personalDetails.contactPreferences') }}" class="govuk-back-link">Back</a>{% endblock %}
+
+{% block backLink %}
+    <a href="{{ url_for('personalDetails.contactPreferences') }}" class="govuk-back-link">Back</a>
+{% endblock %}
 
 {% block content %}
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
-    {% if form.errors %}
-    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
-      <h2 id="error-summary-title" class="govuk-error-summary__title">
-        There is a problem
-      </h2>
-      <div class="govuk-error-summary__body">
-        <ul class="govuk-list govuk-error-summary__list">
-          {% for error in form.errors %}
-            {% for e in form[error].errors %}
-            <li><a href="#{{ error }}">{{ e }}</a></li>
-            {% endfor %}
-          {% endfor %}
-        </ul>
-      </div>
-    </div>
-    {% endif %}
+    {% import "govuk-design-system-templates/error-summary.html" as error_summary %}
+    {% import "govuk-design-system-templates/radios.html" as radios %}
+    {% import "govuk-design-system-templates/text-input.html" as textInput %}
 
-    <h1 class="govuk-heading-l">
-      Notifying HMRC
-    </h1>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
 
-    <p class="govuk-body">HMRC must be told if you have received a Gender Recognition Certificate.</p>
-    <p class="govuk-body">This is so they can update your tax, tax credit and benefit records.</p>
-    <p class="govuk-body">We can tell them on your behalf, otherwise <a class="govuk-link" href="https://www.gov.uk/tell-hmrc-change-of-details/gender-change" rel="external" target="_blank">you will need to send your Gender Recognition Certificate and National Insurance number to them yourself (opens in new tab)</a>.</p>
-    <p class="govuk-body govuk-!-margin-bottom-8">You will have to do this if you pay tax in the Isle of Man or Channel Islands as we can only pass information to UK authorities.</p>
+            {{ error_summary.renderFor(form) }}
 
-    <form method="POST" action="{{ url_for('personalDetails.hmrc') }}">
-      {{ form.csrf_token }}
-
-      <div class="govuk-form-group {{ 'govuk-form-group--error' if form.errors }}">
-        <fieldset class="govuk-fieldset" aria-describedby="check-hint">
-          <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
-            <h1 class="govuk-fieldset__heading">
-              Would you like us to tell HMRC after you receive a Gender Recognition Certificate
+            <h1 class="govuk-heading-l">
+                Notifying HMRC
             </h1>
-          </legend>
-          {% if form.check.errors %}
-          <p id="check" class="govuk-error-message">
-            <span class="govuk-visually-hidden">Error:</span> Select if you would like us to tell HMRC after you receive a Gender Recognition Certificate
-          </p>
-          {% endif %}
-          <div class="govuk-radios" data-module="govuk-radios">
-            <div class="govuk-radios__item">
-              <input id="check" type="radio" name="check" value="Yes" class="govuk-radios__input" data-aria-controls="conditional-check" {{ 'checked' if form.check.data is iterable and 'Yes' in form.check.data }}>
-              <label for="check" class="govuk-label govuk-radios__label">
-                Yes
-              </label>
-            </div>
-            <div id="conditional-check" class="govuk-radios__conditional govuk-radios__conditional--hidden">
-              <div class="govuk-form-group">
-                <label for="nino" class="govuk-label govuk-label--s">
-                  National Insurance number
-                </label>
-                <div id="nino-hint" class="govuk-hint">
-                  It's on your National Insurance card, benefit letter, payslip or P60. For example, 'QQ 12 34 56 C'.
-                </div>
-                {% if form.nino.errors %}
-                <p id="nino-error" class="govuk-error-message">
-                  <span class="govuk-visually-hidden">Error:</span> National Insurance number is required
-                </p>
-                {% endif %}
-                <input id="nino" type="text" name="nino" value="{{ form.nino.data if form.nino.data is not none }}" spellcheck="false" autocomplete="off" class="govuk-input govuk-input--width-10 {{ 'govuk-input--error' if form.nino.errors }}">
-              </div>
-            </div>
-            <div class="govuk-radios__item">
-              <input id="check-2" type="radio" name="check" value="No" class="govuk-radios__input" {{ 'checked' if form.check.data is iterable and 'No' in form.check.data }}>
-              <label for="check-2" class="govuk-label govuk-radios__label">
-                No
-              </label>
-            </div>
-          </div>
-        </fieldset>
-      </div>
 
-      <div class="govuk-button-group">
-        <button class="govuk-button" data-module="govuk-button">
-          Save and continue
-        </button>
-        <a href="{{ url_for('taskList.index') }}" class="govuk-link govuk-link--no-visited-state">Return to task list</a>
-      </div>
-    </form>
-  </div>
-</div>
+            <p class="govuk-body">
+                HMRC must be told if you have received a Gender Recognition Certificate.
+            </p>
+            <p class="govuk-body">
+                This is so they can update your tax, tax credit and benefit records.
+            </p>
+            <p class="govuk-body">
+                If you usually pay tax in the UK, we can tell HMRC on your behalf. Otherwise
+                <a class="govuk-link" href="https://www.gov.uk/tell-hmrc-change-of-details/gender-change" rel="external" target="_blank">
+                    you will need to send your Gender Recognition Certificate and National Insurance number to them yourself (opens in new tab)
+                </a>.
+            </p>
+            <p class="govuk-body govuk-!-margin-bottom-8">
+                If you pay tax in the Isle of Man or Channel Islands, please select ‘No’ and notify HMRC yourself.
+            </p>
+
+            <form method="POST" action="{{ url_for('personalDetails.hmrc') }}">
+                {{ form.csrf_token }}
+
+                {{ radios.renderFor(
+                    form,
+                    fieldName='tell_hmrc',
+                    question="Would you like us to tell HMRC after you receive a Gender Recognition Certificate?",
+                    radiosOptions={
+                        'questionClasses': 'govuk-fieldset__legend--m',
+                        'conditionalOptions': [
+                            ('Yes',
+                            textInput.renderFor(
+                                form,
+                                fieldName='national_insurance_number',
+                                textInputForOptions={
+                                    'labelOptions':{
+                                        'htmlOrText': 'What is your National Insurance number?',
+                                        'classes': 'govuk-label--s'
+                                    },
+                                    'hintOptions':{
+                                        'htmlOrText': "It’s on your National Insurance card, benefit letter, payslip or P60. For example, ‘QQ 12 34 56 C’."
+                                    },
+                                    'classes': 'govuk-input--width-10',
+                                    'autocomplete': 'off',
+                                    'attributes': [ ('spellcheck', 'false') ]
+                                }
+                            ))
+                        ]
+                    }
+                ) }}
+
+                <div class="govuk-button-group">
+                    <button class="govuk-button" data-module="govuk-button">
+                        Save and continue
+                    </button>
+                    <a href="{{ url_for('taskList.index') }}" class="govuk-link govuk-link--no-visited-state">
+                        Return to task list
+                    </a>
+                </div>
+            </form>
+            
+        </div>
+    </div>
 {% endblock %}

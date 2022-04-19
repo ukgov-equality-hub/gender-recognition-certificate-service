@@ -110,7 +110,7 @@
         <dd class="govuk-summary-list__value">
           {{ session['application']['personalDetails']['hmrc']['answer'] }}<br>
           {% if session['application']['personalDetails']['hmrc']['answer'] == 'Yes' %}
-          {{ session['application']['personalDetails']['hmrc']['nino'] }}
+          {{ session['application']['personalDetails']['hmrc']['national_insurance_number'] }}
           {% endif %}
         </dd>
         <dd class="govuk-summary-list__actions">

@@ -266,8 +266,8 @@ def hmrc():
     form = HmrcForm()
 
     if request.method == 'POST':
-        if form.check.data != 'Yes':
-            form.nino.data = None
+        if form.tell_hmrc.data != 'Yes':
+            form.national_insurance_number.data = None
 
         if form.validate_on_submit():
             if 'personalDetails' not in session['application']:
@@ -276,15 +276,11 @@ def hmrc():
             if 'hmrc' not in session['application']['personalDetails']:
                 session['application']['personalDetails']['hmrc'] = {
                     'answer': '',
-                    'nino': ''
+                    'national_insurance_number': ''
                 }
 
-            if 'Yes' in form.check.data:
-                session['application']['personalDetails']['hmrc']['nino'] = form.nino.data
-            else:
-                session['application']['personalDetails']['hmrc']['nino'] = ''
-
-            session['application']['personalDetails']['hmrc']['answer'] = form.check.data
+            session['application']['personalDetails']['hmrc']['national_insurance_number'] = form.national_insurance_number.data
+            session['application']['personalDetails']['hmrc']['answer'] = form.tell_hmrc.data
             session['application']['personalDetails']['progress'] = ListStatus.IN_REVIEW.name
             session['application']['personalDetails']['step'] = 'personalDetails.checkYourAnswers'
             session['application'] = save_progress()
@@ -292,9 +288,8 @@ def hmrc():
             return redirect(url_for(session['application']['personalDetails']['step']))
 
     if request.method == 'GET' and 'hmrc' in session['application']['personalDetails']:
-        form.check.data = []
-        form.check.data.append(session['application']['personalDetails']['hmrc']['answer'])
-        form.nino.data = session['application']['personalDetails']['hmrc']['nino']
+        form.tell_hmrc.data = session['application']['personalDetails']['hmrc']['answer']
+        form.national_insurance_number.data = session['application']['personalDetails']['hmrc']['national_insurance_number']
 
     return render_template(
         'personal-details/hmrc.html',
