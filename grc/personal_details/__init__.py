@@ -1,6 +1,6 @@
 from flask import Blueprint, redirect, render_template, request, url_for, session
 from grc.models import ListStatus
-from grc.personal_details.forms import NameForm, AffirmedGenderForm, PreviousNamesCheck, AddressForm, ContactPreferencesForm, ContactNameForm,ContactDatesForm, HmrcForm, CheckYourAnswers
+from grc.personal_details.forms import NameForm, AffirmedGenderForm, PreviousNamesCheck, AddressForm, ContactPreferencesForm, ContactDatesForm, HmrcForm, CheckYourAnswers
 from grc.utils.decorators import LoginRequired
 from grc.utils.application_progress import save_progress
 
@@ -174,50 +174,6 @@ def contactPreferences():
         'personal-details/contact-preferences.html',
         form=form,
         address=address
-    )
-
-
-@personalDetails.route('/personal-details/contact-name', methods=['GET', 'POST'])
-@LoginRequired
-def contactName():
-    form = ContactNameForm()
-
-    if request.method == 'POST':
-        if form.check.data != 'Yes':
-            form.name.data = None
-
-        if form.validate_on_submit():
-            if 'personalDetails' not in session['application']:
-                session['application']['personalDetails'] = {}
-
-            if 'contactName' not in session['application']['personalDetails']:
-                session['application']['personalDetails']['contactName'] = {
-                    'answer': '',
-                    'name': ''
-                }
-
-            if 'Yes' in form.check.data:
-                session['application']['personalDetails']['contactName']['name'] = form.name.data
-            else:
-                session['application']['personalDetails']['contactName']['name'] = ''
-
-            session['application']['personalDetails']['contactName']['answer'] = form.check.data
-
-            if ListStatus[session['application']['personalDetails']['progress']] == ListStatus.IN_PROGRESS:
-                session['application']['personalDetails']['step'] = 'personalDetails.contactDates'
-
-            session['application'] = save_progress()
-
-            return redirect(url_for(session['application']['personalDetails']['step']))
-
-    if request.method == 'GET' and 'contactName' in session['application']['personalDetails']:
-        form.check.data = []
-        form.check.data.append(session['application']['personalDetails']['contactName']['answer'])
-        form.name.data = session['application']['personalDetails']['contactName']['name']
-
-    return render_template(
-        'personal-details/contact-name.html',
-        form=form
     )
 
 
