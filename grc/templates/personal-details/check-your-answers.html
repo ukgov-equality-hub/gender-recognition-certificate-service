@@ -1,111 +1,178 @@
 {% extends 'base.html' %}
-{% block backLink %}<a href="{{ url_for('personalDetails.hmrc') }}" class="govuk-back-link">Back</a>{% endblock %}
+
+{% block backLink %}
+    <a href="{{ url_for('personalDetails.hmrc') }}" class="govuk-back-link">Back</a>
+{% endblock %}
 
 {% block content %}
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
-    <h1 class="govuk-heading-l">
-      <span class="govuk-caption-l">Check your answers:</span> Your personal details
-    </h1>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
 
-    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          Name on certificate
-        </dt>
-        <dd class="govuk-summary-list__value">
-          {{ session['application']['personalDetails']['first_name'] }} {{ session['application']['personalDetails']['last_name'] }}
-        </dd>
-        <dd class="govuk-summary-list__actions">
-          <a href="{{ url_for('personalDetails.index') }}" class="govuk-link">Change</a>
-        </dd>
-      </div>
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          Changed name
-        </dt>
-        <dd class="govuk-summary-list__value">
-          {{ session['application']['personalDetails']['previousNamesCheck'] }}
-        </dd>
-        <dd class="govuk-summary-list__actions">
-          <a href="{{ url_for('personalDetails.previousNamesCheck') }}" class="govuk-link">Change</a>
-        </dd>
-      </div>
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          Address
-        </dt>
-        <dd class="govuk-summary-list__value">
-          {{ session['application']['personalDetails']['address']['address_line_one'] }}<br>
-          {{ session['application']['personalDetails']['address']['address_line_two'] }}<br>
-          {{ session['application']['personalDetails']['address']['town'] }}<br>
-          {{ session['application']['personalDetails']['address']['postcode'] }}
-        </dd>
-        <dd class="govuk-summary-list__actions">
-          <a href="{{ url_for('personalDetails.address') }}" class="govuk-link">Change</a>
-        </dd>
-      </div>
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          Contact preferences
-        </dt>
-        <dd class="govuk-summary-list__value">
-          <ul class="govuk-list">
-            {% if session['application']['personalDetails']['contactPreferences']['email'] != '' %}
-            <li>Email: {{ session['application']['personalDetails']['contactPreferences']['email'] }}</li>
-            {% endif %}
-            {% if session['application']['personalDetails']['contactPreferences']['phone'] != '' %}
-            <li>Phone: {{ session['application']['personalDetails']['contactPreferences']['phone'] }}</li>
-            {% endif %}
-            {% if session['application']['personalDetails']['contactPreferences']['post'] != '' %}
-            <li>Post: {{ session['application']['personalDetails']['contactPreferences']['post'] }}</li>
-            {% endif %}
-          </ul>
-        </dd>
-        <dd class="govuk-summary-list__actions">
-          <a href="{{ url_for('personalDetails.contactPreferences') }}" class="govuk-link">Change</a>
-        </dd>
-      </div>
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          Unavailable over the next 6 months
-        </dt>
-        <dd class="govuk-summary-list__value">
-          {{ session['application']['personalDetails']['contactDates']['answer'] }}<br>
-          {% if session['application']['personalDetails']['contactDates']['answer'] == 'Yes' %}
-          {{ session['application']['personalDetails']['contactDates']['dates'] }}
-          {% endif %}
-        </dd>
-        <dd class="govuk-summary-list__actions">
-          <a href="{{ url_for('personalDetails.contactDates') }}" class="govuk-link">Change</a>
-        </dd>
-      </div>
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          Notify HMRC
-        </dt>
-        <dd class="govuk-summary-list__value">
-          {{ session['application']['personalDetails']['hmrc']['answer'] }}<br>
-          {% if session['application']['personalDetails']['hmrc']['answer'] == 'Yes' %}
-          {{ session['application']['personalDetails']['hmrc']['national_insurance_number'] }}
-          {% endif %}
-        </dd>
-        <dd class="govuk-summary-list__actions">
-          <a href="{{ url_for('personalDetails.hmrc') }}" class="govuk-link">Change</a>
-        </dd>
-      </div>
-    </dl>
+            <h1 class="govuk-heading-l">
+                <span class="govuk-caption-l">Check your answers:</span>
+                Your personal details
+            </h1>
 
-    <form method="POST" action="{{ url_for('personalDetails.checkYourAnswers') }}">
-      {{ form.csrf_token }}
+            <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Name
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ session['application']['personalDetails']['first_name'] }} {{ session['application']['personalDetails']['last_name'] }}
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a href="{{ url_for('personalDetails.index') }}" class="govuk-link">
+                            Change
+                            <span class="govuk-visually-hidden">
+                                name
+                            </span>
+                        </a>
+                    </dd>
+                </div>
 
-      <div class="govuk-button-group">
-        <button class="govuk-button" data-module="govuk-button">
-          Save and continue
-        </button>
-        <a href="{{ url_for('taskList.index') }}" class="govuk-link govuk-link--no-visited-state">Return to task list</a>
-      </div>
-    </form>
-  </div>
-</div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Affirmed gender
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ 'Male' if session['application']['personalDetails']['affirmed_gender'] == 'MALE' else 'Female' }}
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a href="{{ url_for('personalDetails.affirmedGender') }}" class="govuk-link">
+                            Change
+                            <span class="govuk-visually-hidden">
+                                affirmed gender
+                            </span>
+                        </a>
+                    </dd>
+                </div>
+
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Have you ever changed your name to reflect your gender?
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ session['application']['personalDetails']['previousNamesCheck'] }}
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a href="{{ url_for('personalDetails.previousNamesCheck') }}" class="govuk-link">
+                            Change
+                            <span class="govuk-visually-hidden">
+                                whether you have changed your name to reflect your gender
+                            </span>
+                        </a>
+                    </dd>
+                </div>
+
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Address
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ session['application']['personalDetails']['address']['address_line_one'] }}<br>
+                        {{ session['application']['personalDetails']['address']['address_line_two'] }}<br>
+                        {{ session['application']['personalDetails']['address']['town'] }}<br>
+                        {{ session['application']['personalDetails']['address']['postcode'] }}
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a href="{{ url_for('personalDetails.address') }}" class="govuk-link">
+                            Change
+                            <span class="govuk-visually-hidden">
+                                address
+                            </span>
+                        </a>
+                    </dd>
+                </div>
+
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Contact preferences
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        <ul class="govuk-list">
+                            {% if session['application']['personalDetails']['contactPreferences']['email'] != '' %}
+                                <li>
+                                    Email: {{ session['application']['personalDetails']['contactPreferences']['email'] }}
+                                </li>
+                            {% endif %}
+                            {% if session['application']['personalDetails']['contactPreferences']['phone'] != '' %}
+                                <li>
+                                    Phone: {{ session['application']['personalDetails']['contactPreferences']['phone'] }}
+                                </li>
+                            {% endif %}
+                            {% if session['application']['personalDetails']['contactPreferences']['post'] != '' %}
+                                <li>
+                                    Post: {{ session['application']['personalDetails']['contactPreferences']['post'] }}
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a href="{{ url_for('personalDetails.contactPreferences') }}" class="govuk-link">
+                            Change
+                            <span class="govuk-visually-hidden">
+                                contact preferences
+                            </span>
+                        </a>
+                    </dd>
+                </div>
+
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Unavailable over the next 6 months
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ session['application']['personalDetails']['contactDates']['answer'] }}<br>
+                        {% if session['application']['personalDetails']['contactDates']['answer'] == 'Yes' %}
+                            {# Note: The following <span> should all be on one line, to allow the line breaks to work correctly #}
+                            <span style="white-space: pre-line;">{{ session['application']['personalDetails']['contactDates']['dates'] }}</span>
+                        {% endif %}
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a href="{{ url_for('personalDetails.contactDates') }}" class="govuk-link">
+                            Change
+                            <span class="govuk-visually-hidden">
+                                whether there are any dates you don't want us to contact you by post over the next 6 months
+                            </span>
+                        </a>
+                    </dd>
+                </div>
+
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Notify HMRC
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ session['application']['personalDetails']['hmrc']['answer'] }}<br>
+                        {% if session['application']['personalDetails']['hmrc']['answer'] == 'Yes' %}
+                            {{ session['application']['personalDetails']['hmrc']['national_insurance_number'] }}
+                        {% endif %}
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a href="{{ url_for('personalDetails.hmrc') }}" class="govuk-link">
+                            Change
+                            <span class="govuk-visually-hidden">
+                                whether you want us to notify HMRC after you receive a Gender Recognition Certificate
+                            </span>
+                        </a>
+                    </dd>
+                </div>
+            </dl>
+
+            <form method="POST" action="{{ url_for('personalDetails.checkYourAnswers') }}">
+                {{ form.csrf_token }}
+
+                <div class="govuk-button-group">
+                    <button class="govuk-button" data-module="govuk-button">
+                        Save and continue
+                    </button>
+                    <a href="{{ url_for('taskList.index') }}" class="govuk-link govuk-link--no-visited-state">
+                        Return to task list
+                    </a>
+                </div>
+            </form>
+
+        </div>
+    </div>
 {% endblock %}
