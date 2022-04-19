@@ -31,6 +31,7 @@ def save_progress():
 
 
 def calculate_progress_status():
+    print('calculate_progress_status', flush=True)
     try:
         if 'application' in session:
             list_status = {
@@ -100,8 +101,7 @@ def calculate_progress_status():
                 session['application']['nameChange']['progress'] = ListStatus.NOT_STARTED.name
                 session['application'] = save_progress()
             elif (
-                session['application']['nameChange']['progress']
-                != ListStatus.CANNOT_START_YET.name
+                session['application']['nameChange']['progress'] != ListStatus.CANNOT_START_YET.name
                 and 'previousNamesCheck' in session['application']['personalDetails']
                 and session['application']['personalDetails']['previousNamesCheck']
                 != 'Yes'
@@ -116,14 +116,14 @@ def calculate_progress_status():
             # Marriage Documents
             if (
                 session['application']['marriageDocuments']['progress'] == ListStatus.CANNOT_START_YET.name
-                and 'marriageCivilPartnership' in session['application']['personalDetails']
+                and 'marriageCivilPartnership' in session['application']['partnershipDetails']
                 and (
-                    session['application']['personalDetails']['marriageCivilPartnership'] == 'Married'
+                    session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Married'
                     or (
-                        session['application']['personalDetails']['marriageCivilPartnership'] == 'Neither'
+                        session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Neither'
                         and (
-                            session['application']['personalDetails']['marriageCivilPartnership']['partnerDied'] == 'Yes'
-                            or session['application']['personalDetails']['marriageCivilPartnership']['endedCheck'] == 'Yes'
+                            session['application']['partnershipDetails']['marriageCivilPartnership']['partnerDied'] == 'Yes'
+                            or session['application']['partnershipDetails']['marriageCivilPartnership']['endedCheck'] == 'Yes'
                         )
                     )
                 )
@@ -132,13 +132,13 @@ def calculate_progress_status():
                 session['application'] = save_progress()
             elif (
                 session['application']['marriageDocuments']['progress'] != ListStatus.CANNOT_START_YET.name
-                and 'marriageCivilPartnership' in session['application']['personalDetails']
+                and 'marriageCivilPartnership' in session['application']['partnershipDetails']
                 and (
-                    session['application']['personalDetails']['marriageCivilPartnership'] != 'Married'
+                    session['application']['partnershipDetails']['marriageCivilPartnership'] != 'Married'
                     or (
-                        session['application']['personalDetails']['marriageCivilPartnership'] == 'Neither'
-                        and session['application']['personalDetails']['marriageCivilPartnership']['partnerDied'] != 'Yes'
-                        and session['application']['personalDetails']['marriageCivilPartnership']['endedCheck'] != 'Yes'
+                        session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Neither'
+                        and session['application']['partnershipDetails']['marriageCivilPartnership']['partnerDied'] != 'Yes'
+                        and session['application']['partnershipDetails']['marriageCivilPartnership']['endedCheck'] != 'Yes'
                     )
                 )
             ):

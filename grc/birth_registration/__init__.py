@@ -323,7 +323,6 @@ def adoptedUK():
     form = AdoptedUKForm()
 
     if form.validate_on_submit():
-        print('AAA', flush=True)
         session['application']['birthRegistration']['adopted_uk'] = form.check.data
 
         if ListStatus[session['application']['birthRegistration']['progress']] == ListStatus.IN_PROGRESS:

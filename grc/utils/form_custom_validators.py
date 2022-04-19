@@ -123,7 +123,9 @@ def validateDOB(form, field):
             return today.year - dt.year - ((today.month, today.day) < (dt.month, dt.day))
 
         if age(dt) < 18 and field.name == 'year':
-            raise ValidationError('You need to be 18 years old to apply')
+            raise ValidationError('You need to be at least 18 years old to apply')
+        elif age(dt) > 110 and field.name == 'year':
+            raise ValidationError('You need to be less than 110 years old to apply')
 
 
 def validateNino(form, field):
