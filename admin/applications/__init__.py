@@ -52,17 +52,17 @@ def downloadfile(file_name):
     return response
 
 
-@applications.route('/applications/<email_address>/download', methods=['GET'])
+@applications.route('/applications/<reference_number>/download', methods=['GET'])
 @AdminViewerRequired
-def download(email_address):
+def download(reference_number):
     message = ""
 
     application = Application.query.filter_by(
-        email=email_address
+        reference_number=reference_number
     ).first()
 
     if application is None:
-        message = "An application with that email address cannot be found"
+        message = "An application with that reference number cannot be found"
     else:
         application.status = ApplicationStatus.DOWNLOADED
         application.downloaded = datetime.now()
@@ -139,17 +139,17 @@ def download(email_address):
     return redirect(url_for('applications.index', _anchor='downloaded'))
 
 
-@applications.route('/applications/<email_address>/completed', methods=['GET'])
+@applications.route('/applications/<reference_number>/completed', methods=['GET'])
 @AdminViewerRequired
-def completed(email_address):
+def completed(reference_number):
     message = ""
 
     application = Application.query.filter_by(
-        email=email_address
+        reference_number=reference_number
     ).first()
 
     if application is None:
-        message = "An application with that email address cannot be found"
+        message = "An application with that reference number cannot be found"
     else:
         application.status = ApplicationStatus.COMPLETED
         application.completed = datetime.now()
@@ -161,17 +161,17 @@ def completed(email_address):
     return redirect(url_for('applications.index', _anchor='completed'))
 
 
-@applications.route('/applications/<email_address>/attachments', methods=['GET'])
+@applications.route('/applications/<reference_number>/attachments', methods=['GET'])
 @AdminViewerRequired
-def attachments(email_address):
+def attachments(reference_number):
     message = ""
 
     application = Application.query.filter_by(
-        email=email_address
+        reference_number=reference_number
     ).first()
 
     if application is None:
-        message = "An application with that email address cannot be found"
+        message = "An application with that reference number cannot be found"
     else:
         import io
         import zipfile
@@ -218,17 +218,17 @@ def attachments(email_address):
     return redirect(url_for('applications.index', _anchor='completed'))
 
 
-@applications.route('/applications/<email_address>/delete', methods=['GET'])
+@applications.route('/applications/<reference_number>/delete', methods=['GET'])
 @AdminViewerRequired
-def delete(email_address):
+def delete(reference_number):
     message = ""
 
     application = Application.query.filter_by(
-        email=email_address
+        reference_number=reference_number
     ).first()
 
     if application is None:
-        message = "An application with that email address cannot be found"
+        message = "An application with that reference number cannot be found"
     else:
         db.session.delete(application)
         db.session.commit()

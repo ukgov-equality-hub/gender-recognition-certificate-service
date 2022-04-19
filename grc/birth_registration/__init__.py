@@ -1,6 +1,6 @@
 from flask import Blueprint, redirect, render_template, request, url_for, session
 from grc.models import ListStatus
-from grc.birth_registration.forms import  NameForm, SexForm, DobForm, UkCheckForm, CountryForm, PlaceOfBirthForm, MothersNameForm, FatherNameCheckForm, AdoptedForm, ForcesForm, CheckYourAnswers
+from grc.birth_registration.forms import  NameForm, SexForm, DobForm, UkCheckForm, CountryForm, PlaceOfBirthForm, MothersNameForm, FatherNameCheckForm, AdoptedForm, AdoptedUKForm, ForcesForm, CheckYourAnswers
 from grc.utils.decorators import LoginRequired
 from grc.utils.application_progress import save_progress
 
@@ -287,28 +287,57 @@ def adopted():
 
     if form.validate_on_submit():
         session['application']['birthRegistration']['adopted'] = form.check.data
-        if session['application']['birthRegistration']['adopted'] == 'Yes':
-            session['application']['birthRegistration']['adopted_uk'] = form.adopted_uk.data
-        if form.check.data == 'No': # and 'adopted_uk' in session['application']['birthRegistration']:
+        #if session['application']['birthRegistration']['adopted'] == 'Yes':
+        #    session['application']['birthRegistration']['adopted_uk'] = form.adopted_uk.data
+        if form.check.data == 'No':
             session['application']['birthRegistration'].pop('adopted_uk', None)
 
         if ListStatus[session['application']['birthRegistration']['progress']] == ListStatus.IN_PROGRESS:
-            session['application']['birthRegistration']['step'] = 'birthRegistration.forces'
+            if session['application']['birthRegistration']['adopted'] == 'Yes':
+                session['application']['birthRegistration']['step'] = 'birthRegistration.adoptedUK'
+            else:
+                session['application']['birthRegistration']['step'] = 'birthRegistration.forces'
+        elif form.check.data == 'Yes':
+            session['application']['birthRegistration']['step'] = 'birthRegistration.adoptedUK'
 
         session['application'] = save_progress()
 
         return redirect(url_for(session['application']['birthRegistration']['step']))
-    else:
-        if form.check.data == 'Yes' or form.check.data == 'No':
-            session['application']['birthRegistration']['adopted'] = form.check.data
-            if form.check.data == 'No': # and 'adopted_uk' in session['application']['birthRegistration']:
-                session['application']['birthRegistration'].pop('adopted_uk', None)
-            session['application'] = save_progress()
+    #else:
+    #    if form.check.data == 'Yes' or form.check.data == 'No':
+    #        session['application']['birthRegistration']['adopted'] = form.check.data
+    #        if form.check.data == 'No':
+    #            session['application']['birthRegistration'].pop('adopted_uk', None)
+    #        session['application'] = save_progress()
 
     return render_template(
         'birth-registration/adopted.html',
         form=form,
         back=back
+    )
+
+
+@birthRegistration.route('/birth-registration/adopted-uk', methods=['GET', 'POST'])
+@LoginRequired
+def adoptedUK():
+    form = AdoptedUKForm()
+
+    if form.validate_on_submit():
+        print('AAA', flush=True)
+        session['application']['birthRegistration']['adopted_uk'] = form.check.data
+
+        if ListStatus[session['application']['birthRegistration']['progress']] == ListStatus.IN_PROGRESS:
+            session['application']['birthRegistration']['step'] = 'birthRegistration.forces'
+        else:
+            session['application']['birthRegistration']['step'] = 'birthRegistration.checkYourAnswers'
+
+        session['application'] = save_progress()
+
+        return redirect(url_for(session['application']['birthRegistration']['step']))
+
+    return render_template(
+        'birth-registration/adopted-uk.html',
+        form=form
     )
 
 
