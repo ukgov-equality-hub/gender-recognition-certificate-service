@@ -16,6 +16,7 @@
     </ul>
   </li>
   <li>Changed name: <strong>{{ application.personalDetails.previousNamesCheck }}</strong></li>
+  {% if 'address' in application.personalDetails %}
   <li>Address
     <ul class="govuk-list govuk-list--bullet">
       <li>Building and street: <strong>{{ application.personalDetails.address.address_line_one }}</strong></li>
@@ -24,6 +25,8 @@
       <li>Postcode: <strong>{{ application.personalDetails.address.postcode }}</strong></li>
     </ul>
   </li>
+  {% endif %}
+  {% if 'contactPreferences' in application.personalDetails %}
   <li>Contact preferences
     <ul class="govuk-list govuk-list--bullet">
       {% if application.personalDetails.contactPreferences.email != '' %}
@@ -37,6 +40,8 @@
       {% endif %}
     </ul>
   </li>
+  {% endif %}
+  {% if 'contactDates' in application.personalDetails %}
   <li>Unavailable over the next 6 months: <strong>{{ application.personalDetails.contactDates.answer }}</strong>
     {% if application.personalDetails.contactDates.answer == 'Yes' %}
     <ul class="govuk-list govuk-list--bullet">
@@ -44,6 +49,8 @@
     </ul>
     {% endif %}
   </li>
+  {% endif %}
+  {% if 'hmrc' in application.personalDetails %}
   <li>Notify HMRC: <strong>{{ application.personalDetails.hmrc.answer }}</strong>
     {% if application.personalDetails.hmrc.answer == 'Yes' %}
     <ul class="govuk-list govuk-list--bullet">
@@ -51,6 +58,7 @@
     </ul>
     {% endif %}
   </li>
+  {% endif %}
 </ul>
 
 <p class="govuk-body">Your birth registration information</p>
@@ -61,9 +69,15 @@
       <li>Last name: <strong>{{ application.birthRegistration.first_name }}</strong></li>
     </ul>
   </li>
+  {% if 'sex' in application.birthRegistration %}
   <li>Sex registered at birth: <strong>{{ application.birthRegistration.sex }}</strong></li>
+  {% endif %}
+  {% if 'dob' in application.birthRegistration %}
   <li>Date of birth: <strong>{{ application.birthRegistration.dob.day }}/{{ application.birthRegistration.dob.month }}/{{ application.birthRegistration.dob.year }}</strong></li>
+  {% endif %}
+  {% if 'ukCheck' in application.birthRegistration %}
   <li>Birth registered in UK: <strong>{{ application.birthRegistration.ukCheck }}</strong></li>
+  {% endif %}
   {% if application.birthRegistration.ukCheck == 'Yes' %}
   <li>Mother's name
     <ul class="govuk-list govuk-list--bullet">
@@ -75,11 +89,20 @@
   {% if application.birthRegistration.fathersNameCheck == 'Yes' %}
   <li>Father's name listed: <strong>{{ application.birthRegistration.fathersNameCheck }}</strong></li>
   {% endif %}
+  {% if 'place_of_birth' in application.birthRegistration %}
   <li>Place of birth: <strong>{{ application.birthRegistration.place_of_birth }}</strong></li>
+  {% endif %}
+  {% if 'adopted' in application.birthRegistration %}
   <li>Adopted: <strong>{{ application.birthRegistration.adopted }}</strong></li>
+  {% endif %}
+  {% if application.birthRegistration.adopted == 'Yes' %}
+  <li>Adopted in the UK: <strong>{{ application.birthRegistration.adopted_uk }}</strong></li>
+  {% endif %}
   <li>Forces registering service, British Consul or High Commission, or under Merchant Shipping or Civil Aviation provisions: <strong>{{ application.birthRegistration.forces }}</strong></li>
   {% else %}
+  {% if 'country' in application.birthRegistration %}
   <li>Registered birth country: <strong>{{ application.birthRegistration.country }}</strong></li>
+  {% endif %}
   {% endif %}
 </ul>
 

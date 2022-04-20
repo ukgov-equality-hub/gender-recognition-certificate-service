@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block backLink %}<a href="{{ url_for(back) }}" class="govuk-back-link">Back</a>{% endblock %}
+{% block backLink %}<a href="{{ url_for('birthRegistration.adopted') }}" class="govuk-back-link">Back</a>{% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">
@@ -21,31 +21,31 @@
     </div>
     {% endif %}
 
-    <form method="POST" action="{{ url_for('birthRegistration.adopted') }}">
+    <form method="POST" action="{{ url_for('birthRegistration.adoptedUK') }}">
       {{ form.csrf_token }}
 
       <div class="govuk-form-group {{ 'govuk-form-group--error' if form.check.errors }}">
         <fieldset class="govuk-fieldset">
           <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
             <h1 class="govuk-fieldset__heading">
-              Were you adopted?
+              Were you adopted in the United Kingdom?
             </h1>
           </legend>
           {% if form.check.errors %}
           <p id="check-issued-error" class="govuk-error-message">
-            <span class="govuk-visually-hidden">Error:</span> Select if your were you adopted
+            <span class="govuk-visually-hidden">Error:</span> Select if your were you adopted in the United Kingdom
           </p>
           {% endif %}
           <div class="govuk-radios" data-module="govuk-radios">
             <div class="govuk-radios__item">
-              <input id="were-you-adopted-yes" type="radio" name="check" value="Yes" class="govuk-radios__input" {{ 'checked' if session['application']['birthRegistration']['adopted'] == 'Yes' }}>
-              <label for="were-you-adopted-yes" class="govuk-label govuk-radios__label">
+              <input id="were-you-adopted-uk-yes" type="radio" name="check" value="Yes" class="govuk-radios__input" {{ 'checked' if session['application']['birthRegistration']['adopted_uk'] == 'Yes' }}>
+              <label for="were-you-adopted-uk-yes" class="govuk-label govuk-radios__label">
                 Yes
               </label>
             </div>
             <div class="govuk-radios__item">
-              <input id="were-you-adopted-no" type="radio" name="check" value="No" class="govuk-radios__input" {{ 'checked' if session['application']['birthRegistration']['adopted'] == 'No' }}>
-              <label for="were-you-adopted-no" class="govuk-label govuk-radios__label">
+              <input id="were-you-adopted-uk-no" type="radio" name="check" value="No" class="govuk-radios__input" {{ 'checked' if session['application']['birthRegistration']['adopted_uk'] == 'No' }}>
+              <label for="were-you-adopted-uk-no" class="govuk-label govuk-radios__label">
                 No
               </label>
             </div>

@@ -54,10 +54,10 @@
                     <a href="javascript:;" class="new-link" style="white-space: nowrap;" onclick="document.getElementById('newApplications_{{ loop.index }}').style.display = document.getElementById('newApplications_{{ loop.index }}').style.display == 'none' ? 'table-row' : 'none'">View</a>
                   </li>
                   <li class="govuk-summary-list__actions-list-item">
-                    <a href="/applications/{{ application.email }}/download" target="_blank" class="new-link" style="white-space: nowrap;">Download application</a>
+                    <a href="/applications/{{ application.reference_number }}/download" target="_blank" class="new-link" style="white-space: nowrap;">Download application</a>
                   </li>
                   <li class="govuk-summary-list__actions-list-item">
-                    <a href="/applications/{{ application.email }}/attachments" target="_blank" class="new-link" style="white-space: nowrap;">Download attachments</a>
+                    <a href="/applications/{{ application.reference_number }}/attachments" target="_blank" class="new-link" style="white-space: nowrap;">Download attachments</a>
                   </li>
                 </ul>
               </td>
@@ -105,13 +105,13 @@
                     </a>
                   </li>
                   <li class="govuk-summary-list__actions-list-item">
-                    <a href="/applications/{{ application.email }}/download" target="_blank" class="new-link" style="white-space: nowrap;">Re-download application</a>
+                    <a href="/applications/{{ application.reference_number }}/download" target="_blank" class="new-link" style="white-space: nowrap;">Re-download application</a>
                   </li>
                   <li class="govuk-summary-list__actions-list-item">
-                    <a href="/applications/{{ application.email }}/attachments" target="_blank" class="new-link" style="white-space: nowrap;">Download attachments</a>
+                    <a href="/applications/{{ application.reference_number }}/attachments" target="_blank" class="new-link" style="white-space: nowrap;">Download attachments</a>
                   </li>
                   <li class="govuk-summary-list__actions-list-item">
-                    <a href="/applications/{{ application.email }}/completed" target="_blank" class="new-link" style="white-space: nowrap;">Complete</a>
+                    <a href="/applications/{{ application.reference_number }}/completed" target="_blank" class="new-link" style="white-space: nowrap;">Complete</a>
                   </li>
                 </ul>
               </td>
@@ -165,10 +165,10 @@
                     <a href="javascript:;" class="new-link" style="white-space: nowrap;" onclick="document.getElementById('completedApplications_{{ loop.index }}').style.display = document.getElementById('completedApplications_{{ loop.index }}').style.display == 'none' ? 'table-row' : 'none'">View</a>
                   </li>
                   <li class="govuk-summary-list__actions-list-item">
-                    <a href="/applications/{{ application.email }}/download" target="_blank" class="new-link" style="white-space: nowrap;">Re-download application</a>
+                    <a href="/applications/{{ application.reference_number }}/download" target="_blank" class="new-link" style="white-space: nowrap;">Re-download application</a>
                   </li>
                   <li class="govuk-summary-list__actions-list-item">
-                    <a href="/applications/{{ application.email }}/attachments" target="_blank" class="new-link" style="white-space: nowrap;">Download attachments</a>
+                    <a href="/applications/{{ application.reference_number }}/attachments" target="_blank" class="new-link" style="white-space: nowrap;">Download attachments</a>
                   </li>
                 </ul>
               </td>
