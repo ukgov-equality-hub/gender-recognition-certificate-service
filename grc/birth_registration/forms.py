@@ -80,13 +80,13 @@ class MothersNameForm(FlaskForm):
 
 
 class FatherNameCheckForm(FlaskForm):
-    check = RadioField(
-        'check',
-        choices=[('Yes'), ('No')],
-        validators=[DataRequired(message='Select if your father’s name is listed on the certificate')]
+    fathers_name_on_certificate = RadioField(
+        choices=[
+            ('Yes', 'Yes'),
+            ('No', 'No')
+        ],
+        validators=[DataRequired(message="Select if your father's name is listed on the certificate")]
     )
-
-    submit = SubmitField('Save and continue')
 
 
 class AdoptedForm(FlaskForm):

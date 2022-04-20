@@ -207,19 +207,26 @@ def fathersNameCheck():
     form = FatherNameCheckForm()
 
     if form.validate_on_submit():
-        session['application']['birthRegistration']['fathersNameCheck'] = form.check.data
+        session['application']['birthRegistration']['fathersNameCheck'] = form.fathers_name_on_certificate.data
 
         if ListStatus[session['application']['birthRegistration']['progress']] == ListStatus.IN_PROGRESS:
-            if form.check.data == 'Yes':
+            if form.fathers_name_on_certificate.data == 'Yes':
                 session['application']['birthRegistration']['step'] = 'birthRegistration.fathersName'
             else:
                 session['application']['birthRegistration']['step'] = 'birthRegistration.adopted'
-        elif form.check.data == 'Yes':
+        elif form.fathers_name_on_certificate.data == 'Yes':
             session['application']['birthRegistration']['step'] = 'birthRegistration.fathersName'
 
         session['application'] = save_progress()
 
         return redirect(url_for(session['application']['birthRegistration']['step']))
+
+    else:
+        form.fathers_name_on_certificate.data = (
+            session['application']['birthRegistration']['fathersNameCheck']
+            if 'fathersNameCheck' in session['application']['birthRegistration']
+            else None
+        )
 
     return render_template(
         'birth-registration/fathers-name-check.html',
