@@ -97,19 +97,13 @@ class FathersNameForm(FlaskForm):
 
 
 class AdoptedForm(FlaskForm):
-    check = RadioField(
-        'check',
-        choices=[('Yes'), ('No')],
-        validators=[DataRequired(message='Select if your were you adopted')]
+    adopted = RadioField(
+        choices=[
+            ('Yes', 'Yes'),
+            ('No', 'No')
+        ],
+        validators=[DataRequired(message='Select if you were you adopted')]
     )
-
-    #adopted_uk = StringField(
-    #    'adopted_uk',
-    #    # choices=[('Yes'), ('No'), (None)],
-    #    validators=[StrictRequiredIf('check', 'Yes', message='Select if your were you adopted in the United Kingdom')]  # validateAdopted
-    #)
-
-    submit = SubmitField('Save and continue')
 
 
 class AdoptedUKForm(FlaskForm):
