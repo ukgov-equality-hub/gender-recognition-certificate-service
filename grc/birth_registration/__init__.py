@@ -315,7 +315,7 @@ def adoptedUK():
     form = AdoptedUKForm()
 
     if form.validate_on_submit():
-        session['application']['birthRegistration']['adopted_uk'] = form.check.data
+        session['application']['birthRegistration']['adopted_uk'] = form.adopted_uk.data
 
         if ListStatus[session['application']['birthRegistration']['progress']] == ListStatus.IN_PROGRESS:
             session['application']['birthRegistration']['step'] = 'birthRegistration.forces'
@@ -325,6 +325,13 @@ def adoptedUK():
         session['application'] = save_progress()
 
         return redirect(url_for(session['application']['birthRegistration']['step']))
+
+    if request.method == 'GET':
+        form.adopted_uk.data = (
+            session['application']['birthRegistration']['adopted_uk']
+            if 'adopted_uk' in session['application']['birthRegistration']
+            else None
+        )
 
     return render_template(
         'birth-registration/adopted-uk.html',

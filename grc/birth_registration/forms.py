@@ -107,13 +107,14 @@ class AdoptedForm(FlaskForm):
 
 
 class AdoptedUKForm(FlaskForm):
-    check = RadioField(
-        'check',
-        choices=[('Yes'), ('No')],
-        validators=[DataRequired(message='Select if your were you adopted in the United Kingdom')]
+    adopted_uk = RadioField(
+        choices=[
+            ('Yes', 'Yes'),
+            ('No', 'No'),
+            ('DO_NOT_KNOW', "I don't know")
+        ],
+        validators=[DataRequired(message='Select if you were adopted in the United Kingdom')]
     )
-
-    submit = SubmitField('Save and continue')
 
 
 class ForcesForm(FlaskForm):
