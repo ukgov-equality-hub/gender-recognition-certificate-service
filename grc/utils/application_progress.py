@@ -122,8 +122,8 @@ def calculate_progress_status():
                     or (
                         session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Neither'
                         and (
-                            session['application']['partnershipDetails']['marriageCivilPartnership']['partnerDied'] == 'Yes'
-                            or session['application']['partnershipDetails']['marriageCivilPartnership']['endedCheck'] == 'Yes'
+                            session['application']['partnershipDetails']['partnerDied'] == 'Yes'
+                            or session['application']['partnershipDetails']['endedCheck'] == 'Yes'
                         )
                     )
                 )
@@ -137,8 +137,8 @@ def calculate_progress_status():
                     session['application']['partnershipDetails']['marriageCivilPartnership'] != 'Married'
                     or (
                         session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Neither'
-                        and session['application']['partnershipDetails']['marriageCivilPartnership']['partnerDied'] != 'Yes'
-                        and session['application']['partnershipDetails']['marriageCivilPartnership']['endedCheck'] != 'Yes'
+                        and session['application']['partnershipDetails']['partnerDied'] != 'Yes'
+                        and session['application']['partnershipDetails']['endedCheck'] != 'Yes'
                     )
                 )
             ):
