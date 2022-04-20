@@ -1,5 +1,6 @@
+{% import "govuk-design-system-templates/_attributes.html" as attributes %}
+
 {% macro render(hintOptions) %}
-    {% import "govuk-design-system-templates/_attributes.html" as attributes %}
 
     {% if hintOptions %}
         <div class="govuk-hint {{ hintOptions.classes }}"

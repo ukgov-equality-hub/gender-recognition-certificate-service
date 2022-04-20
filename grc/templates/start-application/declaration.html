@@ -1,13 +1,12 @@
 {% extends 'base.html' %}
+{% import "govuk-design-system-templates/checkbox-single.html" as checkbox_single %}
+{% import "govuk-design-system-templates/error-summary.html" as error_summary %}
 
 {% block backLink %}
     <a href="{{ back }}" class="govuk-back-link">Back</a>
 {% endblock %}
 
 {% block content %}
-    {% import "govuk-design-system-templates/error-summary.html" as error_summary %}
-    {% import "govuk-design-system-templates/checkbox-single.html" as checkbox_single %}
-
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 

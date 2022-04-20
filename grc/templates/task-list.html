@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
+{% import "helper-macros/random-id.html" as random_id %}
 
 {% macro taskListItem(text, url, status, suffix, id=None) %}
-    {% import "helper-macros/random-id.html" as random_id %}
     {% set id = id or 'id-' + random_id.randomId(10) %}
 
     <li class="app-task-list__item">

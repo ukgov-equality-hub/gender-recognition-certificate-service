@@ -1,13 +1,12 @@
 {% extends 'base.html' %}
+{% import "govuk-design-system-templates/error-summary.html" as error_summary %}
+{% import "govuk-design-system-templates/radios.html" as radios %}
 
 {% block backLink %}
     <a href="{{ url_for('personalDetails.affirmedGender') }}" class="govuk-back-link">Back</a>
 {% endblock %}
 
 {% block content %}
-    {% import "govuk-design-system-templates/error-summary.html" as error_summary %}
-    {% import "govuk-design-system-templates/radios.html" as radios %}
-
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 

@@ -1,5 +1,6 @@
+{% import "govuk-design-system-templates/_attributes.html" as attributes %}
+
 {% macro render(errorMessageOptions) %}
-    {% import "govuk-design-system-templates/_attributes.html" as attributes %}
 
     <p class="govuk-error-message {{ errorMessageOptions.classes }}"
        id="{{ errorMessageOptions.id }}"

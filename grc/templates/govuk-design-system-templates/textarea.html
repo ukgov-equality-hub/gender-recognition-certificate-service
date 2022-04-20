@@ -1,8 +1,9 @@
+{% import "govuk-design-system-templates/_attributes.html" as attributes %}
+{% import "govuk-design-system-templates/error-message.html" as errorMessage %}
+{% import "govuk-design-system-templates/hint.html" as hint %}
+{% import "govuk-design-system-templates/label.html" as label %}
+
 {% macro render(textareaOptions) %}
-    {% import "govuk-design-system-templates/label.html" as label %}
-    {% import "govuk-design-system-templates/hint.html" as hint %}
-    {% import "govuk-design-system-templates/error-message.html" as errorMessage %}
-    {% import "govuk-design-system-templates/_attributes.html" as attributes %}
 
     <div class="govuk-form-group {{ 'govuk-form-group--error' if textareaOptions.errors }}">
         {{ label.render(textareaOptions.labelOptions) }}

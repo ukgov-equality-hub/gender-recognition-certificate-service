@@ -1,6 +1,7 @@
+{% import "govuk-design-system-templates/error-message.html" as errorMessage %}
+{% import "govuk-design-system-templates/hint.html" as hint %}
+
 {% macro renderFor(form, fieldName, question, checkboxesOptions) %}
-    {% import "govuk-design-system-templates/error-message.html" as errorMessage %}
-    {% import "govuk-design-system-templates/hint.html" as hint %}
 
     <div class="govuk-form-group {{ 'govuk-form-group--error' if form[fieldName].errors }}">
         <fieldset class="govuk-fieldset">
