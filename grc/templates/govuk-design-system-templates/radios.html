@@ -24,6 +24,16 @@
             <div class="govuk-radios" data-module="govuk-radios">
                 {% for choiceId, choiceLabel in form[fieldName].choices %}
                     {% set index = form[fieldName].choices.index((choiceId, choiceLabel)) %}
+                    {% if radiosOptions.dividerOptions %}
+                        {% for dividerChoiceId, dividerHtml in radiosOptions.dividerOptions %}
+                            {%  if dividerChoiceId == choiceId %}
+                                <div class="govuk-radios__divider">
+                                    {{ dividerHtml }}
+                                </div>
+                            {%  endif %}
+                        {% endfor %}
+                    {% endif %}
+
                     <div class="govuk-radios__item">
                         <input id="{{ fieldName }}-{{ index }}" type="radio" name="{{ fieldName }}"
                                value="{{ choiceId }}" class="govuk-radios__input" {{ 'checked' if form[fieldName].data == choiceId }}
