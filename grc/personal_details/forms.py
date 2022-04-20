@@ -1,120 +1,106 @@
 from flask_wtf import FlaskForm
-from wtforms import EmailField, StringField, SubmitField, RadioField, TelField
+from wtforms import EmailField, StringField, RadioField, TelField, BooleanField
 from wtforms.validators import DataRequired
-from grc.utils.form_custom_validators import StrictRequiredIf, validateNino, validatePostcode
+from grc.utils.form_custom_validators import StrictRequiredIf, validateNationalInsuranceNumber, validatePostcode
 from grc.utils.form_widgets import MultiCheckboxField
 
 
 class NameForm(FlaskForm):
     first_name = StringField(
-        'first_name',
-        validators=[DataRequired(message='First name is required')]
+        validators=[DataRequired(message='Enter your first name(s)')]
     )
 
     last_name = StringField(
-        'last_name',
-        validators=[DataRequired(message='Last name is required')]
+        validators=[DataRequired(message='Enter your last name')]
     )
 
-    submit = SubmitField('Save and continue')
+
+class AffirmedGenderForm(FlaskForm):
+    affirmedGender = RadioField(
+        choices=[
+            ('MALE', 'Male'),
+            ('FEMALE', 'Female')
+        ],
+        validators=[DataRequired(message='Select your affirmed gender')]
+    )
 
 
 class PreviousNamesCheck(FlaskForm):
-    check = RadioField(
-        'check', choices=[('Yes'), ('No')],
-        validators=[DataRequired(message='Select if you have ever changed your name')]
+    previousNameCheck = RadioField(
+        choices=[
+            ('Yes', 'Yes'),
+            ('No', 'No')
+        ],
+        validators=[DataRequired(message='Select if you have ever changed your name to reflect your gender')]
     )
-
-    submit = SubmitField('Save and continue')
 
 
 class AddressForm(FlaskForm):
     address_line_one = StringField(
-        'address_line_one',
-        validators=[DataRequired(message='Building is required')]
+        validators=[DataRequired(message='Enter your building')]
     )
 
     address_line_two = StringField(
-        'address_line_two',
-        validators=[DataRequired(message='Street is required')]
+        validators=[DataRequired(message='Enter your street')]
     )
 
     town = StringField(
-        'town',
-        validators=[DataRequired(message='Town or city is required')]
+        validators=[DataRequired(message='Enter your town or city')]
     )
 
     postcode = StringField(
-        'postcode',
-        validators=[DataRequired(message='A valid postcode is required'), validatePostcode]
+        validators=[DataRequired(message='Enter your postcode'), validatePostcode]
     )
-
-    submit = SubmitField('Save and continue')
 
 
 class ContactPreferencesForm(FlaskForm):
-    options = MultiCheckboxField(
-        'options',
-        choices=[('email'), ('phone'), ('post')],
-        validators=[DataRequired(message='Please select how would you like to be contacted')]
+    contact_options = MultiCheckboxField(
+        choices=[
+            ('EMAIL', 'Email'),
+            ('PHONE', 'Phone call'),
+            ('POST', 'Post')
+        ],
+        validators=[DataRequired(message='Select how would you like to be contacted')]
     )
 
     email = EmailField(
-        'email',
-        validators=[StrictRequiredIf('options', 'email', message='Email address is required')]
-    )  # Email(message='A valid email address is required')
+        validators=[StrictRequiredIf('contact_options', 'EMAIL', message='Enter your email address')]
+    )
 
     phone = TelField(
-        'phone',
-        validators=[StrictRequiredIf('options', 'phone', message='Phone number is required')]
+        validators=[StrictRequiredIf('contact_options', 'PHONE', message='Enter your phone number')]
     )
-
-    submit = SubmitField('Save and continue')
-
-
-class ContactNameForm(FlaskForm):
-    check = RadioField(
-        'check',
-        choices=[('Yes'), ('No')],
-        validators=[DataRequired(message='Select if you want us to use a different name')]
-    )
-
-    name = StringField(
-        'name',
-        validators=[StrictRequiredIf('check', 'Yes', message='Full name is required')]
-    )
-
-    submit = SubmitField('Save and continue')
 
 
 class ContactDatesForm(FlaskForm):
-    check = RadioField(
-        'check',
-        choices=[('Yes'), ('No')],
-        validators=[DataRequired(message='Select if you’ll be unavailable')]
+    contactDatesCheck = RadioField(
+        choices=[
+            ('Yes', 'Yes'),
+            ('No', 'No')
+        ],
+        validators=[DataRequired(message="Select if you don't want us to contact you at any point in the next 6 months")]
     )
 
     dates = StringField(
-        'dates', validators=[StrictRequiredIf('check', 'Yes', message='Dates are required')]
+        validators=[StrictRequiredIf('contactDatesCheck', 'Yes', message="Enter the dates you don't want us to contact you by post")]
     )
-
-    submit = SubmitField('Save and continue')
 
 
 class HmrcForm(FlaskForm):
-    check = RadioField(
-        'check',
-        choices=[('Yes'),('No')],
+    tell_hmrc = RadioField(
+        choices=[
+            ('Yes', 'Yes'),
+            ('No', 'No')
+        ],
         validators=[DataRequired(message='Select if you would like us to tell HMRC after you receive a Gender Recognition Certificate')]
     )
 
-    nino = StringField(
-        'nino',
-        validators=[StrictRequiredIf('check', 'Yes', message='A valid National Insurance number is required'), validateNino]
+    national_insurance_number = StringField(
+        validators=[StrictRequiredIf('tell_hmrc', 'Yes', message='Enter your National Insurance number'), validateNationalInsuranceNumber]
     )
-
-    submit = SubmitField('Save and continue')
 
 
 class CheckYourAnswers(FlaskForm):
-    submit = SubmitField('Save and continue')
+    # There are no fields on the CheckYourAnswers form
+    # But, to avoid a compiler error, we need to write 'pass' here
+    pass

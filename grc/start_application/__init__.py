@@ -1,5 +1,4 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for, session
-import json
 from grc.models import ListStatus, Application
 from grc.start_application.forms import SaveYourApplicationForm, ValidateEmailForm, OverseasCheckForm, OverseasApprovedCheckForm, DeclerationForm, IsFirstVisitForm
 from grc.utils.security_code import send_security_code
@@ -71,7 +70,7 @@ def isFirstVisit():
 
     if request.method == 'POST':
         if form.validate_on_submit():
-            if form.isFirstVisit.data == 'FIRST_VISIT':
+            if form.isFirstVisit.data == 'FIRST_VISIT' or form.isFirstVisit.data == 'LOST_REFERENCE':
                 session['reference_number'] = reference_number_generator(session['email'])
                 if session['reference_number'] != False:
                     session['application'] = save_progress()
@@ -80,10 +79,6 @@ def isFirstVisit():
                 else:
                     flash('There is a problem creating a new application', 'error')
                     return render_template('start-application/is-first-visit.html', form=form)
-
-            elif form.isFirstVisit.data == 'LOST_REFERENCE':
-                # Show page saying "Unfortunately you will need to start a new application" / "Continue"
-                return redirect(url_for('startApplication.lostReference'))
 
             elif form.isFirstVisit.data == 'HAS_REFERENCE':
                 application = loadApplicationFromDatabaseByReferenceNumber(form.reference.data)
@@ -125,22 +120,6 @@ def returnToIsFirstVisitPageWithInvalidReferenceError(form):
     return render_template('start-application/is-first-visit.html', form=form)
 
 
-@startApplication.route('/lost-reference', methods=['GET', 'POST'])
-@ValidatedEmailRequired
-@Unauthorized
-def lostReference():
-    if request.method == 'POST':
-        session['reference_number'] = reference_number_generator(session['email'])
-        if session['reference_number'] != False:
-            session['application'] = save_progress()
-            return redirect(url_for(session['application']['confirmation']['step']))
-
-        else:
-            flash('There is a problem creating a new application', 'error')
-
-    return render_template('start-application/lost-reference.html')
-
-
 @startApplication.route('/reference-number', methods=['GET'])
 @LoginRequired
 def reference():
@@ -156,23 +135,25 @@ def overseas_check():
     form = OverseasCheckForm()
 
     if form.validate_on_submit():
-        session['application']['confirmation']['overseasCheck'] = form.check.data
+        session['application']['confirmation']['overseasCheck'] = form.overseasCheck.data
 
         if ListStatus[session['application']['confirmation']['progress']] == ListStatus.IN_PROGRESS:
-            if form.check.data == 'Yes':
+            if form.overseasCheck.data == 'Yes':
                 session['application']['confirmation']['step'] = 'startApplication.overseas_approved_check'
             else:
                 session['application']['confirmation']['step'] = 'startApplication.declaration'
-        elif form.check.data == 'Yes':
+        elif form.overseasCheck.data == 'Yes':
             session['application']['confirmation']['step'] = 'startApplication.overseas_approved_check'
 
         session['application'] = save_progress()
 
         return redirect(url_for(session['application']['confirmation']['step']))
 
-    return render_template(
-        'start-application/overseas-check.html',
-        form=form
+    else:
+        form.overseasCheck.data = session['application']['confirmation']['overseasCheck']
+        return render_template(
+            'start-application/overseas-check.html',
+            form=form
     )
 
 
@@ -182,16 +163,18 @@ def overseas_approved_check():
     form = OverseasApprovedCheckForm()
 
     if form.validate_on_submit():
-        session['application']['confirmation']['overseasApprovedCheck'] = form.check.data
+        session['application']['confirmation']['overseasApprovedCheck'] = form.overseasApprovedCheck.data
         session['application']['confirmation']['step'] = 'startApplication.declaration'
         session['application'] = save_progress()
 
         return redirect(url_for(session['application']['confirmation']['step']))
 
-    return render_template(
-        'start-application/overseas-approved-check.html',
-        form=form
-    )
+    else:
+        form.overseasApprovedCheck.data = session['application']['confirmation']['overseasApprovedCheck']
+        return render_template(
+            'start-application/overseas-approved-check.html',
+            form=form
+        )
 
 
 @startApplication.route('/declaration', methods=['GET', 'POST'])
@@ -202,20 +185,31 @@ def declaration():
 
     if request.method == 'POST':
         if form.validate_on_submit():
-            session['application']['confirmation']['declaration'] = form.check.data
+            session['application']['confirmation']['declaration'] = form.consent.data
             session['application']['confirmation']['progress'] = ListStatus.COMPLETED.name
             session['application']['confirmation']['step'] = 'startApplication.declaration'
             session['application'] = save_progress()
 
             return redirect(url_for('taskList.index'))
 
-    session['application']['confirmation']['progress'] = ListStatus.IN_REVIEW.name
-    session['application'] = save_progress()
+        session['application']['confirmation']['progress'] = ListStatus.IN_REVIEW.name
+        session['application'] = save_progress()
 
-    return render_template(
-        'start-application/declaration.html',
-        form=form,
-        back=back
+        return render_template(
+            'start-application/declaration.html',
+            form=form,
+            back=back
+        )
+
+    else:
+        session['application']['confirmation']['progress'] = ListStatus.IN_REVIEW.name
+        session['application'] = save_progress()
+        form.consent.data = session['application']['confirmation']['declaration'] == True
+
+        return render_template(
+            'start-application/declaration.html',
+            form=form,
+            back=back
     )
 
 

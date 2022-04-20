@@ -6,67 +6,52 @@ from grc.utils.form_custom_validators import validateSecurityCode, validateRefer
 
 class SaveYourApplicationForm(FlaskForm):
     email = EmailField(
-        'email',
         validators=[
             DataRequired(message='Email address is required'),
             Email(message='A valid email address is required')
-        ]
+        ],
     )
-
-    submit = SubmitField('Continue')
 
 
 class ValidateEmailForm(FlaskForm):
     code = StringField(
         'code',
-        validators=[DataRequired(message='A valid code is required'), validateSecurityCode]
+        validators=[DataRequired(message='Enter the security code that we emailed you'), validateSecurityCode]
     )
 
     attempt = IntegerField('attempt', default=0)
-
-    submit = SubmitField('Continue')
 
 
 class IsFirstVisitForm(FlaskForm):
     isFirstVisit = RadioField(
         choices=[
-            ('FIRST_VISIT', "No, this is my first visit"),
-            ('HAS_REFERENCE', "Yes, I have started an application and have my reference number"),
-            ('LOST_REFERENCE', "Yes, I have started an application, but I have lost my reference number")
+            ('FIRST_VISIT', "No"),
+            ('HAS_REFERENCE', "Yes, and I have my reference number"),
+            ('LOST_REFERENCE', "Yes, but I have lost my reference number")
         ],
         validators=[DataRequired(message='Select if you have already started an application')]
     )
 
     reference = StringField(
         validators=[StrictRequiredIf('isFirstVisit', 'HAS_REFERENCE', message='Enter a reference number', validators=[validateReferenceNumber])],
-        default=''
     )
 
 
 class OverseasCheckForm(FlaskForm):
-    check = RadioField(
-        'check',
-        choices=[('Yes'), ('No')],
+    overseasCheck = RadioField(
+        choices=[('Yes', 'Yes'), ('No', 'No')],
         validators=[DataRequired(message='Select if you ever been issued a Gender Recognition Certificate')]
     )
 
-    submit = SubmitField('Continue')
-
 
 class OverseasApprovedCheckForm(FlaskForm):
-    check = RadioField(
-        'check',
-        choices=[('Yes'), ('No')],
+    overseasApprovedCheck = RadioField(
+        choices=[('Yes', 'Yes'), ('No', 'No')],
         validators=[DataRequired(message='Select if you have official documentation')]
     )
 
-    submit = SubmitField('Continue')
-
 
 class DeclerationForm(FlaskForm):
-    check = BooleanField(
-        'check',
-        validators=[DataRequired(message='Confirm that you meet requirements')]
+    consent = BooleanField(
+        validators=[DataRequired(message='You must consent to the General Register Office contacting you')]
     )
-
-    submit = SubmitField('Continue')

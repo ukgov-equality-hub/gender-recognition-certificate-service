@@ -1,102 +1,73 @@
 {% extends 'base.html' %}
-{% block backLink %}<a href="{{ url_for('personalDetails.address') }}" class="govuk-back-link">Back</a>{% endblock %}
+{% import "govuk-design-system-templates/checkboxes.html" as checkboxes %}
+{% import "govuk-design-system-templates/error-summary.html" as error_summary %}
+{% import "govuk-design-system-templates/text-input.html" as textInput %}
+
+{% block backLink %}
+    <a href="{{ url_for('personalDetails.contactDates') }}" class="govuk-back-link">Back</a>
+{% endblock %}
 
 {% block content %}
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
-    {% if form.errors %}
-    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
-      <h2 id="error-summary-title" class="govuk-error-summary__title">
-        There is a problem
-      </h2>
-      <div class="govuk-error-summary__body">
-        <ul class="govuk-list govuk-error-summary__list">
-          {% for error in form.errors %}
-            {% for e in form[error].errors %}
-            <li><a href="#{{ error }}">{{ e }}</a></li>
-            {% endfor %}
-          {% endfor %}
-        </ul>
-      </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            {{ error_summary.renderFor(form) }}
+
+            <form method="POST" action="{{ url_for('personalDetails.contactPreferences') }}">
+                {{ form.csrf_token }}
+
+                {% macro postHtmlBlock() %}
+                    <div class="govuk-form-group">
+                        <p class="govuk-body">
+                            {{ address }}
+                        </p>
+                    </div>
+                {% endmacro %}
+                {{ checkboxes.renderFor(
+                    form,
+                    fieldName='contact_options',
+                    question="How would you like to be contacted if we have any questions about your application?",
+                    checkboxesOptions={
+                        'questionIsPageHeading': true,
+                        'conditionalOptions': [
+                            ('EMAIL',
+                            textInput.renderFor(
+                                form,
+                                fieldName='email',
+                                textInputForOptions={
+                                    'labelOptions':{ 'htmlOrText': 'Email address' },
+                                    'classes': 'govuk-input--width-20',
+                                    'type': 'email',
+                                    'autocomplete': 'email',
+                                    'attributes': [ ('spellcheck', 'false') ]
+                                }
+                            )),
+                            ('PHONE',
+                            textInput.renderFor(
+                                form,
+                                fieldName='phone',
+                                textInputForOptions={
+                                    'labelOptions':{ 'htmlOrText': 'Phone number' },
+                                    'classes': 'govuk-input--width-10',
+                                    'type': 'tel',
+                                    'autocomplete': 'tel'
+                                }
+                            )),
+                            ('POST', postHtmlBlock())
+                        ]
+                    }
+                ) }}
+
+                <div class="govuk-button-group">
+                    <button class="govuk-button" data-module="govuk-button">
+                        Save and continue
+                    </button>
+                    <a href="{{ url_for('taskList.index') }}" class="govuk-link govuk-link--no-visited-state">
+                        Return to task list
+                    </a>
+                </div>
+            </form>
+
+        </div>
     </div>
-    {% endif %}
-
-    <form method="POST" action="{{ url_for('personalDetails.contactPreferences') }}">
-      {{ form.csrf_token }}
-
-      <div class="govuk-form-group {{ 'govuk-form-group--error' if form.errors }}">
-        <fieldset class="govuk-fieldset" aria-describedby="contact-hint">
-          <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-            <h1 class="govuk-fieldset__heading">
-              How would you like to be contacted if we have any questions about your application?
-            </h1>
-          </legend>
-          {% if form.options.errors %}
-          <p id="options" class="govuk-error-message">
-            <span class="govuk-visually-hidden">Error:</span> Please select how would you like to be contacted
-          </p>
-          {% endif %}
-          <div class="govuk-checkboxes" data-module="govuk-checkboxes">
-            <div class="govuk-checkboxes__item">
-              <input id="email-option" type="checkbox" name="options" value="email" class="govuk-checkboxes__input" data-aria-controls="conditional-email-option" {{ 'checked' if form.options.data is iterable and "email" in form.options.data }}>
-              <label for="email-option" class="govuk-label govuk-checkboxes__label">
-                Email
-              </label>
-            </div>
-            <div id="conditional-email-option" class="govuk-checkboxes__conditional govuk-checkboxes__conditional--hidden">
-              <div class="govuk-form-group">
-                <label for="email" class="govuk-label">
-                  Email address
-                </label>
-                {% if form.email.errors %}
-                <p id="email-error" class="govuk-error-message">
-                  <span class="govuk-visually-hidden">Error:</span> Email address is required
-                </p>
-                {% endif %}
-                <input id="email" type="email" name="email" value="{{ form.email.data if form.email.data is not none }}" spellcheck="false" autocomplete="email" class="govuk-input govuk-!-width-three-quarters {{ 'govuk-input--error' if form.email.errors }}">
-              </div>
-            </div>
-            <div class="govuk-checkboxes__item">
-              <input id="phone-option" type="checkbox" name="options" value="phone" class="govuk-checkboxes__input" data-aria-controls="conditional-phone" {{ 'checked' if form.options.data is iterable and 'phone' in form.options.data }}>
-              <label for="phone" class="govuk-label govuk-checkboxes__label">
-                Phone
-              </label>
-            </div>
-            <div id="conditional-phone" class="govuk-checkboxes__conditional govuk-checkboxes__conditional--hidden">
-              <div class="govuk-form-group">
-                <label for="phone" class="govuk-label">
-                  Phone number
-                </label>
-                {% if form.phone.errors %}
-                <p id="phone-error" class="govuk-error-message">
-                  <span class="govuk-visually-hidden">Error:</span> Phone number is required
-                </p>
-                {% endif %}
-                <input id="phone" type="tel" name="phone" value="{{ form.phone.data if form.phone.data is not none }}" autocomplete="tel" class="govuk-input govuk-input--width-20 {{ 'govuk-input--error' if form.phone.errors }}">
-              </div>
-            </div>
-            <div class="govuk-checkboxes__item">
-              <input id="post-option" type="checkbox" name="options" value="post" class="govuk-checkboxes__input" data-aria-controls="conditional-post-option" {{ 'checked' if form.options.data is iterable and 'post' in form.options.data }}>
-              <label for="post-option" class="govuk-label govuk-checkboxes__label">
-                Post
-              </label>
-            </div>
-            <div id="conditional-post-option" class="govuk-checkboxes__conditional govuk-checkboxes__conditional--hidden">
-              <div class="govuk-form-group">
-                <p class="govuk-body">{{ address }}</p>
-              </div>
-            </div>
-          </div>
-        </fieldset>
-      </div>
-
-      <div class="govuk-button-group">
-        <button class="govuk-button" data-module="govuk-button">
-          Save and continue
-        </button>
-        <a href="{{ url_for('taskList.index') }}" class="govuk-link govuk-link--no-visited-state">Return to task list</a>
-      </div>
-    </form>
-  </div>
-</div>
 {% endblock %}

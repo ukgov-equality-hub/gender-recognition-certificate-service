@@ -1,232 +1,197 @@
 {% extends 'base.html' %}
-{% block backLink %}{% endblock %}
+{% import "helper-macros/random-id.html" as random_id %}
+
+{% macro taskListItem(text, url, status, suffix, id=None) %}
+    {% set id = id or 'id-' + random_id.randomId(10) %}
+
+    <li class="app-task-list__item">
+        <span class="app-task-list__task-name">
+            {% if status == ListStatus.CANNOT_START_YET %}
+                {{ text }}
+            {% else %}
+                <a href="{{ url }}" class="govuk-link" aria-describedby="{{ id }}">
+                    {{ text }}
+                </a>
+            {% endif %}
+        </span>
+        <strong id="{{ id }}" class="govuk-tag app-task-list__tag {{ get_colour(status) }}">
+            {{ status.value }}
+        </strong>
+        {{ suffix }}
+    </li>
+{% endmacro %}
 
 {% block content %}
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-full">
-    <h1 class="govuk-heading-l">
-      Your application
-    </h1>
-  </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <h1 class="govuk-heading-l">
+                Your application
+            </h1>
+        </div>
 
-  <!-- {{ application }} -->
-  <div class="govuk-grid-column-two-thirds">
-    <p class="govuk-body">This is where you can provide your personal details and upload your documents.</p>
-    <div class="govuk-inset-text">
-      {% if application.confirmation.overseasCheck == 'Yes' %}
-      <p class="govuk-body">
-        There are documents that you will need to post to us, such as your statutory declaration.
-      </p>
-      <p class="govuk-body">
-        What you need to send us depends on the information you provide during your application. You
-        will be told which documents you still need to send us at the end of the application.
-      </p>
-      {% else %}
-      <p class="govuk-body">
-        While most documents can be uploaded online, there are others that you will need to post to
-        us, such as your statutory declaration.
-      </p>
-      <p class="govuk-body">
-        What you need to send us depends on the information you provide during your application. You
-        will be told which documents you still need to send us at the end of the application.
-      </p>
-      {% endif %}
+        <div class="govuk-grid-column-two-thirds">
+            <p class="govuk-body">
+                This is where you can provide your personal details and upload your documents.
+            </p>
+
+            <div class="govuk-inset-text govuk-!-margin-bottom-8">
+                {% if application.confirmation.overseasCheck == 'Yes' %}
+                    <p class="govuk-body">
+                        There are documents that you will need to post to us, such as your statutory declaration.
+                    </p>
+                {% else %}
+                    <p class="govuk-body">
+                        While most documents can be uploaded online, you will need to post to us your birth certificate.
+                    </p>
+                {% endif %}
+
+                <p class="govuk-body">
+                    What you need to upload depends on the information you provide during your application.
+                </p>
+            </div>
+
+            <ol class="app-task-list app-task-list--no-numbers">
+                <li>
+                    <h2 class="app-task-list__section">
+                    Before you start
+                    </h2>
+
+                    <ul class="app-task-list__items">
+                        {{ taskListItem(
+                            "Confirmation",
+                            url_for(session['application']['confirmation']['step']),
+                            list_status['confirmation'])
+                        }}
+                    </ul>
+                </li>
+
+                <!-- Fill in your details -->
+                <li>
+                    <h2 class="app-task-list__section">
+                        Fill in your details
+                    </h2>
+
+                    <ul class="app-task-list__items">
+                        {{ taskListItem(
+                            "Your personal details",
+                            url_for(session['application']['personalDetails']['step']),
+                            list_status['personalDetails'])
+                        }}
+
+                        {{ taskListItem(
+                            "Your birth registration information",
+                            url_for(session['application']['birthRegistration']['step']),
+                            list_status['birthRegistration'])
+                        }}
+
+                        {{ taskListItem(
+                            "Marriage or civil partnership details",
+                            url_for(session['application']['partnershipDetails']['step']),
+                            list_status['partnershipDetails'])
+                        }}
+                    </ul>
+                </li>
+                <!-- /.Fill in your details -->
+
+                <!-- Upload your documents -->
+                <li>
+                    <h2 class="app-task-list__section">
+                        Upload your documents
+                    </h2>
+
+                    <ul class="app-task-list__items">
+                        {% if application.confirmation.overseasCheck == 'No' %}
+                            {{ taskListItem(
+                                "Your medical reports",
+                                url_for('upload.medicalReports'),
+                                list_status['medicalReports'])
+                            }}
+
+                            {{ taskListItem(
+                                "Evidence of living in your gender",
+                                url_for('upload.genderEvidence'),
+                                list_status['genderEvidence'])
+                            }}
+
+                            {% if application.personalDetails.previousNamesCheck is defined and application.personalDetails.previousNamesCheck == 'Yes' %}
+                                {{ taskListItem(
+                                    "Name change documents",
+                                    url_for('upload.nameChange'),
+                                    list_status['nameChange'])
+                                }}
+                            {% endif %}
+
+                        {% elif application.confirmation.overseasCheck == 'Yes' and application.personalDetails.previousNamesCheck is defined and application.personalDetails.previousNamesCheck == 'Yes' %}
+                            {{ taskListItem(
+                                "Name change documents",
+                                url_for('upload.nameChange'),
+                                list_status['nameChange'])
+                            }}
+                        {% endif %}
+
+                        {% if application.partnershipDetails.marriageCivilPartnership is defined and (application.partnershipDetails.marriageCivilPartnership == 'Married' or (application.partnershipDetails.marriageCivilPartnership == 'Neither' and (application.partnershipDetails.marriageCivilPartnership.partnerDied == 'Yes' or application.partnershipDetails.marriageCivilPartnership.endedCheck == 'Yes'))) %}
+                            {{ taskListItem(
+                                "Marriage documents",
+                                url_for('upload.marriageDocuments'),
+                                list_status['marriageDocuments'])
+                            }}
+                        {% endif %}
+
+                        {% if application.confirmation.overseasApprovedCheck == 'Yes' %}
+                            {{ taskListItem(
+                                "Overseas certificate documents",
+                                url_for('upload.overseasCertificate'),
+                                list_status['overseasCertificate'])
+                            }}
+                        {% endif %}
+
+                        {{ taskListItem(
+                            "Statutory declarations",
+                            url_for('upload.statutoryDeclarations'),
+                            list_status['statutoryDeclarations'])
+                        }}
+                    </ul>
+                </li>
+                <!-- /.Upload your documents -->
+
+                <!-- Apply -->
+                <li>
+                    <h2 class="app-task-list__section">
+                        Apply
+                    </h2>
+
+                    <ul class="app-task-list__items">
+                        {% macro submitAndPaySuffix() %}
+                            <span class="govuk-hint govuk-!-margin-top-3 govuk-!-margin-bottom-0"><br>
+                                Once you have completed the other sections you can submit your application.
+                            </span>
+                        {% endmacro %}
+                        {{ taskListItem(
+                            "Submit and pay",
+                            url_for('submitAndPay.index'),
+                            list_status['submitAndPay'],
+                            submitAndPaySuffix())
+                        }}
+                    </ul>
+                </li>
+                <!-- /.Apply -->
+            </ol>
+        </div>
+
+        <div class="govuk-grid-column-one-third">
+            <div class="gem-c-contextual-sidebar">
+                <div class="gem-c-related-navigation">
+                    <h2 id="related-nav-related_items-298b5325" class="gem-c-related-navigation__main-heading">
+                        Returning to your application
+                    </h2>
+                    <p class="govuk-body-s">
+                        Your application is saved automatically as you progress.
+                    </p>
+                    <p class="govuk-body-s">
+                        <a href="{{ url_for('saveAndReturn.exitApplication') }}" class="govuk-link govuk-link--no-visited-state">Exit and return later</a>.
+                    </p>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <ol class="app-task-list app-task-list--no-numbers">
-      <li>
-        <h2 class="app-task-list__section">
-          Before you start
-        </h2>
-
-        <ul class="app-task-list__items">
-          <li class="app-task-list__item">
-            <span class="app-task-list__task-name">
-              <a href="{{ url_for(session['application']['confirmation']['step']) }}" class="govuk-link" aria-describedby="confirmation-status">
-                Confirmation
-              </a>
-            </span>
-            <strong id="confirmation-status" class="govuk-tag app-task-list__tag {{ get_colour(list_status['confirmation']) }}">
-              {{ list_status['confirmation'].value }}
-            </strong>
-          </li>
-        </ul>
-      </li>
-
-      <!-- Fill in your details -->
-      <li>
-        <h2 class="app-task-list__section">
-          Fill in your details
-        </h2>
-
-        <ul class="app-task-list__items">
-          <li class="app-task-list__item">
-            <span class="app-task-list__task-name">
-              <a href="{{ url_for(session['application']['personalDetails']['step']) }}" class="govuk-link" aria-describedby="personal-details-status">
-                Your personal details
-              </a>
-            </span>
-            <strong id="personal-details-status" class="govuk-tag app-task-list__tag {{ get_colour(list_status['personalDetails']) }}">
-              {{ list_status['personalDetails'].value }}
-            </strong>
-          </li>
-          <li class="app-task-list__item">
-            <span class="app-task-list__task-name">
-              <a href="{{ url_for(session['application']['birthRegistration']['step']) }}" class="govuk-link" aria-describedby="birth-registration-status">
-                Your birth registration information
-              </a>
-            </span>
-            <strong id="birth-registration-status" class="govuk-tag app-task-list__tag {{ get_colour(list_status['birthRegistration']) }}">
-              {{ list_status['birthRegistration'].value }}
-            </strong>
-          </li>
-          <li class="app-task-list__item">
-            <span class="app-task-list__task-name">
-              <a href="{{ url_for(session['application']['partnershipDetails']['step']) }}" class="govuk-link" aria-describedby="partnership-details-status">
-                Marriage or civil partnership details
-              </a>
-            </span>
-            <strong id="partnership-details-status" class="govuk-tag app-task-list__tag {{ get_colour(list_status['partnershipDetails']) }}">
-              {{ list_status['partnershipDetails'].value }}
-            </strong>
-          </li>
-        </ul>
-      </li>
-      <!-- /.Fill in your details -->
-
-      <!-- Upload your documents -->
-      <li>
-        <h2 class="app-task-list__section">
-          Upload your documents
-        </h2>
-
-        <ul class="app-task-list__items">
-          {% if application.confirmation.overseasCheck == 'No' %}
-          <li class="app-task-list__item">
-            <span class="app-task-list__task-name">
-              <a href="{{ url_for('upload.medicalReports') }}" class="govuk-link" aria-describedby="medical-reports-status">
-                Your medical reports
-              </a>
-            </span>
-            <strong id="medical-reports-status" class="govuk-tag app-task-list__tag {{ get_colour(list_status['medicalReports']) }}">
-              {{ list_status['medicalReports'].value }}
-            </strong>
-          </li>
-          <li class="app-task-list__item">
-            <span class="app-task-list__task-name">
-              <a href="{{ url_for('upload.genderEvidence') }}" class="govuk-link" aria-describedby="genderEvidence">
-                Evidence of living in your gender
-              </a>
-            </span>
-            <strong id="genderEvidence" class="govuk-tag app-task-list__tag {{ get_colour(list_status['genderEvidence']) }}">
-              {{ list_status['genderEvidence'].value }}
-            </strong>
-          </li>
-          {% if application.personalDetails.previousNamesCheck is defined and application.personalDetails.previousNamesCheck == 'Yes' %}
-          <li class="app-task-list__item">
-            <span class="app-task-list__task-name">
-              <a href="{{ url_for('upload.nameChange') }}" class="govuk-link" aria-describedby="previousNamesCheck">
-                Name change documents
-              </a>
-            </span>
-            <strong id="previousNamesCheck" class="govuk-tag app-task-list__tag {{ get_colour(list_status['nameChange']) }}">
-              {{ list_status['nameChange'].value }}
-            </strong>
-          </li>
-          {% endif %}
-          {% elif application.confirmation.overseasCheck == 'Yes' and application.personalDetails.previousNamesCheck is defined and application.personalDetails.previousNamesCheck == 'Yes' %}
-          <li class="app-task-list__item">
-            <span class="app-task-list__task-name">
-              <a href="{{ url_for('upload.nameChange') }}" class="govuk-link" aria-describedby="nameChange">
-                Name change documents
-              </a>
-            </span>
-            <strong id="nameChange" class="govuk-tag app-task-list__tag {{ get_colour(list_status['nameChange']) }}">
-              {{ list_status['nameChange'].value }}
-            </strong>
-          </li>
-          {% endif %}
-          {% if application.partnershipDetails.marriageCivilPartnership is defined and (application.partnershipDetails.marriageCivilPartnership == 'Married' or (application.partnershipDetails.marriageCivilPartnership == 'Neither' and (application.partnershipDetails.marriageCivilPartnership.partnerDied == 'Yes' or application.partnershipDetails.marriageCivilPartnership.endedCheck == 'Yes'))) %}
-          <li class="app-task-list__item">
-            <span class="app-task-list__task-name">
-              <a href="{{ url_for('upload.marriageDocuments') }}" class="govuk-link" aria-describedby="marriageDocuments">
-                Marriage documents
-              </a>
-            </span>
-            <strong id="marriageDocuments" class="govuk-tag app-task-list__tag {{ get_colour(list_status['marriageDocuments']) }}">
-              {{ list_status['marriageDocuments'].value }}
-            </strong>
-          </li>
-          {% endif %}
-          {% if application.confirmation.overseasApprovedCheck == 'Yes' %}
-          <li class="app-task-list__item">
-            <span class="app-task-list__task-name">
-              <a href="{{ url_for('upload.overseasCertificate') }}" class="govuk-link" aria-describedby="overseasCertificate">
-                Overseas certificate documents
-              </a>
-            </span>
-            <strong id="overseasCertificate" class="govuk-tag app-task-list__tag {{ get_colour(list_status['overseasCertificate']) }}">
-              {{ list_status['overseasCertificate'].value }}
-            </strong>
-          </li>
-          {% endif %}
-          <li class="app-task-list__item">
-            <span class="app-task-list__task-name">
-              <a href="{{ url_for('upload.statutoryDeclarations') }}" class="govuk-link" aria-describedby="statutoryDeclarations">
-                Statutory declarations
-              </a>
-            </span>
-            <strong id="statutoryDeclarations" class="govuk-tag app-task-list__tag {{ get_colour(list_status['statutoryDeclarations']) }}">
-              {{ list_status['statutoryDeclarations'].value }}
-            </strong>
-          </li>
-        </ul>
-      </li>
-      <!-- /.Upload your documents -->
-
-      <!-- Apply -->
-      <li>
-        <h2 class="app-task-list__section">
-          Apply
-        </h2>
-
-        <ul class="app-task-list__items">
-          <li class="app-task-list__item">
-            <span class="app-task-list__task-name">
-              {% if can_submit %}
-              <a href="{{ url_for('submitAndPay.index') }}" class="govuk-link" aria-describedby="medical-reports-status">
-                Submit and pay
-              </a>
-              {% else %}
-              Submit and pay
-              {% endif %}
-            </span>
-            <strong id="medical-reports-status" class="govuk-tag app-task-list__tag {{ get_colour(list_status['submitAndPay']) }}">
-              {{ list_status['submitAndPay'].value }}
-            </strong>
-            <span class="govuk-hint govuk-!-margin-top-3 govuk-!-margin-bottom-0"><br>
-              Once you have completed the other sections you can submit your application.
-            </span>
-          </li>
-        </ul>
-      </li>
-      <!-- /.Apply -->
-    </ol>
-  </div>
-
-  <div class="govuk-grid-column-one-third">
-    <div class="gem-c-contextual-sidebar">
-      <div class="gem-c-related-navigation">
-        <h2 id="related-nav-related_items-298b5325" class="gem-c-related-navigation__main-heading">
-          Returning to your application
-        </h2>
-
-        <p class="govuk-body-s">Your application is saved automatically as you progress.</p>
-        <p class="govuk-body-s">
-          <a href="{{ url_for('saveAndReturn.exitApplication') }}" class="govuk-link govuk-link--no-visited-state">Exit and return later</a>.
-        </p>
-      </div>
-    </div>
-  </div>
-</div>
 {% endblock %}

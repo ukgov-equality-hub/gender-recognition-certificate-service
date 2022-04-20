@@ -1,83 +1,54 @@
 {% extends 'base.html' %}
-{% block backLink %}<a href="{{ url_for('personalDetails.contactPreferences') }}" class="govuk-back-link">Back</a>{% endblock %}
+{% import "govuk-design-system-templates/error-summary.html" as error_summary %}
+{% import "govuk-design-system-templates/radios.html" as radios %}
+{% import "govuk-design-system-templates/textarea.html" as textarea %}
+
+{% block backLink %}
+    <a href="{{ url_for('personalDetails.address') }}" class="govuk-back-link">Back</a>
+{% endblock %}
 
 {% block content %}
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
-    {% if form.errors %}
-    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
-      <h2 id="error-summary-title" class="govuk-error-summary__title">
-        There is a problem
-      </h2>
-      <div class="govuk-error-summary__body">
-        <ul class="govuk-list govuk-error-summary__list">
-          {% for error in form.errors %}
-            {% for e in form[error].errors %}
-            <li><a href="#{{ error }}">{{ e }}</a></li>
-            {% endfor %}
-          {% endfor %}
-        </ul>
-      </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            {{ error_summary.renderFor(form) }}
+
+            <form method="POST" action="{{ url_for('personalDetails.contactDates') }}">
+                {{ form.csrf_token }}
+
+                {{ radios.renderFor(
+                    form,
+                    fieldName='contactDatesCheck',
+                    question="If we need to contact you by post in the next 6 months, are there any dates you don’t want us to do this?",
+                    radiosOptions={
+                        'questionIsPageHeading': true,
+                        'hintOptions': {
+                            'htmlOrText': 'For example, if you are away on holiday.'
+                        },
+                        'conditionalOptions': [
+                            ('Yes',
+                            textarea.renderFor(
+                                form,
+                                fieldName='dates',
+                                textareaForOptions={
+                                    'labelOptions':{ 'htmlOrText': "Dates you don't want us to contact you by post" },
+                                    'rows': 3
+                                }
+                            ))
+                        ]
+                    }
+                ) }}
+
+                <div class="govuk-button-group">
+                    <button class="govuk-button" data-module="govuk-button">
+                        Save and continue
+                    </button>
+                    <a href="{{ url_for('taskList.index') }}" class="govuk-link govuk-link--no-visited-state">
+                        Return to task list
+                    </a>
+                </div>
+            </form>
+            
+        </div>
     </div>
-    {% endif %}
-
-    <form method="POST" action="{{ url_for('personalDetails.contactDates') }}">
-      {{ form.csrf_token }}
-
-      <div class="govuk-form-group {{ 'govuk-form-group--error' if form.errors }}">
-        <fieldset class="govuk-fieldset" aria-describedby="check-hint">
-          <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-            <h1 class="govuk-fieldset__heading">
-              Will you be away from your address for more than a week over the next 6 months?
-            </h1>
-          </legend>
-          <div class="govuk-hint">
-            We will not post anything to you during this time
-          </div>
-          {% if form.check.errors %}
-          <p id="check" class="govuk-error-message">
-            <span class="govuk-visually-hidden">Error:</span> Select if you'll be unavailable
-          </p>
-          {% endif %}
-          <div class="govuk-radios" data-module="govuk-radios">
-            <div class="govuk-radios__item">
-              <input id="check" type="radio" name="check" value="Yes" class="govuk-radios__input" data-aria-controls="conditional-check" {{ 'checked' if form.check.data is iterable and 'Yes' in form.check.data }}>
-              <label for="check" class="govuk-label govuk-radios__label">
-                Yes
-              </label>
-            </div>
-            <div id="conditional-check" class="govuk-radios__conditional govuk-radios__conditional--hidden">
-              <div class="govuk-form-group">
-                <label for="dates" class="govuk-label">
-                  Dates you're unavailable
-                </label>
-                {% if form.dates.errors %}
-                <p id="dates-error" class="govuk-error-message">
-                  <span class="govuk-visually-hidden">Error:</span> Dates are required
-                </p>
-                {% endif %}
-                <textarea id="dates" name="dates" rows="3" class="govuk-textarea {{ 'govuk-input--error' if form.dates.errors }}">
-                  {{ form.dates.data if form.dates.data is not none }}
-                </textarea>
-              </div>
-            </div>
-            <div class="govuk-radios__item">
-              <input id="check-2" type="radio" name="check" value="No" class="govuk-radios__input" {{ 'checked' if form.check.data is iterable and 'No' in form.check.data }}>
-              <label for="check-2" class="govuk-label govuk-radios__label">
-                No
-              </label>
-            </div>
-          </div>
-        </fieldset>
-      </div>
-
-      <div class="govuk-button-group">
-        <button class="govuk-button" data-module="govuk-button">
-          Save and continue
-        </button>
-        <a href="{{ url_for('taskList.index') }}" class="govuk-link govuk-link--no-visited-state">Return to task list</a>
-      </div>
-    </form>
-  </div>
-</div>
 {% endblock %}

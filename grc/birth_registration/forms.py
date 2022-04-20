@@ -1,69 +1,43 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, RadioField, IntegerField
 from wtforms.validators import DataRequired, NumberRange
-from datetime import datetime
-from dateutil.relativedelta import relativedelta
-from grc.utils.form_custom_validators import StrictRequiredIf, validateAdopted, validateDOB
+from grc.utils.form_custom_validators import StrictRequiredIf, validateDOB
 
 
 class NameForm(FlaskForm):
     first_name = StringField(
-        'first_name',
-        validators=[DataRequired(message='First name is required')]
+        validators=[DataRequired(message='Enter your first name, as originally registered on your birth or adoption certificate')]
     )
 
     last_name = StringField(
-        'last_name',
-        validators=[DataRequired(message='Last name is required')]
+        validators=[DataRequired(message='Enter your last name, as originally registered on your birth or adoption certificate')]
     )
-
-    submit = SubmitField('Save and continue')
-
-
-class SexForm(FlaskForm):
-    check = RadioField(
-        'check',
-        choices=[('Female'), ('Male')],
-        validators=[DataRequired(message='Select a sex')]
-    )
-
-    submit = SubmitField('Save and continue')
 
 
 class DobForm(FlaskForm):
     day = IntegerField(
-        'day',
         validators=[
-            DataRequired(message='The date must include a day'),
-            NumberRange(min=1, max=31, message='Please enter a valid day'),
+            DataRequired(message='Enter a day'),
+            NumberRange(min=1, max=31, message='Enter a valid day'),
             validateDOB
         ]
     )
 
     month = IntegerField(
-        'month',
         validators=[
-            DataRequired(message='The date must include a month'),
-            NumberRange(min=1, max=12, message='Please enter a valid month'),
+            DataRequired(message='Enter a month'),
+            NumberRange(min=1, max=12, message='Enter a valid month'),
             validateDOB
         ]
     )
 
-    # We are assuming the person applying is 18 years old or older
+    # THe user must be 18 years old or older to apply
     year = IntegerField(
-        'year',
         validators=[
-            DataRequired(message='The date must include a year'),
-            #NumberRange(
-            #    min=int((datetime.now() - relativedelta(years=120)).strftime('%Y')),
-            #    max=int((datetime.now() - relativedelta(years=18)).strftime('%Y')),
-            #    message='Year needs to be a valid year in past. You need to be 18 years old to apply.'
-            #),
+            DataRequired(message='Enter a year'),
             validateDOB
         ]
     )
-
-    submit = SubmitField('Save and continue')
 
 
 class UkCheckForm(FlaskForm):

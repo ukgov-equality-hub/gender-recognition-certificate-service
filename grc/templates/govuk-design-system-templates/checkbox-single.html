@@ -1,0 +1,35 @@
+{% import "govuk-design-system-templates/error-message.html" as errorMessage %}
+{% import "govuk-design-system-templates/hint.html" as hint %}
+
+{% macro renderFor(form, fieldName, question, label, checkboxOptions) %}
+
+    <div class="govuk-form-group {{ 'govuk-form-group--error' if form[fieldName].errors }}">
+        <fieldset class="govuk-fieldset">
+            {% if checkboxOptions.questionIsPageHeading %}
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                    <h1 class="govuk-fieldset__heading">
+                        {{ question }}
+                    </h1>
+                </legend>
+            {% else %}
+                <legend class="govuk-fieldset__legend {{ checkboxOptions.questionClasses }}">
+                    {{ question }}
+                </legend>
+            {% endif %}
+
+            {{ hint.render(checkboxOptions.hintOptions) }}
+
+            {{ errorMessage.renderFor(fieldName, form[fieldName].errors, checkboxOptions.errorMessageOptions) }}
+
+            <div class="govuk-checkboxes" data-module="govuk-checkboxes">
+                <div class="govuk-checkboxes__item">
+                    <input class="govuk-checkboxes__input" id="{{ fieldName }}" name="{{ fieldName }}" type="checkbox" {{ 'checked' if form[fieldName].data }}>
+                    <label class="govuk-label govuk-checkboxes__label" for="{{ fieldName }}">
+                        {{ label }}
+                    </label>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+
+{% endmacro %}

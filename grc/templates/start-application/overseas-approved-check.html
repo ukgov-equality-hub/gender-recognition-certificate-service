@@ -1,138 +1,110 @@
 {% extends 'base.html' %}
-{% block backLink %}<a href="{{ url_for('startApplication.overseas_check') }}" class="govuk-back-link">Back</a>{% endblock %}
+{% import "govuk-design-system-templates/error-summary.html" as error_summary %}
+{% import "govuk-design-system-templates/radios.html" as radios %}
+
+{% block backLink %}
+    <a href="{{ url_for('startApplication.overseas_check') }}" class="govuk-back-link">Back</a>
+{% endblock %}
 
 {% block content %}
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
-    {% if form.errors %}
-    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
-      <h2 id="error-summary-title" class="govuk-error-summary__title">
-        There is a problem
-      </h2>
-      <div class="govuk-error-summary__body">
-        <ul class="govuk-list govuk-error-summary__list">
-          {% for error in form.errors %}
-            {% for e in form[error].errors %}
-            <li><a href="#{{ error }}-issued-error">{{ e }}</a></li>
-            {% endfor %}
-          {% endfor %}
-        </ul>
-      </div>
-    </div>
-    {% endif %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
 
-    <h1 class="govuk-heading-l">
-      Gender recognition in approved countries and territories
-    </h1>
+            {{ error_summary.renderFor(form) }}
 
-    <p class="govuk-body">
-      If you have had your affirmed gender recognised in an approved country or territory, then you will need to provide official documentation that shows this.
-    </p>
-    <p class="govuk-body">This could be:</p>
-    <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-8">
-      <li>a document that's equal to a Gender Recognition Certificate</li>
-      <li>an updated birth certificate</li>
-      <li>a court order</li>
-      <li>an entry in a legal register</li>
-    </ul>
-
-    <h2 class="govuk-heading-l">
-      List of approved countries and territories
-    </h2>
-
-    <p class="govuk-body">
-      If you have received gender recognition from somewhere else, or you can't provide this documentation then you
-      will need to provide medical reports and evidence of living in your gender for 2 years instead.
-    </p>
-    <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-8">
-      <li>Australia <span class="govuk-hint">(Territories of Australian Capital Territory and Northern Territory and the
-        states of New South Wales, Queensland, South Australia, Tasmania, Victoria and Western Australia)</span></li>
-      <li>Canada <span class="govuk-hint">(Provinces of Alberta, British Columbia, Manitoba, New Brunswick, Newfoundland
-        and Labrador, Nova Scotia, Ontario, Prince Edward Island, Quebec and Saskatchewan and the Yukon
-        Territory)</span></li>
-      <li>Austria</li>
-      <li>Belgium</li>
-      <li>Bulgaria</li>
-      <li>Croatia</li>
-      <li>Republic of Cyprus</li>
-      <li>Czech Republic</li>
-      <li>Denmark</li>
-      <li>Estonia</li>
-      <li>Finland</li>
-      <li>France</li>
-      <li>Germany</li>
-      <li>Greece</li>
-      <li>Iceland</li>
-      <li>Italy</li>
-      <li>Japan</li>
-      <li>Liechtenstein</li>
-      <li>Luxembourg</li>
-      <li>Malta</li>
-      <li>Federal District of Mexico</li>
-      <li>Moldova</li>
-      <li>Netherlands</li>
-      <li>New Zealand</li>
-      <li>Norway</li>
-      <li>Poland</li>
-      <li>Romania</li>
-      <li>Russian Federation</li>
-      <li>Serbia</li>
-      <li>Singapore</li>
-      <li>Slovakia</li>
-      <li>Slovenia</li>
-      <li>South Africa</li>
-      <li>South Korea</li>
-      <li>Spain</li>
-      <li>Sweden</li>
-      <li>Switzerland</li>
-      <li>Turkey</li>
-      <li>Ukraine</li>
-      <li>Uruguay</li>
-      <li>United States of America <span class="govuk-hint">(the District of Columbia and all of the states except for
-        Idaho, Ohio, Tennessee and Texas)<span></li>
-    </ul>
-
-    <form method="POST" action="{{ url_for('startApplication.overseas_approved_check') }}">
-      {{ form.csrf_token }}
-
-      <div class="govuk-form-group {{ 'govuk-form-group--error' if form.check.errors }}">
-        <fieldset class="govuk-fieldset">
-          <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
-            <h1 class="govuk-fieldset__heading">
-              Do you have official documentation that shows your affirmed gender has been recognised in one of these countries or territories?
+            <h1 class="govuk-heading-l">
+                Gender recognition in approved countries and territories
             </h1>
-          </legend>
-          <div id="changed-name-hint" class="govuk-hint">
-            Select 'No' if you have received gender recognition from somewhere else, or you can't provide this documentation.
-          </div>
-          {% if form.check.errors %}
-          <p id="check-issued-error" class="govuk-error-message">
-            <span class="govuk-visually-hidden">Error:</span> Select if you have official documentation
-          </p>
-          {% endif %}
-          <div class="govuk-radios" data-module="govuk-radios">
-            <div class="govuk-radios__item">
-              <input id="check" type="radio" name="check" value="Yes" class="govuk-radios__input" {{ 'checked' if session['application']['confirmation']['overseasApprovedCheck'] == 'Yes' }}>
-              <label for="check" class="govuk-label govuk-radios__label">
-                Yes
-              </label>
-            </div>
-            <div class="govuk-radios__item">
-              <input id="check-2" type="radio" name="check" value="No" class="govuk-radios__input" {{ 'checked' if session['application']['confirmation']['overseasApprovedCheck'] == 'No' }}>
-              <label for="check-2" class="govuk-label govuk-radios__label">
-                No
-              </label>
-            </div>
-          </div>
-        </fieldset>
-      </div>
 
-      <div class="govuk-button-group">
-        <button class="govuk-button" data-module="govuk-button">
-          Continue
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
+            <p class="govuk-body">
+                If you have ever been issued a Gender Recognition Certificate (or its equivalent) in an approved
+                country or territory, you will need to provide official documentation that shows this.
+            </p>
+            <p class="govuk-body govuk-!-margin-bottom-1">
+                This could be:
+            </p>
+            <ul class="govuk-list govuk-list--bullet">
+                <li>a document equal to a Gender Recognition Certificate</li>
+                <li>an updated birth certificate</li>
+                <li>a court order</li>
+                <li>an entry in a legal register</li>
+            </ul>
+            <p class="govuk-body govuk-!-margin-bottom-8">
+                If you have received gender recognition from somewhere else, or you can’t provide this documentation,
+                you will need to provide medical reports and evidence of living in your gender for 2 years instead.
+            </p>
+
+            <h2 class="govuk-heading-m">
+                List of approved countries and territories
+            </h2>
+            <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-8">
+                <li>Australia <span class="govuk-hint">(Territories of Australian Capital Territory and Northern Territory and the
+                states of New South Wales, Queensland, South Australia, Tasmania, Victoria and Western Australia)</span></li>
+                <li>Canada <span class="govuk-hint">(Provinces of Alberta, British Columbia, Manitoba, New Brunswick, Newfoundland
+                and Labrador, Nova Scotia, Ontario, Prince Edward Island, Quebec and Saskatchewan and the Yukon
+                Territory)</span></li>
+                <li>Austria</li>
+                <li>Belgium</li>
+                <li>Bulgaria</li>
+                <li>Croatia</li>
+                <li>Cyprus</li>
+                <li>Czech Republic</li>
+                <li>Denmark</li>
+                <li>Estonia</li>
+                <li>Finland</li>
+                <li>France</li>
+                <li>Germany</li>
+                <li>Greece</li>
+                <li>Iceland</li>
+                <li>Italy</li>
+                <li>Japan</li>
+                <li>Liechtenstein</li>
+                <li>Luxembourg</li>
+                <li>Malta</li>
+                <li>Federal District of Mexico</li>
+                <li>Moldova</li>
+                <li>Netherlands</li>
+                <li>New Zealand</li>
+                <li>Norway</li>
+                <li>Poland</li>
+                <li>Romania</li>
+                <li>Russian Federation</li>
+                <li>Serbia</li>
+                <li>Singapore</li>
+                <li>Slovakia</li>
+                <li>Slovenia</li>
+                <li>South Africa</li>
+                <li>South Korea</li>
+                <li>Spain</li>
+                <li>Sweden</li>
+                <li>Switzerland</li>
+                <li>Turkey</li>
+                <li>Ukraine</li>
+                <li>Uruguay</li>
+                <li>United States of America <span class="govuk-hint">(the District of Columbia and all of the states except for
+                Idaho, Ohio, Tennessee and Texas)</span></li>
+            </ul>
+
+            <form method="POST" action="{{ url_for('startApplication.overseas_approved_check') }}">
+                {{ form.csrf_token }}
+
+                {{ radios.renderFor(
+                    form,
+                    fieldName='overseasApprovedCheck',
+                    question="Do you have official documentation that shows you have ever been issued a Gender Recognition Certificate (or its equivalent) in one of these countries or territories?",
+                    radiosOptions={
+                        'questionClasses': 'govuk-fieldset__legend--m',
+                        'hintOptions': {
+                            'htmlOrText': "Select ‘No’ if you have received gender recognition from somewhere else, or you can’t provide this documentation."
+                        }
+                    }
+                ) }}
+
+                <button class="govuk-button" data-module="govuk-button">
+                    Continue
+                </button>
+            </form>
+
+        </div>
+    </div>
 {% endblock %}

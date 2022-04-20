@@ -61,7 +61,7 @@ class StrictRequiredIf(DataRequired):
 
 def validateSecurityCode(form, field):
     if validate_security_code(session['email'], field.data) is False:
-        raise ValidationError('A valid code is required')
+        raise ValidationError('Enter a valid security code')
 
 
 def validateReferenceNumber(form, field):
@@ -103,7 +103,7 @@ def validatePostcode(form, field):
         data = field.data
         match = re.search('^([A-Za-z][A-Ha-hJ-Yj-y]?[0-9][A-Za-z0-9]? ?[0-9][A-Za-z]{2}|[Gg][Ii][Rr] ?0[Aa]{2})$', data)
         if match is None:
-            raise ValidationError('Your post code is not valid')
+            raise ValidationError('Enter a valid postcode')
 
 
 def validateDOB(form, field):
@@ -115,7 +115,7 @@ def validateDOB(form, field):
             dt = datetime(y, m, d, 00, 00)
         except Exception as e:
             if field.name == 'year':
-                raise ValidationError('You have entered a invalid date')
+                raise ValidationError('Enter a valid year')
             return
 
         def age(dt):
@@ -128,7 +128,7 @@ def validateDOB(form, field):
             raise ValidationError('You need to be less than 110 years old to apply')
 
 
-def validateNino(form, field):
+def validateNationalInsuranceNumber(form, field):
 
     # https://www.gov.uk/hmrc-internal-manuals/national-insurance-manual/nim39110
     # https://stackoverflow.com/questions/17928496/use-regex-to-validate-a-uk-national-insurance-no-nino-in-an-html5-pattern-attri
@@ -136,7 +136,7 @@ def validateNino(form, field):
         data = field.data.replace(' ', '').upper()
         match = re.search('^(?!BG)(?!GB)(?!NK)(?!KN)(?!TN)(?!NT)(?!ZZ)(?:[A-CEGHJ-PR-TW-Z][A-CEGHJ-NPR-TW-Z])(?:\s*\d\s*){6}[A-D]{1}$', data)
         if match is None:
-            raise ValidationError('Your national insurance number is not valid')
+            raise ValidationError('Enter a valid National Insurance number')
 
 
 class MultiFileAllowed(object):

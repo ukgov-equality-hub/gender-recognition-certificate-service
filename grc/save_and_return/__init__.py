@@ -1,14 +1,10 @@
 from datetime import datetime, timedelta
 from dateutil import tz
 from flask import Blueprint, flash, redirect, render_template, request, url_for, current_app, session
-from grc.save_and_return.forms import ReturnToYourApplicationForm
 from notifications_python_client.notifications import NotificationsAPIClient
-from grc.utils.security_code import send_security_code
-from grc.utils.reference_number import validate_reference_number, reference_number_string
-from grc.start_application.forms import ValidateEmailForm
-from grc.utils.decorators import EmailRequired, LoginRequired, Unauthorized
+from grc.utils.reference_number import reference_number_string
+from grc.utils.decorators import LoginRequired, Unauthorized
 from grc.utils.application_progress import save_progress
-from grc.utils.threading import Threading
 
 saveAndReturn = Blueprint('saveAndReturn', __name__)
 

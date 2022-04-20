@@ -1,69 +1,58 @@
 {% extends 'base.html' %}
-{% block backLink %}<a href="{{ url_for('personalDetails.index') }}" class="govuk-back-link">Back</a>{% endblock %}
+{% import "govuk-design-system-templates/error-summary.html" as error_summary %}
+{% import "govuk-design-system-templates/radios.html" as radios %}
+
+{% block backLink %}
+    <a href="{{ url_for('personalDetails.affirmedGender') }}" class="govuk-back-link">Back</a>
+{% endblock %}
 
 {% block content %}
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
-    {% if form.errors %}
-    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
-      <h2 id="error-summary-title" class="govuk-error-summary__title">There is a problem</h2>
-      <div class="govuk-error-summary__body">
-        <ul class="govuk-list govuk-error-summary__list">
-          {% for error in form.errors %}
-            {% for e in form[error].errors %}
-            <li><a href="#{{ error }}-issued-error">{{ e }}</a></li>
-            {% endfor %}
-          {% endfor %}
-        </ul>
-      </div>
-    </div>
-    {% endif %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
 
-    <h1 class="govuk-heading-l">If you have ever changed your name to reflect your gender</h1>
-    <p class="govuk-body">You will need to send us documents that show this. If you have changed your name more than once, we will need to see documents for each instance.</p>
-    <p class="govuk-body">We ask for this so we can match your birth records after you receive a Gender Recognition Certificate.</p>
-    <p class="govuk-body govuk-!-margin-bottom-2">These documents are likely to be:</p>
-    <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-8">
-      <li>deed poll documents, either enrolled or unenrolled</li>
-      <li>change of name documents (Scotland)</li>
-      <li>statutory declarations</li>
-    </ul>
+            {{ error_summary.renderFor(form) }}
 
-    <form method="POST" action="{{ url_for('personalDetails.previousNamesCheck') }}">
-      {{ form.csrf_token }}
-
-      <div class="govuk-form-group {{ 'govuk-form-group--error' if form.check.errors }}">
-        <fieldset class="govuk-fieldset">
-          <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
-            <h1 class="govuk-fieldset__heading">
-              Have you ever changed your name to reflect your gender?
+            <h1 class="govuk-heading-l">
+                If you have ever changed your name to reflect your gender
             </h1>
-          </legend>
-          {% if form.check.errors %}
-          <p id="check-issued-error" class="govuk-error-message">
-            <span class="govuk-visually-hidden">Error:</span> Select if you have ever changed your name
-          </p>
-          {% endif %}
-          <div class="govuk-radios" data-module="govuk-radios">
-            <div class="govuk-radios__item">
-              <input type="radio" id="check" name="check" value="Yes" {{ 'checked' if session['application']['personalDetails']['previousNamesCheck'] == "Yes" }} class="govuk-radios__input">
-              <label for="check" class="govuk-label govuk-radios__label">Yes</label>
-            </div>
-            <div class="govuk-radios__item">
-              <input type="radio" id="check-2" name="check" value="No" {{ 'checked' if session['application']['personalDetails']['previousNamesCheck'] == "No" }} class="govuk-radios__input">
-              <label for="check-2" class="govuk-label govuk-radios__label">No</label>
-            </div>
-          </div>
-        </fieldset>
-      </div>
+            <p class="govuk-body">
+                You will need to send us documents that show this.
+                If you have changed your name more than once, we will need to see documents for each instance.
+            </p>
+            <p class="govuk-body">
+                We ask for this so we can match your birth records after you receive a Gender Recognition Certificate.
+            </p>
+            <p class="govuk-body govuk-!-margin-bottom-2">
+                These documents are likely to be:
+            </p>
+            <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-8">
+                <li>deed poll documents, either enrolled or unenrolled</li>
+                <li>change of name documents (Scotland)</li>
+                <li>statutory declarations</li>
+            </ul>
 
-      <div class="govuk-button-group">
-        <button class="govuk-button" data-module="govuk-button">
-          Save and continue
-        </button>
-        <a href="{{ url_for('taskList.index') }}" class="govuk-link govuk-link--no-visited-state">Return to task list</a>
-      </div>
-    </form>
-  </div>
-</div>
+            <form method="POST" action="{{ url_for('personalDetails.previousNamesCheck') }}">
+                {{ form.csrf_token }}
+
+                {{ radios.renderFor(
+                    form,
+                    fieldName='previousNameCheck',
+                    question="Have you ever changed your name to reflect your gender?",
+                    radiosOptions={
+                        'questionClasses': 'govuk-fieldset__legend--m'
+                    }
+                ) }}
+
+                <div class="govuk-button-group">
+                    <button class="govuk-button" data-module="govuk-button">
+                        Save and continue
+                    </button>
+                    <a href="{{ url_for('taskList.index') }}" class="govuk-link govuk-link--no-visited-state">
+                        Return to task list
+                    </a>
+                </div>
+            </form>
+
+        </div>
+    </div>
 {% endblock %}

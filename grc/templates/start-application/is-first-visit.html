@@ -1,4 +1,7 @@
 {% extends 'base.html' %}
+{% import "govuk-design-system-templates/error-summary.html" as error_summary %}
+{% import "govuk-design-system-templates/radios.html" as radios %}
+{% import "govuk-design-system-templates/text-input.html" as textInput %}
 
 {% block backLink %}
     <a href="{{ url_for('startApplication.index') }}"
@@ -8,40 +11,36 @@
 {% endblock %}
 
 {% block content %}
-    {% import "govuk-design-system-templates/error-summary.html" as error_summary %}
-    {% import "govuk-design-system-templates/radios.html" as radios %}
-    {% import "govuk-design-system-templates/text-input.html" as textInput %}
-
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
+
             {{ error_summary.renderFor(form) }}
 
             <form method="POST" action="{{ url_for('startApplication.isFirstVisit') }}">
                 {{ form.csrf_token }}
 
+                {% macro lostReferenceHtmlBlock() %}
+                    <p class="govuk-hint">
+                        You will need to start a new application
+                    </p>
+                {% endmacro %}
                 {{ radios.renderFor(
                     form,
                     fieldName='isFirstVisit',
                     question="Have you already started an application?",
                     radiosOptions={
-                        'errorMessageOptions': {
-                            'classes': 'govuk-!-margin-top-0'
-                        },
+                        'questionIsPageHeading': true,
                         'conditionalOptions': [
                             ('HAS_REFERENCE',
                             textInput.renderFor(
                                 form,
                                 fieldName='reference',
                                 textInputForOptions={
-                                    'labelOptions':{
-                                        'htmlOrText': 'Reference number'
-                                    },
-                                    'errorMessageOptions': {
-                                        'classes': 'govuk-!-margin-top-0'
-                                    },
+                                    'labelOptions':{ 'htmlOrText': 'Reference number' },
                                     'classes': 'govuk-input--width-10'
                                 }
-                            ))
+                            )),
+                            ('LOST_REFERENCE', lostReferenceHtmlBlock())
                         ]
                     }
                 ) }}

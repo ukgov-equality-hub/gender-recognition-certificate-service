@@ -1,6 +1,6 @@
 from flask import Blueprint, redirect, render_template, request, url_for, session
 from grc.models import ListStatus
-from grc.birth_registration.forms import  NameForm, SexForm, DobForm, UkCheckForm, CountryForm, PlaceOfBirthForm, MothersNameForm, FatherNameCheckForm, AdoptedForm, AdoptedUKForm, ForcesForm, CheckYourAnswers
+from grc.birth_registration.forms import  NameForm, DobForm, UkCheckForm, CountryForm, PlaceOfBirthForm, MothersNameForm, FatherNameCheckForm, AdoptedForm, AdoptedUKForm, ForcesForm, CheckYourAnswers
 from grc.utils.decorators import LoginRequired
 from grc.utils.application_progress import save_progress
 
@@ -18,7 +18,7 @@ def index():
 
         if ListStatus[session['application']['birthRegistration']['progress']] == ListStatus.NOT_STARTED:
             session['application']['birthRegistration']['progress'] = ListStatus.IN_PROGRESS.name
-            session['application']['birthRegistration']['step'] = 'birthRegistration.sexCheck'
+            session['application']['birthRegistration']['step'] = 'birthRegistration.dob'
 
         session['application'] = save_progress()
 
@@ -36,27 +36,6 @@ def index():
 
     return render_template(
         'birth-registration/name.html',
-        form=form
-    )
-
-
-@birthRegistration.route('/birth-registration/sex', methods=['GET', 'POST'])
-@LoginRequired
-def sexCheck():
-    form = SexForm()
-
-    if form.validate_on_submit():
-        session['application']['birthRegistration']['sex'] = form.check.data
-
-        if ListStatus[session['application']['birthRegistration']['progress']] == ListStatus.IN_PROGRESS:
-            session['application']['birthRegistration']['step'] = 'birthRegistration.dob'
-
-        session['application'] = save_progress()
-
-        return redirect(url_for(session['application']['birthRegistration']['step']))
-
-    return render_template(
-        'birth-registration/sex.html',
         form=form
     )
 

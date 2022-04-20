@@ -11,15 +11,10 @@ taskList = Blueprint('taskList', __name__)
 def index():
     list_status = calculate_progress_status()
 
-    if session['application']['submitAndPay']['progress'] == ListStatus.CANNOT_START_YET.name:
-        can_submit = False
-    else:
-        can_submit = True
-
     return render_template(
         'task-list.html',
         application=session['application'],
         list_status=list_status,
         get_colour=calculate_progress_status_colour,
-        can_submit=can_submit
+        ListStatus=ListStatus
     )

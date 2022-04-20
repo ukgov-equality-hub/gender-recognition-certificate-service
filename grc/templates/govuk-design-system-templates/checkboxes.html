@@ -1,42 +1,42 @@
 {% import "govuk-design-system-templates/error-message.html" as errorMessage %}
 {% import "govuk-design-system-templates/hint.html" as hint %}
 
-{% macro renderFor(form, fieldName, question, radiosOptions) %}
+{% macro renderFor(form, fieldName, question, checkboxesOptions) %}
 
     <div class="govuk-form-group {{ 'govuk-form-group--error' if form[fieldName].errors }}">
         <fieldset class="govuk-fieldset">
-            {% if radiosOptions.questionIsPageHeading %}
+            {% if checkboxesOptions.questionIsPageHeading %}
                 <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
                     <h1 class="govuk-fieldset__heading">
                         {{ question }}
                     </h1>
                 </legend>
             {% else %}
-                <legend class="govuk-fieldset__legend {{ radiosOptions.questionClasses }}">
+                <legend class="govuk-fieldset__legend {{ checkboxesOptions.questionClasses }}">
                     {{ question }}
                 </legend>
             {% endif %}
 
-            {{ hint.render(radiosOptions.hintOptions) }}
+            {{ hint.render(checkboxesOptions.hintOptions) }}
 
-            {{ errorMessage.renderFor(fieldName, form[fieldName].errors, radiosOptions.errorMessageOptions) }}
+            {{ errorMessage.renderFor(fieldName, form[fieldName].errors, checkboxesOptions.errorMessageOptions) }}
 
-            <div class="govuk-radios" data-module="govuk-radios">
+            <div class="govuk-checkboxes" data-module="govuk-checkboxes">
                 {% for choiceId, choiceLabel in form[fieldName].choices %}
                     {% set index = form[fieldName].choices.index((choiceId, choiceLabel)) %}
-                    <div class="govuk-radios__item">
-                        <input id="{{ fieldName }}-{{ index }}" type="radio" name="{{ fieldName }}"
-                               value="{{ choiceId }}" class="govuk-radios__input" {{ 'checked' if form[fieldName].data == choiceId }}
+                    <div class="govuk-checkboxes__item">
+                        <input id="{{ fieldName }}-{{ index }}" type="checkbox" name="{{ fieldName }}"
+                               value="{{ choiceId }}" class="govuk-checkboxes__input" {{ 'checked' if form[fieldName].data is iterable and choiceId in form[fieldName].data }}
                                data-aria-controls="conditional-{{ fieldName }}-{{ index }}">
-                        <label for="{{ fieldName }}-{{ index }}" class="govuk-label govuk-radios__label">
+                        <label for="{{ fieldName }}-{{ index }}" class="govuk-label govuk-checkboxes__label">
                             {{ choiceLabel }}
                         </label>
                     </div>
 
-                    {% if radiosOptions.conditionalOptions %}
-                        {% for optionChoiceId, conditionalHtml in radiosOptions.conditionalOptions %}
+                    {% if checkboxesOptions.conditionalOptions %}
+                        {% for optionChoiceId, conditionalHtml in checkboxesOptions.conditionalOptions %}
                             {%  if optionChoiceId == choiceId %}
-                                <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-{{ fieldName }}-{{ index }}">
+                                <div class="govuk-checkboxes__conditional govuk-checkboxes__conditional--hidden" id="conditional-{{ fieldName }}-{{ index }}">
                                     {{ conditionalHtml }}
                                 </div>
                             {%  endif %}
