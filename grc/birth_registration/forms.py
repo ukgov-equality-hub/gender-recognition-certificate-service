@@ -1,23 +1,17 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, RadioField, IntegerField
 from wtforms.validators import DataRequired, NumberRange
-from datetime import datetime
-from dateutil.relativedelta import relativedelta
-from grc.utils.form_custom_validators import StrictRequiredIf, validateAdopted, validateDOB
+from grc.utils.form_custom_validators import StrictRequiredIf, validateDOB
 
 
 class NameForm(FlaskForm):
     first_name = StringField(
-        'first_name',
-        validators=[DataRequired(message='First name is required')]
+        validators=[DataRequired(message='Enter your first name, as originally registered on your birth or adoption certificate')]
     )
 
     last_name = StringField(
-        'last_name',
-        validators=[DataRequired(message='Last name is required')]
+        validators=[DataRequired(message='Enter your last name, as originally registered on your birth or adoption certificate')]
     )
-
-    submit = SubmitField('Save and continue')
 
 
 class SexForm(FlaskForm):
