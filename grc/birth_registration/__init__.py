@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import Blueprint, redirect, render_template, request, url_for, session
 from grc.models import ListStatus
 from grc.birth_registration.forms import  NameForm, DobForm, UkCheckForm, CountryForm, PlaceOfBirthForm, MothersNameForm, FatherNameCheckForm, FathersNameForm, AdoptedForm, AdoptedUKForm, ForcesForm, CheckYourAnswers
@@ -388,5 +389,6 @@ def checkYourAnswers():
 
     return render_template(
         'birth-registration/check-your-answers.html',
-        form=form
+        form=form,
+        strptime=datetime.strptime
     )
