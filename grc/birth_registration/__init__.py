@@ -86,9 +86,9 @@ def ukCheck():
     form = UkCheckForm()
 
     if form.validate_on_submit():
-        session['application']['birthRegistration']['ukCheck'] = form.check.data
+        session['application']['birthRegistration']['ukCheck'] = form.birth_registered_in_uk.data
 
-        if form.check.data == 'Yes':
+        if form.birth_registered_in_uk.data == 'Yes':
             session['application']['birthRegistration']['step'] = 'birthRegistration.placeOfBirth'
         else:
             session['application']['birthRegistration']['step'] = 'birthRegistration.country'
@@ -96,6 +96,13 @@ def ukCheck():
         session['application'] = save_progress()
 
         return redirect(url_for(session['application']['birthRegistration']['step']))
+
+    else:
+        form.birth_registered_in_uk.data = (
+            session['application']['birthRegistration']['ukCheck']
+            if 'ukCheck' in session['application']['birthRegistration']
+            else None
+        )
 
     return render_template(
         'birth-registration/uk-check.html',

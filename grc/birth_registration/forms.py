@@ -41,13 +41,13 @@ class DobForm(FlaskForm):
 
 
 class UkCheckForm(FlaskForm):
-    check = RadioField(
-        'check',
-        choices=[('Yes'), ('No')],
+    birth_registered_in_uk = RadioField(
+        choices=[
+            ('Yes', 'Yes'),
+            ('No', 'No')
+        ],
         validators=[DataRequired(message='Select if your birth was registered in the UK')]
     )
-
-    submit = SubmitField('Save and continue')
 
 
 class CountryForm(FlaskForm):
