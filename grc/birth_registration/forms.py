@@ -121,8 +121,7 @@ class ForcesForm(FlaskForm):
     forces = RadioField(
         choices=[
             ('Yes', 'Yes'),
-            ('No', 'No'),
-            ('I don’t know', 'I don’t know')
+            ('No', 'No')
         ],
         validators=[DataRequired(message='Select if your birth was registered by a Forces registering service, or with a British Consul or High Commission, or under Merchant Shipping or Civil Aviation provisions')]
     )
