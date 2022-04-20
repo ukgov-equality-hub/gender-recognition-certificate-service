@@ -1,85 +1,99 @@
 {% extends 'base.html' %}
-{% block backLink %}<a href="{{ url_for('birthRegistration.index') }}" class="govuk-back-link">Back</a>{% endblock %}
+
+{% block backLink %}
+    <a href="{{ url_for('birthRegistration.index') }}" class="govuk-back-link">Back</a>
+{% endblock %}
 
 {% block content %}
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
-    {% if form.errors %}
-    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
-      <h2 id="error-summary-title" class="govuk-error-summary__title">
-        There is a problem
-      </h2>
-      <div class="govuk-error-summary__body">
-        <ul class="govuk-list govuk-error-summary__list">
-          {% for error in form.errors %}
-            {% for e in form[error].errors %}
-            <li><a href="#{{ error }}">{{ e }}</a></li>
-            {% endfor %}
-          {% endfor %}
-        </ul>
-      </div>
+    {% import "govuk-design-system-templates/error-summary.html" as error_summary %}
+    {% import "govuk-design-system-templates/text-input.html" as textInput %}
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            {{ error_summary.renderFor(form) }}
+
+            <form method="POST" action="{{ url_for('birthRegistration.dob') }}">
+                {{ form.csrf_token }}
+
+                <div class="govuk-form-group {{ 'govuk-form-group--error' if form.errors }}">
+                    <fieldset class="govuk-fieldset" role="group" aria-describedby="adoption-certificate-dob-hint">
+                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                            <h1 class="govuk-fieldset__heading">
+                                What is the date of birth on your birth or adoption certificate?
+                            </h1>
+                        </legend>
+
+                        <div id="adoption-certificate-dob-hint" class="govuk-hint">
+                            For example, 27 3 2007
+                        </div>
+
+                        {% if form.errors %}
+                            <p id="adoption-certificate-dob-error" class="govuk-error-message">
+                                {% for error in form.errors %}
+                                    <span id="{{ error }}-error">
+                                        {% for e in form[error].errors %}
+                                            <span class="govuk-visually-hidden">Error:</span> {{ e }}<br>
+                                        {% endfor %}
+                                    </span>
+                                {% endfor %}
+                            </p>
+                        {% endif %}
+
+                        <div id="adoption-certificate-dob" class="govuk-date-input">
+                            <div class="govuk-date-input__item">
+                                <div class="govuk-form-group">
+                                    <label for="day" class="govuk-label govuk-date-input__label">
+                                        Day
+                                    </label>
+                                    <input type="text"
+                                           id="day" name="day"
+                                           value="{{ form.day.data if form.day.data is not none }}"
+                                           pattern="[0-9]*"
+                                           inputmode="numeric"
+                                           class="govuk-input govuk-date-input__input govuk-input--width-2  {{ 'govuk-input--error' if form.day.errors }}">
+                                </div>
+                            </div>
+                            <div class="govuk-date-input__item">
+                                <div class="govuk-form-group">
+                                    <label for="month" class="govuk-label govuk-date-input__label">
+                                        Month
+                                    </label>
+                                    <input type="text"
+                                           id="month" name="month"
+                                           value="{{ form.month.data if form.month.data is not none }}"
+                                           pattern="[0-9]*"
+                                           inputmode="numeric"
+                                           class="govuk-input govuk-date-input__input govuk-input--width-2  {{ 'govuk-input--error' if form.month.errors }}">
+                                </div>
+                            </div>
+                            <div class="govuk-date-input__item">
+                                <div class="govuk-form-group">
+                                    <label for="year" class="govuk-label govuk-date-input__label">
+                                        Year
+                                    </label>
+                                    <input type="text"
+                                           id="year" name="year"
+                                           value="{{ form.year.data if form.year.data is not none }}"
+                                           pattern="[0-9]*"
+                                           inputmode="numeric"
+                                           class="govuk-input govuk-date-input__input govuk-input--width-4  {{ 'govuk-input--error' if form.year.errors }}">
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <div class="govuk-button-group">
+                    <button class="govuk-button" data-module="govuk-button">
+                        Save and continue
+                    </button>
+                    <a href="{{ url_for('taskList.index') }}" class="govuk-link govuk-link--no-visited-state">
+                        Return to task list
+                    </a>
+                </div>
+            </form>
+
+        </div>
     </div>
-    {% endif %}
-
-    <form method="POST" action="{{ url_for('birthRegistration.dob') }}">
-      {{ form.csrf_token }}
-
-      <div class="govuk-form-group {{ 'govuk-form-group--error' if form.errors }}">
-        <fieldset class="govuk-fieldset" role="group" aria-describedby="adoption-certificate-dob-hint">
-          <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-            <h1 class="govuk-fieldset__heading">
-              What is the date of birth on your birth or adoption certificate?
-            </h1>
-          </legend>
-          <div id="adoption-certificate-dob-hint" class="govuk-hint">
-            For example, 27 3 2007
-          </div>
-          {% if form.errors %}
-          <p id="adoption-certificate-dob-error" class="govuk-error-message">
-            <!-- <span class="govuk-visually-hidden">Error:</span> The date of birth on your adoption certificate must be in the past -->
-            {% for error in form.errors %}
-              {% for e in form[error].errors %}
-              <span class="govuk-visually-hidden">Error:</span> {{ e }}<br>
-              {% endfor %}
-            {% endfor %}
-          </p>
-          {% endif %}
-          <div id="adoption-certificate-dob" class="govuk-date-input">
-            <div class="govuk-date-input__item">
-              <div class="govuk-form-group">
-                <label for="day" class="govuk-label govuk-date-input__label">
-                  Day
-                </label>
-                <input id="day" type="text" name="day" value="{{ form.day.data if form.day.data is not none }}" pattern="[0-9]*" inputmode="numeric" class="govuk-input govuk-date-input__input govuk-input--width-2  {{ 'govuk-input--error' if form.day.errors or form.year.errors[0] == 'You have entered a invalid date' or form.year.errors[0] == 'You need to be 18 years old to apply' }}">
-              </div>
-            </div>
-            <div class="govuk-date-input__item">
-              <div class="govuk-form-group">
-                <label for="month" class="govuk-label govuk-date-input__label">
-                  Month
-                </label>
-                <input id="month" type="text" name="month" value="{{ form.month.data if form.month.data is not none }}" pattern="[0-9]*" inputmode="numeric" class="govuk-input govuk-date-input__input govuk-input--width-2  {{ 'govuk-input--error' if form.month.errors or form.year.errors[0] == 'You have entered a invalid date' or form.year.errors[0] == 'You need to be 18 years old to apply' }}">
-              </div>
-            </div>
-            <div class="govuk-date-input__item">
-              <div class="govuk-form-group">
-                <label for="year" class="govuk-label govuk-date-input__label">
-                  Year
-                </label>
-                <input id="year" type="text" name="year" value="{{ form.year.data if form.year.data is not none }}" pattern="[0-9]*" inputmode="numeric" class="govuk-input govuk-date-input__input govuk-input--width-4  {{ 'govuk-input--error' if form.year.errors }}">
-              </div>
-            </div>
-          </div>
-        </fieldset>
-      </div>
-
-      <div class="govuk-button-group">
-        <button class="govuk-button" data-module="govuk-button">
-          Save and continue
-        </button>
-        <a href="{{ url_for('taskList.index') }}" class="govuk-link govuk-link--no-visited-state">Return to task list</a>
-      </div>
-    </form>
-  </div>
-</div>
 {% endblock %}

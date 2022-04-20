@@ -115,7 +115,7 @@ def validateDOB(form, field):
             dt = datetime(y, m, d, 00, 00)
         except Exception as e:
             if field.name == 'year':
-                raise ValidationError('You have entered a invalid date')
+                raise ValidationError('Enter a valid year')
             return
 
         def age(dt):
