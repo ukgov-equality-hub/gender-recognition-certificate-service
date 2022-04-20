@@ -1,54 +1,45 @@
 {% extends 'base.html' %}
-{% block backLink %}<a href="{{ url_for('birthRegistration.ukCheck') }}" class="govuk-back-link">Back</a>{% endblock %}
+
+{% block backLink %}
+    <a href="{{ url_for('birthRegistration.ukCheck') }}" class="govuk-back-link">Back</a>
+{% endblock %}
 
 {% block content %}
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
-    {% if form.errors %}
-    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
-      <h2 id="error-summary-title" class="govuk-error-summary__title">
-        There is a problem
-      </h2>
-      <div class="govuk-error-summary__body">
-        <ul class="govuk-list govuk-error-summary__list">
-          {% for error in form.errors %}
-            {% for e in form[error].errors %}
-            <li><a href="#{{ error }}">{{ e }}</a></li>
-            {% endfor %}
-          {% endfor %}
-        </ul>
-      </div>
+    {% import "govuk-design-system-templates/error-summary.html" as error_summary %}
+    {% import "govuk-design-system-templates/text-input.html" as textInput %}
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            {{ error_summary.renderFor(form) }}
+
+            <form method="POST" action="{{ url_for('birthRegistration.placeOfBirth') }}">
+                {{ form.csrf_token }}
+
+                {{ textInput.renderFor(
+                    form,
+                    fieldName='place_of_birth',
+                    textInputForOptions={
+                        'labelOptions':{
+                            'htmlOrText': 'What is the town or city of birth on your birth or adoption certificate?',
+                            'isPageHeading': true,
+                            'classes': 'govuk-label--l'
+                        },
+                        'classes': 'govuk-!-width-three-quarters',
+                        'autocomplete': 'off'
+                    }
+                ) }}
+
+                <div class="govuk-button-group">
+                    <button class="govuk-button" data-module="govuk-button">
+                        Save and continue
+                    </button>
+                    <a href="{{ url_for('taskList.index') }}" class="govuk-link govuk-link--no-visited-state">
+                        Return to task list
+                    </a>
+                </div>
+            </form>
+
+        </div>
     </div>
-    {% endif %}
-
-    <form method="POST" action="{{ url_for('birthRegistration.placeOfBirth') }}">
-      {{ form.csrf_token }}
-
-      <div class="govuk-form-group {{ 'govuk-form-group--error' if form.errors }}">
-        <fieldset class="govuk-fieldset">
-          <div class="govuk-form-group">
-            <h1 class="govuk-label-wrapper">
-              <label for="place_of_birth" class="govuk-label govuk-label--l">
-                What is the place of birth on your birth or adoption certificate?
-              </label>
-            </h1>
-            {% if form.place_of_birth.errors %}
-            <p id="place_of_birth-issued-error" class="govuk-error-message">
-              <span class="govuk-visually-hidden">Error:</span> Place of birth is required
-            </p>
-            {% endif %}
-            <input id="place_of_birth" type="text" name="place_of_birth" value="{{ form.place_of_birth.data if form.place_of_birth.data is not none }}" autocomplete="off" class="govuk-input govuk-!-width-three-quarters {{ 'govuk-input--error' if form.place_of_birth.errors }}">
-          </div>
-        </fieldset>
-      </div>
-
-      <div class="govuk-button-group">
-        <button class="govuk-button" data-module="govuk-button">
-          Save and continue
-        </button>
-        <a href="{{ url_for('taskList.index') }}" class="govuk-link govuk-link--no-visited-state">Return to task list</a>
-      </div>
-    </form>
-  </div>
-</div>
 {% endblock %}

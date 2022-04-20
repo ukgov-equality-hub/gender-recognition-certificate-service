@@ -61,11 +61,8 @@ class CountryForm(FlaskForm):
 
 class PlaceOfBirthForm(FlaskForm):
     place_of_birth = StringField(
-        'place_of_birth',
-        validators=[DataRequired(message='Place of birth is required')]
+        validators=[DataRequired(message='Enter your town or city of birth')]
     )
-
-    submit = SubmitField('Save and continue')
 
 
 class MothersNameForm(FlaskForm):
