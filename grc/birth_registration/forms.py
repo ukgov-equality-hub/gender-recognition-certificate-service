@@ -118,13 +118,14 @@ class AdoptedUKForm(FlaskForm):
 
 
 class ForcesForm(FlaskForm):
-    check = RadioField(
-        'check',
-        choices=[('Yes'), ('No'), ('I don’t know')],
-        validators=[DataRequired(message='Select if your was birth registered by a Forces registering service, or with a British Consul or High Commission, or under Merchant Shipping or Civil Aviation provisions')]
+    forces = RadioField(
+        choices=[
+            ('Yes', 'Yes'),
+            ('No', 'No'),
+            ('I don’t know', 'I don’t know')
+        ],
+        validators=[DataRequired(message='Select if your birth was registered by a Forces registering service, or with a British Consul or High Commission, or under Merchant Shipping or Civil Aviation provisions')]
     )
-
-    submit = SubmitField('Save and continue')
 
 
 class CheckYourAnswers(FlaskForm):

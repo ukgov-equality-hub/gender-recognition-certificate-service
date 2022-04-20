@@ -345,12 +345,19 @@ def forces():
     form = ForcesForm()
 
     if form.validate_on_submit():
-        session['application']['birthRegistration']['forces'] = form.check.data
+        session['application']['birthRegistration']['forces'] = form.forces.data
         session['application']['birthRegistration']['progress'] = ListStatus.IN_REVIEW.name
         session['application']['birthRegistration']['step'] = 'birthRegistration.checkYourAnswers'
         session['application'] = save_progress()
 
         return redirect(url_for(session['application']['birthRegistration']['step']))
+
+    if request.method == 'GET':
+        form.forces.data = (
+            session['application']['birthRegistration']['forces']
+            if 'forces' in session['application']['birthRegistration']
+            else None
+        )
 
     return render_template(
         'birth-registration/forces.html',
