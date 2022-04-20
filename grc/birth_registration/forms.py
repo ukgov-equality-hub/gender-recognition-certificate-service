@@ -14,16 +14,6 @@ class NameForm(FlaskForm):
     )
 
 
-class SexForm(FlaskForm):
-    check = RadioField(
-        'check',
-        choices=[('Female'), ('Male')],
-        validators=[DataRequired(message='Select a sex')]
-    )
-
-    submit = SubmitField('Save and continue')
-
-
 class DobForm(FlaskForm):
     day = IntegerField(
         'day',
