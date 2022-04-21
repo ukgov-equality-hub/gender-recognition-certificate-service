@@ -101,7 +101,11 @@ def checkYourAnswers():
             headers['Authorization'] = 'Bearer ' + current_app.config['GOVUK_PAY_API_KEY']
 
             try:
-                r = requests.post(current_app.config['GOVUK_PAY_API']+'v1/payments', headers=headers, json=data)
+                r = requests.post(
+                    current_app.config['GOVUK_PAY_API'] + 'v1/payments',
+                    headers=headers,
+                    json=data
+                )
                 res = json.loads(r.text)
 
                 session['application']['submitAndPay']['payment_id'] = res['payment_id']
@@ -130,7 +134,10 @@ def paymentConfirmation(id):
         headers['Authorization'] = 'Bearer ' + current_app.config['GOVUK_PAY_API_KEY']
 
         try:
-            r = requests.get(current_app.config['GOVUK_PAY_API']+'v1/payments/' + session['application']['submitAndPay']['payment_id'], headers=headers)
+            r = requests.get(
+                current_app.config['GOVUK_PAY_API'] + 'v1/payments/' + session['application']['submitAndPay']['payment_id'],
+                headers=headers
+            )
             res = json.loads(r.text)
             if res['state']['status'] == 'success' and res['state']['finished'] == True:
                 session['application']['submitAndPay']['progress'] = ListStatus.COMPLETED.name
