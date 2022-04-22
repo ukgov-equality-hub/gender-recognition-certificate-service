@@ -4,13 +4,14 @@ from wtforms.validators import DataRequired
 
 
 class MarriageCivilPartnershipForm(FlaskForm):
-    check = RadioField(
-        'check',
-        choices=[('Married'), ('Civil partnership'), ('Neither')],
+    currently_married = RadioField(
+        choices=[
+            ('Married', 'Married'),
+            ('Civil partnership', 'Civil partnership'),
+            ('Neither', 'Neither')
+        ],
         validators=[DataRequired(message='Select if you are currently married or in a civil partnership')]
     )
-
-    submit = SubmitField('Save and continue')
 
 
 class StayTogetherForm(FlaskForm):

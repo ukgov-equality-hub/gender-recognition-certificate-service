@@ -13,9 +13,9 @@ def index():
     form = MarriageCivilPartnershipForm()
 
     if form.validate_on_submit():
-        session['application']['partnershipDetails']['marriageCivilPartnership'] = form.check.data
+        session['application']['partnershipDetails']['marriageCivilPartnership'] = form.currently_married.data
 
-        if form.check.data == 'Neither':
+        if form.currently_married.data == 'Neither':
             session['application']['partnershipDetails']['step'] = 'partnershipDetails.partnerDied'
         else:
             session['application']['partnershipDetails']['step'] = 'partnershipDetails.stayTogether'
@@ -23,6 +23,13 @@ def index():
         session['application'] = save_progress()
 
         return redirect(url_for(session['application']['partnershipDetails']['step']))
+
+    if request.method == 'GET':
+        form.currently_married.data = (
+            session['application']['partnershipDetails']['marriageCivilPartnership']
+            if 'marriageCivilPartnership' in session['application']['partnershipDetails']
+            else None
+        )
 
     return render_template(
         'partnership-details/current-check.html',
