@@ -86,6 +86,16 @@ class FatherNameCheckForm(FlaskForm):
     )
 
 
+class FathersNameForm(FlaskForm):
+    first_name = StringField(
+        validators=[DataRequired(message="Enter your father's first name")]
+    )
+
+    last_name = StringField(
+        validators=[DataRequired(message="Enter your father's last name")]
+    )
+
+
 class AdoptedForm(FlaskForm):
     check = RadioField(
         'check',

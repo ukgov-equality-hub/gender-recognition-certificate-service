@@ -1,6 +1,6 @@
 from flask import Blueprint, redirect, render_template, request, url_for, session
 from grc.models import ListStatus
-from grc.birth_registration.forms import  NameForm, DobForm, UkCheckForm, CountryForm, PlaceOfBirthForm, MothersNameForm, FatherNameCheckForm, AdoptedForm, AdoptedUKForm, ForcesForm, CheckYourAnswers
+from grc.birth_registration.forms import  NameForm, DobForm, UkCheckForm, CountryForm, PlaceOfBirthForm, MothersNameForm, FatherNameCheckForm, FathersNameForm, AdoptedForm, AdoptedUKForm, ForcesForm, CheckYourAnswers
 from grc.utils.decorators import LoginRequired
 from grc.utils.application_progress import save_progress
 
@@ -237,7 +237,7 @@ def fathersNameCheck():
 @birthRegistration.route('/birth-registration/fathers-name', methods=['GET', 'POST'])
 @LoginRequired
 def fathersName():
-    form = NameForm()
+    form = FathersNameForm()
 
     if form.validate_on_submit():
         session['application']['birthRegistration']['fathers_first_name'] = form.first_name.data
