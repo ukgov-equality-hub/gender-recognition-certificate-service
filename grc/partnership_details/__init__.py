@@ -43,9 +43,9 @@ def stayTogether():
     form = StayTogetherForm()
 
     if form.validate_on_submit():
-        session['application']['partnershipDetails']['stayTogether'] = form.check.data
+        session['application']['partnershipDetails']['stayTogether'] = form.stay_together.data
 
-        if form.check.data == 'Yes':
+        if form.stay_together.data == 'Yes':
             session['application']['partnershipDetails']['step'] = 'partnershipDetails.partnerAgrees'
         else:
             session['application']['partnershipDetails']['step'] = 'partnershipDetails.interimCheck'
@@ -53,6 +53,13 @@ def stayTogether():
         session['application'] = save_progress()
 
         return redirect(url_for(session['application']['partnershipDetails']['step']))
+
+    if request.method == 'GET':
+        form.stay_together.data = (
+            session['application']['partnershipDetails']['stayTogether']
+            if 'stayTogether' in session['application']['partnershipDetails']
+            else None
+        )
 
     return render_template(
         'partnership-details/stay-together.html',

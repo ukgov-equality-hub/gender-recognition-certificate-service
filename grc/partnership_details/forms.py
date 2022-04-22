@@ -15,13 +15,13 @@ class MarriageCivilPartnershipForm(FlaskForm):
 
 
 class StayTogetherForm(FlaskForm):
-    check = RadioField(
-        'check',
-        choices=[('Yes'), ('No')],
-        validators=[DataRequired(message='Select if you you plan to remain married after receiving your Gender Recognition Certificate')]
+    stay_together = RadioField(
+        choices=[
+            ('Yes', 'Yes'),
+            ('No', 'No')
+        ],
+        validators=[DataRequired(message='Select if you plan to remain married after receiving your Gender Recognition Certificate')]
     )
-
-    submit = SubmitField('Save and continue')
 
 
 class PartnerAgreesForm(FlaskForm):
