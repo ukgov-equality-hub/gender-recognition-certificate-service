@@ -61,7 +61,10 @@ def affirmedGender():
         return redirect(url_for(session['application']['personalDetails']['step']))
 
     if request.method == 'GET':
-        form.affirmedGender.data = session['application']['personalDetails']['affirmed_gender'] if 'affirmed_gender' in session['application']['personalDetails'] else None
+        form.affirmedGender.data = (
+            session['application']['personalDetails']['affirmed_gender']
+            if 'affirmed_gender' in session['application']['personalDetails'] else None
+        )
 
     return render_template(
         'personal-details/affirmed-gender.html',
@@ -85,7 +88,10 @@ def previousNamesCheck():
         return redirect(url_for(session['application']['personalDetails']['step']))
 
     if request.method == 'GET':
-        form.previousNameCheck.data = session['application']['personalDetails']['previousNamesCheck'] if 'previousNamesCheck' in session['application']['personalDetails'] else None
+        form.previousNameCheck.data = (
+            session['application']['personalDetails']['previousNamesCheck']
+            if 'previousNamesCheck' in session['application']['personalDetails'] else None
+        )
 
     return render_template(
         'personal-details/previous-names-check.html',
@@ -115,10 +121,22 @@ def address():
         return redirect(url_for(session['application']['personalDetails']['step']))
 
     if request.method == 'GET'  and 'address' in session['application']['personalDetails']:
-        form.address_line_one.data = session['application']['personalDetails']['address']['address_line_one'] if 'address_line_one' in session['application']['personalDetails']['address'] else None
-        form.address_line_two.data = session['application']['personalDetails']['address']['address_line_two'] if 'address_line_two' in session['application']['personalDetails']['address'] else None
-        form.town.data = session['application']['personalDetails']['address']['town'] if 'town' in session['application']['personalDetails']['address'] else None
-        form.postcode.data = session['application']['personalDetails']['address']['postcode'] if 'postcode' in session['application']['personalDetails']['address'] else None
+        form.address_line_one.data = (
+            session['application']['personalDetails']['address']['address_line_one']
+            if 'address_line_one' in session['application']['personalDetails']['address'] else None
+        )
+        form.address_line_two.data = (
+            session['application']['personalDetails']['address']['address_line_two']
+            if 'address_line_two' in session['application']['personalDetails']['address'] else None
+        )
+        form.town.data = (
+            session['application']['personalDetails']['address']['town']
+            if 'town' in session['application']['personalDetails']['address'] else None
+        )
+        form.postcode.data = (
+            session['application']['personalDetails']['address']['postcode']
+            if 'postcode' in session['application']['personalDetails']['address'] else None
+        )
 
     return render_template(
         'personal-details/address.html',
@@ -178,8 +196,15 @@ def contactPreferences():
         if session['application']['personalDetails']['contactPreferences']['post']:
             form.contact_options.data.append('POST')
 
-        form.email.data = session['application']['personalDetails']['contactPreferences']['email']
-        form.phone.data = session['application']['personalDetails']['contactPreferences']['phone']
+        form.email.data = (
+            session['application']['personalDetails']['contactPreferences']['email']
+            if 'email' in session['application']['personalDetails']['contactPreferences'] else None
+        )
+        form.phone.data = (
+            session['application']['personalDetails']['contactPreferences']['phone']
+            if 'phone' in session['application']['personalDetails']['contactPreferences'] else None
+        )
+
 
     return render_template(
         'personal-details/contact-preferences.html',
@@ -218,8 +243,14 @@ def contactDates():
             return redirect(url_for(session['application']['personalDetails']['step']))
 
     if request.method == 'GET' and 'contactDates' in session['application']['personalDetails']:
-        form.contactDatesCheck.data = session['application']['personalDetails']['contactDates']['answer']
-        form.dates.data = session['application']['personalDetails']['contactDates']['dates']
+        form.contactDatesCheck.data = (
+            session['application']['personalDetails']['contactDates']['answer']
+            if 'answer' in session['application']['personalDetails']['contactDates'] else None
+        )
+        form.dates.data = (
+            session['application']['personalDetails']['contactDates']['dates']
+            if 'dates' in session['application']['personalDetails']['contactDates'] else None
+        )
 
     return render_template(
         'personal-details/contact-dates.html',
@@ -255,8 +286,14 @@ def hmrc():
             return redirect(url_for(session['application']['personalDetails']['step']))
 
     if request.method == 'GET' and 'hmrc' in session['application']['personalDetails']:
-        form.tell_hmrc.data = session['application']['personalDetails']['hmrc']['answer']
-        form.national_insurance_number.data = session['application']['personalDetails']['hmrc']['national_insurance_number']
+        form.tell_hmrc.data = (
+            session['application']['personalDetails']['hmrc']['answer']
+            if 'answer' in session['application']['personalDetails']['hmrc'] else None
+        )
+        form.national_insurance_number.data = (
+            session['application']['personalDetails']['hmrc']['national_insurance_number']
+            if 'national_insurance_number' in session['application']['personalDetails']['hmrc'] else None
+        )
 
     return render_template(
         'personal-details/hmrc.html',
