@@ -35,7 +35,7 @@
                     title='Birth name',
                     changeLinkHiddenText='birth name',
                     changeLinkUrl=url_for('birthRegistration.index'),
-                    value=(session['application']['birthRegistration']['first_name'] + ' ' + session['application']['birthRegistration']['last_name'])
+                    value=(session['application']['birthRegistration']['first_name'] + ' ' + session['application']['birthRegistration']['middle_names'] + ' ' + session['application']['birthRegistration']['last_name'])
                 ) }}
 
                 {{ summaryListItem(

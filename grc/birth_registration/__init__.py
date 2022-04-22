@@ -15,6 +15,7 @@ def index():
 
     if form.validate_on_submit():
         session['application']['birthRegistration']['first_name'] = form.first_name.data
+        session['application']['birthRegistration']['middle_names'] = form.middle_names.data
         session['application']['birthRegistration']['last_name'] = form.last_name.data
 
         if ListStatus[session['application']['birthRegistration']['progress']] == ListStatus.NOT_STARTED:
@@ -29,6 +30,10 @@ def index():
         form.first_name.data = (
             session['application']['birthRegistration']['first_name']
             if 'first_name' in session['application']['birthRegistration'] else None
+        )
+        form.middle_names.data = (
+            session['application']['birthRegistration']['middle_names']
+            if 'middle_names' in session['application']['birthRegistration'] else None
         )
         form.last_name.data = (
             session['application']['birthRegistration']['last_name']

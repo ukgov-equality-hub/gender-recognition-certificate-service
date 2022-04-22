@@ -1,13 +1,15 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, RadioField, IntegerField
+from wtforms import StringField, RadioField, IntegerField
 from wtforms.validators import DataRequired, NumberRange
-from grc.utils.form_custom_validators import StrictRequiredIf, validateDOB
+from grc.utils.form_custom_validators import validateDOB
 
 
 class NameForm(FlaskForm):
     first_name = StringField(
         validators=[DataRequired(message='Enter your first name, as originally registered on your birth or adoption certificate')]
     )
+
+    middle_names = StringField() # Middle names are optional, so no validators are required here
 
     last_name = StringField(
         validators=[DataRequired(message='Enter your last name, as originally registered on your birth or adoption certificate')]
