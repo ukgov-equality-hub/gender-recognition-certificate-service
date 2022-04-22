@@ -38,10 +38,17 @@
             ) }}
 
             {{ summaryListItem(
-                title='Affirmed gender',
-                changeLinkHiddenText='affirmed gender',
-                changeLinkUrl=url_for('personalDetails.affirmedGender'),
-                value=('Male' if session['application']['personalDetails']['affirmed_gender'] == 'MALE' else 'Female')
+                title='Name',
+                changeLinkHiddenText='name',
+                changeLinkUrl=url_for('personalDetails.index'),
+                value=(session['application']['personalDetails']['title'] + ' ' + session['application']['personalDetails']['first_name'] + ' ' + session['application']['personalDetails']['last_name'])
+            ) }}
+
+            {{ summaryListItem(
+                title='Ever changed name',
+                changeLinkHiddenText='whether you have changed your name to reflect your gender',
+                changeLinkUrl=url_for('personalDetails.previousNamesCheck'),
+                value=(session['application']['personalDetails']['previousNamesCheck'])
             ) }}
 
             {{ summaryListItem(
@@ -90,19 +97,21 @@
                 value=(contactPreferencesValue())
             ) }}
 
-            {% macro unavailabilityValue() %}
-            {{ session['application']['personalDetails']['contactDates']['answer'] }}<br>
-            {% if session['application']['personalDetails']['contactDates']['answer'] == 'Yes' %}
-                {# Note: The following <span> should all be on one line, to allow the line breaks to work correctly #}
-                <span style="white-space: pre-line;">{{ session['application']['personalDetails']['contactDates']['dates'] }}</span>
-            {% endif %}
-            {% endmacro %}
             {{ summaryListItem(
-                title='Unavailable over the next 6 months',
-                changeLinkHiddenText="whether there are any dates you don't want us to contact you by post over the next 6 months",
-                changeLinkUrl=url_for('personalDetails.contactDates'),
-                value=(unavailabilityValue())
+                title='Notify HMRC',
+                changeLinkHiddenText="whether you want us to notify HMRC after you receive a Gender Recognition Certificate",
+                changeLinkUrl=url_for('personalDetails.hmrc'),
+                value=(session['application']['personalDetails']['hmrc']['answer'])
             ) }}
+
+            {% if session['application']['personalDetails']['hmrc']['answer'] == 'Yes' %}
+            {{ summaryListItem(
+                title='National insurance number',
+                changeLinkHiddenText="your National Insurance number",
+                changeLinkUrl=url_for('personalDetails.hmrc'),
+                value=(session['application']['personalDetails']['hmrc']['national_insurance_number'])
+            ) }}
+            {% endif %}
 
             {% macro notifyHmrcValue() %}
             {{ session['application']['personalDetails']['hmrc']['answer'] }}<br>
