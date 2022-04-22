@@ -37,7 +37,7 @@
                     title='Name',
                     changeLinkHiddenText='name',
                     changeLinkUrl=url_for('personalDetails.index'),
-                    value=(session['application']['personalDetails']['first_name'] + ' ' + session['application']['personalDetails']['last_name'])
+                    value=(session['application']['personalDetails']['title'] + ' ' + session['application']['personalDetails']['first_name'] + ' ' + session['application']['personalDetails']['last_name'])
                 ) }}
 
                 {{ summaryListItem(

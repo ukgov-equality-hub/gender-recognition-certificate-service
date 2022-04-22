@@ -13,6 +13,7 @@ def index():
     form = NameForm()
 
     if form.validate_on_submit():
+        session['application']['personalDetails']['title'] = form.title.data
         session['application']['personalDetails']['first_name'] = form.first_name.data
         session['application']['personalDetails']['last_name'] = form.last_name.data
 
@@ -25,6 +26,7 @@ def index():
         return redirect(url_for(session['application']['personalDetails']['step']))
 
     if request.method == 'GET':
+        form.title.data = session['application']['personalDetails']['title'] if 'title' in session['application']['personalDetails'] else None
         form.first_name.data = session['application']['personalDetails']['first_name'] if 'first_name' in session['application']['personalDetails'] else None
         form.last_name.data = session['application']['personalDetails']['last_name'] if 'last_name' in session['application']['personalDetails'] else None
 

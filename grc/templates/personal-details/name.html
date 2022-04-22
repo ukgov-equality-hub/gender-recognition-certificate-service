@@ -29,6 +29,16 @@
 
                         {{ textInput.renderFor(
                             form,
+                            fieldName='title',
+                            textInputForOptions={
+                                'labelOptions':{ 'htmlOrText': 'Title' },
+                                'classes': 'govuk-input--width-5',
+                                'autocomplete': 'off'
+                            }
+                        ) }}
+
+                        {{ textInput.renderFor(
+                            form,
                             fieldName='first_name',
                             textInputForOptions={
                                 'labelOptions':{ 'htmlOrText': 'First name(s)' },
