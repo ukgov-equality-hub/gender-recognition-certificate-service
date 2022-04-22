@@ -51,12 +51,9 @@ class UkCheckForm(FlaskForm):
 
 
 class CountryForm(FlaskForm):
-    country = StringField(
-        'country',
-        validators=[DataRequired(message='Country is required')]
+    country_of_birth = StringField(
+        validators=[DataRequired(message='Enter your country of birth')]
     )
-
-    submit = SubmitField('Save and continue')
 
 
 class PlaceOfBirthForm(FlaskForm):

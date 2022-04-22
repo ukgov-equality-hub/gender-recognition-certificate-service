@@ -116,7 +116,7 @@ def country():
     form = CountryForm()
 
     if form.validate_on_submit():
-        session['application']['birthRegistration']['country'] = form.country.data
+        session['application']['birthRegistration']['country'] = form.country_of_birth.data
         session['application']['birthRegistration']['progress'] = ListStatus.IN_REVIEW.name
         session['application']['birthRegistration']['step'] = 'birthRegistration.checkYourAnswers'
         session['application'] = save_progress()
@@ -124,7 +124,7 @@ def country():
         return redirect(url_for(session['application']['birthRegistration']['step']))
 
     if request.method == 'GET':
-        form.country.data = (
+        form.country_of_birth.data = (
             session['application']['birthRegistration']['country']
             if 'country' in session['application']['birthRegistration'] else None
         )
