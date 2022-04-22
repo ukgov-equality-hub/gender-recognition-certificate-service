@@ -106,7 +106,7 @@
                             title="Adopted in UK",
                             changeLinkHiddenText="whether you were adopted in the UK",
                             changeLinkUrl=url_for('birthRegistration.adoptedUK'),
-                            value=(session['application']['birthRegistration']['adopted_uk'])
+                            value=(get_radio_pretty_value('AdoptedUKForm', 'adopted_uk', session['application']['birthRegistration']['adopted_uk']))
                         ) }}
                     {% endif %}
 

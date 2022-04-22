@@ -4,6 +4,7 @@ from grc.models import ListStatus
 from grc.birth_registration.forms import  NameForm, DobForm, UkCheckForm, CountryForm, PlaceOfBirthForm, MothersNameForm, FatherNameCheckForm, FathersNameForm, AdoptedForm, AdoptedUKForm, ForcesForm, CheckYourAnswers
 from grc.utils.decorators import LoginRequired
 from grc.utils.application_progress import save_progress
+from grc.utils.radio_values_helper import get_radio_pretty_value
 
 birthRegistration = Blueprint('birthRegistration', __name__)
 
@@ -395,5 +396,6 @@ def checkYourAnswers():
     return render_template(
         'birth-registration/check-your-answers.html',
         form=form,
-        strptime=datetime.strptime
+        strptime=datetime.strptime,
+        get_radio_pretty_value=get_radio_pretty_value
     )

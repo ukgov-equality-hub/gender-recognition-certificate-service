@@ -24,6 +24,7 @@
             <div class="govuk-radios" data-module="govuk-radios">
                 {% for choiceId, choiceLabel in form[fieldName].choices %}
                     {% set index = form[fieldName].choices.index((choiceId, choiceLabel)) %}
+
                     {% if radiosOptions.dividerOptions %}
                         {% for dividerChoiceId, dividerHtml in radiosOptions.dividerOptions %}
                             {%  if dividerChoiceId == choiceId %}
