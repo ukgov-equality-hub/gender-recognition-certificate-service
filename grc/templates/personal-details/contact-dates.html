@@ -19,7 +19,7 @@
                 {{ radios.renderFor(
                     form,
                     fieldName='contactDatesCheck',
-                    question="If we need to contact you by post in the next 6 months, are there any dates you don’t want us to do this?",
+                    question="If we need to contact you by post in the next 6 months, are there any dates we should avoid?",
                     radiosOptions={
                         'questionIsPageHeading': true,
                         'hintOptions': {
@@ -31,7 +31,7 @@
                                 form,
                                 fieldName='dates',
                                 textareaForOptions={
-                                    'labelOptions':{ 'htmlOrText': "Dates you don't want us to contact you by post" },
+                                    'labelOptions':{ 'htmlOrText': "Insert dates to avoid" },
                                     'rows': 3
                                 }
                             ))

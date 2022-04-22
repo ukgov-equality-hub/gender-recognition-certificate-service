@@ -1,68 +1,60 @@
 {% extends 'base.html' %}
-{% block backLink %}<a href="{{ url_for('birthRegistration.fathersNameCheck') }}" class="govuk-back-link">Back</a>{% endblock %}
+{% import "govuk-design-system-templates/error-summary.html" as error_summary %}
+{% import "govuk-design-system-templates/text-input.html" as textInput %}
+
+{% block backLink %}
+    <a href="{{ url_for('birthRegistration.fathersNameCheck') }}" class="govuk-back-link">Back</a>
+{% endblock %}
 
 {% block content %}
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
-    {% if form.errors %}
-    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
-      <h2 id="error-summary-title" class="govuk-error-summary__title">
-        There is a problem
-      </h2>
-      <div class="govuk-error-summary__body">
-        <ul class="govuk-list govuk-error-summary__list">
-          {% for error in form.errors %}
-            {% for e in form[error].errors %}
-            <li><a href="#{{ error }}">{{ e }}</a></li>
-            {% endfor %}
-          {% endfor %}
-        </ul>
-      </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            {{ error_summary.renderFor(form) }}
+
+            <form method="POST" action="{{ url_for('birthRegistration.fathersName') }}">
+                {{ form.csrf_token }}
+
+                <div class="govuk-form-group {{ 'govuk-form-group--error' if form.errors }}">
+                    <fieldset class="govuk-fieldset">
+                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                            <h1 class="govuk-fieldset__heading">
+                                What is your father's name as listed on your birth or adoption certificate?
+                            </h1>
+                        </legend>
+
+                        {{ textInput.renderFor(
+                            form,
+                            fieldName='first_name',
+                            textInputForOptions={
+                                'labelOptions':{ 'htmlOrText': 'First name(s)' },
+                                'classes': 'govuk-input--width-20',
+                                'autocomplete': 'off'
+                            }
+                        ) }}
+
+                        {{ textInput.renderFor(
+                            form,
+                            fieldName='last_name',
+                            textInputForOptions={
+                                'labelOptions':{ 'htmlOrText': 'Last name' },
+                                'classes': 'govuk-input--width-20',
+                                'autocomplete': 'off'
+                            }
+                        ) }}
+                    </fieldset>
+                </div>
+
+                <div class="govuk-button-group">
+                    <button class="govuk-button" data-module="govuk-button">
+                        Save and continue
+                    </button>
+                    <a href="{{ url_for('taskList.index') }}" class="govuk-link govuk-link--no-visited-state">
+                        Return to task list
+                    </a>
+                </div>
+            </form>
+
+        </div>
     </div>
-    {% endif %}
-
-    <form method="POST" action="{{ url_for('birthRegistration.fathersName') }}">
-      {{ form.csrf_token }}
-
-      <div class="govuk-form-group {{ 'govuk-form-group--error' if form.errors }}">
-        <fieldset class="govuk-fieldset">
-          <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-            <h1 class="govuk-fieldset__heading">
-              What is your father's name as listed on your birth or adoption certificate?
-            </h1>
-          </legend>
-          <div class="govuk-form-group">
-            <label for="first_name" class="govuk-label">
-              First name(s)
-            </label>
-            {% if form.first_name.errors %}
-            <p id="first_name-issued-error" class="govuk-error-message">
-              <span class="govuk-visually-hidden">Error:</span> First name is required
-            </p>
-            {% endif %}
-            <input id="first_name" type="text" name="first_name" value="{{ form.first_name.data if form.first_name.data is not none }}" autocomplete="off" class="govuk-input govuk-!-width-three-quarters {{ 'govuk-input--error' if form.first_name.errors }}">
-          </div>
-          <div class="govuk-form-group">
-            <label for="last_name" class="govuk-label">
-              Last name
-            </label>
-            {% if form.last_name.errors %}
-            <p id="last_name-issued-error" class="govuk-error-message">
-              <span class="govuk-visually-hidden">Error:</span> Last name is required
-            </p>
-            {% endif %}
-            <input id="last_name" type="text" name="last_name" value="{{ form.last_name.data if form.last_name.data is not none }}" autocomplete="off" class="govuk-input govuk-!-width-three-quarters {{ 'govuk-input--error' if form.last_name.errors }}">
-          </div>
-        </fieldset>
-      </div>
-
-      <div class="govuk-button-group">
-        <button class="govuk-button" data-module="govuk-button">
-          Save and continue
-        </button>
-        <a href="{{ url_for('taskList.index') }}" class="govuk-link govuk-link--no-visited-state">Return to task list</a>
-      </div>
-    </form>
-  </div>
-</div>
 {% endblock %}

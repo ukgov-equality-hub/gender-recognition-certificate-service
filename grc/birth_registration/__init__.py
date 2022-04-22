@@ -1,8 +1,10 @@
+from datetime import datetime
 from flask import Blueprint, redirect, render_template, request, url_for, session
 from grc.models import ListStatus
-from grc.birth_registration.forms import  NameForm, DobForm, UkCheckForm, CountryForm, PlaceOfBirthForm, MothersNameForm, FatherNameCheckForm, AdoptedForm, AdoptedUKForm, ForcesForm, CheckYourAnswers
+from grc.birth_registration.forms import  NameForm, DobForm, UkCheckForm, CountryForm, PlaceOfBirthForm, MothersNameForm, FatherNameCheckForm, FathersNameForm, AdoptedForm, AdoptedUKForm, ForcesForm, CheckYourAnswers
 from grc.utils.decorators import LoginRequired
 from grc.utils.application_progress import save_progress
+from grc.utils.radio_values_helper import get_radio_pretty_value
 
 birthRegistration = Blueprint('birthRegistration', __name__)
 
@@ -14,6 +16,7 @@ def index():
 
     if form.validate_on_submit():
         session['application']['birthRegistration']['first_name'] = form.first_name.data
+        session['application']['birthRegistration']['middle_names'] = form.middle_names.data
         session['application']['birthRegistration']['last_name'] = form.last_name.data
 
         if ListStatus[session['application']['birthRegistration']['progress']] == ListStatus.NOT_STARTED:
@@ -28,6 +31,10 @@ def index():
         form.first_name.data = (
             session['application']['birthRegistration']['first_name']
             if 'first_name' in session['application']['birthRegistration'] else None
+        )
+        form.middle_names.data = (
+            session['application']['birthRegistration']['middle_names']
+            if 'middle_names' in session['application']['birthRegistration'] else None
         )
         form.last_name.data = (
             session['application']['birthRegistration']['last_name']
@@ -86,9 +93,9 @@ def ukCheck():
     form = UkCheckForm()
 
     if form.validate_on_submit():
-        session['application']['birthRegistration']['ukCheck'] = form.check.data
+        session['application']['birthRegistration']['ukCheck'] = form.birth_registered_in_uk.data
 
-        if form.check.data == 'Yes':
+        if form.birth_registered_in_uk.data == 'Yes':
             session['application']['birthRegistration']['step'] = 'birthRegistration.placeOfBirth'
         else:
             session['application']['birthRegistration']['step'] = 'birthRegistration.country'
@@ -96,6 +103,13 @@ def ukCheck():
         session['application'] = save_progress()
 
         return redirect(url_for(session['application']['birthRegistration']['step']))
+
+    else:
+        form.birth_registered_in_uk.data = (
+            session['application']['birthRegistration']['ukCheck']
+            if 'ukCheck' in session['application']['birthRegistration']
+            else None
+        )
 
     return render_template(
         'birth-registration/uk-check.html',
@@ -109,7 +123,7 @@ def country():
     form = CountryForm()
 
     if form.validate_on_submit():
-        session['application']['birthRegistration']['country'] = form.country.data
+        session['application']['birthRegistration']['country'] = form.country_of_birth.data
         session['application']['birthRegistration']['progress'] = ListStatus.IN_REVIEW.name
         session['application']['birthRegistration']['step'] = 'birthRegistration.checkYourAnswers'
         session['application'] = save_progress()
@@ -117,7 +131,7 @@ def country():
         return redirect(url_for(session['application']['birthRegistration']['step']))
 
     if request.method == 'GET':
-        form.country.data = (
+        form.country_of_birth.data = (
             session['application']['birthRegistration']['country']
             if 'country' in session['application']['birthRegistration'] else None
         )
@@ -200,19 +214,26 @@ def fathersNameCheck():
     form = FatherNameCheckForm()
 
     if form.validate_on_submit():
-        session['application']['birthRegistration']['fathersNameCheck'] = form.check.data
+        session['application']['birthRegistration']['fathersNameCheck'] = form.fathers_name_on_certificate.data
 
         if ListStatus[session['application']['birthRegistration']['progress']] == ListStatus.IN_PROGRESS:
-            if form.check.data == 'Yes':
+            if form.fathers_name_on_certificate.data == 'Yes':
                 session['application']['birthRegistration']['step'] = 'birthRegistration.fathersName'
             else:
                 session['application']['birthRegistration']['step'] = 'birthRegistration.adopted'
-        elif form.check.data == 'Yes':
+        elif form.fathers_name_on_certificate.data == 'Yes':
             session['application']['birthRegistration']['step'] = 'birthRegistration.fathersName'
 
         session['application'] = save_progress()
 
         return redirect(url_for(session['application']['birthRegistration']['step']))
+
+    else:
+        form.fathers_name_on_certificate.data = (
+            session['application']['birthRegistration']['fathersNameCheck']
+            if 'fathersNameCheck' in session['application']['birthRegistration']
+            else None
+        )
 
     return render_template(
         'birth-registration/fathers-name-check.html',
@@ -223,7 +244,7 @@ def fathersNameCheck():
 @birthRegistration.route('/birth-registration/fathers-name', methods=['GET', 'POST'])
 @LoginRequired
 def fathersName():
-    form = NameForm()
+    form = FathersNameForm()
 
     if form.validate_on_submit():
         session['application']['birthRegistration']['fathers_first_name'] = form.first_name.data
@@ -265,10 +286,8 @@ def adopted():
         back = 'birthRegistration.fathersNameCheck'
 
     if form.validate_on_submit():
-        session['application']['birthRegistration']['adopted'] = form.check.data
-        #if session['application']['birthRegistration']['adopted'] == 'Yes':
-        #    session['application']['birthRegistration']['adopted_uk'] = form.adopted_uk.data
-        if form.check.data == 'No':
+        session['application']['birthRegistration']['adopted'] = form.adopted.data
+        if form.adopted.data == 'No':
             session['application']['birthRegistration'].pop('adopted_uk', None)
 
         if ListStatus[session['application']['birthRegistration']['progress']] == ListStatus.IN_PROGRESS:
@@ -276,18 +295,19 @@ def adopted():
                 session['application']['birthRegistration']['step'] = 'birthRegistration.adoptedUK'
             else:
                 session['application']['birthRegistration']['step'] = 'birthRegistration.forces'
-        elif form.check.data == 'Yes':
+        elif form.adopted.data == 'Yes':
             session['application']['birthRegistration']['step'] = 'birthRegistration.adoptedUK'
 
         session['application'] = save_progress()
 
         return redirect(url_for(session['application']['birthRegistration']['step']))
-    #else:
-    #    if form.check.data == 'Yes' or form.check.data == 'No':
-    #        session['application']['birthRegistration']['adopted'] = form.check.data
-    #        if form.check.data == 'No':
-    #            session['application']['birthRegistration'].pop('adopted_uk', None)
-    #        session['application'] = save_progress()
+
+    if request.method == 'GET':
+        form.adopted.data = (
+            session['application']['birthRegistration']['adopted']
+            if 'adopted' in session['application']['birthRegistration']
+            else None
+        )
 
     return render_template(
         'birth-registration/adopted.html',
@@ -302,7 +322,7 @@ def adoptedUK():
     form = AdoptedUKForm()
 
     if form.validate_on_submit():
-        session['application']['birthRegistration']['adopted_uk'] = form.check.data
+        session['application']['birthRegistration']['adopted_uk'] = form.adopted_uk.data
 
         if ListStatus[session['application']['birthRegistration']['progress']] == ListStatus.IN_PROGRESS:
             session['application']['birthRegistration']['step'] = 'birthRegistration.forces'
@@ -312,6 +332,13 @@ def adoptedUK():
         session['application'] = save_progress()
 
         return redirect(url_for(session['application']['birthRegistration']['step']))
+
+    if request.method == 'GET':
+        form.adopted_uk.data = (
+            session['application']['birthRegistration']['adopted_uk']
+            if 'adopted_uk' in session['application']['birthRegistration']
+            else None
+        )
 
     return render_template(
         'birth-registration/adopted-uk.html',
@@ -325,12 +352,19 @@ def forces():
     form = ForcesForm()
 
     if form.validate_on_submit():
-        session['application']['birthRegistration']['forces'] = form.check.data
+        session['application']['birthRegistration']['forces'] = form.forces.data
         session['application']['birthRegistration']['progress'] = ListStatus.IN_REVIEW.name
         session['application']['birthRegistration']['step'] = 'birthRegistration.checkYourAnswers'
         session['application'] = save_progress()
 
         return redirect(url_for(session['application']['birthRegistration']['step']))
+
+    if request.method == 'GET':
+        form.forces.data = (
+            session['application']['birthRegistration']['forces']
+            if 'forces' in session['application']['birthRegistration']
+            else None
+        )
 
     return render_template(
         'birth-registration/forces.html',
@@ -361,5 +395,7 @@ def checkYourAnswers():
 
     return render_template(
         'birth-registration/check-your-answers.html',
-        form=form
+        form=form,
+        strptime=datetime.strptime,
+        get_radio_pretty_value=get_radio_pretty_value
     )
