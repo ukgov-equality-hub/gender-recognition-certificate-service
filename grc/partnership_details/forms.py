@@ -25,13 +25,13 @@ class StayTogetherForm(FlaskForm):
 
 
 class PartnerAgreesForm(FlaskForm):
-    check = RadioField(
-        'check',
-        choices=[('Yes'), ('No')],
+    partner_agrees = RadioField(
+        choices=[
+            ('Yes', 'Yes'),
+            ('No', 'No')
+        ],
         validators=[DataRequired(message='Select if you can provide a declaration of consent from your spouse')]
     )
-
-    submit = SubmitField('Save and continue')
 
 
 class PartnerDiedForm(FlaskForm):

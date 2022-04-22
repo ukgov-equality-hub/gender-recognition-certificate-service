@@ -73,9 +73,9 @@ def partnerAgrees():
     form = PartnerAgreesForm()
 
     if form.validate_on_submit():
-        session['application']['partnershipDetails']['partnerAgrees'] = form.check.data
+        session['application']['partnershipDetails']['partnerAgrees'] = form.partner_agrees.data
 
-        if form.check.data == 'Yes':
+        if form.partner_agrees.data == 'Yes':
             session['application']['partnershipDetails']['progress'] = ListStatus.IN_REVIEW.name
             session['application']['partnershipDetails']['step'] = 'partnershipDetails.checkYourAnswers'
         else:
@@ -84,6 +84,13 @@ def partnerAgrees():
         session['application'] = save_progress()
 
         return redirect(url_for(session['application']['partnershipDetails']['step']))
+
+    if request.method == 'GET':
+        form.partner_agrees.data = (
+            session['application']['partnershipDetails']['partnerAgrees']
+            if 'partnerAgrees' in session['application']['partnershipDetails']
+            else None
+        )
 
     return render_template(
         'partnership-details/partner-agrees.html',
