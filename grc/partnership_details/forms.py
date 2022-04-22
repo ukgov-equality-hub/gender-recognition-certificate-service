@@ -55,7 +55,9 @@ class EndedCheckForm(FlaskForm):
 
 
 class InterimCheckForm(FlaskForm):
-    submit = SubmitField('Save and continue')
+    # There are no fields on the CheckYourAnswers form
+    # But, to avoid a compiler error, we need to write 'pass' here
+    pass
 
 
 class CheckYourAnswers(FlaskForm):
