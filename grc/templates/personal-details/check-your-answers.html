@@ -48,7 +48,7 @@
                 ) }}
 
                 {{ summaryListItem(
-                    title='Have you ever changed your name to reflect your gender?',
+                    title='Ever changed name',
                     changeLinkHiddenText='whether you have changed your name to reflect your gender',
                     changeLinkUrl=url_for('personalDetails.previousNamesCheck'),
                     value=(session['application']['personalDetails']['previousNamesCheck'])
@@ -107,18 +107,21 @@
                     value=(unavailabilityValue())
                 ) }}
 
-                {% macro notifyHmrcValue() %}
-                    {{ session['application']['personalDetails']['hmrc']['answer'] }}<br>
-                    {% if session['application']['personalDetails']['hmrc']['answer'] == 'Yes' %}
-                        {{ session['application']['personalDetails']['hmrc']['national_insurance_number'] }}
-                    {% endif %}
-                {% endmacro %}
                 {{ summaryListItem(
                     title='Notify HMRC',
                     changeLinkHiddenText="whether you want us to notify HMRC after you receive a Gender Recognition Certificate",
                     changeLinkUrl=url_for('personalDetails.hmrc'),
-                    value=(notifyHmrcValue())
+                    value=(session['application']['personalDetails']['hmrc']['answer'])
                 ) }}
+
+                {% if session['application']['personalDetails']['hmrc']['answer'] == 'Yes' %}
+                    {{ summaryListItem(
+                        title='National insurance number',
+                        changeLinkHiddenText="your National Insurance number",
+                        changeLinkUrl=url_for('personalDetails.hmrc'),
+                        value=(session['application']['personalDetails']['hmrc']['national_insurance_number'])
+                    ) }}
+                {% endif %}
             </dl>
 
             <form method="POST" action="{{ url_for('personalDetails.checkYourAnswers') }}">
