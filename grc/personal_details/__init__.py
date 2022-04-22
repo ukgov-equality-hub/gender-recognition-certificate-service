@@ -26,9 +26,18 @@ def index():
         return redirect(url_for(session['application']['personalDetails']['step']))
 
     if request.method == 'GET':
-        form.title.data = session['application']['personalDetails']['title'] if 'title' in session['application']['personalDetails'] else None
-        form.first_name.data = session['application']['personalDetails']['first_name'] if 'first_name' in session['application']['personalDetails'] else None
-        form.last_name.data = session['application']['personalDetails']['last_name'] if 'last_name' in session['application']['personalDetails'] else None
+        form.title.data = (
+            session['application']['personalDetails']['title']
+            if 'title' in session['application']['personalDetails'] else None
+        )
+        form.first_name.data = (
+            session['application']['personalDetails']['first_name']
+            if 'first_name' in session['application']['personalDetails'] else None
+        )
+        form.last_name.data = (
+            session['application']['personalDetails']['last_name']
+            if 'last_name' in session['application']['personalDetails'] else None
+        )
 
     return render_template(
         'personal-details/name.html',
