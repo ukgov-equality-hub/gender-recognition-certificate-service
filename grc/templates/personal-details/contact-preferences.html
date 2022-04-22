@@ -3,71 +3,69 @@
 {% import "govuk-design-system-templates/error-summary.html" as error_summary %}
 {% import "govuk-design-system-templates/text-input.html" as textInput %}
 
-{% block backLink %}
-    <a href="{{ url_for('personalDetails.contactDates') }}" class="govuk-back-link">Back</a>
-{% endblock %}
+{% block backLink %}<a href="{{ url_for('personalDetails.contactDates') }}" class="govuk-back-link">Back</a>{% endblock %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
 
-            {{ error_summary.renderFor(form) }}
+        {{ error_summary.renderFor(form) }}
 
-            <form method="POST" action="{{ url_for('personalDetails.contactPreferences') }}">
-                {{ form.csrf_token }}
+        <form method="POST" action="{{ url_for('personalDetails.contactPreferences') }}">
+            {{ form.csrf_token }}
 
-                {% macro postHtmlBlock() %}
-                    <div class="govuk-form-group">
-                        <p class="govuk-body">
-                            {{ address }}
-                        </p>
-                    </div>
-                {% endmacro %}
-                {{ checkboxes.renderFor(
-                    form,
-                    fieldName='contact_options',
-                    question="How would you like to be contacted if we have any questions about your application?",
-                    checkboxesOptions={
-                        'questionIsPageHeading': true,
-                        'conditionalOptions': [
-                            ('EMAIL',
-                            textInput.renderFor(
-                                form,
-                                fieldName='email',
-                                textInputForOptions={
-                                    'labelOptions':{ 'htmlOrText': 'Email address' },
-                                    'classes': 'govuk-input--width-20',
-                                    'type': 'email',
-                                    'autocomplete': 'email',
-                                    'attributes': [ ('spellcheck', 'false') ]
-                                }
-                            )),
-                            ('PHONE',
-                            textInput.renderFor(
-                                form,
-                                fieldName='phone',
-                                textInputForOptions={
-                                    'labelOptions':{ 'htmlOrText': 'Phone number' },
-                                    'classes': 'govuk-input--width-10',
-                                    'type': 'tel',
-                                    'autocomplete': 'tel'
-                                }
-                            )),
-                            ('POST', postHtmlBlock())
-                        ]
-                    }
-                ) }}
-
-                <div class="govuk-button-group">
-                    <button class="govuk-button" data-module="govuk-button">
-                        Save and continue
-                    </button>
-                    <a href="{{ url_for('taskList.index') }}" class="govuk-link govuk-link--no-visited-state">
-                        Return to task list
-                    </a>
+            {% macro postHtmlBlock() %}
+                <div class="govuk-form-group">
+                    <p class="govuk-body">
+                        {{ address }}
+                    </p>
                 </div>
-            </form>
+            {% endmacro %}
+            {{ checkboxes.renderFor(
+                form,
+                fieldName='contact_options',
+                question="How would you like to be contacted if we have any questions about your application?",
+                checkboxesOptions={
+                    'questionIsPageHeading': true,
+                    'conditionalOptions': [
+                        ('EMAIL',
+                        textInput.renderFor(
+                            form,
+                            fieldName='email',
+                            textInputForOptions={
+                                'labelOptions':{ 'htmlOrText': 'Email address' },
+                                'classes': 'govuk-input--width-20',
+                                'type': 'email',
+                                'autocomplete': 'email',
+                                'attributes': [ ('spellcheck', 'false') ]
+                            }
+                        )),
+                        ('PHONE',
+                        textInput.renderFor(
+                            form,
+                            fieldName='phone',
+                            textInputForOptions={
+                                'labelOptions':{ 'htmlOrText': 'Phone number' },
+                                'classes': 'govuk-input--width-10',
+                                'type': 'tel',
+                                'autocomplete': 'tel'
+                            }
+                        )),
+                        ('POST', postHtmlBlock())
+                    ]
+                }
+            ) }}
 
-        </div>
+            <div class="govuk-button-group">
+                <button class="govuk-button" data-module="govuk-button">
+                    Save and continue
+                </button>
+                <a href="{{ url_for('taskList.index') }}" class="govuk-link govuk-link--no-visited-state">
+                    Return to task list
+                </a>
+            </div>
+        </form>
+
     </div>
+</div>
 {% endblock %}

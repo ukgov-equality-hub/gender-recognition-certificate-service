@@ -171,6 +171,7 @@ def overseas_approved_check():
 
     else:
         form.overseasApprovedCheck.data = session['application']['confirmation']['overseasApprovedCheck']
+
         return render_template(
             'start-application/overseas-approved-check.html',
             form=form

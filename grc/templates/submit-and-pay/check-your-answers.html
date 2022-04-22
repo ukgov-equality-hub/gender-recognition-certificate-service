@@ -34,6 +34,7 @@
           Name on certificate
         </dt>
         <dd class="govuk-summary-list__value">
+          {{ session['application']['personalDetails']['title'] }}
           {{ session['application']['personalDetails']['first_name'] }}
           {{ session['application']['personalDetails']['last_name'] }}
         </dd>
@@ -130,6 +131,7 @@
         </dt>
         <dd class="govuk-summary-list__value">
           {{ session['application']['birthRegistration']['first_name'] }}
+          {{ session['application']['birthRegistration']['middle_name'] }}
           {{ session['application']['birthRegistration']['last_name'] }}
         </dd>
         <dd class="govuk-summary-list__actions">

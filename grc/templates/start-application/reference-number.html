@@ -1,27 +1,23 @@
 {% extends 'base.html' %}
 
-{% block backLink %}
-    <a href="{{ url_for('startApplication.emailConfirmation') }}" class="govuk-back-link">Back</a>
-{% endblock %}
+{% block backLink %}<a href="{{ url_for('startApplication.emailConfirmation') }}" class="govuk-back-link">Back</a>{% endblock %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-l">
+            Your reference number
+        </h1>
 
-            <h1 class="govuk-heading-l">
-                Your reference number
-            </h1>
-
-            <div class="govuk-inset-text callout">
-                <p>Your reference number is: <br><span class="callout__title">{{ reference_number }}</span></p>
-            </div>
-            <p class="govuk-body">
-                You will need your reference number to return to your application.
-                Keep a record of it – it can't be recovered if you lose it.
-            </p>
-
-            <a href="{{ url_for('startApplication.overseas_check') }}" role="button" draggable="false" class="govuk-button" data-module="govuk-button">Continue</a>
-
+        <div class="govuk-inset-text callout">
+            <p>Your reference number is: <br><span class="callout__title">{{ reference_number }}</span></p>
         </div>
+        <p class="govuk-body">
+            You will need your reference number to return to your application.
+            Keep a record of it – it can't be recovered if you lose it.
+        </p>
+
+        <a href="{{ url_for('startApplication.overseas_check') }}" role="button" draggable="false" class="govuk-button" data-module="govuk-button">Continue</a>
     </div>
+</div>
 {% endblock %}

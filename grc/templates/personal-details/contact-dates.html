@@ -3,52 +3,50 @@
 {% import "govuk-design-system-templates/radios.html" as radios %}
 {% import "govuk-design-system-templates/textarea.html" as textarea %}
 
-{% block backLink %}
-    <a href="{{ url_for('personalDetails.address') }}" class="govuk-back-link">Back</a>
-{% endblock %}
+{% block backLink %}<a href="{{ url_for('personalDetails.address') }}" class="govuk-back-link">Back</a>{% endblock %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
 
-            {{ error_summary.renderFor(form) }}
+        {{ error_summary.renderFor(form) }}
 
-            <form method="POST" action="{{ url_for('personalDetails.contactDates') }}">
-                {{ form.csrf_token }}
+        <form method="POST" action="{{ url_for('personalDetails.contactDates') }}">
+            {{ form.csrf_token }}
 
-                {{ radios.renderFor(
-                    form,
-                    fieldName='contactDatesCheck',
-                    question="If we need to contact you by post in the next 6 months, are there any dates you don’t want us to do this?",
-                    radiosOptions={
-                        'questionIsPageHeading': true,
-                        'hintOptions': {
-                            'htmlOrText': 'For example, if you are away on holiday.'
-                        },
-                        'conditionalOptions': [
-                            ('Yes',
-                            textarea.renderFor(
-                                form,
-                                fieldName='dates',
-                                textareaForOptions={
-                                    'labelOptions':{ 'htmlOrText': "Dates you don't want us to contact you by post" },
-                                    'rows': 3
-                                }
-                            ))
-                        ]
-                    }
-                ) }}
+            {{ radios.renderFor(
+                form,
+                fieldName='contactDatesCheck',
+                question="If we need to contact you by post in the next 6 months, are there any dates you don’t want us to do this?",
+                radiosOptions={
+                    'questionIsPageHeading': true,
+                    'hintOptions': {
+                        'htmlOrText': 'For example, if you are away on holiday.'
+                    },
+                    'conditionalOptions': [
+                        ('Yes',
+                        textarea.renderFor(
+                            form,
+                            fieldName='dates',
+                            textareaForOptions={
+                                'labelOptions':{ 'htmlOrText': "Dates you don't want us to contact you by post" },
+                                'rows': 3
+                            }
+                        ))
+                    ]
+                }
+            ) }}
 
-                <div class="govuk-button-group">
-                    <button class="govuk-button" data-module="govuk-button">
-                        Save and continue
-                    </button>
-                    <a href="{{ url_for('taskList.index') }}" class="govuk-link govuk-link--no-visited-state">
-                        Return to task list
-                    </a>
-                </div>
-            </form>
-            
-        </div>
+            <div class="govuk-button-group">
+                <button class="govuk-button" data-module="govuk-button">
+                    Save and continue
+                </button>
+                <a href="{{ url_for('taskList.index') }}" class="govuk-link govuk-link--no-visited-state">
+                    Return to task list
+                </a>
+            </div>
+        </form>
+        
     </div>
+</div>
 {% endblock %}

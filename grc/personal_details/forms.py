@@ -6,6 +6,10 @@ from grc.utils.form_widgets import MultiCheckboxField
 
 
 class NameForm(FlaskForm):
+    title = StringField(
+        validators=[DataRequired(message='Enter your title')]
+    )
+
     first_name = StringField(
         validators=[DataRequired(message='Enter your first name(s)')]
     )

@@ -9,6 +9,8 @@ class NameForm(FlaskForm):
         validators=[DataRequired(message='Enter your first name, as originally registered on your birth or adoption certificate')]
     )
 
+    middle_name = StringField()
+
     last_name = StringField(
         validators=[DataRequired(message='Enter your last name, as originally registered on your birth or adoption certificate')]
     )

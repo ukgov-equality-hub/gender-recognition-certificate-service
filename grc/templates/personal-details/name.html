@@ -2,63 +2,71 @@
 {% import "govuk-design-system-templates/error-summary.html" as error_summary %}
 {% import "govuk-design-system-templates/text-input.html" as textInput %}
 
-{% block backLink %}
-    <a href="{{ url_for('taskList.index') }}" class="govuk-back-link">Back</a>
-{% endblock %}
+{% block backLink %}<a href="{{ url_for('taskList.index') }}" class="govuk-back-link">Back</a>{% endblock %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
 
-            {{ error_summary.renderFor(form) }}
+        {{ error_summary.renderFor(form) }}
 
-            <form method="POST" action="{{ url_for('personalDetails.index') }}">
-                {{ form.csrf_token }}
+        <form method="POST" action="{{ url_for('personalDetails.index') }}">
+            {{ form.csrf_token }}
 
-                <div class="govuk-form-group {{ 'govuk-form-group--error' if form.errors }}">
-                    <fieldset class="govuk-fieldset">
-                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-                            <h1 class="govuk-fieldset__heading">
-                                What is your name?
-                            </h1>
-                        </legend>
+            <div class="govuk-form-group {{ 'govuk-form-group--error' if form.errors }}">
+                <fieldset class="govuk-fieldset">
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                        <h1 class="govuk-fieldset__heading">
+                            What is your name?
+                        </h1>
+                    </legend>
 
-                        <p class="govuk-hint">
-                            This will appear on your Gender Recognition Certificate.
-                        </p>
+                    <p class="govuk-hint">
+                        This will appear on your Gender Recognition Certificate.
+                    </p>
 
-                        {{ textInput.renderFor(
-                            form,
-                            fieldName='first_name',
-                            textInputForOptions={
-                                'labelOptions':{ 'htmlOrText': 'First name(s)' },
-                                'classes': 'govuk-!-width-three-quarters',
-                                'autocomplete': 'off'
-                            }
-                        ) }}
+                    {{ textInput.renderFor(
+                        form,
+                        fieldName='title',
+                        textInputForOptions={
+                            'labelOptions':{ 'htmlOrText': 'Title' },
+                            'classes': 'govuk-!-width-three-quarters',
+                            'autocomplete': 'off'
+                        }
+                    ) }}
 
-                        {{ textInput.renderFor(
-                            form,
-                            fieldName='last_name',
-                            textInputForOptions={
-                                'labelOptions':{ 'htmlOrText': 'Last name' },
-                                'classes': 'govuk-!-width-three-quarters',
-                                'autocomplete': 'off'
-                            }
-                        ) }}
-                    </fieldset>
-                </div>
+                    {{ textInput.renderFor(
+                        form,
+                        fieldName='first_name',
+                        textInputForOptions={
+                            'labelOptions':{ 'htmlOrText': 'First name(s)' },
+                            'classes': 'govuk-!-width-three-quarters',
+                            'autocomplete': 'off'
+                        }
+                    ) }}
 
-                <div class="govuk-button-group">
-                    <button class="govuk-button" data-module="govuk-button">
-                        Save and continue
-                    </button>
-                    <a href="{{ url_for('taskList.index') }}" class="govuk-link govuk-link--no-visited-state">
-                        Return to task list
-                    </a>
-                </div>
-            </form>
+                    {{ textInput.renderFor(
+                        form,
+                        fieldName='last_name',
+                        textInputForOptions={
+                            'labelOptions':{ 'htmlOrText': 'Last name' },
+                            'classes': 'govuk-!-width-three-quarters',
+                            'autocomplete': 'off'
+                        }
+                    ) }}
+                </fieldset>
+            </div>
 
-        </div>
+            <div class="govuk-button-group">
+                <button class="govuk-button" data-module="govuk-button">
+                    Save and continue
+                </button>
+                <a href="{{ url_for('taskList.index') }}" class="govuk-link govuk-link--no-visited-state">
+                    Return to task list
+                </a>
+            </div>
+        </form>
+
     </div>
+</div>
 {% endblock %}

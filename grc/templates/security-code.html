@@ -2,60 +2,58 @@
 {% import "govuk-design-system-templates/error-summary.html" as error_summary %}
 {% import "govuk-design-system-templates/text-input.html" as textInput %}
 
-{% block backLink %}
-    <a href="{{ back }}" class="govuk-back-link">Back</a>
-{% endblock %}
+{% block backLink %}<a href="{{ back }}" class="govuk-back-link">Back</a>{% endblock %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
 
-            {{ error_summary.renderFor(form) }}
+        {{ error_summary.renderFor(form) }}
 
-            <h1 class="govuk-heading-l">
-                Enter security code
-            </h1>
+        <h1 class="govuk-heading-l">
+            Enter security code
+        </h1>
 
-            <p class="govuk-body">
-                We’ve sent a security code to <strong>{{ email }}</strong>
-            </p>
-            <p class="govuk-body">
-                This can take a few minutes to arrive.
-            </p>
-            <p class="govuk-body govuk-!-margin-bottom-2">
-                If you do not get an email:
-            </p>
-            <ul class="govuk-list govuk-list--bullet">
-                <li>check your spam or junk folder</li>
-                <li>check you have entered the correct email</li>
-            </ul>
-            <p class="govuk-body govuk-!-margin-bottom-8">
-                If it's still not there, we can
-                <a href="{{ action }}?resend=true" class="govuk-link--no-visited-state">resend the email</a>.
-            </p>
+        <p class="govuk-body">
+            We’ve sent a security code to <strong>{{ email }}</strong>
+        </p>
+        <p class="govuk-body">
+            This can take a few minutes to arrive.
+        </p>
+        <p class="govuk-body govuk-!-margin-bottom-2">
+            If you do not get an email:
+        </p>
+        <ul class="govuk-list govuk-list--bullet">
+            <li>check your spam or junk folder</li>
+            <li>check you have entered the correct email</li>
+        </ul>
+        <p class="govuk-body govuk-!-margin-bottom-8">
+            If it's still not there, we can
+            <a href="{{ action }}?resend=true" class="govuk-link--no-visited-state">resend the email</a>.
+        </p>
 
-            <form method="POST" action="{{ action }}">
-                {{ form.csrf_token }}
+        <form method="POST" action="{{ action }}">
+            {{ form.csrf_token }}
 
-                {{ textInput.renderFor(
-                    form,
-                    fieldName='code',
-                    textInputForOptions={
-                        'labelOptions':{
-                            'htmlOrText': 'Security code',
-                            'classes': 'govuk-label--m'
-                        },
-                        'classes': 'govuk-input--width-5',
-                    }
-                ) }}
+            {{ textInput.renderFor(
+                form,
+                fieldName='code',
+                textInputForOptions={
+                    'labelOptions':{
+                        'htmlOrText': 'Security code',
+                        'classes': 'govuk-label--m'
+                    },
+                    'classes': 'govuk-input--width-5',
+                }
+            ) }}
 
-                <input type="hidden" name="attempt" value="{{ form.attempt.data }}">
+            <input type="hidden" name="attempt" value="{{ form.attempt.data }}">
 
-                <button class="govuk-button" data-module="govuk-button">
-                    Continue
-                </button>
-            </form>
+            <button class="govuk-button" data-module="govuk-button">
+                Continue
+            </button>
+        </form>
 
-        </div>
     </div>
+</div>
 {% endblock %}

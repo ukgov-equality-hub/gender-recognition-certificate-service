@@ -2,86 +2,84 @@
 {% import "govuk-design-system-templates/error-summary.html" as error_summary %}
 {% import "govuk-design-system-templates/text-input.html" as textInput %}
 
-{% block backLink %}
-    <a href="{{ url_for('personalDetails.previousNamesCheck') }}" class="govuk-back-link">Back</a>
-{% endblock %}
+{% block backLink %}<a href="{{ url_for('personalDetails.previousNamesCheck') }}" class="govuk-back-link">Back</a>{% endblock %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
 
-            {{ error_summary.renderFor(form) }}
+        {{ error_summary.renderFor(form) }}
 
-            <form method="POST" action="{{ url_for('personalDetails.address') }}">
-                {{ form.csrf_token }}
+        <form method="POST" action="{{ url_for('personalDetails.address') }}">
+            {{ form.csrf_token }}
 
-                <div class="govuk-form-group {{ 'govuk-form-group--error' if form.errors }}">
-                    <fieldset class="govuk-fieldset">
-                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-                            <h1 class="govuk-fieldset__heading">
-                                What is your address?
-                            </h1>
-                        </legend>
-                        <div id="address-hint" class="govuk-hint">
-                            This should be the address that you want us to send your Gender Recognition Certificate to.
-                        </div>
+            <div class="govuk-form-group {{ 'govuk-form-group--error' if form.errors }}">
+                <fieldset class="govuk-fieldset">
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                        <h1 class="govuk-fieldset__heading">
+                            What is your address?
+                        </h1>
+                    </legend>
+                    <div id="address-hint" class="govuk-hint">
+                        This should be the address that you want us to send your Gender Recognition Certificate to.
+                    </div>
 
-                        {% macro addressLineOneLabel() %}
-                            Building and street <span class="govuk-visually-hidden">line 1 of 2</span>
-                        {% endmacro %}
-                        {{ textInput.renderFor(
-                            form,
-                            fieldName='address_line_one',
-                            textInputForOptions={
-                                'labelOptions':{ 'htmlOrText': addressLineOneLabel() },
-                                'autocomplete': 'address-line1'
-                            }
-                        ) }}
+                    {% macro addressLineOneLabel() %}
+                        Building and street <span class="govuk-visually-hidden">line 1 of 2</span>
+                    {% endmacro %}
+                    {{ textInput.renderFor(
+                        form,
+                        fieldName='address_line_one',
+                        textInputForOptions={
+                            'labelOptions':{ 'htmlOrText': addressLineOneLabel() },
+                            'autocomplete': 'address-line1'
+                        }
+                    ) }}
 
-                        {% macro addressLineTwoLabel() %}
-                            <span class="govuk-visually-hidden">Building and street line 2 of 2</span>
-                        {% endmacro %}
-                        {{ textInput.renderFor(
-                            form,
-                            fieldName='address_line_two',
-                            textInputForOptions={
-                                'labelOptions':{ 'htmlOrText': addressLineTwoLabel() },
-                                'autocomplete': 'address-line2'
-                            }
-                        ) }}
+                    {% macro addressLineTwoLabel() %}
+                        <span class="govuk-visually-hidden">Building and street line 2 of 2</span>
+                    {% endmacro %}
+                    {{ textInput.renderFor(
+                        form,
+                        fieldName='address_line_two',
+                        textInputForOptions={
+                            'labelOptions':{ 'htmlOrText': addressLineTwoLabel() },
+                            'autocomplete': 'address-line2'
+                        }
+                    ) }}
 
-                        {{ textInput.renderFor(
-                            form,
-                            fieldName='town',
-                            textInputForOptions={
-                                'labelOptions':{ 'htmlOrText': 'Town or city' },
-                                'autocomplete': 'address-level2',
-                                'classes': 'govuk-!-width-two-thirds'
-                            }
-                        ) }}
+                    {{ textInput.renderFor(
+                        form,
+                        fieldName='town',
+                        textInputForOptions={
+                            'labelOptions':{ 'htmlOrText': 'Town or city' },
+                            'autocomplete': 'address-level2',
+                            'classes': 'govuk-!-width-two-thirds'
+                        }
+                    ) }}
 
-                        {{ textInput.renderFor(
-                            form,
-                            fieldName='postcode',
-                            textInputForOptions={
-                                'labelOptions':{ 'htmlOrText': 'Postcode' },
-                                'autocomplete': 'postal-code',
-                                'classes': 'govuk-input--width-10'
-                            }
-                        ) }}
-                    </fieldset>
-                </div>
+                    {{ textInput.renderFor(
+                        form,
+                        fieldName='postcode',
+                        textInputForOptions={
+                            'labelOptions':{ 'htmlOrText': 'Postcode' },
+                            'autocomplete': 'postal-code',
+                            'classes': 'govuk-input--width-10'
+                        }
+                    ) }}
+                </fieldset>
+            </div>
 
-                <div class="govuk-button-group">
-                    <button class="govuk-button" data-module="govuk-button">
-                        Save and continue
-                    </button>
-                    <a href="{{ url_for('taskList.index') }}" class="govuk-link govuk-link--no-visited-state">
-                        Return to task list
-                    </a>
-                </div>
-            </form>
+            <div class="govuk-button-group">
+                <button class="govuk-button" data-module="govuk-button">
+                    Save and continue
+                </button>
+                <a href="{{ url_for('taskList.index') }}" class="govuk-link govuk-link--no-visited-state">
+                    Return to task list
+                </a>
+            </div>
+        </form>
 
-        </div>
     </div>
+</div>
 {% endblock %}

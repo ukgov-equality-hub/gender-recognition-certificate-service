@@ -14,7 +14,9 @@
           Birth name
         </dt>
         <dd class="govuk-summary-list__value">
-          {{ session['application']['birthRegistration']['first_name'] }} {{ session['application']['birthRegistration']['last_name'] }}
+          {{ session['application']['birthRegistration']['first_name'] }}
+          {{ session['application']['birthRegistration']['middle_name'] }}
+          {{ session['application']['birthRegistration']['last_name'] }}
         </dd>
         <dd class="govuk-summary-list__actions">
           <a href="{{ url_for('birthRegistration.index') }}" class="govuk-link">Change</a>
@@ -50,7 +52,9 @@
           Mother's name
         </dt>
         <dd class="govuk-summary-list__value">
-          {{ session['application']['birthRegistration']['mothers_first_name'] }} {{ session['application']['birthRegistration']['mothers_last_name'] }}, {{ session['application']['birthRegistration']['mothers_maiden_name'] }}
+          {{ session['application']['birthRegistration']['mothers_first_name'] }}
+          {{ session['application']['birthRegistration']['mothers_last_name'] }},
+          {{ session['application']['birthRegistration']['mothers_maiden_name'] }}
         </dd>
         <dd class="govuk-summary-list__actions">
           <a href="{{ url_for('birthRegistration.mothersName') }}" class="govuk-link">Change</a>
@@ -73,7 +77,8 @@
           Father's name
         </dt>
         <dd class="govuk-summary-list__value">
-          {{ session['application']['birthRegistration']['fathers_first_name'] }} {{ session['application']['birthRegistration']['fathers_last_name'] }}
+          {{ session['application']['birthRegistration']['fathers_first_name'] }}
+          {{ session['application']['birthRegistration']['fathers_last_name'] }}
         </dd>
         <dd class="govuk-summary-list__actions">
           <a href="{{ url_for('birthRegistration.fathersName') }}" class="govuk-link">Change</a>
