@@ -67,21 +67,16 @@ class PlaceOfBirthForm(FlaskForm):
 
 class MothersNameForm(FlaskForm):
     first_name = StringField(
-        'first_name',
-        validators=[DataRequired(message='First name is required')]
+        validators=[DataRequired(message="Enter your mother's first name")]
     )
 
     last_name = StringField(
-        'last_name',
-        validators=[DataRequired(message='Last name is required')]
+        validators=[DataRequired(message="Enter your mother's last name")]
     )
 
     maiden_name = StringField(
-        'maiden_name',
-        validators=[DataRequired(message='Mother’s maiden name is required')]
+        validators=[DataRequired(message="Enter your mother's maiden name")]
     )
-
-    submit = SubmitField('Save and continue')
 
 
 class FatherNameCheckForm(FlaskForm):
