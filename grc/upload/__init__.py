@@ -109,6 +109,8 @@ def nameChange():
 
         if not form.more_files.data == True:
             return redirect(url_for('taskList.index'))
+        else:
+            return redirect(url_for('upload.nameChange') + '#file-upload-section')
 
     if request.method == 'GET' and 'files' in session['application']['nameChange'] and len(session['application']['nameChange']['files']) == 0:
         session['application']['nameChange']['progress'] = ListStatus.IN_PROGRESS.name
