@@ -185,6 +185,8 @@ def overseasCertificate():
 
         if not form.more_files.data == True:
             return redirect(url_for('taskList.index'))
+        else:
+            return redirect(url_for('upload.overseasCertificate') + '#file-upload-section')
 
     if request.method == 'GET' and 'files' in session['application']['overseasCertificate'] and len(session['application']['overseasCertificate']['files']) == 0:
         session['application']['overseasCertificate']['progress'] = ListStatus.IN_PROGRESS.name
