@@ -162,18 +162,6 @@ def calculate_progress_status():
             )
 
             # Submit and pay
-            print('Submit and pay', flush=True)
-            print(session['application']['submitAndPay']['progress'], flush=True)
-            print(list_status['confirmation'], flush=True)
-            print(list_status['personalDetails'], flush=True)
-            print(list_status['birthRegistration'], flush=True)
-            print(list_status['partnershipDetails'], flush=True)
-            print(list_status['statutoryDeclarations'], flush=True)
-            print(session['application']['medicalReports']['progress'], flush=True)
-            print(session['application']['genderEvidence']['progress'], flush=True)
-            print(session['application']['nameChange']['progress'], flush=True)
-            print(session['application']['marriageDocuments']['progress'], flush=True)
-            print(session['application']['overseasCertificate']['progress'], flush=True)
             if session['application']['submitAndPay']['progress'] == ListStatus.IN_PROGRESS.name:
                 list_status['submitAndPay'] = calculate_progress_status_display_name(
                     ListStatus[session['application']['submitAndPay']['progress']]
