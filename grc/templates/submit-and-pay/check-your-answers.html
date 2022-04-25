@@ -312,6 +312,10 @@
             </dl>
 
 
+            <h2 class="govuk-heading-m">
+                Your uploaded documents
+            </h2>
+
             {% macro uploadedDocumentsList(section) %}
                 <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0">
                     {% for item in session['application'][section]['files'] %}
@@ -320,100 +324,60 @@
                 </ul>
             {% endmacro %}
 
-            {% if application.confirmation.overseasCheck == 'No' %}
-                <h2 class="govuk-heading-m">
-                    Your medical reports
-                </h2>
-
-                <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+            <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+                {% if application.confirmation.overseasCheck == 'No' %}
                     {{ summary_list_item.render(
-                        title='Uploaded documents',
+                        title='Your medical reports',
                         changeLinkHiddenText='the documents you have uploaded for your medical reports',
                         changeLinkUrl=url_for('upload.medicalReports'),
                         value=(uploadedDocumentsList('medicalReports'))
                     ) }}
-                </dl>
 
-                <h2 class="govuk-heading-m">
-                    Evidence of living in your gender
-                </h2>
-
-                <dl class="govuk-summary-list govuk-!-margin-bottom-9">
                     {{ summary_list_item.render(
-                        title='Uploaded documents',
+                        title='Evidence of living in your gender',
                         changeLinkHiddenText='the documents you have uploaded as evidence of living in your gender',
                         changeLinkUrl=url_for('upload.genderEvidence'),
                         value=(uploadedDocumentsList('genderEvidence'))
                     ) }}
-                </dl>
 
-                {% if application.personalDetails.previousNamesCheck is defined and application.personalDetails.previousNamesCheck == 'Yes' %}
-                    <h2 class="govuk-heading-m">
-                        Name change documents
-                    </h2>
-
-                    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+                    {% if application.personalDetails.previousNamesCheck is defined and application.personalDetails.previousNamesCheck == 'Yes' %}
                         {{ summary_list_item.render(
-                            title='Uploaded documents',
+                            title='Name change documents',
                             changeLinkHiddenText='the documents you have uploaded as evidence of changing your name',
                             changeLinkUrl=url_for('upload.nameChange'),
                             value=(uploadedDocumentsList('nameChange'))
                         ) }}
-                    </dl>
-                {% endif %}
+                    {% endif %}
 
-            {% elif application.confirmation.overseasCheck == 'Yes' and application.personalDetails.previousNamesCheck is defined and application.personalDetails.previousNamesCheck == 'Yes' %}
-                <h2 class="govuk-heading-m">
-                    Name change documents
-                </h2>
-
-                <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+                {% elif application.confirmation.overseasCheck == 'Yes' and application.personalDetails.previousNamesCheck is defined and application.personalDetails.previousNamesCheck == 'Yes' %}
                     {{ summary_list_item.render(
-                        title='Uploaded documents',
+                        title='Name change documents',
                         changeLinkHiddenText='the documents you have uploaded as evidence of changing your name',
                         changeLinkUrl=url_for('upload.nameChange'),
                         value=(uploadedDocumentsList('nameChange'))
                     ) }}
-                </dl>
-            {% endif %}
+                {% endif %}
 
-            {% if application.partnershipDetails.marriageCivilPartnership is defined and (application.partnershipDetails.marriageCivilPartnership == 'Married' or (application.partnershipDetails.marriageCivilPartnership == 'Neither' and (application.partnershipDetails.marriageCivilPartnership.partnerDied == 'Yes' or application.partnershipDetails.marriageCivilPartnership.endedCheck == 'Yes'))) %}
-                <h2 class="govuk-heading-m">
-                    Marriage documents
-                </h2>
-
-                <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+                {% if application.partnershipDetails.marriageCivilPartnership is defined and (application.partnershipDetails.marriageCivilPartnership == 'Married' or (application.partnershipDetails.marriageCivilPartnership == 'Neither' and (application.partnershipDetails.marriageCivilPartnership.partnerDied == 'Yes' or application.partnershipDetails.marriageCivilPartnership.endedCheck == 'Yes'))) %}
                     {{ summary_list_item.render(
-                        title='Uploaded documents',
+                        title='Marriage documents',
                         changeLinkHiddenText='the documents you have uploaded as evidence of your marriage or civil partnership',
                         changeLinkUrl=url_for('upload.marriageDocuments'),
                         value=(uploadedDocumentsList('marriageDocuments'))
                     ) }}
-                </dl>
-            {% endif %}
+                {% endif %}
 
-            {% if application.confirmation.overseasApprovedCheck == 'Yes' %}
-                <h2 class="govuk-heading-m">
-                    Overseas certificate documents
-                </h2>
-
-                <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+                {% if application.confirmation.overseasApprovedCheck == 'Yes' %}
                     {{ summary_list_item.render(
-                        title='Uploaded documents',
+                        title='Overseas certificate documents',
                         changeLinkHiddenText='the documents you have uploaded as evidence of your overseas certificate',
                         changeLinkUrl=url_for('upload.overseasCertificate'),
                         value=(uploadedDocumentsList('overseasCertificate'))
                     ) }}
-                </dl>
-            {% endif %}
+                {% endif %}
 
-            <h2 class="govuk-heading-m">
-                Statutory declarations
-            </h2>
-
-            <dl class="govuk-summary-list govuk-!-margin-bottom-9">
                 {{ summary_list_item.render(
-                    title='Uploaded documents',
+                    title='Statutory declarations',
                     changeLinkHiddenText='the statutory declarations documents you have uploaded',
                     changeLinkUrl=url_for('upload.statutoryDeclarations'),
                     value=(uploadedDocumentsList('statutoryDeclarations'))
