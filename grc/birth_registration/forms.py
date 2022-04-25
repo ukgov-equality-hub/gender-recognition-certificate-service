@@ -33,7 +33,7 @@ class DobForm(FlaskForm):
         ]
     )
 
-    # THe user must be 18 years old or older to apply
+    # The user must be 18 years old or older to apply
     year = IntegerField(
         validators=[
             DataRequired(message='Enter a year'),
