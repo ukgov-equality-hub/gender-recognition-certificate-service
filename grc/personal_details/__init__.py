@@ -1,6 +1,6 @@
 from flask import Blueprint, redirect, render_template, request, url_for, session
 from grc.models import ListStatus
-from grc.personal_details.forms import NameForm, AffirmedGenderForm, PreviousNamesCheck, AddressForm, ContactPreferencesForm, ContactDatesForm, HmrcForm, CheckYourAnswers
+from grc.personal_details.forms import NameForm, AffirmedGenderForm, TransitionDateForm, PreviousNamesCheck, AddressForm, ContactPreferencesForm, ContactDatesForm, HmrcForm, CheckYourAnswers
 from grc.utils.decorators import LoginRequired
 from grc.utils.application_progress import save_progress
 
@@ -54,7 +54,7 @@ def affirmedGender():
         session['application']['personalDetails']['affirmed_gender'] = form.affirmedGender.data
 
         if ListStatus[session['application']['personalDetails']['progress']] == ListStatus.IN_PROGRESS:
-            session['application']['personalDetails']['step'] = 'personalDetails.previousNamesCheck'
+            session['application']['personalDetails']['step'] = 'personalDetails.transitionDate'
 
         session['application'] = save_progress()
 
@@ -68,6 +68,38 @@ def affirmedGender():
 
     return render_template(
         'personal-details/affirmed-gender.html',
+        form=form
+    )
+
+
+@personalDetails.route('/personal-details/transition-date', methods=['GET', 'POST'])
+@LoginRequired
+def transitionDate():
+    form = TransitionDateForm()
+
+    if form.validate_on_submit():
+        session['application']['personalDetails']['transition_date_month'] = form.transition_date_month.data
+        session['application']['personalDetails']['transition_date_year'] = form.transition_date_year.data
+
+        if ListStatus[session['application']['personalDetails']['progress']] == ListStatus.IN_PROGRESS:
+            session['application']['personalDetails']['step'] = 'personalDetails.previousNamesCheck'
+
+        session['application'] = save_progress()
+
+        return redirect(url_for(session['application']['personalDetails']['step']))
+
+    if request.method == 'GET':
+        form.transition_date_month.data = (
+            session['application']['personalDetails']['transition_date_month']
+            if 'transition_date_month' in session['application']['personalDetails'] else None
+        )
+        form.transition_date_year.data = (
+            session['application']['personalDetails']['transition_date_year']
+            if 'transition_date_year' in session['application']['personalDetails'] else None
+        )
+
+    return render_template(
+        'personal-details/transition-date.html',
         form=form
     )
 

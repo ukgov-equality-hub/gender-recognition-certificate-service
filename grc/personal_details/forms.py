@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import EmailField, StringField, RadioField, TelField, BooleanField
-from wtforms.validators import DataRequired
-from grc.utils.form_custom_validators import StrictRequiredIf, validateNationalInsuranceNumber, validatePostcode
+from wtforms import EmailField, StringField, RadioField, TelField, IntegerField
+from wtforms.validators import DataRequired, NumberRange
+from grc.utils.form_custom_validators import StrictRequiredIf, validateNationalInsuranceNumber, validatePostcode, validateDateOfTransiton
 from grc.utils.form_widgets import MultiCheckboxField
 
 
@@ -26,6 +26,22 @@ class AffirmedGenderForm(FlaskForm):
             ('FEMALE', 'Female')
         ],
         validators=[DataRequired(message='Select your affirmed gender')]
+    )
+
+
+class TransitionDateForm(FlaskForm):
+    transition_date_month = IntegerField(
+        validators=[
+            DataRequired(message='Enter a month'),
+            NumberRange(min=1, max=12, message='Enter a valid month')
+        ]
+    )
+
+    transition_date_year = IntegerField(
+        validators=[
+            DataRequired(message='Enter a year'),
+            validateDateOfTransiton
+        ]
     )
 
 
