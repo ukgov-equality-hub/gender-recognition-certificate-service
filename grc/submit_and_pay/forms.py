@@ -7,13 +7,13 @@ from dateutil.relativedelta import relativedelta
 
 
 class MethodCheckForm(FlaskForm):
-    check = RadioField(
-        'check',
-        choices=[('Help'), ('Online')],
+    applying_for_help_with_fee = RadioField(
+        choices=[
+            ('Help', 'Yes'),
+            ('Online', 'No, I will pay now')
+        ],
         validators=[DataRequired(message='Select if you are applying for help paying the fee')]
     )
-
-    submit = SubmitField('Continue')
 
 
 class HelpTypeForm(FlaskForm):

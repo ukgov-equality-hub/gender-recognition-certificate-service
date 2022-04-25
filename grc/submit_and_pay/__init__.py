@@ -18,9 +18,9 @@ def index():
     form = MethodCheckForm()
 
     if form.validate_on_submit():
-        session['application']['submitAndPay']['method'] = form.check.data
+        session['application']['submitAndPay']['method'] = form.applying_for_help_with_fee.data
 
-        if form.check.data == 'Help':
+        if form.applying_for_help_with_fee.data == 'Help':
             session['application']['submitAndPay']['progress'] = ListStatus.IN_PROGRESS.name
             session['application']['submitAndPay']['step'] = 'submitAndPay.helpType'
         else:
@@ -30,6 +30,13 @@ def index():
         session['application'] = save_progress()
 
         return redirect(url_for(session['application']['submitAndPay']['step']))
+
+    if request.method == 'GET':
+        form.applying_for_help_with_fee.data = (
+            session['application']['submitAndPay']['method']
+            if 'method' in session['application']['submitAndPay']
+            else None
+        )
 
     return render_template(
         'submit-and-pay/method.html',
