@@ -1,27 +1,9 @@
 {% extends 'base.html' %}
+{% import "govuk-design-system-templates/_summary-list-item.html" as summary_list_item %}
 
 {% block backLink %}
     <a href="{{ url_for('taskList.index') }}" class="govuk-back-link">Back</a>
 {% endblock %}
-
-{% macro summaryListItem(title, changeLinkHiddenText, changeLinkUrl, value) %}
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-            {{ title }}
-        </dt>
-        <dd class="govuk-summary-list__value">
-            {{ value }}
-        </dd>
-        <dd class="govuk-summary-list__actions">
-            <a href="{{ changeLinkUrl }}" class="govuk-link">
-                Change
-                <span class="govuk-visually-hidden">
-                    {{ changeLinkHiddenText }}
-                </span>
-            </a>
-        </dd>
-    </div>
-{% endmacro %}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -32,7 +14,7 @@
             </h1>
 
             <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-                {{ summaryListItem(
+                {{ summary_list_item.render(
                     title='Currently married or in a civil partnership',
                     changeLinkHiddenText='if you are currently married or in a civil partnership',
                     changeLinkUrl=url_for('partnershipDetails.index'),
@@ -40,14 +22,14 @@
                 ) }}
 
                 {% if session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Neither' %}
-                    {{ summaryListItem(
+                    {{ summary_list_item.render(
                         title='Spouse or partner has died',
                         changeLinkHiddenText='if your spouse or partner has died',
                         changeLinkUrl=url_for('partnershipDetails.partnerDied'),
                         value=(session['application']['partnershipDetails']['partnerDied'])
                     ) }}
 
-                    {{ summaryListItem(
+                    {{ summary_list_item.render(
                         title='Marriage or civil partnership has ended',
                         changeLinkHiddenText='if your marriage or civil partnership has ended',
                         changeLinkUrl=url_for('partnershipDetails.endedCheck'),
@@ -55,7 +37,7 @@
                     ) }}
 
                 {% else %}
-                    {{ summaryListItem(
+                    {{ summary_list_item.render(
                         title='Remain married',
                         changeLinkHiddenText='if you plan to remain married after receiving your Gender Recognition Certificate',
                         changeLinkUrl=url_for('partnershipDetails.stayTogether'),
@@ -63,7 +45,7 @@
                     ) }}
 
                     {% if session['application']['partnershipDetails']['stayTogether'] == 'Yes' %}
-                        {{ summaryListItem(
+                        {{ summary_list_item.render(
                             title='Can provide a declaration of consent from your spouse',
                             changeLinkHiddenText='if you can provide a declaration of consent from your spouse',
                             changeLinkUrl=url_for('partnershipDetails.partnerAgrees'),
@@ -72,7 +54,7 @@
                     {% endif %}
 
                     {% if session['application']['partnershipDetails']['stayTogether'] == 'No' or session['application']['partnershipDetails']['partnerAgrees'] == 'No' %}
-                        {{ summaryListItem(
+                        {{ summary_list_item.render(
                             title='Interim GRC',
                             changeLinkHiddenText='if you understand that you will receive an Interim GRC',
                             changeLinkUrl=url_for('partnershipDetails.interimCheck'),

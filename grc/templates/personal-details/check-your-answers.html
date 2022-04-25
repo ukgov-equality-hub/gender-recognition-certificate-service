@@ -1,27 +1,9 @@
 {% extends 'base.html' %}
+{% import "govuk-design-system-templates/_summary-list-item.html" as summary_list_item %}
 
 {% block backLink %}
     <a href="{{ url_for('personalDetails.hmrc') }}" class="govuk-back-link">Back</a>
 {% endblock %}
-
-{% macro summaryListItem(title, changeLinkHiddenText, changeLinkUrl, value) %}
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-            {{ title }}
-        </dt>
-        <dd class="govuk-summary-list__value">
-            {{ value }}
-        </dd>
-        <dd class="govuk-summary-list__actions">
-            <a href="{{ changeLinkUrl }}" class="govuk-link">
-                Change
-                <span class="govuk-visually-hidden">
-                    {{ changeLinkHiddenText }}
-                </span>
-            </a>
-        </dd>
-    </div>
-{% endmacro %}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -33,21 +15,21 @@
             </h1>
 
             <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-                {{ summaryListItem(
+                {{ summary_list_item.render(
                     title='Name',
                     changeLinkHiddenText='name',
                     changeLinkUrl=url_for('personalDetails.index'),
                     value=(session['application']['personalDetails']['title'] + ' ' + session['application']['personalDetails']['first_name'] + ' ' + session['application']['personalDetails']['last_name'])
                 ) }}
 
-                {{ summaryListItem(
+                {{ summary_list_item.render(
                     title='Affirmed gender',
                     changeLinkHiddenText='affirmed gender',
                     changeLinkUrl=url_for('personalDetails.affirmedGender'),
                     value=('Male' if session['application']['personalDetails']['affirmed_gender'] == 'MALE' else 'Female')
                 ) }}
 
-                {{ summaryListItem(
+                {{ summary_list_item.render(
                     title='Ever changed name',
                     changeLinkHiddenText='whether you have changed your name to reflect your gender',
                     changeLinkUrl=url_for('personalDetails.previousNamesCheck'),
@@ -60,7 +42,7 @@
                     {{ session['application']['personalDetails']['address']['town'] }}<br>
                     {{ session['application']['personalDetails']['address']['postcode'] }}
                 {% endmacro %}
-                {{ summaryListItem(
+                {{ summary_list_item.render(
                     title='Address',
                     changeLinkHiddenText='address',
                     changeLinkUrl=url_for('personalDetails.address'),
@@ -86,7 +68,7 @@
                         {% endif %}
                     </ul>
                 {% endmacro %}
-                {{ summaryListItem(
+                {{ summary_list_item.render(
                     title='Contact preferences',
                     changeLinkHiddenText='contact preferences',
                     changeLinkUrl=url_for('personalDetails.contactPreferences'),
@@ -100,14 +82,14 @@
                         <span style="white-space: pre-line;">{{ session['application']['personalDetails']['contactDates']['dates'] }}</span>
                     {% endif %}
                 {% endmacro %}
-                {{ summaryListItem(
+                {{ summary_list_item.render(
                     title='Unavailable over the next 6 months',
                     changeLinkHiddenText="whether there are any dates you don't want us to contact you by post over the next 6 months",
                     changeLinkUrl=url_for('personalDetails.contactDates'),
                     value=(unavailabilityValue())
                 ) }}
 
-                {{ summaryListItem(
+                {{ summary_list_item.render(
                     title='Notify HMRC',
                     changeLinkHiddenText="whether you want us to notify HMRC after you receive a Gender Recognition Certificate",
                     changeLinkUrl=url_for('personalDetails.hmrc'),
@@ -115,7 +97,7 @@
                 ) }}
 
                 {% if session['application']['personalDetails']['hmrc']['answer'] == 'Yes' %}
-                    {{ summaryListItem(
+                    {{ summary_list_item.render(
                         title='National insurance number',
                         changeLinkHiddenText="your National Insurance number",
                         changeLinkUrl=url_for('personalDetails.hmrc'),
