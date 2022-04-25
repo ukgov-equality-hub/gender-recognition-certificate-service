@@ -42,6 +42,7 @@ jobs:
           pip install playwright pytest-playwright
           pip install -e .
           python -m playwright install --with-deps
+          ./prod.sh
 
       - name: Test with pytest
         run: |
