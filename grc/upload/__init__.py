@@ -221,6 +221,8 @@ def statutoryDeclarations():
 
         if not form.more_files.data == True:
             return redirect(url_for('taskList.index'))
+        else:
+            return redirect(url_for('upload.statutoryDeclarations') + '#file-upload-section')
 
     if request.method == 'GET' and 'files' in session['application']['statutoryDeclarations'] and len(session['application']['statutoryDeclarations']['files']) == 0:
         session['application']['statutoryDeclarations']['progress'] = ListStatus.IN_PROGRESS.name
