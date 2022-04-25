@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import EmailField, StringField, SubmitField, RadioField, RadioField, BooleanField, IntegerField
+from wtforms import EmailField, StringField, SubmitField, RadioField, BooleanField, IntegerField
 from wtforms.validators import DataRequired, NumberRange
 from grc.utils.form_custom_validators import StrictRequiredIf, validatePostcode
 from datetime import datetime
@@ -17,18 +17,17 @@ class MethodCheckForm(FlaskForm):
 
 
 class HelpTypeForm(FlaskForm):
-    check = RadioField(
-        'check',
-        choices=[('Using the online service'), ('Using the EX160 form')],
+    how_applying_for_fees = RadioField(
+        choices=[
+            ('Using the online service', 'Using the online service'),
+            ('Using the EX160 form', 'Using the EX160 form')
+        ],
         validators=[DataRequired(message='Select how are you applying for help paying the fee')]
     )
 
-    referenceNumber = StringField(
-        'referenceNumber',
-        validators=[StrictRequiredIf('check', 'Using the online service', message='Reference number is required')]
+    help_with_fees_reference_number = StringField(
+        validators=[StrictRequiredIf('how_applying_for_fees', 'Using the online service', message='Enter your Help with Fees reference number')]
     )
-
-    submit = SubmitField('Continue')
 
 
 class CheckYourAnswers(FlaskForm):

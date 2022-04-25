@@ -50,14 +50,16 @@ def helpType():
     form = HelpTypeForm()
 
     if request.method == 'POST':
-        if 'Using the EX160 form' == form.check.data:
-            form.referenceNumber.data = None
+        if 'Using the EX160 form' == form.how_applying_for_fees.data:
+            form.help_with_fees_reference_number.data = None
 
         if form.validate_on_submit():
-            session['application']['submitAndPay']['helpType'] = form.check.data
+            session['application']['submitAndPay']['helpType'] = form.how_applying_for_fees.data
 
-            if 'Using the online service' == form.check.data:
-                session['application']['submitAndPay']['referenceNumber'] = form.referenceNumber.data
+            if 'Using the online service' == form.how_applying_for_fees.data:
+                session['application']['submitAndPay']['referenceNumber'] = form.help_with_fees_reference_number.data
+            else:
+                session['application']['submitAndPay']['referenceNumber'] = None
 
             session['application']['submitAndPay']['progress'] = ListStatus.IN_REVIEW.name
             session['application']['submitAndPay']['step'] = 'submitAndPay.checkYourAnswers'
@@ -66,8 +68,8 @@ def helpType():
             return redirect(url_for(session['application']['submitAndPay']['step']))
 
     if request.method == 'GET' and 'helpType' in session['application']['submitAndPay']:
-        form.check.data = session['application']['submitAndPay']['helpType']
-        form.referenceNumber.data = session['application']['submitAndPay']['referenceNumber']
+        form.how_applying_for_fees.data = session['application']['submitAndPay']['helpType']
+        form.help_with_fees_reference_number.data = session['application']['submitAndPay']['referenceNumber']
 
     return render_template(
         'submit-and-pay/help-type.html',
