@@ -1,4 +1,5 @@
 import re
+from dateutil.relativedelta import relativedelta
 from flask import session
 from wtforms.validators import DataRequired, InputRequired, ValidationError, StopValidation, Optional
 from werkzeug.datastructures import FileStorage
@@ -126,6 +127,29 @@ def validateDOB(form, field):
             raise ValidationError('You need to be at least 18 years old to apply')
         elif age(dt) > 110 and field.name == 'year':
             raise ValidationError('You need to be less than 110 years old to apply')
+
+
+def validateDateOfTransiton(form, field):
+    transition_date_month = form['transition_date_month'].data
+    transition_date_year = form['transition_date_year'].data
+
+    try:
+        date_of_transition = date(transition_date_year, transition_date_month, 1)
+    except Exception as e:
+        if field.name == 'year':
+            raise ValidationError('Enter a valid year')
+        return
+
+    earliest_date_of_transition_years = 100
+    earliest_date_of_transition = date.today() - relativedelta(years=earliest_date_of_transition_years)
+
+    if date_of_transition < earliest_date_of_transition:
+        raise ValidationError(f"Enter a date within the last {earliest_date_of_transition_years} years")
+
+    latest_date_of_transition = date.today()
+
+    if date_of_transition > latest_date_of_transition:
+        raise ValidationError('Enter a date in the past')
 
 
 def validateNationalInsuranceNumber(form, field):

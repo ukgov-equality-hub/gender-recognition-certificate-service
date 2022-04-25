@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% import "govuk-design-system-templates/error-summary.html" as error_summary %}
+{% import "govuk-design-system-templates/text-input.html" as textInput %}
+
+{% block backLink %}
+    <a href="{{ url_for('personalDetails.affirmedGender') }}" class="govuk-back-link">Back</a>
+{% endblock %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            {{ error_summary.renderFor(form) }}
+
+            <form method="POST">
+                {{ form.csrf_token }}
+
+                <div class="govuk-form-group {{ 'govuk-form-group--error' if form.errors }}">
+                    <fieldset class="govuk-fieldset" role="group" aria-describedby="adoption-certificate-dob-hint">
+                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                            <h1 class="govuk-fieldset__heading">
+                                When did you transition?
+                            </h1>
+                        </legend>
+
+                        <div id="adoption-certificate-dob-hint" class="govuk-hint">
+                            Enter the month and year of your transition – this will be the same as on your statutory declaration.
+                        </div>
+
+                        {% if form.errors %}
+                            <p id="adoption-certificate-dob-error" class="govuk-error-message">
+                                {% for error in form.errors %}
+                                    <span id="{{ error }}-error">
+                                        {% for e in form[error].errors %}
+                                            <span class="govuk-visually-hidden">Error:</span> {{ e }}<br>
+                                        {% endfor %}
+                                    </span>
+                                {% endfor %}
+                            </p>
+                        {% endif %}
+
+                        <div id="adoption-certificate-dob" class="govuk-date-input">
+                            <div class="govuk-date-input__item">
+                                <div class="govuk-form-group">
+                                    <label for="transition_date_month" class="govuk-label govuk-date-input__label">
+                                        Month
+                                    </label>
+                                    <input type="text"
+                                           id="transition_date_month" name="transition_date_month"
+                                           value="{{ form.transition_date_month.data if form.transition_date_month.data is not none }}"
+                                           pattern="[0-9]*"
+                                           inputmode="numeric"
+                                           class="govuk-input govuk-date-input__input govuk-input--width-2  {{ 'govuk-input--error' if form.transition_date_month.errors }}">
+                                </div>
+                            </div>
+                            <div class="govuk-date-input__item">
+                                <div class="govuk-form-group">
+                                    <label for="transition_date_year" class="govuk-label govuk-date-input__label">
+                                        Year
+                                    </label>
+                                    <input type="text"
+                                           id="transition_date_year" name="transition_date_year"
+                                           value="{{ form.transition_date_year.data if form.transition_date_year.data is not none }}"
+                                           pattern="[0-9]*"
+                                           inputmode="numeric"
+                                           class="govuk-input govuk-date-input__input govuk-input--width-4  {{ 'govuk-input--error' if form.transition_date_year.errors }}">
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <div class="govuk-button-group">
+                    <button class="govuk-button" data-module="govuk-button">
+                        Save and continue
+                    </button>
+                    <a href="{{ url_for('taskList.index') }}" class="govuk-link govuk-link--no-visited-state">
+                        Return to task list
+                    </a>
+                </div>
+            </form>
+
+        </div>
+    </div>
+{% endblock %}
