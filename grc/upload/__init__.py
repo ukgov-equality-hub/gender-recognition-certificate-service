@@ -71,6 +71,8 @@ def genderEvidence():
 
         if not form.more_files.data == True:
             return redirect(url_for('taskList.index'))
+        else:
+            return redirect(url_for('upload.genderEvidence') + '#file-upload-section')
 
     if request.method == 'GET' and 'files' in session['application']['genderEvidence'] and len(session['application']['genderEvidence']['files']) == 0:
         session['application']['genderEvidence']['progress'] = ListStatus.IN_PROGRESS.name
@@ -237,4 +239,4 @@ def removeFile():
         session['application'][form.section.data]['files'].remove(form.file.data)
         session['application'] = save_progress()
 
-    return redirect(form.redirect_route.data)
+    return redirect(url_for('upload.' + form.section.data) + '#file-upload-section')
