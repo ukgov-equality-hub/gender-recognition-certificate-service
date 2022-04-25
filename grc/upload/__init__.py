@@ -33,6 +33,8 @@ def medicalReports():
 
         if not form.more_files.data == True:
             return redirect(url_for('taskList.index'))
+        else:
+            return redirect(url_for('upload.medicalReports') + '#file-upload-section')
 
     if request.method == 'GET' and 'files' in session['application']['medicalReports'] and len(session['application']['medicalReports']['files']) == 0:
         session['application']['medicalReports']['progress'] = ListStatus.IN_PROGRESS.name
@@ -236,10 +238,3 @@ def removeFile():
         session['application'] = save_progress()
 
     return redirect(form.redirect_route.data)
-
-
-# @upload.route('/upload/get-file', methods=['GET'])
-# @LoginRequired
-# def downloadFile():
-#     file = create_presigned_url('')
-#     return redirect(file)
