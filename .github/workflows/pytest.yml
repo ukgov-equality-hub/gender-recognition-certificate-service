@@ -4,6 +4,10 @@ on: [push]
 
 env:
   FLASK_ENV: production
+  FLASK_DEBUG: 1
+  FLASK_APP: grc
+  LOG_LEVEL: DEBUG
+  SECRET_KEY: ef987sd9fwkjefosf9we0svs9q3evsd0
   PERMANENT_SESSION_LIFETIME: 1200
 
 jobs:
