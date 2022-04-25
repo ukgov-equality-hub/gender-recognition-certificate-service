@@ -147,6 +147,8 @@ def marriageDocuments():
 
         if not form.more_files.data == True:
             return redirect(url_for('taskList.index'))
+        else:
+            return redirect(url_for('upload.marriageDocuments') + '#file-upload-section')
 
     if request.method == 'GET' and 'files' in session['application']['marriageDocuments'] and len(session['application']['marriageDocuments']['files']) == 0:
         session['application']['marriageDocuments']['progress'] = ListStatus.IN_PROGRESS.name
