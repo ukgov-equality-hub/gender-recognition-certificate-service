@@ -1,62 +1,56 @@
 {% extends 'base.html' %}
-{% block backLink %}<a href="{{ url_for(back) }}" class="govuk-back-link">Back</a>{% endblock %}
+
+{% block backLink %}
+    <a href="{{ url_for(back) }}" class="govuk-back-link">Back</a>
+{% endblock %}
 
 {% block content %}
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-full">
-    <div class="interuption-card">
-      <h1 class="govuk-heading-l">
-        Interim Gender Recognition Certificate
-      </h1>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
 
-      {% if session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Civil partnership' %}
-      {% if session['application']['partnershipDetails']['stayTogether'] == 'No' %}
-      <p class="govuk-body">
-        You must end your civil partnership before you can receive a full Gender Recognition Certificate.
-      </p>
-      {% else %}
-      <p class="govuk-body">
-        If your partner has not signed a statutory declaration of consent then you cannot receive a full Gender
-        Recognition Certificate.
-      </p>
-      <p class="govuk-body">
-        You will only be able to receive a full certificate if you end your civil partnership.
-      </p>
-      {% endif %}
-      <p class="govuk-!-margin-bottom-8">
-        If you continue with this application, you will receive an interim Gender
-        Recognition Certificate which can be used to end your civil partnership, after which you will receive a full
-        certificate. The interim certificate cannot be used for any other purpose.
-      </p>
-      {% else %}
-      {% if session['application']['partnershipDetails']['stayTogether'] == 'No' %}
-      <p class="govuk-body">
-        You must end your marriage before you can receive a full Gender Recognition Certificate.
-      </p>
-      {% else %}
-      <p class="govuk-body">
-        If your spouse has not signed a statutory declaration of consent then you cannot receive a full Gender
-        Recognition Certificate.
-      </p>
-      <p class="govuk-body">
-        You will only be able to receive a full certificate if you end your marriage.
-      </p>
-      {% endif %}
-      <p class="govuk-body govuk-!-margin-bottom-8">
-        If you continue with this application, you will receive an interim Gender
-        Recognition Certificate which can be used to end your marriage, after which you will receive a full certificate.
-        The interim certificate cannot be used for any other purpose.
-      </p>
-      {% endif %}
+            <div class="interuption-card">
+                <h1 class="govuk-heading-l">
+                    Interim Gender Recognition Certificate
+                </h1>
 
-      <form method="POST" action="{{ url_for('partnershipDetails.interimCheck') }}">
-        {{ form.csrf_token }}
+                {%  set partnerName = 'civil partner'
+                    if session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Civil partnership'
+                    else 'spouce' %}
+                {%  set partnershipName = 'civil partnership'
+                    if session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Civil partnership'
+                    else 'marriage' %}
+                {%  set inPartnershipName = 'in a civil partnership'
+                    if session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Civil partnership'
+                    else 'married' %}
 
-        <button class="govuk-button govuk-!-margin-bottom-0" data-module="govuk-button">
-          Continue
-        </button>
-      </form>
+                <p class="govuk-body">
+                    When you apply for a certificate, your {{ partnerName }} needs to
+                    sign a document if you want to stay {{ inPartnershipName }}.
+                </p>
+                <p class="govuk-body">
+                    If they do not sign the document, or you’re ending the {{ partnershipName }},
+                    you will get an ‘interim’ certificate if you continue with your application.
+                </p>
+                <p class="govuk-body">
+                    You can only use the interim certificate to end your {{ partnershipName }}.
+                </p>
+                <p class="govuk-body">
+                    You have 6 months to apply for an annulment, divorce or dissolution
+                    from when you get your interim certificate.
+                </p>
+                <p class="govuk-body govuk-!-margin-bottom-8">
+                    You will get a full certificate once you’re no longer {{ inPartnershipName }}.
+                </p>
+
+                <form method="POST" action="{{ url_for('partnershipDetails.interimCheck') }}">
+                    {{ form.csrf_token }}
+
+                    <button class="govuk-button govuk-!-margin-bottom-0" data-module="govuk-button">
+                        Continue
+                    </button>
+                </form>
+            </div>
+
+        </div>
     </div>
-  </div>
-</div>
 {% endblock %}

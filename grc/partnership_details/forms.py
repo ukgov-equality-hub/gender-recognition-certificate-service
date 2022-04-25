@@ -4,33 +4,34 @@ from wtforms.validators import DataRequired
 
 
 class MarriageCivilPartnershipForm(FlaskForm):
-    check = RadioField(
-        'check',
-        choices=[('Married'), ('Civil partnership'), ('Neither')],
+    currently_married = RadioField(
+        choices=[
+            ('Married', 'Married'),
+            ('Civil partnership', 'Civil partnership'),
+            ('Neither', 'Neither')
+        ],
         validators=[DataRequired(message='Select if you are currently married or in a civil partnership')]
     )
 
-    submit = SubmitField('Save and continue')
-
 
 class StayTogetherForm(FlaskForm):
-    check = RadioField(
-        'check',
-        choices=[('Yes'), ('No')],
-        validators=[DataRequired(message='Select if you you plan to remain married after receiving your Gender Recognition Certificate')]
+    stay_together = RadioField(
+        choices=[
+            ('Yes', 'Yes'),
+            ('No', 'No')
+        ],
+        validators=[DataRequired(message='Select if you plan to remain married after receiving your Gender Recognition Certificate')]
     )
-
-    submit = SubmitField('Save and continue')
 
 
 class PartnerAgreesForm(FlaskForm):
-    check = RadioField(
-        'check',
-        choices=[('Yes'), ('No')],
+    partner_agrees = RadioField(
+        choices=[
+            ('Yes', 'Yes'),
+            ('No', 'No')
+        ],
         validators=[DataRequired(message='Select if you can provide a declaration of consent from your spouse')]
     )
-
-    submit = SubmitField('Save and continue')
 
 
 class PartnerDiedForm(FlaskForm):
@@ -54,8 +55,12 @@ class EndedCheckForm(FlaskForm):
 
 
 class InterimCheckForm(FlaskForm):
-    submit = SubmitField('Save and continue')
+    # There are no fields on the CheckYourAnswers form
+    # But, to avoid a compiler error, we need to write 'pass' here
+    pass
 
 
 class CheckYourAnswers(FlaskForm):
-    submit = SubmitField('Save and continue')
+    # There are no fields on the CheckYourAnswers form
+    # But, to avoid a compiler error, we need to write 'pass' here
+    pass

@@ -1,85 +1,70 @@
 {% extends 'base.html' %}
-{% block backLink %}<a href="{{ url_for('partnershipDetails.stayTogether') }}" class="govuk-back-link">Back</a>{% endblock %}
+{% import "govuk-design-system-templates/error-summary.html" as error_summary %}
+{% import "govuk-design-system-templates/radios.html" as radios %}
+
+{% block backLink %}
+    <a href="{{ url_for('partnershipDetails.stayTogether') }}" class="govuk-back-link">Back</a>
+{% endblock %}
 
 {% block content %}
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
-    {% if form.errors %}
-    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
-      <h2 id="error-summary-title" class="govuk-error-summary__title">
-        There is a problem
-      </h2>
-      <div class="govuk-error-summary__body">
-        <ul class="govuk-list govuk-error-summary__list">
-          {% for error in form.errors %}
-            {% for e in form[error].errors %}
-            <li><a href="#{{ error }}-issued-error">{{ e }}</a></li>
-            {% endfor %}
-          {% endfor %}
-        </ul>
-      </div>
-    </div>
-    {% endif %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
 
-    <h1 class="govuk-heading-l">
-      Declaration of consent
-    </h1>
+            {{ error_summary.renderFor(form) }}
 
-    {% if session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Civil partnership' %}
-    <p class="govuk-body">If you intend to remain in a civil partnership, your civil partner needs to:</p>
-    <ul class="govuk-list govuk-list--bullet">
-      <li>download and fill in a <a href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852943/t466-eng.pdf" rel="noreferrer noopener" target="_blank" class="govuk-link">statutory declaration for spouses or civil partners (opens in new tab)</a></li>
-      <li>sign the statutory declaration in front of someone authorised to administer oaths - the declaration form explains who can act as a witness</li>
-    </ul>
-    {% set questionText %}Can you provide a statutory declaration of consent from your civil partner?{% endset %}
-    {% else %}
-    <p class="govuk-body">If you intend to remain married, your spouse needs to:</p>
-    <ul class="govuk-list govuk-list--bullet">
-      <li>download and fill in a <a href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852943/t466-eng.pdf" rel="noreferrer noopener" target="_blank" class="govuk-link">statutory declaration for spouses (opens in new tab)</a></li>
-      <li>sign the statutory declaration in front of someone authorised to administer oaths - the declaration form explains who can act as a witness</li>
-    </ul>
-    {% set questionText %}Can you provide a statutory declaration of consent from your spouse?{% endset %}
-    {% endif %}
-
-    <form method="POST" action="{{ url_for('partnershipDetails.partnerAgrees') }}">
-      {{ form.csrf_token }}
-
-      <div class="govuk-form-group {{ 'govuk-form-group--error' if form.check.errors }}">
-        <fieldset class="govuk-fieldset">
-          <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
-            <h1 class="govuk-fieldset__heading">
-              {{ questionText }}
+            <h1 class="govuk-heading-l">
+                Declaration of consent
             </h1>
-          </legend>
-          {% if form.check.errors %}
-          <p id="check-issued-error" class="govuk-error-message">
-            <span class="govuk-visually-hidden">Error:</span> Select if you can provide a declaration of consent from your spouse
-          </p>
-          {% endif %}
-          <div class="govuk-radios" data-module="govuk-radios">
-            <div class="govuk-radios__item">
-              <input id="check" type="radio" name="check" value="Yes" class="govuk-radios__input" {{ 'checked' if session['application']['partnershipDetails']['partnerAgrees'] == 'Yes' }}>
-              <label for="check" class="govuk-label govuk-radios__label">
-                Yes
-              </label>
-            </div>
-            <div class="govuk-radios__item">
-              <input id="check-2" type="radio" name="check" value="No" class="govuk-radios__input" {{ 'checked' if session['application']['partnershipDetails']['partnerAgrees'] == 'No' }}>
-              <label for="check-2" class="govuk-label govuk-radios__label">
-                No
-              </label>
-            </div>
-          </div>
-        </fieldset>
-      </div>
 
-      <div class="govuk-button-group">
-        <button class="govuk-button" data-module="govuk-button">
-          Save and continue
-        </button>
-        <a href="{{ url_for('taskList.index') }}" class="govuk-link govuk-link--no-visited-state">Return to task list</a>
-      </div>
-    </form>
-  </div>
-</div>
+            {%  set partnerName = 'civil partner'
+                if session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Civil partnership'
+                else 'spouce' %}
+            {%  set inPartnershipName = 'in a civil partnership'
+                if session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Civil partnership'
+                else 'married' %}
+
+            <p class="govuk-body">
+                If you intend to remain {{ inPartnershipName }}, your {{ partnerName }} needs to:
+            </p>
+            <ul class="govuk-list govuk-list--bullet">
+                <li>
+                    download and fill in a
+                    <a href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852943/t466-eng.pdf"
+                        rel="noreferrer noopener" target="_blank" class="govuk-link">
+                        statutory declaration for spouses or civil partners (opens in new tab)
+                    </a>
+                </li>
+                <li>
+                    sign the statutory declaration in front of
+                    <a href="https://assets.publishing.service.gov.uk/government/publications/gender-recognition-certificate-statutory-declarations-for-applicants"
+                        rel="noreferrer noopener" target="_blank" class="govuk-link">
+                        someone authorised to administer oaths (opens in new tab)
+                    </a>
+                </li>
+            </ul>
+
+            <form method="POST" action="{{ url_for('partnershipDetails.partnerAgrees') }}">
+                {{ form.csrf_token }}
+
+                {{ radios.renderFor(
+                    form,
+                    fieldName='partner_agrees',
+                    question="Can you provide a statutory declaration from your " + partnerName + "?",
+                    radiosOptions={
+                        'questionClasses': 'govuk-fieldset__legend--m'
+                    }
+                ) }}
+
+                <div class="govuk-button-group">
+                    <button class="govuk-button" data-module="govuk-button">
+                        Save and continue
+                    </button>
+                    <a href="{{ url_for('taskList.index') }}" class="govuk-link govuk-link--no-visited-state">
+                        Return to task list
+                    </a>
+                </div>
+            </form>
+
+        </div>
+    </div>
 {% endblock %}
