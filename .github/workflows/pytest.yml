@@ -2,6 +2,10 @@ name: Python package
 
 on: [push]
 
+env:
+  FLASK_ENV: production
+  PERMANENT_SESSION_LIFETIME: 1200
+
 jobs:
   build:
     runs-on: ubuntu-latest
