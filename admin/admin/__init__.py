@@ -56,7 +56,7 @@ def index():
                             except Exception as e:
                                 print(e, flush=True)
                     else:
-                        message = "NOT OK"
+                        message = "Your login details cannot be confirmed"
                 else:
                     message = "User not found"
                     signedIn = ""

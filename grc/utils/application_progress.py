@@ -25,13 +25,12 @@ def save_progress():
                 return application_record.data()
 
         except ValueError:
-            print('Oops!  Something went wrong.')
+            print('Oops!  Something went wrong.', flush=True)
     else:
-        print('Application does not exist')
+        print('Application does not exist', flush=True)
 
 
 def calculate_progress_status():
-    print('calculate_progress_status', flush=True)
     try:
         if 'application' in session:
             list_status = {
@@ -103,8 +102,7 @@ def calculate_progress_status():
             elif (
                 session['application']['nameChange']['progress'] != ListStatus.CANNOT_START_YET.name
                 and 'previousNamesCheck' in session['application']['personalDetails']
-                and session['application']['personalDetails']['previousNamesCheck']
-                != 'Yes'
+                and session['application']['personalDetails']['previousNamesCheck'] != 'Yes'
             ):
                 session['application']['nameChange']['progress'] = ListStatus.CANNOT_START_YET.name
                 session['application'] = save_progress()
@@ -164,8 +162,16 @@ def calculate_progress_status():
             )
 
             # Submit and pay
-            if (
-                session['application']['submitAndPay']['progress'] == ListStatus.CANNOT_START_YET.name
+            if session['application']['submitAndPay']['progress'] == ListStatus.IN_PROGRESS.name:
+                list_status['submitAndPay'] = calculate_progress_status_display_name(
+                    ListStatus[session['application']['submitAndPay']['progress']]
+                )
+            elif (
+                (
+                    session['application']['submitAndPay']['progress'] == ListStatus.CANNOT_START_YET.name
+                    or session['application']['submitAndPay']['progress'] == ListStatus.NOT_STARTED.name
+                    #or session['application']['submitAndPay']['progress'] == ListStatus.IN_PROGRESS.name
+                )
                 and list_status['confirmation'] == ListStatus.COMPLETED
                 and list_status['personalDetails'] == ListStatus.COMPLETED
                 and list_status['birthRegistration'] == ListStatus.COMPLETED
@@ -204,28 +210,20 @@ def calculate_progress_status():
                 and list_status['partnershipDetails'] == ListStatus.COMPLETED
                 and list_status['statutoryDeclarations'] == ListStatus.COMPLETED
                 and not (
-                    session['application']['medicalReports']['progress']
-                    != ListStatus.CANNOT_START_YET.name
-                    or session['application']['medicalReports']['progress']
-                    != ListStatus.COMPLETED.name
+                    session['application']['medicalReports']['progress'] != ListStatus.CANNOT_START_YET.name
+                    or session['application']['medicalReports']['progress'] != ListStatus.COMPLETED.name
                 )
                 and not (
-                    session['application']['genderEvidence']['progress']
-                    != ListStatus.CANNOT_START_YET.name
-                    or session['application']['genderEvidence']['progress']
-                    != ListStatus.COMPLETED.name
+                    session['application']['genderEvidence']['progress'] != ListStatus.CANNOT_START_YET.name
+                    or session['application']['genderEvidence']['progress'] != ListStatus.COMPLETED.name
                 )
                 and not (
-                    session['application']['nameChange']['progress']
-                    != ListStatus.CANNOT_START_YET.name
-                    and session['application']['nameChange']['progress']
-                    != ListStatus.COMPLETED.name
+                    session['application']['nameChange']['progress'] != ListStatus.CANNOT_START_YET.name
+                    and session['application']['nameChange']['progress'] != ListStatus.COMPLETED.name
                 )
                 and not (
-                    session['application']['marriageDocuments']['progress']
-                    != ListStatus.CANNOT_START_YET.name
-                    and session['application']['marriageDocuments']['progress']
-                    != ListStatus.COMPLETED.name
+                    session['application']['marriageDocuments']['progress'] != ListStatus.CANNOT_START_YET.name
+                    and session['application']['marriageDocuments']['progress'] != ListStatus.COMPLETED.name
                 )
             ):
                 session['application']['submitAndPay']['progress'] = ListStatus.CANNOT_START_YET.name
@@ -238,7 +236,10 @@ def calculate_progress_status():
             return list_status
 
     except ValueError:
-        print('Oops!  Session does not exist')
+        print('Oops!  Session does not exist', flush=True)
+
+    except Exception as e:
+        print(e, flush=True)
 
 
 def calculate_progress_status_display_name(value):
@@ -272,6 +273,6 @@ def mark_complete():
                 db.session.commit()
                 session['application'] = application_record.data()
         except ValueError:
-            print('Oops!  Something went wrong.')
+            print('Oops!  Something went wrong.', flush=True)
     else:
-        print('Application does not exist')
+        print('Application does not exist', flush=True)
