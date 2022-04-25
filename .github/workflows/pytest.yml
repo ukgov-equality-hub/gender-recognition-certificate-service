@@ -42,7 +42,7 @@ jobs:
           pip install playwright pytest-playwright
           pip install -e .
           python -m playwright install --with-deps
-          ./prod.sh
+          waitress-serve --call 'grc:create_app' &
 
       - name: Test with pytest
         run: |
