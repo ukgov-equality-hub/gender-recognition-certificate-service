@@ -68,11 +68,20 @@ jobs:
           pip install -e .
           python -m playwright install --with-deps
 
-      - name: Database migration and start site
+      - name: Database init
         run: |
           flask db init
+
+      - name: Database migration
+        run: |
           flask db migrate
+
+      - name: Database upgrade
+        run: |
           flask db upgrade
+
+      - name: Start site
+        run: |
           waitress-serve --call 'grc:create_app' &
 
       - name: Test with pytest
