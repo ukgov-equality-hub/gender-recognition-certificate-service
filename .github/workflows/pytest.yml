@@ -70,6 +70,7 @@ jobs:
 
       - name: Database init
         run: |
+          sudo -u postgres createdb grc
           flask db stamp head
 
       - name: Database migration
