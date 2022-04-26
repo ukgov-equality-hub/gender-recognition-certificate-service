@@ -71,8 +71,8 @@ jobs:
 
       - name: Database init
         run: |
-          flask db stamp head
           python setup-db.py
+          flask db stamp head
 
       - name: Database migration
         run: |
