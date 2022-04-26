@@ -70,7 +70,7 @@ jobs:
 
       - name: Database init
         run: |
-          flask db init
+          python manage.py db stamp head
 
       - name: Database migration
         run: |
