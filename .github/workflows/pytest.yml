@@ -32,8 +32,8 @@ jobs:
         image: postgres:latest
         env:
           POSTGRES_PORT: 5432
-          POSTGRES_USER: postgres_user
-          POSTGRES_PASSWORD: postgres_password
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
         ports:
           - 5432:5432
         options: >-
@@ -64,9 +64,15 @@ jobs:
 
       - name: Install Playwright and browsers
         run: |
-          pip install playwright pytest-playwright
+          pip install playwright pytest-playwright asyncio
           pip install -e .
           python -m playwright install --with-deps
+
+      - name: Database migration and start site
+        run: |
+          flask db init
+          flask db migrate
+          flask db upgrade
           waitress-serve --call 'grc:create_app' &
 
       - name: Test with pytest
