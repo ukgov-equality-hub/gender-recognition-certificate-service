@@ -63,6 +63,7 @@ jobs:
       #    flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
       #    sudo -u postgres createdb grc
       #    flask db stamp head
+      #    flask db init
 
       - name: Install Playwright and browsers
         run: |
@@ -73,7 +74,6 @@ jobs:
       - name: Database init
         run: |
           python setup-db.py
-          flask db init
 
       - name: Database migration
         run: |
