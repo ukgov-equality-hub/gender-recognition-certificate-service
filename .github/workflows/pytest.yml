@@ -77,12 +77,8 @@ jobs:
 
       - name: Database migration
         run: |
+          flask db stamp head
           flask db migrate
-        env:
-          SQLALCHEMY_DATABASE_URI: postgresql://postgres:password@localhost:5432/grc
-
-      - name: Database upgrade
-        run: |
           flask db upgrade
         env:
           SQLALCHEMY_DATABASE_URI: postgresql://postgres:password@localhost:5432/grc
