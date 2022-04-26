@@ -5,16 +5,18 @@
 
     <div class="govuk-form-group {{ 'govuk-form-group--error' if form[fieldName].errors }}">
         <fieldset class="govuk-fieldset">
-            {% if checkboxOptions.questionIsPageHeading %}
-                <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-                    <h1 class="govuk-fieldset__heading">
+            {% if question %}
+                {% if checkboxOptions.questionIsPageHeading %}
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                        <h1 class="govuk-fieldset__heading">
+                            {{ question }}
+                        </h1>
+                    </legend>
+                {% else %}
+                    <legend class="govuk-fieldset__legend {{ checkboxOptions.questionClasses }}">
                         {{ question }}
-                    </h1>
-                </legend>
-            {% else %}
-                <legend class="govuk-fieldset__legend {{ checkboxOptions.questionClasses }}">
-                    {{ question }}
-                </legend>
+                    </legend>
+                {% endif %}
             {% endif %}
 
             {{ hint.render(checkboxOptions.hintOptions) }}

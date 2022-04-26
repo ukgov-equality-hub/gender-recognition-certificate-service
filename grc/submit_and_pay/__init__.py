@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import Blueprint, flash, redirect, render_template, request, current_app, url_for, session
 import requests
 from requests.structures import CaseInsensitiveDict
@@ -8,6 +9,7 @@ from grc.models import ListStatus
 from grc.submit_and_pay.forms import MethodCheckForm, HelpTypeForm, CheckYourAnswers
 from grc.utils.decorators import LoginRequired
 from grc.utils.application_progress import save_progress, mark_complete
+from grc.utils.radio_values_helper import get_radio_pretty_value
 
 submitAndPay = Blueprint('submitAndPay', __name__)
 
@@ -18,9 +20,9 @@ def index():
     form = MethodCheckForm()
 
     if form.validate_on_submit():
-        session['application']['submitAndPay']['method'] = form.check.data
+        session['application']['submitAndPay']['method'] = form.applying_for_help_with_fee.data
 
-        if form.check.data == 'Help':
+        if form.applying_for_help_with_fee.data == 'Help':
             session['application']['submitAndPay']['progress'] = ListStatus.IN_PROGRESS.name
             session['application']['submitAndPay']['step'] = 'submitAndPay.helpType'
         else:
@@ -30,6 +32,13 @@ def index():
         session['application'] = save_progress()
 
         return redirect(url_for(session['application']['submitAndPay']['step']))
+
+    if request.method == 'GET':
+        form.applying_for_help_with_fee.data = (
+            session['application']['submitAndPay']['method']
+            if 'method' in session['application']['submitAndPay']
+            else None
+        )
 
     return render_template(
         'submit-and-pay/method.html',
@@ -43,14 +52,16 @@ def helpType():
     form = HelpTypeForm()
 
     if request.method == 'POST':
-        if 'Using the EX160 form' == form.check.data:
-            form.referenceNumber.data = None
+        if 'Using the EX160 form' == form.how_applying_for_fees.data:
+            form.help_with_fees_reference_number.data = None
 
         if form.validate_on_submit():
-            session['application']['submitAndPay']['helpType'] = form.check.data
+            session['application']['submitAndPay']['helpType'] = form.how_applying_for_fees.data
 
-            if 'Using the online service' == form.check.data:
-                session['application']['submitAndPay']['referenceNumber'] = form.referenceNumber.data
+            if 'Using the online service' == form.how_applying_for_fees.data:
+                session['application']['submitAndPay']['referenceNumber'] = form.help_with_fees_reference_number.data
+            else:
+                session['application']['submitAndPay']['referenceNumber'] = None
 
             session['application']['submitAndPay']['progress'] = ListStatus.IN_REVIEW.name
             session['application']['submitAndPay']['step'] = 'submitAndPay.checkYourAnswers'
@@ -59,8 +70,8 @@ def helpType():
             return redirect(url_for(session['application']['submitAndPay']['step']))
 
     if request.method == 'GET' and 'helpType' in session['application']['submitAndPay']:
-        form.check.data = session['application']['submitAndPay']['helpType']
-        form.referenceNumber.data = session['application']['submitAndPay']['referenceNumber']
+        form.how_applying_for_fees.data = session['application']['submitAndPay']['helpType']
+        form.help_with_fees_reference_number.data = session['application']['submitAndPay']['referenceNumber']
 
     return render_template(
         'submit-and-pay/help-type.html',
@@ -77,7 +88,7 @@ def checkYourAnswers():
         return redirect(url_for('taskList.index'))
 
     if request.method == 'POST' and form.validate_on_submit():
-        session['application']['submitAndPay']['declaration'] = form.check.data
+        session['application']['submitAndPay']['declaration'] = form.certify.data
 
         if session['application']['submitAndPay']['method'] == 'Help':
             session['application']['submitAndPay']['progress'] = ListStatus.COMPLETED.name
@@ -121,7 +132,10 @@ def checkYourAnswers():
 
     return render_template(
         'submit-and-pay/check-your-answers.html',
-        form=form
+        form=form,
+        strptime=datetime.strptime,
+        get_radio_pretty_value=get_radio_pretty_value,
+        application=session['application']
     )
 
 

@@ -30,6 +30,17 @@
                 ) }}
 
                 {{ summary_list_item.render(
+                    title='When you transitioned',
+                    changeLinkHiddenText='when you transitioned',
+                    changeLinkUrl=url_for('personalDetails.transitionDate'),
+                    value=(strptime('{}-{}-1'.format(session['application']['personalDetails']['transition_date_year'],
+                                 session['application']['personalDetails']['transition_date_month']),
+                                 '%Y-%m-%d')
+                                 .strftime('%B %Y')
+                    )
+                ) }}
+
+                {{ summary_list_item.render(
                     title='Ever changed name',
                     changeLinkHiddenText='whether you have changed your name to reflect your gender',
                     changeLinkUrl=url_for('personalDetails.previousNamesCheck'),

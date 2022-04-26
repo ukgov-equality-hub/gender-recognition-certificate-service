@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import EmailField, StringField, SubmitField, RadioField, RadioField, BooleanField, IntegerField
+from wtforms import EmailField, StringField, SubmitField, RadioField, BooleanField, IntegerField
 from wtforms.validators import DataRequired, NumberRange
 from grc.utils.form_custom_validators import StrictRequiredIf, validatePostcode
 from datetime import datetime
@@ -7,37 +7,33 @@ from dateutil.relativedelta import relativedelta
 
 
 class MethodCheckForm(FlaskForm):
-    check = RadioField(
-        'check',
-        choices=[('Help'), ('Online')],
+    applying_for_help_with_fee = RadioField(
+        choices=[
+            ('Help', 'Yes'),
+            ('Online', 'No, I will pay now')
+        ],
         validators=[DataRequired(message='Select if you are applying for help paying the fee')]
     )
 
-    submit = SubmitField('Continue')
-
 
 class HelpTypeForm(FlaskForm):
-    check = RadioField(
-        'check',
-        choices=[('Using the online service'), ('Using the EX160 form')],
+    how_applying_for_fees = RadioField(
+        choices=[
+            ('Using the online service', 'Using the online service'),
+            ('Using the EX160 form', 'Using the EX160 form')
+        ],
         validators=[DataRequired(message='Select how are you applying for help paying the fee')]
     )
 
-    referenceNumber = StringField(
-        'referenceNumber',
-        validators=[StrictRequiredIf('check', 'Using the online service', message='Reference number is required')]
+    help_with_fees_reference_number = StringField(
+        validators=[StrictRequiredIf('how_applying_for_fees', 'Using the online service', message='Enter your Help with Fees reference number')]
     )
-
-    submit = SubmitField('Continue')
 
 
 class CheckYourAnswers(FlaskForm):
-    check = BooleanField(
-        'check',
-        validators=[DataRequired(message='Please certify that all information given in this application is correct and that you understand making a false application is an offence.')]
+    certify = BooleanField(
+        validators=[DataRequired(message='You must certify that all information given in this application is correct and that you understand making a false application is an offence.')]
     )
-
-    submit = SubmitField('Continue')
 
 
 class PaymentDetailsForm(FlaskForm):

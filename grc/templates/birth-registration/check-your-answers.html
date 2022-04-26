@@ -41,6 +41,13 @@
                 ) }}
 
                 {% if session['application']['birthRegistration']['ukCheck'] == 'Yes' %}
+                    {{ summary_list_item.render(
+                        title='Town or city of birth',
+                        changeLinkHiddenText='your town or city of birth',
+                        changeLinkUrl=url_for('birthRegistration.placeOfBirth'),
+                        value=(session['application']['birthRegistration']['place_of_birth'])
+                    ) }}
+
                     {% macro mothersNameValue() %}
                         {{ session['application']['birthRegistration']['mothers_first_name'] }}
                         {{ session['application']['birthRegistration']['mothers_last_name'] }}<br>
@@ -68,13 +75,6 @@
                             value=(session['application']['birthRegistration']['fathers_first_name'] + ' ' + session['application']['birthRegistration']['fathers_last_name'])
                         ) }}
                     {% endif %}
-
-                    {{ summary_list_item.render(
-                        title="Place of birth",
-                        changeLinkHiddenText="your place of birth",
-                        changeLinkUrl=url_for('birthRegistration.placeOfBirth'),
-                        value=(session['application']['birthRegistration']['place_of_birth'])
-                    ) }}
 
                     {{ summary_list_item.render(
                         title="Adopted",
