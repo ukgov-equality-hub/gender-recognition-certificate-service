@@ -9,7 +9,7 @@ env:
   LOG_LEVEL: DEBUG
   SECRET_KEY: ef987sd9fwkjefosf9we0svs9q3evsd0
   PERMANENT_SESSION_LIFETIME: 1200
-  SQLALCHEMY_DATABASE_URI: postgresql://postgres:password@localhost:5432/grc
+  SQLALCHEMY_DATABASE_URI: postgresql://postgres:password@postgres:5432/grc
   SQLALCHEMY_TRACK_MODIFICATION: False
   DEFAULT_ADMIN_USER: grc-service-account@cabinetoffice.gov.uk
   NOTIFY_API: grctesting-36bdb0a3-86e3-423d-b1ce-26fae1ead417-869084fa-4e9b-4367-8803-b3115692d1cb
@@ -68,10 +68,14 @@ jobs:
           pip install -e .
           python -m playwright install --with-deps
 
+      #- name: Database init
+      #  run: |
+      #    sudo -u postgres createdb grc
+      #    flask db stamp head
+
       - name: Database init
         run: |
-          sudo -u postgres createdb grc
-          flask db stamp head
+          flask db init
 
       - name: Database migration
         run: |
