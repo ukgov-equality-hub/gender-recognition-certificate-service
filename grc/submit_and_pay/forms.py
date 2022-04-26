@@ -31,12 +31,9 @@ class HelpTypeForm(FlaskForm):
 
 
 class CheckYourAnswers(FlaskForm):
-    check = BooleanField(
-        'check',
-        validators=[DataRequired(message='Please certify that all information given in this application is correct and that you understand making a false application is an offence.')]
+    certify = BooleanField(
+        validators=[DataRequired(message='You must certify that all information given in this application is correct and that you understand making a false application is an offence.')]
     )
-
-    submit = SubmitField('Continue')
 
 
 class PaymentDetailsForm(FlaskForm):

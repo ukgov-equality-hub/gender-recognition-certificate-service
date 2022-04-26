@@ -1,519 +1,515 @@
 {% extends 'base.html' %}
-{% block backLink %}<a class="govuk-link" href="{{ url_for('birthRegistration.forces') }}" class="govuk-back-link">Back</a>{% endblock %}
+{% import "govuk-design-system-templates/_summary-list-item.html" as summary_list_item %}
+{% import "govuk-design-system-templates/checkbox-single.html" as checkbox_single %}
+{% import "govuk-design-system-templates/error-summary.html" as error_summary %}
+
+{% block backLink %}
+    <a href="{{ url_for('taskList.index') }}" class="govuk-back-link">Back</a>
+{% endblock %}
 
 {% block content %}
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
-    {% if form.errors %}
-    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
-      <h2 id="error-summary-title" class="govuk-error-summary__title">
-        There is a problem
-      </h2>
-      <div class="govuk-error-summary__body">
-        <ul class="govuk-list govuk-error-summary__list">
-          {% for error in form.errors %}
-            {% for e in form[error].errors %}
-            <li><a href="#{{ error }}-issued-error">{{ e }}</a></li>
-            {% endfor %}
-          {% endfor %}
-        </ul>
-      </div>
-    </div>
-    {% endif %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
 
-    <h1 class="govuk-heading-l">
-      Check your answers before sending your application
-    </h1>
-    <h2 class="govuk-heading-m">
-      Your personal details
-    </h2>
+            {{ error_summary.renderFor(form) }}
 
-    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          Name on certificate
-        </dt>
-        <dd class="govuk-summary-list__value">
-          {{ session['application']['personalDetails']['title'] }}
-          {{ session['application']['personalDetails']['first_name'] }}
-          {{ session['application']['personalDetails']['last_name'] }}
-        </dd>
-        <dd class="govuk-summary-list__actions">
-          <a href="{{ url_for('personalDetails.index') }}" class="govuk-link">Change</a>
-        </dd>
-      </div>
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          Changed name
-        </dt>
-        <dd class="govuk-summary-list__value">
-          {{ session['application']['personalDetails']['previousNamesCheck'] }}
-        </dd>
-        <dd class="govuk-summary-list__actions">
-          <a href="{{ url_for('personalDetails.previousNamesCheck') }}" class="govuk-link">Change</a>
-        </dd>
-      </div>
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          Address
-        </dt>
-        <dd class="govuk-summary-list__value">
-          {{ session['application']['personalDetails']['address']['address_line_one'] }}<br>
-          {{ session['application']['personalDetails']['address']['address_line_two'] }}<br>
-          {{ session['application']['personalDetails']['address']['town'] }}<br>
-          {{ session['application']['personalDetails']['address']['postcode'] }}
-        </dd>
-        <dd class="govuk-summary-list__actions">
-          <a class="govuk-link"
-             href="{{ url_for('personalDetails.address') }}">
-            Change</a>
-        </dd>
-      </div>
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          Contact preferences
-        </dt>
-        <dd class="govuk-summary-list__value">
-          <ul class="govuk-list">
-            {% if session['application']['personalDetails']['contactPreferences']['email'] != '' %}
-            <li>Email: {{ session['application']['personalDetails']['contactPreferences']['email'] }}</li>
+            <h1 class="govuk-heading-l">
+                Check your answers before sending your application
+            </h1>
+
+            <h2 class="govuk-heading-m">
+                Confirmation
+            </h2>
+
+            <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+                {{ summary_list_item.render(
+                    title='Have you ever been issued a Gender Recognition Certificate (or its equivalent) in another country?',
+                    changeLinkHiddenText='if you have ever been issued a Gender Recognition Certificate (or its equivalent) in another country',
+                    changeLinkUrl=url_for('startApplication.overseas_check'),
+                    value=(session['application']['confirmation']['overseasCheck'])
+                ) }}
+
+                {% if session['application']['confirmation']['overseasCheck'] == 'Yes' %}
+                    {{ summary_list_item.render(
+                        title='Do you have official documentation that shows you have ever been issued a Gender Recognition Certificate (or its equivalent) in one of the allowed countries or territories?',
+                        changeLinkHiddenText='if you have official documentation that shows you have ever been issued a Gender Recognition Certificate (or its equivalent) in one of the allowed countries or territories',
+                        changeLinkUrl=url_for('startApplication.overseas_approved_check'),
+                        value=(session['application']['confirmation']['overseasApprovedCheck'])
+                    ) }}
+                {% endif %}
+
+                {{ summary_list_item.render(
+                    title='Do you consent to the General Register Office contacting you about your application?',
+                    changeLinkHiddenText='if you consent to the General Register Office contacting you about your application',
+                    changeLinkUrl=url_for('startApplication.declaration'),
+                    value=('Yes' if session['application']['confirmation']['declaration'] else 'No')
+                ) }}
+            </dl>
+
+            <h2 class="govuk-heading-m">
+                Your personal details
+            </h2>
+
+            <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+                {{ summary_list_item.render(
+                    title='Name (as you would like it to appear on your Gender Recognition Certificate)',
+                    changeLinkHiddenText='name (as you would like it to appear on your Gender Recognition Certificate)',
+                    changeLinkUrl=url_for('personalDetails.index'),
+                    value=(session['application']['personalDetails']['title'] + ' ' + session['application']['personalDetails']['first_name'] + ' ' + session['application']['personalDetails']['last_name'])
+                ) }}
+
+                {{ summary_list_item.render(
+                    title='Affirmed gender',
+                    changeLinkHiddenText='affirmed gender',
+                    changeLinkUrl=url_for('personalDetails.affirmedGender'),
+                    value=('Male' if session['application']['personalDetails']['affirmed_gender'] == 'MALE' else 'Female')
+                ) }}
+
+                {{ summary_list_item.render(
+                    title='When you transitioned',
+                    changeLinkHiddenText='when you transitioned',
+                    changeLinkUrl=url_for('personalDetails.transitionDate'),
+                    value=(strptime('{}-{}-1'.format(session['application']['personalDetails']['transition_date_year'],
+                                 session['application']['personalDetails']['transition_date_month']),
+                                 '%Y-%m-%d')
+                                 .strftime('%B %Y')
+                    )
+                ) }}
+
+                {{ summary_list_item.render(
+                    title='Ever changed name',
+                    changeLinkHiddenText='whether you have changed your name to reflect your gender',
+                    changeLinkUrl=url_for('personalDetails.previousNamesCheck'),
+                    value=(session['application']['personalDetails']['previousNamesCheck'])
+                ) }}
+
+                {% macro addressValue() %}
+                    {{ session['application']['personalDetails']['address']['address_line_one'] }}<br>
+                    {{ session['application']['personalDetails']['address']['address_line_two'] }}<br>
+                    {{ session['application']['personalDetails']['address']['town'] }}<br>
+                    {{ session['application']['personalDetails']['address']['postcode'] }}
+                {% endmacro %}
+                {{ summary_list_item.render(
+                    title='Address',
+                    changeLinkHiddenText='address',
+                    changeLinkUrl=url_for('personalDetails.address'),
+                    value=(addressValue())
+                ) }}
+
+                {% macro contactPreferencesValue() %}
+                    <ul class="govuk-list">
+                        {% if session['application']['personalDetails']['contactPreferences']['email'] != '' %}
+                            <li>
+                                Email: {{ session['application']['personalDetails']['contactPreferences']['email'] }}
+                            </li>
+                        {% endif %}
+                        {% if session['application']['personalDetails']['contactPreferences']['phone'] != '' %}
+                            <li>
+                                Phone: {{ session['application']['personalDetails']['contactPreferences']['phone'] }}
+                            </li>
+                        {% endif %}
+                        {% if session['application']['personalDetails']['contactPreferences']['post'] != '' %}
+                            <li>
+                                Post: {{ session['application']['personalDetails']['contactPreferences']['post'] }}
+                            </li>
+                        {% endif %}
+                    </ul>
+                {% endmacro %}
+                {{ summary_list_item.render(
+                    title='Contact preferences',
+                    changeLinkHiddenText='contact preferences',
+                    changeLinkUrl=url_for('personalDetails.contactPreferences'),
+                    value=(contactPreferencesValue())
+                ) }}
+
+                {% macro unavailabilityValue() %}
+                    {{ session['application']['personalDetails']['contactDates']['answer'] }}<br>
+                    {% if session['application']['personalDetails']['contactDates']['answer'] == 'Yes' %}
+                        {# Note: The following <span> should all be on one line, to allow the line breaks to work correctly #}
+                        <span style="white-space: pre-line;">{{ session['application']['personalDetails']['contactDates']['dates'] }}</span>
+                    {% endif %}
+                {% endmacro %}
+                {{ summary_list_item.render(
+                    title='Unavailable over the next 6 months',
+                    changeLinkHiddenText="whether there are any dates you don't want us to contact you by post over the next 6 months",
+                    changeLinkUrl=url_for('personalDetails.contactDates'),
+                    value=(unavailabilityValue())
+                ) }}
+
+                {{ summary_list_item.render(
+                    title='Notify HMRC',
+                    changeLinkHiddenText="whether you want us to notify HMRC after you receive a Gender Recognition Certificate",
+                    changeLinkUrl=url_for('personalDetails.hmrc'),
+                    value=(session['application']['personalDetails']['hmrc']['answer'])
+                ) }}
+
+                {% if session['application']['personalDetails']['hmrc']['answer'] == 'Yes' %}
+                    {{ summary_list_item.render(
+                        title='National insurance number',
+                        changeLinkHiddenText="your National Insurance number",
+                        changeLinkUrl=url_for('personalDetails.hmrc'),
+                        value=(session['application']['personalDetails']['hmrc']['national_insurance_number'])
+                    ) }}
+                {% endif %}
+            </dl>
+
+            <h2 class="govuk-heading-m">
+                Birth registration details
+            </h2>
+
+            <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+                {{ summary_list_item.render(
+                    title='Birth name',
+                    changeLinkHiddenText='birth name',
+                    changeLinkUrl=url_for('birthRegistration.index'),
+                    value=(session['application']['birthRegistration']['first_name'] + ' ' + session['application']['birthRegistration']['middle_names'] + ' ' + session['application']['birthRegistration']['last_name'])
+                ) }}
+
+                {{ summary_list_item.render(
+                    title='Date of birth',
+                    changeLinkHiddenText='date of birth',
+                    changeLinkUrl=url_for('birthRegistration.dob'),
+                    value=(
+                        strptime('{}-{}-{}'.format(session['application']['birthRegistration']['dob']['year'],
+                                 session['application']['birthRegistration']['dob']['month'],
+                                 session['application']['birthRegistration']['dob']['day']),
+                                 '%Y-%m-%d')
+                                 .strftime('%d %B %Y')
+                    )
+                ) }}
+
+                {{ summary_list_item.render(
+                    title='Birth registered in UK',
+                    changeLinkHiddenText='whether your birth was regstered in the UK',
+                    changeLinkUrl=url_for('birthRegistration.ukCheck'),
+                    value=(session['application']['birthRegistration']['ukCheck'])
+                ) }}
+
+                {% if session['application']['birthRegistration']['ukCheck'] == 'Yes' %}
+                    {{ summary_list_item.render(
+                        title='Town or city of birth',
+                        changeLinkHiddenText='your town or city of birth',
+                        changeLinkUrl=url_for('birthRegistration.placeOfBirth'),
+                        value=(session['application']['birthRegistration']['place_of_birth'])
+                    ) }}
+
+                    {% macro mothersNameValue() %}
+                        {{ session['application']['birthRegistration']['mothers_first_name'] }}
+                        {{ session['application']['birthRegistration']['mothers_last_name'] }}<br>
+                        (Maiden name: {{ session['application']['birthRegistration']['mothers_maiden_name'] }})
+                    {% endmacro %}
+                    {{ summary_list_item.render(
+                        title="Mother's name",
+                        changeLinkHiddenText="your mother's name",
+                        changeLinkUrl=url_for('birthRegistration.mothersName'),
+                        value=mothersNameValue()
+                    ) }}
+
+                    {{ summary_list_item.render(
+                        title="Father's name listed",
+                        changeLinkHiddenText="whether your father's name is listed on your birth or adoption certificate",
+                        changeLinkUrl=url_for('birthRegistration.fathersNameCheck'),
+                        value=(session['application']['birthRegistration']['fathersNameCheck'])
+                    ) }}
+
+                    {% if session['application']['birthRegistration']['fathersNameCheck'] == 'Yes' %}
+                        {{ summary_list_item.render(
+                            title="Father's name",
+                            changeLinkHiddenText="your father's name",
+                            changeLinkUrl=url_for('birthRegistration.fathersName'),
+                            value=(session['application']['birthRegistration']['fathers_first_name'] + ' ' + session['application']['birthRegistration']['fathers_last_name'])
+                        ) }}
+                    {% endif %}
+
+                    {{ summary_list_item.render(
+                        title="Adopted",
+                        changeLinkHiddenText="whether you were adopted",
+                        changeLinkUrl=url_for('birthRegistration.adopted'),
+                        value=(session['application']['birthRegistration']['adopted'])
+                    ) }}
+
+                    {% if session['application']['birthRegistration']['adopted'] == 'Yes' %}
+                        {{ summary_list_item.render(
+                            title="Adopted in UK",
+                            changeLinkHiddenText="whether you were adopted in the UK",
+                            changeLinkUrl=url_for('birthRegistration.adoptedUK'),
+                            value=(get_radio_pretty_value('AdoptedUKForm', 'adopted_uk', session['application']['birthRegistration']['adopted_uk']))
+                        ) }}
+                    {% endif %}
+
+                    {{ summary_list_item.render(
+                        title="Forces registering service, British Consul or High Commission, or under
+                               Merchant Shipping or Civil Aviation provisions",
+                        changeLinkHiddenText="whether your birth was registered under the Forces registering service,
+                                              British Consul or High Commission, or under Merchant Shipping or Civil Aviation provisions",
+                        changeLinkUrl=url_for('birthRegistration.forces'),
+                        value=(session['application']['birthRegistration']['forces'])
+                    ) }}
+
+                {% else %}
+                    {{ summary_list_item.render(
+                        title="Registered birth country",
+                        changeLinkHiddenText="the country you were born in",
+                        changeLinkUrl=url_for('birthRegistration.country'),
+                        value=(session['application']['birthRegistration']['country'])
+                    ) }}
+                {% endif %}
+            </dl>
+
+            <h2 class="govuk-heading-m">
+                Marriage or civil partnership details
+            </h2>
+
+            <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+                {{ summary_list_item.render(
+                    title='Currently married or in a civil partnership',
+                    changeLinkHiddenText='if you are currently married or in a civil partnership',
+                    changeLinkUrl=url_for('partnershipDetails.index'),
+                    value=(session['application']['partnershipDetails']['marriageCivilPartnership'])
+                ) }}
+
+                {% if session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Neither' %}
+                    {{ summary_list_item.render(
+                        title='Spouse or partner has died',
+                        changeLinkHiddenText='if your spouse or partner has died',
+                        changeLinkUrl=url_for('partnershipDetails.partnerDied'),
+                        value=(session['application']['partnershipDetails']['partnerDied'])
+                    ) }}
+
+                    {{ summary_list_item.render(
+                        title='Marriage or civil partnership has ended',
+                        changeLinkHiddenText='if your marriage or civil partnership has ended',
+                        changeLinkUrl=url_for('partnershipDetails.endedCheck'),
+                        value=(session['application']['partnershipDetails']['endedCheck'])
+                    ) }}
+
+                {% else %}
+                    {{ summary_list_item.render(
+                        title='Remain married',
+                        changeLinkHiddenText='if you plan to remain married after receiving your Gender Recognition Certificate',
+                        changeLinkUrl=url_for('partnershipDetails.stayTogether'),
+                        value=(session['application']['partnershipDetails']['stayTogether'])
+                    ) }}
+
+                    {% if session['application']['partnershipDetails']['stayTogether'] == 'Yes' %}
+                        {{ summary_list_item.render(
+                            title='Can provide a declaration of consent from your spouse',
+                            changeLinkHiddenText='if you can provide a declaration of consent from your spouse',
+                            changeLinkUrl=url_for('partnershipDetails.partnerAgrees'),
+                            value=(session['application']['partnershipDetails']['partnerAgrees'])
+                        ) }}
+                    {% endif %}
+
+                    {% if session['application']['partnershipDetails']['stayTogether'] == 'No' or session['application']['partnershipDetails']['partnerAgrees'] == 'No' %}
+                        {{ summary_list_item.render(
+                            title='Interim GRC',
+                            changeLinkHiddenText='if you understand that you will receive an Interim GRC',
+                            changeLinkUrl=url_for('partnershipDetails.interimCheck'),
+                            value=(session['application']['partnershipDetails']['interimCheck'])
+                        ) }}
+                    {% endif %}
+                {% endif %}
+            </dl>
+
+
+            {% macro uploadedDocumentsList(section) %}
+                <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0">
+                    {% for item in session['application'][section]['files'] %}
+                        <li>{{ item | replace(session['application']['reference_number'] + '__' + section + '__', '') }}</li>
+                    {% endfor %}
+                </ul>
+            {% endmacro %}
+
+            {% if application.confirmation.overseasCheck == 'No' %}
+                <h2 class="govuk-heading-m">
+                    Your medical reports
+                </h2>
+
+                <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+                    {{ summary_list_item.render(
+                        title='Uploaded documents',
+                        changeLinkHiddenText='the documents you have uploaded for your medical reports',
+                        changeLinkUrl=url_for('upload.medicalReports'),
+                        value=(uploadedDocumentsList('medicalReports'))
+                    ) }}
+                </dl>
+
+                <h2 class="govuk-heading-m">
+                    Evidence of living in your gender
+                </h2>
+
+                <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+                    {{ summary_list_item.render(
+                        title='Uploaded documents',
+                        changeLinkHiddenText='the documents you have uploaded as evidence of living in your gender',
+                        changeLinkUrl=url_for('upload.genderEvidence'),
+                        value=(uploadedDocumentsList('genderEvidence'))
+                    ) }}
+                </dl>
+
+                {% if application.personalDetails.previousNamesCheck is defined and application.personalDetails.previousNamesCheck == 'Yes' %}
+                    <h2 class="govuk-heading-m">
+                        Name change documents
+                    </h2>
+
+                    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+                        {{ summary_list_item.render(
+                            title='Uploaded documents',
+                            changeLinkHiddenText='the documents you have uploaded as evidence of changing your name',
+                            changeLinkUrl=url_for('upload.nameChange'),
+                            value=(uploadedDocumentsList('nameChange'))
+                        ) }}
+                    </dl>
+                {% endif %}
+
+            {% elif application.confirmation.overseasCheck == 'Yes' and application.personalDetails.previousNamesCheck is defined and application.personalDetails.previousNamesCheck == 'Yes' %}
+                <h2 class="govuk-heading-m">
+                    Name change documents
+                </h2>
+
+                <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+                    {{ summary_list_item.render(
+                        title='Uploaded documents',
+                        changeLinkHiddenText='the documents you have uploaded as evidence of changing your name',
+                        changeLinkUrl=url_for('upload.nameChange'),
+                        value=(uploadedDocumentsList('nameChange'))
+                    ) }}
+                </dl>
             {% endif %}
-            {% if session['application']['personalDetails']['contactPreferences']['phone'] != '' %}
-            <li>Phone: {{ session['application']['personalDetails']['contactPreferences']['phone'] }}</li>
+
+            {% if application.partnershipDetails.marriageCivilPartnership is defined and (application.partnershipDetails.marriageCivilPartnership == 'Married' or (application.partnershipDetails.marriageCivilPartnership == 'Neither' and (application.partnershipDetails.marriageCivilPartnership.partnerDied == 'Yes' or application.partnershipDetails.marriageCivilPartnership.endedCheck == 'Yes'))) %}
+                <h2 class="govuk-heading-m">
+                    Marriage documents
+                </h2>
+
+                <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+                    {{ summary_list_item.render(
+                        title='Uploaded documents',
+                        changeLinkHiddenText='the documents you have uploaded as evidence of your marriage or civil partnership',
+                        changeLinkUrl=url_for('upload.marriageDocuments'),
+                        value=(uploadedDocumentsList('marriageDocuments'))
+                    ) }}
+                </dl>
             {% endif %}
-            {% if session['application']['personalDetails']['contactPreferences']['post'] != '' %}
-            <li>Post: {{ session['application']['personalDetails']['contactPreferences']['post'] }}</li>
+
+            {% if application.confirmation.overseasApprovedCheck == 'Yes' %}
+                <h2 class="govuk-heading-m">
+                    Overseas certificate documents
+                </h2>
+
+                <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+                    {{ summary_list_item.render(
+                        title='Uploaded documents',
+                        changeLinkHiddenText='the documents you have uploaded as evidence of your overseas certificate',
+                        changeLinkUrl=url_for('upload.overseasCertificate'),
+                        value=(uploadedDocumentsList('overseasCertificate'))
+                    ) }}
+                </dl>
             {% endif %}
-          </ul>
-        </dd>
-        <dd class="govuk-summary-list__actions">
-          <a href="{{ url_for('personalDetails.contactPreferences') }}" class="govuk-link">Change</a>
-        </dd>
-      </div>
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          Unavailable over the next 6 months
-        </dt>
-        <dd class="govuk-summary-list__value">
-          {{ session['application']['personalDetails']['contactDates']['answer'] }}<br>
-          {% if session['application']['personalDetails']['contactDates']['answer'] == 'Yes' %}
-          {{ session['application']['personalDetails']['contactDates']['dates'] }}
-          {% endif %}
-        </dd>
-        <dd class="govuk-summary-list__actions">
-          <a href="{{ url_for('personalDetails.contactDates') }}" class="govuk-link">Change</a>
-        </dd>
-      </div>
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          Notify HMRC
-        </dt>
-        <dd class="govuk-summary-list__value">
-          {{ session['application']['personalDetails']['hmrc']['answer'] }}<br>
-          {% if session['application']['personalDetails']['hmrc']['answer'] == 'Yes' %}
-          {{ session['application']['personalDetails']['hmrc']['national_insurance_number'] }}
-          {% endif %}
-        </dd>
-        <dd class="govuk-summary-list__actions">
-          <a href="{{ url_for('personalDetails.hmrc') }}" class="govuk-link">Change</a>
-        </dd>
-      </div>
-    </dl>
 
-    <h2 class="govuk-heading-m">
-      Birth registration details
-    </h2>
+            <h2 class="govuk-heading-m">
+                Statutory declarations
+            </h2>
 
-    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          Birth name
-        </dt>
-        <dd class="govuk-summary-list__value">
-          {{ session['application']['birthRegistration']['first_name'] }}
-          {{ session['application']['birthRegistration']['middle_names'] }}
-          {{ session['application']['birthRegistration']['last_name'] }}
-        </dd>
-        <dd class="govuk-summary-list__actions">
-          <a href="{{ url_for('birthRegistration.index') }}" class="govuk-link">Change</a>
-        </dd>
-      </div>
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          Date of birth
-        </dt>
-        <dd class="govuk-summary-list__value">
-          {{ session['application']['birthRegistration']['dob']['day'] }}/{{ session['application']['birthRegistration']['dob']['month'] }}/{{ session['application']['birthRegistration']['dob']['year'] }}
-        </dd>
-        <dd class="govuk-summary-list__actions">
-          <a href="{{ url_for('birthRegistration.dob') }}" class="govuk-link">Change</a>
-        </dd>
-      </div>
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          Birth registered in UK
-        </dt>
-        <dd class="govuk-summary-list__value">
-          <ul class="govuk-list">
-            {{ session['application']['birthRegistration']['ukCheck'] }}
-          </ul>
-        </dd>
-        <dd class="govuk-summary-list__actions">
-          <a href="{{ url_for('birthRegistration.ukCheck') }}" class="govuk-link">Change</a>
-        </dd>
-      </div>
+            <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+                {{ summary_list_item.render(
+                    title='Uploaded documents',
+                    changeLinkHiddenText='the statutory declarations documents you have uploaded',
+                    changeLinkUrl=url_for('upload.statutoryDeclarations'),
+                    value=(uploadedDocumentsList('statutoryDeclarations'))
+                ) }}
+            </dl>
 
-      {% if session['application']['birthRegistration']['ukCheck'] == 'Yes' %}
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          Mother's name
-        </dt>
-        <dd class="govuk-summary-list__value">
-          {{ session['application']['birthRegistration']['mothers_first_name'] }}
-          {{ session['application']['birthRegistration']['mothers_last_name'] }},
-          {{ session['application']['birthRegistration']['mothers_maiden_name'] }}
-        </dd>
-        <dd class="govuk-summary-list__actions">
-          <a href="{{ url_for('birthRegistration.mothersName') }}" class="govuk-link">Change</a>
-        </dd>
-      </div>
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          Father's name listed
-        </dt>
-        <dd class="govuk-summary-list__value">
-          {{ session['application']['birthRegistration']['fathersNameCheck'] }}
-        </dd>
-        <dd class="govuk-summary-list__actions">
-          <a href="{{ url_for('birthRegistration.fathersNameCheck') }}" class="govuk-link">Change</a>
-        </dd>
-      </div>
+            <h2 class="govuk-heading-m">
+                Payment details
+            </h2>
 
-      {% if session['application']['birthRegistration']['fathersNameCheck'] == 'Yes' %}
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          Father's name
-        </dt>
-        <dd class="govuk-summary-list__value">
-          {{ session['application']['birthRegistration']['fathers_first_name'] }}
-          {{ session['application']['birthRegistration']['fathers_last_name'] }}
-        </dd>
-        <dd class="govuk-summary-list__actions">
-          <a href="{{ url_for('birthRegistration.fathersName') }}" class="govuk-link">Change</a>
-        </dd>
-      </div>
-      {% endif %}
+            <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+                {{ summary_list_item.render(
+                    title='Payment method',
+                    changeLinkHiddenText='payment method',
+                    changeLinkUrl=url_for('submitAndPay.index'),
+                    value=(session['application']['submitAndPay']['method'])
+                ) }}
 
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          Place of birth
-        </dt>
-        <dd class="govuk-summary-list__value">
-          {{ session['application']['birthRegistration']['place_of_birth'] }}
-        </dd>
-        <dd class="govuk-summary-list__actions">
-          <a href="{{ url_for('birthRegistration.placeOfBirth') }}" class="govuk-link">Change</a>
-        </dd>
-      </div>
+                {% if session['application']['submitAndPay']['method'] == 'Help' %}
+                    {{ summary_list_item.render(
+                        title='Help type',
+                        changeLinkHiddenText='the way your are applying for help with paying the fees',
+                        changeLinkUrl=url_for('submitAndPay.helpType'),
+                        value=(session['application']['submitAndPay']['helpType'])
+                    ) }}
 
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          Adopted
-        </dt>
-        <dd class="govuk-summary-list__value">
-          {{ session['application']['birthRegistration']['adopted'] }}
-        </dd>
-        <dd class="govuk-summary-list__actions">
-          <a href="{{ url_for('birthRegistration.adopted') }}" class="govuk-link">Change</a>
-        </dd>
-      </div>
+                    {% if session['application']['submitAndPay']['helpType'] == 'Using the online service' %}
+                        {{ summary_list_item.render(
+                            title='Help with Fees reference number',
+                            changeLinkHiddenText='your Help with Fees reference number',
+                            changeLinkUrl=url_for('submitAndPay.helpType'),
+                            value=(session['application']['submitAndPay']['referenceNumber'])
+                        ) }}
+                    {% endif %}
+                {% endif %}
+            </dl>
 
-      {% if session['application']['birthRegistration']['adopted'] == 'Yes' %}
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          Adopted in UK
-        </dt>
-        <dd class="govuk-summary-list__value">
-          {{ session['application']['birthRegistration']['adopted_uk'] }}
-        </dd>
-        <dd class="govuk-summary-list__actions">
-          <a href="{{ url_for('birthRegistration.adoptedUK') }}" class="govuk-link">Change</a>
-        </dd>
-      </div>
-      {% endif %}
 
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          Forces registering service, British Consul or High Commission, or under Merchant Shipping or Civil Aviation provisions
-        </dt>
-        <dd class="govuk-summary-list__value">
-          {{ session['application']['birthRegistration']['forces'] }}
-        </dd>
-        <dd class="govuk-summary-list__actions">
-          <a href="{{ url_for('birthRegistration.forces') }}" class="govuk-link">Change</a>
-        </dd>
-      </div>
-      {% else %}
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          Registered birth country
-        </dt>
-        <dd class="govuk-summary-list__value">
-          {{ session['application']['birthRegistration']['country'] }}
-        </dd>
-        <dd class="govuk-summary-list__actions">
-          <a href="{{ url_for('birthRegistration.country') }}" class="govuk-link">Change</a>
-        </dd>
-      </div>
-      {% endif %}
-    </dl>
+            <h2 class="govuk-heading-m">
+                Documents you'll need to post
+            </h2>
+            <p class="govuk-body govuk-!-margin-bottom-2">
+                Based on your application the documents that will need to be posted are:
+            </p>
 
-    <h2 class="govuk-heading-m">
-      Marriage or civil partnership details
-    </h2>
+            <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-9">
+                <li>
+                    your original or a
+                    <a href="https://www.gov.uk/certifying-a-document" rel="external" target="_blank" class="govuk-link">
+                        certified copy (opens in new tab)
+                    </a>
+                    of your full birth or adoption certificate
+                </li>
 
-    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          Currently married or in a civil partnership
-        </dt>
-        <dd class="govuk-summary-list__value">
-          {{ session['application']['partnershipDetails']['marriageCivilPartnership'] }}
-        </dd>
-        <dd class="govuk-summary-list__actions">
-          <a href="{{ url_for('partnershipDetails.index') }}" class="govuk-link">Change</a>
-        </dd>
-      </div>
+                {% if session['application']['submitAndPay']['helpType'] == 'Using the EX160 form' %}
+                    <li>
+                        an
+                        <a href="https://www.gov.uk/government/publications/apply-for-help-with-court-and-tribunal-fees"
+                           rel="external" target="_blank" class="govuk-link">
+                            EX160 form (opens in new tab)
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
 
-      {% if session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Neither' %}
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          Spouse or partner has died
-        </dt>
-        <dd class="govuk-summary-list__value">
-          {{ session['application']['partnershipDetails']['partnerDied'] }}
-        </dd>
-        <dd class="govuk-summary-list__actions">
-          <a href="{{ url_for('partnershipDetails.partnerDied') }}" class="govuk-link">Change</a>
-        </dd>
-      </div>
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          Married or in a civil partnership has ended
-        </dt>
-        <dd class="govuk-summary-list__value">
-          {{ session['application']['partnershipDetails']['endedCheck'] }}
-        </dd>
-        <dd class="govuk-summary-list__actions">
-          <a href="{{ url_for('partnershipDetails.endedCheck') }}" class="govuk-link">Change</a>
-        </dd>
-      </div>
-      {% else %}
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          Remain married
-        </dt>
-        <dd class="govuk-summary-list__value">
-          {{ session['application']['partnershipDetails']['stayTogether'] }}
-        </dd>
-        <dd class="govuk-summary-list__actions">
-          <a href="{{ url_for('partnershipDetails.stayTogether') }}" class="govuk-link">Change</a>
-        </dd>
-      </div>
 
-      {% if session['application']['partnershipDetails']['stayTogether'] == 'Yes' %}
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          Can provide a declaration of consent from your spouse
-        </dt>
-        <dd class="govuk-summary-list__value">
-          {{ session['application']['partnershipDetails']['partnerAgrees'] }}
-        </dd>
-        <dd class="govuk-summary-list__actions">
-          <a href="{{ url_for('partnershipDetails.partnerAgrees') }}" class="govuk-link">Change</a>
-        </dd>
-      </div>
-      {% endif %}
+            <h2 class="govuk-heading-m">
+                Now send your application
+            </h2>
 
-      {% if session['application']['partnershipDetails']['stayTogether'] == 'No' or session['application']['partnershipDetails']['partnerAgrees'] == 'No' %}
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          Interim GRC
-        </dt>
-        <dd class="govuk-summary-list__value">
-          {{ session['application']['partnershipDetails']['interimCheck'] }}
-        </dd>
-        <dd class="govuk-summary-list__actions">
-          <a href="{{ url_for('partnershipDetails.interimCheck') }}" class="govuk-link">Change</a>
-        </dd>
-      </div>
-      {% endif %}
-      {% endif %}
-    </dl>
+            <form method="POST" action="{{ url_for('submitAndPay.checkYourAnswers') }}">
+                {{ form.csrf_token }}
 
-    <h2 class="govuk-heading-m">
-      Your medical reports
-    </h2>
+                <div class="checkboxes-long-text">
+                    {{ checkbox_single.renderFor(
+                        form,
+                        fieldName='certify',
+                        label='I certify that all information given in this application is correct
+                                  and that I understand making a false application is an offence.',
+                        checkboxOptions={
+                            'questionClasses': 'govuk-fieldset__legend--m'
+                        }
+                    ) }}
+                </div>
 
-    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          Uploaded documents
-        </dt>
-        <dd class="govuk-summary-list__value">
-          <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0">
-            {% for item in session['application']['medicalReports']['files'] %}
-            <li>{{ item | replace(session['application']['reference_number'] + '__medicalReports__', '') }}</li>
-            {% endfor %}
-          </ul>
-        </dd>
-        <dd class="govuk-summary-list__actions">
-          <a href="{{ url_for('upload.medicalReports') }}" class="govuk-link">Change</a>
-        </dd>
-      </div>
-    </dl>
+                <div class="govuk-button-group">
+                    <button class="govuk-button" data-module="govuk-button">
+                        {% if session['application']['submitAndPay']['method'] == 'Help' %}
+                            Submit application
+                        {% else %}
+                            Submit application and pay online
+                        {% endif %}
+                    </button>
+                </div>
+            </form>
 
-    <h2 class="govuk-heading-m">
-      Evidence of living in your gender
-    </h2>
-
-    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          Uploaded documents
-        </dt>
-        <dd class="govuk-summary-list__value">
-          <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0">
-            {% for item in session['application']['genderEvidence']['files'] %}
-            <li>{{ item | replace(session['application']['reference_number'] + '__genderEvidence__', '') }}</li>
-            {% endfor %}
-          </ul>
-        </dd>
-        <dd class="govuk-summary-list__actions">
-          <a href="{{ url_for('upload.genderEvidence') }}" class="govuk-link">Change</a>
-        </dd>
-      </div>
-    </dl>
-
-    <h2 class="govuk-heading-m">
-      Payment details
-    </h2>
-
-    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          Payment method
-        </dt>
-        <dd class="govuk-summary-list__value">
-          {{ session['application']['submitAndPay']['method'] }}
-        </dd>
-        <dd class="govuk-summary-list__actions">
-          <a href="{{ url_for('submitAndPay.index') }}" class="govuk-link">Change</a>
-        </dd>
-      </div>
-
-      {% if session['application']['submitAndPay']['method'] == 'Help' %}
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          Help type
-        </dt>
-        <dd class="govuk-summary-list__value">
-          {% if session['application']['submitAndPay']['helpType'] == 'Using the online service' %}
-          Using the online service<br>
-          Reference: {{ session['application']['submitAndPay']['referenceNumber'] }}
-          {% else %}
-          {{ session['application']['submitAndPay']['helpType'] }}
-          {% endif %}
-        </dd>
-        <dd class="govuk-summary-list__actions">
-          <a href="{{ url_for('submitAndPay.helpType') }}" class="govuk-link">Change</a>
-        </dd>
-      </div>
-      {% endif %}
-    </dl>
-
-    <!-- documents to post  -->
-    <h2 class="govuk-heading-m">
-      Documents you'll need to post
-    </h2>
-    <p class="govuk-body govuk-!-margin-bottom-2">Based on your application the documents that will need to be posted are:</p>
-    <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-9">
-      {% if session['application']['birthRegistration']['ukCheck'] == 'Yes' and session['application' ]['birthRegistration']['adopted'] != 'Yes' %}
-      <li>your original or a <a href="https://www.gov.uk/certifying-a-document" rel="external" target="_blank" class="govuk-link">certified copy (opens in new tab)</a> of your full birth certificate</li>
-      {% endif %}
-      {% if session['application']['birthRegistration']['ukCheck'] == 'Yes' and session['application']['birthRegistration']['adopted'] == 'Yes' %}
-      <li>your original or a <a href="https://www.gov.uk/certifying-a-document" rel="external" target="_blank" class="govuk-link">certified copy (opens in new tab)</a> of your full adoption certificate</li>
-      {% endif %}
-      {% if session['application']['birthRegistration']['ukCheck'] == 'No' %}
-      <li>an official confirmation of date of birth and birth gender</li>
-      {% endif %}
-      {% if session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Neither' %}
-      <li>a <a href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852944/t467-eng.pdf" rel="external" target="_blank" class="govuk-link">statutory declaration for single applicants (opens in new tab)</a></li>
-      {% endif %}
-      {% if session['application']['partnershipDetails']['marriageCivilPartnership'] != 'Neither' %}
-      <li>a <a href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852943/t466-eng.pdf" rel="external" target="_blank" class="govuk-link">statutory declaration for applicants who are married or in a civil partnership (opens in new tab)</a></li>
-      {% endif %}
-      {% if session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Married' and session['application']['partnershipDetails']['stayTogether'] == 'Yes' %}
-      <li><a href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852946/t469-eng.pdf" rel="external" target="_blank" class="govuk-link">your spouse's statutory declaration (opens in new tab)</a></li>
-      {% endif %}
-      {% if session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Civil partnership' and session['application']['partnershipDetails']['stayTogether'] == 'Yes' %}
-      <li><a href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852946/t469-eng.pdf" rel="external" target="_blank" class="govuk-link">your civil partner's statutory declaration (opens in new tab)</a></li>
-      {% endif %}
-      {% if session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Married' %}
-      <li>your original marriage certificate or a <a href="https://www.gov.uk/certifying-a-document" rel="external" target="_blank" class="govuk-link">certified copy (opens in new tab)</a></li>
-      {% endif %}
-      {% if session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Civil partnership' %}
-      <li>your original civil partnership certificate or a <a href="https://www.gov.uk/certifying-a-document" rel="external" target="_blank" class="govuk-link">certified copy (opens in new tab)</a></li>
-      {% endif %}
-      {% if session['application']['partnershipDetails']['partnerDied'] == 'Yes' %}
-      <li>a copy of your spouse or civil partner's death certificate</li>
-      {% endif %}
-      {% if session['application']['partnershipDetails']['endedCheck'] == 'Yes' %}
-      <li>a copy of your decree(s) dissolving the marriage or civil partnership</li>
-      {% endif %}
-      {% if session['application']['confirmation']['overseasCheck'] == 'Yes' %}
-      <li>official documentation that shows that your affirmed gender has been recognised in an approved country or territory</li>
-      {% endif %}
-      {% if session['application']['submitAndPay']['helpType'] == 'Using the EX160 form' %}
-      <li>an <a href="https://www.gov.uk/government/publications/apply-for-help-with-court-and-tribunal-fees" rel="external" target="_blank" class="govuk-link">EX160 form (opens in new tab)</a></li>
-      {% endif %}
-    </ul>
-
-    <h2 class="govuk-heading-m">
-      Now send your application
-    </h2>
-
-    <form method="POST" action="{{ url_for('submitAndPay.checkYourAnswers') }}">
-      {{ form.csrf_token }}
-
-      <div class="govuk-form-group">
-        <div class="govuk-checkboxes checkboxes-long-text" data-module="govuk-checkboxes">
-          {% if form.check.errors %}
-          <p id="check-issued-error" class="govuk-error-message">
-            <span class="govuk-visually-hidden">Error:</span> Please certify that all information given in this
-            application is correct and that you understand making a false application is an offence.
-          </p>
-          {% endif %}
-          <div class="govuk-checkboxes__item">
-            <input id="check" type="checkbox" name="check" value="true" class="govuk-checkboxes__input" {{ 'checked' if session['application']['submitAndPay']['declaration']==true }}>
-            <label for="check" class="govuk-label govuk-checkboxes__label">
-              I certify that all information given in this application is correct and that I understand making a false
-              application is an offence.
-            </label>
-          </div>
         </div>
-      </div>
-
-      <div class="govuk-button-group">
-        <button class="govuk-button" data-module="govuk-button">
-          {% if session['application']['submitAndPay']['method'] == 'Help' %}
-          Submit application
-          {% else %}
-          Submit application and pay online
-        </button>
-        {% endif %}
-      </div>
-    </form>
-  </div>
-</div>
+    </div>
 {% endblock %}

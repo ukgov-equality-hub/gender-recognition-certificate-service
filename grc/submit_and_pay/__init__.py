@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import Blueprint, flash, redirect, render_template, request, current_app, url_for, session
 import requests
 from requests.structures import CaseInsensitiveDict
@@ -8,6 +9,7 @@ from grc.models import ListStatus
 from grc.submit_and_pay.forms import MethodCheckForm, HelpTypeForm, CheckYourAnswers
 from grc.utils.decorators import LoginRequired
 from grc.utils.application_progress import save_progress, mark_complete
+from grc.utils.radio_values_helper import get_radio_pretty_value
 
 submitAndPay = Blueprint('submitAndPay', __name__)
 
@@ -86,7 +88,7 @@ def checkYourAnswers():
         return redirect(url_for('taskList.index'))
 
     if request.method == 'POST' and form.validate_on_submit():
-        session['application']['submitAndPay']['declaration'] = form.check.data
+        session['application']['submitAndPay']['declaration'] = form.certify.data
 
         if session['application']['submitAndPay']['method'] == 'Help':
             session['application']['submitAndPay']['progress'] = ListStatus.COMPLETED.name
@@ -130,7 +132,10 @@ def checkYourAnswers():
 
     return render_template(
         'submit-and-pay/check-your-answers.html',
-        form=form
+        form=form,
+        strptime=datetime.strptime,
+        get_radio_pretty_value=get_radio_pretty_value,
+        application=session['application']
     )
 
 
