@@ -51,6 +51,7 @@ class Config:
     AWS_S3_REGION_NAME = os.environ.get("AWS_REGION")
     AWS_S3_SIGNATURE_VERSION = "s3v4"
     BUCKET_NAME = os.environ.get("BUCKET_NAME")
+    MAINTENANCE_MODE = os.environ.get("MAINTENANCE_MODE")
 
 
 class DevConfig(Config):

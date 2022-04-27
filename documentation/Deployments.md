@@ -1,5 +1,7 @@
 
-[Gender Recognition Certificate service](../README.md) > [Developer documentation](README.md) > Deployments
+[Gender Recognition Certificate service](../README.md) >
+[Developer documentation](README.md) >
+Deployments
 
 # Deployments
 
