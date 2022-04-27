@@ -5,6 +5,7 @@ from flask_migrate import Migrate
 from flask_uuid import FlaskUUID
 from grc.models import db
 from grc.config import Config, DevConfig, TestConfig
+from grc.utils.maintenance_mode import Maintenance
 from grc.utils.custom_error_handlers import CustomErrorHandlers
 
 migrate = Migrate()
@@ -26,6 +27,11 @@ def create_app(test_config=None):
     app.config.from_object(config_object)
 
     CustomErrorHandlers(app)
+
+    # Show "Service unavailable" page if the config setting it set
+    if app.config['MAINTENANCE_MODE'] == 'ON':
+        Maintenance(app)
+        return app
 
     # database
     db.init_app(app)
