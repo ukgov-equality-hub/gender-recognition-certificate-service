@@ -1,5 +1,5 @@
+import os
 import asyncio
-import time
 from playwright.async_api import async_playwright
 
 '''
@@ -31,18 +31,19 @@ def test_example_is_working(page):
     assert page.inner_text('h1.govuk-heading-l') == 'Enter security code'
 '''
 
-
+TEST_URL = os.getenv('TEST_URL', 'http://localhost:5000')
+print('Running tests on %s' % TEST_URL)
 
 async def main():
     async with async_playwright() as p:
         for browser_type in [p.chromium]: #, p.firefox, p.webkit]:
             browser = await browser_type.launch()
             page = await browser.new_page()
-            await page.goto('http://localhost:5000')
+            await page.goto(TEST_URL)
             assert await page.inner_text('a.govuk-header__link.govuk-header__link--service-name') == 'Apply for a Gender Recognition Certificate'
 
             await page.type('#email', 'alistair@nts-graphics.co.uk') #'test@test.com')
-            await page.click('#submit') #'button.govuk-button')     # a.govuk-footer__link.govuk-footer__copyright-logo
+            await page.click('button.govuk-button')     # a.govuk-footer__link.govuk-footer__copyright-logo
             #await page.dispatch_event('form', 'submit')
             #await page.locator('button.govuk-button').click()
             #time.sleep(10)
@@ -51,7 +52,7 @@ async def main():
             ####await page.waitForTimeout(2000)
             #await page.wait_for_load_state('networkidle')
 
-            page.on("console", lambda msg: print(msg.text))
+            #page.on("console", lambda msg: print(msg.text))
 
             await page.screenshot(path=f'example-{browser_type.name}.png')
 
