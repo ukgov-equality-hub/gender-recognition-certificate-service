@@ -5,6 +5,7 @@ from flask_migrate import Migrate
 from flask_uuid import FlaskUUID
 from grc.models import db
 from grc.config import Config, DevConfig, TestConfig
+from grc.utils.custom_error_handlers import CustomErrorHandlers
 
 migrate = Migrate()
 flask_uuid = FlaskUUID()
@@ -23,6 +24,8 @@ def create_app(test_config=None):
         config_object = TestConfig
 
     app.config.from_object(config_object)
+
+    CustomErrorHandlers(app)
 
     # database
     db.init_app(app)

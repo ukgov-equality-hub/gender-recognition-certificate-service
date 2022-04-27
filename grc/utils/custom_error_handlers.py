@@ -1,0 +1,10 @@
+from flask import Flask, render_template
+
+
+class CustomErrorHandlers:
+    def __init__(self, app: Flask):
+        app.register_error_handler(Exception, self.error_default)
+
+    @staticmethod
+    def error_default(e):
+        return render_template('custom-error-templates/error-default.html'), 500
