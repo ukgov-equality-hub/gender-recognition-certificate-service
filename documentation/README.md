@@ -17,6 +17,9 @@ Environments and deployments:
 Database:
 * TODO Database migrations
 
+How-to:
+* [How to put the service into Maintenance Mode / "Service unavailable"](Maintenance_mode.md)
+
 # Miscellaneous documentation
 **Note: If we have time, we could put the following documentation into other sub-files.**
 
