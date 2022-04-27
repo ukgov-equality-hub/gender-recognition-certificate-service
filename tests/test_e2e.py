@@ -1,19 +1,61 @@
 import asyncio
+import time
 from playwright.async_api import async_playwright
+
+'''
+To setup on docker container:
+pip install playwright pytest-playwright asyncio
+playwright install
+apt-get install -y gstreamer1.0-libav libnss3-tools libatk-bridge2.0-0 libcups2-dev libxkbcommon-x11-0 libxcomposite-dev libxrandr2 libgbm-dev libgtk-3-0
+
+To setup locally:
+pip install playwright pytest-playwright asyncio
+pip install -e .
+playwright install --with-deps
+
+To run test locally in debug mode:
+PWDEBUG=1 pytest -s
+'''
+
+
+'''
+def test_example_is_working(page):
+    page.goto("http://localhost:5000")
+    assert page.inner_text('a.govuk-header__link.govuk-header__link--service-name') == 'Apply for a Gender Recognition Certificate'
+
+    page.fill('#email', 'test@test.com')
+    page.click('button.govuk-button')
+    page.wait_for_load_state("networkidle")
+
+
+    assert page.inner_text('h1.govuk-heading-l') == 'Enter security code'
+'''
+
 
 
 async def main():
     async with async_playwright() as p:
-        for browser_type in [p.chromium, p.firefox, p.webkit]:
+        for browser_type in [p.chromium]: #, p.firefox, p.webkit]:
             browser = await browser_type.launch()
             page = await browser.new_page()
-            page.goto('http://localhost:8080')
-            #await page.screenshot(path=f'example-{browser_type.name}.png')
-            assert page.inner_text('a.govuk-header__link.govuk-header__link--service-name') == 'Apply for a Gender Recognition Certificate'
+            await page.goto('http://localhost:5000')
+            assert await page.inner_text('a.govuk-header__link.govuk-header__link--service-name') == 'Apply for a Gender Recognition Certificate'
 
-            await page.fill('#email', 'test@test.com')
-            await page.click('button.govuk-button')
-            assert page.inner_text('h1.govuk-heading-l') == 'Enter security code'
+            await page.type('#email', 'alistair@nts-graphics.co.uk') #'test@test.com')
+            await page.click('#submit') #'button.govuk-button')     # a.govuk-footer__link.govuk-footer__copyright-logo
+            #await page.dispatch_event('form', 'submit')
+            #await page.locator('button.govuk-button').click()
+            #time.sleep(10)
+            await page.wait_for_timeout(3000)
+            ####await page.waitFor(2000)
+            ####await page.waitForTimeout(2000)
+            #await page.wait_for_load_state('networkidle')
+
+            page.on("console", lambda msg: print(msg.text))
+
+            await page.screenshot(path=f'example-{browser_type.name}.png')
+
+            assert await page.inner_text('h1.govuk-heading-l') == 'Enter security code'
 
             await browser.close()
 
