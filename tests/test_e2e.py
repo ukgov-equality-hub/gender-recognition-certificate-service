@@ -18,19 +18,6 @@ PWDEBUG=1 pytest -s
 '''
 
 
-'''
-def test_example_is_working(page):
-    page.goto("http://localhost:5000")
-    assert page.inner_text('a.govuk-header__link.govuk-header__link--service-name') == 'Apply for a Gender Recognition Certificate'
-
-    page.fill('#email', 'test@test.com')
-    page.click('button.govuk-button')
-    page.wait_for_load_state("networkidle")
-
-
-    assert page.inner_text('h1.govuk-heading-l') == 'Enter security code'
-'''
-
 TEST_URL = os.getenv('TEST_URL', 'http://localhost:5000')
 print('Running tests on %s' % TEST_URL)
 
@@ -42,21 +29,18 @@ async def main():
             await page.goto(TEST_URL)
             assert await page.inner_text('a.govuk-header__link.govuk-header__link--service-name') == 'Apply for a Gender Recognition Certificate'
 
-            await page.type('#email', 'alistair@nts-graphics.co.uk') #'test@test.com')
-            await page.click('button.govuk-button')     # a.govuk-footer__link.govuk-footer__copyright-logo
-            #await page.dispatch_event('form', 'submit')
-            #await page.locator('button.govuk-button').click()
-            #time.sleep(10)
-            await page.wait_for_timeout(3000)
-            ####await page.waitFor(2000)
-            ####await page.waitForTimeout(2000)
-            #await page.wait_for_load_state('networkidle')
-
-            #page.on("console", lambda msg: print(msg.text))
-
-            await page.screenshot(path=f'example-{browser_type.name}.png')
-
+            await page.type('#email', 'alistair@nts-graphics.co.uk')
+            await page.click('button.govuk-button')
+            #await page.wait_for_timeout(3000)
             assert await page.inner_text('h1.govuk-heading-l') == 'Enter security code'
+
+            # If we need to test...
+            #page.on('console', lambda msg: print(msg.text))
+            #await page.screenshot(path=f'example-{browser_type.name}.png')
+
+            await page.type('#code', '11111')
+            await page.click('button.govuk-button')
+            assert await page.inner_text('h1.govuk-fieldset__heading') == 'Have you already started an application?'
 
             await browser.close()
 
