@@ -26,7 +26,8 @@ def create_app(test_config=None):
 
     app.config.from_object(config_object)
 
-    CustomErrorHandlers(app)
+    if os.environ['FLASK_ENV'] != 'development':
+        CustomErrorHandlers(app)
 
     # Show "Service unavailable" page if the config setting it set
     if app.config['MAINTENANCE_MODE'] == 'ON':
