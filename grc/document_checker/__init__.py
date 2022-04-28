@@ -195,7 +195,7 @@ def your_documents():
 
 @documentChecker.route('/check-documents/email-address', methods=['GET', 'POST'])
 def email():
-    if 'documentChecker' not in session or session['documentChecker']['confirmation']['overseasApprovedCheck'] is '':
+    if 'documentChecker' not in session or session['documentChecker']['confirmation']['overseasApprovedCheck'] == '':
         return redirect(url_for('documentChecker.index'))
 
     form = EmailForm()
