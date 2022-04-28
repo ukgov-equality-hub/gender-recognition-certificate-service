@@ -62,8 +62,7 @@ class StrictRequiredIf(DataRequired):
 
 
 def validateSecurityCode(form, field):
-    #is_test = True if os.getenv('TEST_URL', '') != '' else False
-    is_test = '/localhost:' in request.base_url
+    is_test = True if os.getenv('TEST_URL', '') != '' or os.getenv('FLASK_ENV', '') == 'development' else False
 
     if is_test and field.data == '11111':
         pass
