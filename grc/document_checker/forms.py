@@ -36,16 +36,6 @@ class PlanToRemainInAPartnershipForm(FlaskForm):
     )
 
 
-class PartnerAgreesForm(FlaskForm):
-    check = RadioField(
-        'check',
-        choices=[('Yes'), ('No')],
-        validators=[DataRequired(message='Select if you can provide a declaration of consent from your spouse')]
-    )
-
-    submit = SubmitField('Save and continue')
-
-
 class PartnerDiedForm(FlaskForm):
     check = RadioField(
         'check',
@@ -63,10 +53,6 @@ class EndedCheckForm(FlaskForm):
         validators=[DataRequired(message='Select if you have ever been married or in a civil partnership that has now ended')]
     )
 
-    submit = SubmitField('Save and continue')
-
-
-class InterimCheckForm(FlaskForm):
     submit = SubmitField('Save and continue')
 
 

@@ -3,7 +3,7 @@ from flask import Blueprint, flash, redirect, render_template, request, url_for,
 from notifications_python_client.notifications import NotificationsAPIClient
 from grc.document_checker.doc_checker_data_store import DocCheckerDataStore
 from grc.document_checker.doc_checker_state import DocCheckerState, CurrentlyInAPartnershipEnum
-from grc.document_checker.forms import PreviousNamesCheck, MarriageCivilPartnershipForm, PlanToRemainInAPartnershipForm, PartnerAgreesForm, PartnerDiedForm, InterimCheckForm, OverseasApprovedCheckForm, EmailForm, ValidateEmailForm
+from grc.document_checker.forms import PreviousNamesCheck, MarriageCivilPartnershipForm, PlanToRemainInAPartnershipForm, PartnerDiedForm, OverseasApprovedCheckForm, EmailForm, ValidateEmailForm
 from grc.utils.security_code import send_security_code
 from grc.utils.threading import Threading
 
@@ -83,52 +83,6 @@ def planToRemainInAPartnership():
         'document-checker/plan-to-remain-in-a-partnership.html',
         form=form,
         doc_checker_state=doc_checker_state
-    )
-
-
-@documentChecker.route('/check-documents/partnership-details/partner-agrees', methods=['GET', 'POST'])
-def partnerAgrees():
-    form = PartnerAgreesForm()
-
-    if form.validate_on_submit():
-        session['documentChecker']['partnershipDetails']['partnerAgrees'] = form.check.data
-        session['documentChecker'] = session['documentChecker']
-
-        if form.check.data == 'Yes':
-            next_step = 'documentChecker.checkYourAnswers'
-        else:
-            next_step = 'documentChecker.interimCheck'
-
-        return redirect(url_for(next_step))
-
-    return render_template(
-        'document-checker/partner-agrees.html',
-        form=form
-    )
-
-
-@documentChecker.route('/check-documents/partnership-details/interim-check', methods=['GET', 'POST'])
-def interimCheck():
-    form = InterimCheckForm()
-
-    if request.method == 'POST':
-        session['documentChecker']['partnershipDetails']['interimCheck'] = 'Yes'
-        session['documentChecker'] = session['documentChecker']
-
-        # set current step in case user exits the app
-        next_step = 'documentChecker.checkYourAnswers'
-
-        return redirect(url_for(next_step))
-
-    if session['documentChecker']['partnershipDetails']['stayTogether'] == 'No':
-        back = 'documentChecker.stayTogether'
-    else:
-        back = 'documentChecker.partnerAgrees'
-
-    return render_template(
-        'document-checker/interim-check.html',
-        form=form,
-        back=back
     )
 
 
