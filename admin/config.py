@@ -24,7 +24,7 @@ class Config:
     SESSION_COOKIE_SECURE = True
     PERMANENT_SESSION_LIFETIME = int(os.environ.get("PERMANENT_SESSION_LIFETIME"))
     WTF_CSRF_ENABLED = True
-    AWS_ACCESS_KEY_ID = "FDIA3GOLL9JYJ4XTGPFD" #os.environ.get("AWS_ACCESS_KEY_ID")
+    AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
     AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
     AWS_REGION = os.environ.get("AWS_REGION")
     AWS_S3_REGION_NAME = os.environ.get("AWS_REGION")
