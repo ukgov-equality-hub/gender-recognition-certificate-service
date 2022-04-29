@@ -3,7 +3,7 @@ from flask import Blueprint, flash, redirect, render_template, request, url_for,
 from notifications_python_client.notifications import NotificationsAPIClient
 from grc.document_checker.doc_checker_data_store import DocCheckerDataStore
 from grc.document_checker.doc_checker_state import DocCheckerState, CurrentlyInAPartnershipEnum
-from grc.document_checker.forms import PreviousNamesCheck, MarriageCivilPartnershipForm, StayTogetherForm, PartnerAgreesForm, PartnerDiedForm, InterimCheckForm, OverseasApprovedCheckForm, EmailForm, ValidateEmailForm
+from grc.document_checker.forms import PreviousNamesCheck, MarriageCivilPartnershipForm, PlanToRemainInAPartnershipForm, PartnerAgreesForm, PartnerDiedForm, InterimCheckForm, OverseasApprovedCheckForm, EmailForm, ValidateEmailForm
 from grc.utils.security_code import send_security_code
 from grc.utils.threading import Threading
 
@@ -45,7 +45,7 @@ def currentlyInAPartnership():
         DocCheckerDataStore.save_doc_checker_state(doc_checker_state)
 
         if doc_checker_state.currently_in_a_partnership.is_currently_in_partnership:
-            next_step = 'documentChecker.stayTogether'
+            next_step = 'documentChecker.planToRemainInAPartnership'
         else:
             next_step = 'documentChecker.partnerDied'
 
@@ -65,25 +65,24 @@ def currentlyInAPartnership():
     )
 
 
-@documentChecker.route('/check-documents/partnership-details/stay-together', methods=['GET', 'POST'])
-def stayTogether():
-    form = StayTogetherForm()
+@documentChecker.route('/check-documents/plan-to-remain-in-a-partnership', methods=['GET', 'POST'])
+def planToRemainInAPartnership():
+    form = PlanToRemainInAPartnershipForm()
+    doc_checker_state = DocCheckerDataStore.load_doc_checker_state()
 
     if form.validate_on_submit():
-        session['documentChecker']['partnershipDetails']['stayTogether'] = form.check.data
-        session['documentChecker'] = session['documentChecker']
+        doc_checker_state.plan_to_remain_in_a_partnership = strtobool(form.plan_to_remain_in_a_partnership.data)
+        DocCheckerDataStore.save_doc_checker_state(doc_checker_state)
 
-        # if form.check.data == 'Yes':
-        #     next_step = 'documentChecker.partnerAgrees'
-        # else:
-        #     next_step = 'documentChecker.interimCheck'
-        next_step = 'documentChecker.overseas_approved_check'
+        return redirect(url_for('documentChecker.overseas_approved_check'))
 
-        return redirect(url_for(next_step))
+    if request.method == 'GET':
+        form.plan_to_remain_in_a_partnership.data = doc_checker_state.plan_to_remain_in_a_partnership
 
     return render_template(
-        'document-checker/stay-together.html',
-        form=form
+        'document-checker/plan-to-remain-in-a-partnership.html',
+        form=form,
+        doc_checker_state=doc_checker_state
     )
 
 
@@ -182,7 +181,7 @@ def overseas_approved_check():
     if session['documentChecker']['partnershipDetails']['marriageCivilPartnership'] == 'Neither':
         back = 'documentChecker.endedCheck'
     else:
-        back = 'documentChecker.stayTogether'
+        back = 'documentChecker.planToRemainInAPartnership'
 
     return render_template(
         'document-checker/overseas-approved-check.html',
