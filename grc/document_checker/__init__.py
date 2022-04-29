@@ -1,5 +1,7 @@
+from distutils.util import strtobool
 from flask import Blueprint, flash, redirect, render_template, request, url_for, session, current_app
 from notifications_python_client.notifications import NotificationsAPIClient
+from grc.document_checker.doc_checker_data_store import DocCheckerDataStore, DocCheckerState
 from grc.document_checker.forms import PreviousNamesCheck, MarriageCivilPartnershipForm, StayTogetherForm, PartnerAgreesForm, PartnerDiedForm, InterimCheckForm, OverseasApprovedCheckForm, EmailForm, ValidateEmailForm
 from grc.utils.security_code import send_security_code
 from grc.utils.threading import Threading
@@ -9,31 +11,22 @@ documentChecker = Blueprint('documentChecker', __name__)
 
 @documentChecker.route('/check-documents', methods=['GET', 'POST'])
 def index():
-    if 'documentChecker' not in session:
-        session['documentChecker'] = {
-            'previousNamesCheck': '',
-            'partnershipDetails': {
-                'marriageCivilPartnership': '',
-                'stayTogether': '',
-                'partnerAgrees': '',
-                'interimCheck': '',
-                'partnerDied': ''
-            },
-            'confirmation': {'overseasApprovedCheck': ''}
-        }
-
     return render_template('document-checker/start.html')
 
 
-@documentChecker.route('/check-documents/personal-details/previous-names-check', methods=['GET', 'POST'])
+@documentChecker.route('/check-documents/changed-name-to-reflect-gender', methods=['GET', 'POST'])
 def previousNamesCheck():
     form = PreviousNamesCheck()
+    doc_checker_state = DocCheckerDataStore.load_doc_checker_state()
 
     if form.validate_on_submit():
-        session['documentChecker']['previousNamesCheck'] = form.check.data
-        session['documentChecker'] = session['documentChecker']
+        doc_checker_state.changed_name_to_reflect_gender = strtobool(form.changed_name_to_reflect_gender.data)
+        DocCheckerDataStore.save_doc_checker_state(doc_checker_state)
 
-        return redirect(url_for('documentChecker.partnershipDetails'))
+        return redirect(url_for('documentChecker.currentlyInAPartnership'))
+
+    if request.method == 'GET':
+        form.changed_name_to_reflect_gender.data = doc_checker_state.changed_name_to_reflect_gender
 
     return render_template(
         'document-checker/previous-names-check.html',

@@ -1,3 +1,4 @@
 
 class DocCheckerState(object):
-    pass
+    changed_name_to_reflect_gender: bool = None
+

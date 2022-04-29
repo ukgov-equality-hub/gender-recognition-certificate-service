@@ -5,13 +5,13 @@ from grc.utils.form_custom_validators import validateSecurityCode
 
 
 class PreviousNamesCheck(FlaskForm):
-    check = RadioField(
-        'check',
-        choices=[('Yes'), ('No')],
-        validators=[DataRequired(message='Select if you have ever changed your name')]
+    changed_name_to_reflect_gender = RadioField(
+        choices=[
+            (True, 'Yes'),
+            (False, 'No')
+        ],
+        validators=[DataRequired(message='Select if you have ever changed your name to reflect your gender')]
     )
-
-    submit = SubmitField('Save and continue')
 
 
 class MarriageCivilPartnershipForm(FlaskForm):
