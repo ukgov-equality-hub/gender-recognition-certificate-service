@@ -1,87 +1,61 @@
 {% extends 'base.html' %}
-{% block backLink %}<a href="{{ url_for('taskList.index') }}" class="govuk-back-link">Back</a>{% endblock %}
+{% import "govuk-design-system-templates/error-summary.html" as error_summary %}
+{% import "upload/_upload-files-section.html" as upload_files_section %}
+
+{% block backLink %}
+    <a href="{{ url_for('taskList.index') }}" class="govuk-back-link">Back</a>
+{% endblock %}
 
 {% block content %}
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
-    {% if form.errors %}
-    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
-      <h2 id="error-summary-title" class="govuk-error-summary__title">There is a problem</h2>
-      <div class="govuk-error-summary__body">
-        <ul class="govuk-list govuk-error-summary__list">
-          {% for error in form.errors %}
-            {% for e in form[error].errors %}
-            <li><a href="#{{ error }}">{{ e }}</a></li>
-            {% endfor %}
-          {% endfor %}
-        </ul>
-      </div>
-    </div>
-    {% endif %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
 
-    <h1 class="govuk-heading-l">
-      Upload marriage documents
-    </h1>
+            {{ error_summary.renderFor(form) }}
 
-    <form method="POST" action="{{ url_for('upload.marriageDocuments') }}" enctype="multipart/form-data" onsubmit="document.getElementById('documents').style.display = 'none'; document.getElementById('loading').style.display = 'inline-block';">
-      {{ form.csrf_token }}
+            <h1 class="govuk-heading-l">
+                Upload marriage documents
+            </h1>
+            <p class="govuk-body">
+                This is where you can upload copies of all required marriage documents.
+            </p>
 
-      <div class="govuk-form-group {{ 'govuk-form-group--error' if form.errors }}">
-        <label for="documents" class="govuk-label govuk-label--m">Upload files</label>
-        <div id="documents-hint" class="govuk-hint">The files must be a JPG, BMP, PNG, TIF or PDF and be smaller than 10MB</div>
-        {% if form.documents.errors %}
-        <p id="documents-error" class="govuk-error-message">
-          {% for error in form.errors %}
-            {% for e in form[error].errors %}
-            <span class="govuk-visually-hidden">Error:</span> {{ e }}
-            {% endfor %}
-          {% endfor %}
-        </p>
-        {% endif %}
+            <h2 class="govuk-heading-m">
+                If you’re currently married or in a civil partnership
+            </h2>
+            <p class="govuk-body">
+                You need to have good quality photocopies or photographs of all your marriage or civil partnership certificates.
+            </p>
 
-        <img id="loading" src="{{ url_for('static', filename='assets/images/loading.gif') }}" width="41" height="41" style="display: none; margin-bottom: 20px;">
-        <input id="documents" type="file" name="documents" multiple accept=".jpg,.jpeg,.bmp,.png,.tif,.tiff,.pdf" class="govuk-file-upload govuk-!-margin-bottom-4 {{ 'govuk-input--error' if form.documents.errors }}">
-        <div class="govuk-checkboxes__item">
-          <input id="more_files" type="checkbox" name="more_files" value="Yes" class="govuk-checkboxes__input">
-          <label for="more_files" class="govuk-label govuk-checkboxes__label">
-            I have more files to upload.
-          </label>
+            <h2 class="govuk-heading-m">
+                If you were married or in a civil partnership in the past
+            </h2>
+            <p class="govuk-body govuk-!-margin-bottom-2">
+                For each marriage or civil partnership, you need an original or certified copy of one of the following:
+            </p>
+            <ul class="govuk-list govuk-list--bullet">
+                <li>
+                    a
+                    <a href="https://draft-origin.publishing.service.gov.uk/copy-decree-absolute-final-order" class="govuk-link">
+                        decree absolute or final order
+                    </a>
+                    to show the marriage or civil partnership has ended
+                </li>
+                <li>
+                    a death certificate for your partner if their death ended the marriage or civil partnership – you can
+                    <a href="https://draft-origin.publishing.service.gov.uk/copy-decree-absolute-final-order" class="govuk-link">
+                        order a certificate
+                    </a>
+                    if their death was registered in the UK
+                </li>
+            </ul>
+
+            {{ upload_files_section.render(
+                form,
+                deleteform,
+                currently_uploaded_files=session['application']['marriageDocuments']['files'],
+                section='marriageDocuments')
+            }}
+
         </div>
-      </div>
-
-      <div class="govuk-button-group">
-        <button class="govuk-button" data-module="govuk-button">
-          Save and continue
-        </button>
-        <a href="{{ url_for('taskList.index') }}" class="govuk-link govuk-link--no-visited-state">Return to task list</a>
-      </div>
-    </form>
-
-    {% if session['application']['marriageDocuments']['files'] %}
-    <div class="govuk-form-group govuk-!-margin-top-9">
-      <label for="documents" class="govuk-label govuk-label--m">Uploaded files</label>
-      <dl class="govuk-summary-list">
-        {% for item in session['application']['marriageDocuments']['files'] %}
-        <form method="POST" action="{{ url_for('upload.removeFile') }}" enctype="multipart/form-data">
-          {{ deleteform.csrf_token }}
-          <div class="govuk-summary-list__row">
-            <dd class="govuk-summary-list__value govuk-!-width-full">
-              {{ item | replace(session['application']['reference_number'] + '__marriageDocuments__', '') }}
-            </dd>
-            <dd class="govuk-summary-list__actions">
-              <input type="hidden" name="section" value="marriageDocuments">
-              <input type="hidden" name="file" value="{{ item }}">
-              <input type="hidden" name="redirect_route" value="{{ url_for('upload.marriageDocuments') }}">
-              <button class="govuk-button govuk-button--warning" data-module="govuk-button">
-                Remove <span class="govuk-visually-hidden">{{ item | replace(session['application']['reference_number'] + '__marriageDocuments__', '') }} file</span>
-              </button>
-            </dd>
-          </div>
-        </form>
-        {% endfor %}
-      </dl>
     </div>
-    {% endif %}
-  </div>
-</div>
 {% endblock %}

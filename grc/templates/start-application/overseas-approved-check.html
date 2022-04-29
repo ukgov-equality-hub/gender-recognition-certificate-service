@@ -38,14 +38,13 @@
                 List of approved countries and territories
             </h2>
             <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-8">
-                <li>Australia <span class="govuk-hint">(Territories of Australian Capital Territory and Northern Territory and the
-                states of New South Wales, Queensland, South Australia, Tasmania, Victoria and Western Australia)</span></li>
-                <li>Canada <span class="govuk-hint">(Provinces of Alberta, British Columbia, Manitoba, New Brunswick, Newfoundland
-                and Labrador, Nova Scotia, Ontario, Prince Edward Island, Quebec and Saskatchewan and the Yukon
-                Territory)</span></li>
+                <li>Australia
+                    <span class="govuk-hint govuk-!-margin-bottom-0">(not including the external territories)</span></li>
                 <li>Austria</li>
                 <li>Belgium</li>
                 <li>Bulgaria</li>
+                <li>Canada
+                    <span class="govuk-hint govuk-!-margin-bottom-0">(not including Northwest Territories and Nunavut)</span></li>
                 <li>Croatia</li>
                 <li>Cyprus</li>
                 <li>Czech Republic</li>
@@ -81,8 +80,8 @@
                 <li>Turkey</li>
                 <li>Ukraine</li>
                 <li>Uruguay</li>
-                <li>United States of America <span class="govuk-hint">(the District of Columbia and all states except for
-                Idaho, Ohio, Tennessee and Texas)</span></li>
+                <li>United States of America
+                    <span class="govuk-hint govuk-!-margin-bottom-0">(not including Idaho, Ohio, Tennessee and Texas)</span></li>
             </ul>
 
             <form method="POST" action="{{ url_for('startApplication.overseas_approved_check') }}">

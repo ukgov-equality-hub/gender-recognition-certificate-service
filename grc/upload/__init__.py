@@ -33,6 +33,8 @@ def medicalReports():
 
         if not form.more_files.data == True:
             return redirect(url_for('taskList.index'))
+        else:
+            return redirect(url_for('upload.medicalReports') + '#file-upload-section')
 
     if request.method == 'GET' and 'files' in session['application']['medicalReports'] and len(session['application']['medicalReports']['files']) == 0:
         session['application']['medicalReports']['progress'] = ListStatus.IN_PROGRESS.name
@@ -69,6 +71,8 @@ def genderEvidence():
 
         if not form.more_files.data == True:
             return redirect(url_for('taskList.index'))
+        else:
+            return redirect(url_for('upload.genderEvidence') + '#file-upload-section')
 
     if request.method == 'GET' and 'files' in session['application']['genderEvidence'] and len(session['application']['genderEvidence']['files']) == 0:
         session['application']['genderEvidence']['progress'] = ListStatus.IN_PROGRESS.name
@@ -105,6 +109,8 @@ def nameChange():
 
         if not form.more_files.data == True:
             return redirect(url_for('taskList.index'))
+        else:
+            return redirect(url_for('upload.nameChange') + '#file-upload-section')
 
     if request.method == 'GET' and 'files' in session['application']['nameChange'] and len(session['application']['nameChange']['files']) == 0:
         session['application']['nameChange']['progress'] = ListStatus.IN_PROGRESS.name
@@ -141,6 +147,8 @@ def marriageDocuments():
 
         if not form.more_files.data == True:
             return redirect(url_for('taskList.index'))
+        else:
+            return redirect(url_for('upload.marriageDocuments') + '#file-upload-section')
 
     if request.method == 'GET' and 'files' in session['application']['marriageDocuments'] and len(session['application']['marriageDocuments']['files']) == 0:
         session['application']['marriageDocuments']['progress'] = ListStatus.IN_PROGRESS.name
@@ -177,6 +185,8 @@ def overseasCertificate():
 
         if not form.more_files.data == True:
             return redirect(url_for('taskList.index'))
+        else:
+            return redirect(url_for('upload.overseasCertificate') + '#file-upload-section')
 
     if request.method == 'GET' and 'files' in session['application']['overseasCertificate'] and len(session['application']['overseasCertificate']['files']) == 0:
         session['application']['overseasCertificate']['progress'] = ListStatus.IN_PROGRESS.name
@@ -213,6 +223,8 @@ def statutoryDeclarations():
 
         if not form.more_files.data == True:
             return redirect(url_for('taskList.index'))
+        else:
+            return redirect(url_for('upload.statutoryDeclarations') + '#file-upload-section')
 
     if request.method == 'GET' and 'files' in session['application']['statutoryDeclarations'] and len(session['application']['statutoryDeclarations']['files']) == 0:
         session['application']['statutoryDeclarations']['progress'] = ListStatus.IN_PROGRESS.name
@@ -235,11 +247,4 @@ def removeFile():
         session['application'][form.section.data]['files'].remove(form.file.data)
         session['application'] = save_progress()
 
-    return redirect(form.redirect_route.data)
-
-
-# @upload.route('/upload/get-file', methods=['GET'])
-# @LoginRequired
-# def downloadFile():
-#     file = create_presigned_url('')
-#     return redirect(file)
+    return redirect(url_for('upload.' + form.section.data) + '#file-upload-section')
