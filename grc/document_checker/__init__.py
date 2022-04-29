@@ -22,7 +22,7 @@ def index():
             'confirmation': {'overseasApprovedCheck': ''}
         }
 
-    return render_template('/document-checker/start.html')
+    return render_template('document-checker/start.html')
 
 
 @documentChecker.route('/check-documents/personal-details/previous-names-check', methods=['GET', 'POST'])
