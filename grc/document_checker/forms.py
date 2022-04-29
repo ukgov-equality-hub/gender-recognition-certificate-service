@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import EmailField, StringField, SubmitField, RadioField, IntegerField
 from wtforms.validators import DataRequired, Email
+from grc.document_checker.doc_checker_state import CurrentlyInAPartnershipEnum
 from grc.utils.form_custom_validators import validateSecurityCode
 
 
@@ -15,13 +16,14 @@ class PreviousNamesCheck(FlaskForm):
 
 
 class MarriageCivilPartnershipForm(FlaskForm):
-    check = RadioField(
-        'check',
-        choices=[('Married'), ('Civil partnership'), ('Neither')],
+    currently_in_a_partnership = RadioField(
+        choices=[
+            (CurrentlyInAPartnershipEnum.MARRIED.name, 'Married'),
+            (CurrentlyInAPartnershipEnum.CIVIL_PARTNERSHIP.name, 'Civil partnership'),
+            (CurrentlyInAPartnershipEnum.NEITHER.name, 'Neither')
+        ],
         validators=[DataRequired(message='Select if you are currently married or in a civil partnership')]
     )
-
-    submit = SubmitField('Save and continue')
 
 
 class StayTogetherForm(FlaskForm):

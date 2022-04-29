@@ -1,0 +1,42 @@
+{% extends 'document-checker/doc-checker-base.html' %}
+{% import "govuk-design-system-templates/error-summary.html" as error_summary %}
+{% import "govuk-design-system-templates/radios.html" as radios %}
+
+{% block backLink %}
+    <a href="{{ url_for('documentChecker.previousNamesCheck') }}" class="govuk-back-link">Back</a>
+{% endblock %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            {{ error_summary.renderFor(form) }}
+
+            <form method="POST">
+                {{ form.csrf_token }}
+
+                {{ radios.renderFor(
+                    form,
+                    fieldName='currently_in_a_partnership',
+                    question="Are you currently married or in a civil partnership?",
+                    radiosOptions={
+                        'questionIsPageHeading': true,
+                        'hintOptions':{
+                            'htmlOrText': 'Select your current legal status, even if you are planning to end your marriage or civil partnership.'
+                        },
+                        'dividerOptions': [
+                            (CurrentlyInAPartnershipEnum.NEITHER.name, 'or')
+                        ]
+                    }
+                ) }}
+
+                <div class="govuk-button-group">
+                    <button class="govuk-button" data-module="govuk-button">
+                        Continue
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+{% endblock %}

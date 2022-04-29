@@ -1,7 +1,8 @@
 from distutils.util import strtobool
 from flask import Blueprint, flash, redirect, render_template, request, url_for, session, current_app
 from notifications_python_client.notifications import NotificationsAPIClient
-from grc.document_checker.doc_checker_data_store import DocCheckerDataStore, DocCheckerState
+from grc.document_checker.doc_checker_data_store import DocCheckerDataStore
+from grc.document_checker.doc_checker_state import DocCheckerState, CurrentlyInAPartnershipEnum
 from grc.document_checker.forms import PreviousNamesCheck, MarriageCivilPartnershipForm, StayTogetherForm, PartnerAgreesForm, PartnerDiedForm, InterimCheckForm, OverseasApprovedCheckForm, EmailForm, ValidateEmailForm
 from grc.utils.security_code import send_security_code
 from grc.utils.threading import Threading
@@ -34,24 +35,33 @@ def previousNamesCheck():
     )
 
 
-@documentChecker.route('/check-documents/partnership-details', methods=['GET', 'POST'])
-def partnershipDetails():
+@documentChecker.route('/check-documents/currently-in-a-partnership', methods=['GET', 'POST'])
+def currentlyInAPartnership():
     form = MarriageCivilPartnershipForm()
+    doc_checker_state = DocCheckerDataStore.load_doc_checker_state()
 
     if form.validate_on_submit():
-        session['documentChecker']['partnershipDetails']['marriageCivilPartnership'] = form.check.data
-        session['documentChecker'] = session['documentChecker']
+        doc_checker_state.currently_in_a_partnership = CurrentlyInAPartnershipEnum(form.currently_in_a_partnership.data)
+        DocCheckerDataStore.save_doc_checker_state(doc_checker_state)
 
-        if form.check.data == 'Neither':
-            next_step = 'documentChecker.partnerDied'
-        else:
+        if doc_checker_state.currently_in_a_partnership.is_currently_in_partnership:
             next_step = 'documentChecker.stayTogether'
+        else:
+            next_step = 'documentChecker.partnerDied'
 
         return redirect(url_for(next_step))
 
+    if request.method == 'GET':
+        form.currently_in_a_partnership.data = (
+            doc_checker_state.currently_in_a_partnership.name
+            if doc_checker_state.currently_in_a_partnership is not None
+            else None
+        )
+
     return render_template(
-        'document-checker/current-check.html',
-        form=form
+        'document-checker/currently_in_a_partnership.html',
+        form=form,
+        CurrentlyInAPartnershipEnum=CurrentlyInAPartnershipEnum
     )
 
 
