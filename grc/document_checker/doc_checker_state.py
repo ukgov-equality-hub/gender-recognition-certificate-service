@@ -25,4 +25,4 @@ class DocCheckerState(object):
     previous_partnership_partner_died: bool = None
     previous_partnership_ended: bool = None
     plan_to_remain_in_a_partnership: bool = None
-
+    gender_recognition_outside_uk: bool = None

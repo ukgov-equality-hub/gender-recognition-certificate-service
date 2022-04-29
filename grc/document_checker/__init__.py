@@ -3,7 +3,7 @@ from flask import Blueprint, flash, redirect, render_template, request, url_for,
 from notifications_python_client.notifications import NotificationsAPIClient
 from grc.document_checker.doc_checker_data_store import DocCheckerDataStore
 from grc.document_checker.doc_checker_state import DocCheckerState, CurrentlyInAPartnershipEnum
-from grc.document_checker.forms import PreviousNamesCheck, MarriageCivilPartnershipForm, PlanToRemainInAPartnershipForm, PartnerDiedForm, PreviousPartnershipEndedForm, OverseasApprovedCheckForm, EmailForm, ValidateEmailForm
+from grc.document_checker.forms import PreviousNamesCheck, MarriageCivilPartnershipForm, PlanToRemainInAPartnershipForm, PartnerDiedForm, PreviousPartnershipEndedForm, GenderRecognitionOutsideUKForm, EmailForm, ValidateEmailForm
 from grc.utils.security_code import send_security_code
 from grc.utils.threading import Threading
 
@@ -74,7 +74,7 @@ def planToRemainInAPartnership():
         doc_checker_state.plan_to_remain_in_a_partnership = strtobool(form.plan_to_remain_in_a_partnership.data)
         DocCheckerDataStore.save_doc_checker_state(doc_checker_state)
 
-        return redirect(url_for('documentChecker.overseas_approved_check'))
+        return redirect(url_for('documentChecker.genderRecognitionOutsideUK'))
 
     if request.method == 'GET':
         form.plan_to_remain_in_a_partnership.data = doc_checker_state.plan_to_remain_in_a_partnership
@@ -115,7 +115,7 @@ def previousPartnershipEnded():
         doc_checker_state.previous_partnership_ended = strtobool(form.previous_partnership_ended.data)
         DocCheckerDataStore.save_doc_checker_state(doc_checker_state)
 
-        return redirect(url_for('documentChecker.overseas_approved_check'))
+        return redirect(url_for('documentChecker.genderRecognitionOutsideUK'))
 
     if request.method == 'GET':
         form.previous_partnership_ended.data = doc_checker_state.previous_partnership_ended
@@ -126,25 +126,24 @@ def previousPartnershipEnded():
     )
 
 
-@documentChecker.route('/check-documents/overseas-approved-check', methods=['GET', 'POST'])
-def overseas_approved_check():
-    form = OverseasApprovedCheckForm()
+@documentChecker.route('/check-documents/gender-recognition-outside-uk', methods=['GET', 'POST'])
+def genderRecognitionOutsideUK():
+    form = GenderRecognitionOutsideUKForm()
+    doc_checker_state = DocCheckerDataStore.load_doc_checker_state()
 
     if form.validate_on_submit():
-        session['documentChecker']['confirmation']['overseasApprovedCheck'] = form.check.data
-        session['documentChecker'] = session['documentChecker']
+        doc_checker_state.gender_recognition_outside_uk = strtobool(form.gender_recognition_outside_uk.data)
+        DocCheckerDataStore.save_doc_checker_state(doc_checker_state)
 
         return redirect(url_for('documentChecker.your_documents'))
 
-    if session['documentChecker']['partnershipDetails']['marriageCivilPartnership'] == 'Neither':
-        back = 'documentChecker.previousPartnershipEnded'
-    else:
-        back = 'documentChecker.planToRemainInAPartnership'
+    if request.method == 'GET':
+        form.gender_recognition_outside_uk.data = doc_checker_state.gender_recognition_outside_uk
 
     return render_template(
-        'document-checker/overseas-approved-check.html',
+        'document-checker/gender-recognition-outside-uk.html',
         form=form,
-        back=back
+        doc_checker_state=doc_checker_state
     )
 
 

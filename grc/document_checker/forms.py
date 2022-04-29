@@ -56,14 +56,14 @@ class PreviousPartnershipEndedForm(FlaskForm):
     )
 
 
-class OverseasApprovedCheckForm(FlaskForm):
-    check = RadioField(
-        'check',
-        choices=[('Yes'), ('No')],
-        validators=[DataRequired(message='Select if you have official documentation')]
+class GenderRecognitionOutsideUKForm(FlaskForm):
+    gender_recognition_outside_uk = RadioField(
+        choices=[
+            (True, 'Yes'),
+            (False, 'No')
+        ],
+        validators=[DataRequired(message='Select if you have received gender recognition in one of these countries or territories')]
     )
-
-    submit = SubmitField('Continue')
 
 
 class EmailForm(FlaskForm):
