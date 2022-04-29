@@ -16,7 +16,7 @@
                 {{ form.csrf_token }}
 
                 {% set inYourPartnershipName = 'married'
-                       if doc_checker_state.currently_in_a_partnership.is_married
+                       if doc_checker_state.is_married
                        else 'in your civil partnership' %}
                 {{ radios.renderFor(
                     form,

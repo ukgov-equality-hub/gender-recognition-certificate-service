@@ -4,7 +4,7 @@
 
 {% block backLink %}
     {% set backLink = 'documentChecker.planToRemainInAPartnership'
-           if doc_checker_state.currently_in_a_partnership.is_currently_in_partnership
+           if doc_checker_state.is_currently_in_partnership
            else 'documentChecker.previousPartnershipEnded' %}
     <a href="{{ url_for(backLink) }}" class="govuk-back-link">Back</a>
 {% endblock %}

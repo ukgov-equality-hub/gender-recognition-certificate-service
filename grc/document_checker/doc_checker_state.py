@@ -11,13 +11,6 @@ class CurrentlyInAPartnershipEnum(GrcEnum):
     CIVIL_PARTNERSHIP = auto()
     NEITHER = auto()
 
-    @property
-    def is_married(self) -> bool: return self == CurrentlyInAPartnershipEnum.MARRIED
-    @property
-    def is_in_civil_partnership(self) -> bool: return self == CurrentlyInAPartnershipEnum.CIVIL_PARTNERSHIP
-    @property
-    def is_currently_in_partnership(self) -> bool: return self.is_married or self.is_in_civil_partnership
-
 
 class DocCheckerState(object):
     changed_name_to_reflect_gender: bool = None
@@ -26,3 +19,12 @@ class DocCheckerState(object):
     previous_partnership_ended: bool = None
     plan_to_remain_in_a_partnership: bool = None
     gender_recognition_outside_uk: bool = None
+
+    @property
+    def is_married(self) -> bool: return self.currently_in_a_partnership == CurrentlyInAPartnershipEnum.MARRIED
+    @property
+    def is_in_civil_partnership(self) -> bool: return self.currently_in_a_partnership == CurrentlyInAPartnershipEnum.CIVIL_PARTNERSHIP
+    @property
+    def is_currently_in_partnership(self) -> bool: return self.is_married or self.is_in_civil_partnership
+    @property
+    def is_not_in_partnership(self) -> bool: return not self.is_currently_in_partnership

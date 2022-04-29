@@ -44,7 +44,7 @@ def currentlyInAPartnership():
         doc_checker_state.currently_in_a_partnership = CurrentlyInAPartnershipEnum(form.currently_in_a_partnership.data)
         DocCheckerDataStore.save_doc_checker_state(doc_checker_state)
 
-        if doc_checker_state.currently_in_a_partnership.is_currently_in_partnership:
+        if doc_checker_state.is_currently_in_partnership:
             next_step = 'documentChecker.planToRemainInAPartnership'
         else:
             next_step = 'documentChecker.previousPartnershipPartnerDied'
