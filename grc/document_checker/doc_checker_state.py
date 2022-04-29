@@ -22,5 +22,6 @@ class CurrentlyInAPartnershipEnum(GrcEnum):
 class DocCheckerState(object):
     changed_name_to_reflect_gender: bool = None
     currently_in_a_partnership: CurrentlyInAPartnershipEnum = None
+    previous_partnership_partner_died: bool = None
     plan_to_remain_in_a_partnership: bool = None
 
