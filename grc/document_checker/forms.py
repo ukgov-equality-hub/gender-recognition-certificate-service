@@ -46,14 +46,14 @@ class PartnerDiedForm(FlaskForm):
     )
 
 
-class EndedCheckForm(FlaskForm):
-    check = RadioField(
-        'check',
-        choices=[('Yes'), ('No')],
+class PreviousPartnershipEndedForm(FlaskForm):
+    previous_partnership_ended = RadioField(
+        choices=[
+            (True, 'Yes'),
+            (False, 'No')
+        ],
         validators=[DataRequired(message='Select if you have ever been married or in a civil partnership that has now ended')]
     )
-
-    submit = SubmitField('Save and continue')
 
 
 class OverseasApprovedCheckForm(FlaskForm):

@@ -1,0 +1,36 @@
+{% extends 'document-checker/doc-checker-base.html' %}
+{% import "govuk-design-system-templates/error-summary.html" as error_summary %}
+{% import "govuk-design-system-templates/radios.html" as radios %}
+
+{% block backLink %}
+    <a href="{{ url_for('documentChecker.previousPartnershipPartnerDied') }}" class="govuk-back-link">Back</a>
+{% endblock %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            {{ error_summary.renderFor(form) }}
+
+            <form method="POST">
+                {{ form.csrf_token }}
+
+                {{ radios.renderFor(
+                    form,
+                    fieldName='previous_partnership_ended',
+                    question="Have you ever been in a marriage or civil partnership that ended for another reason?",
+                    radiosOptions={
+                        'questionIsPageHeading': true,
+                    }
+                ) }}
+
+                <div class="govuk-button-group">
+                    <button class="govuk-button" data-module="govuk-button">
+                        Continue
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+{% endblock %}

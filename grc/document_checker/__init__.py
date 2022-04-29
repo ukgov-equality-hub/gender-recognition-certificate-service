@@ -3,7 +3,7 @@ from flask import Blueprint, flash, redirect, render_template, request, url_for,
 from notifications_python_client.notifications import NotificationsAPIClient
 from grc.document_checker.doc_checker_data_store import DocCheckerDataStore
 from grc.document_checker.doc_checker_state import DocCheckerState, CurrentlyInAPartnershipEnum
-from grc.document_checker.forms import PreviousNamesCheck, MarriageCivilPartnershipForm, PlanToRemainInAPartnershipForm, PartnerDiedForm, OverseasApprovedCheckForm, EmailForm, ValidateEmailForm
+from grc.document_checker.forms import PreviousNamesCheck, MarriageCivilPartnershipForm, PlanToRemainInAPartnershipForm, PartnerDiedForm, PreviousPartnershipEndedForm, OverseasApprovedCheckForm, EmailForm, ValidateEmailForm
 from grc.utils.security_code import send_security_code
 from grc.utils.threading import Threading
 
@@ -95,7 +95,7 @@ def previousPartnershipPartnerDied():
         doc_checker_state.previous_partnership_partner_died = strtobool(form.previous_partnership_partner_died.data)
         DocCheckerDataStore.save_doc_checker_state(doc_checker_state)
 
-        return redirect(url_for('documentChecker.endedCheck'))
+        return redirect(url_for('documentChecker.previousPartnershipEnded'))
 
     if request.method == 'GET':
         form.previous_partnership_partner_died.data = doc_checker_state.previous_partnership_partner_died
@@ -106,21 +106,22 @@ def previousPartnershipPartnerDied():
     )
 
 
-@documentChecker.route('/check-documents/partnership-details/ended-check', methods=['GET', 'POST'])
-def endedCheck():
-    form = PartnerDiedForm()
+@documentChecker.route('/check-documents/previous-partnership-ended', methods=['GET', 'POST'])
+def previousPartnershipEnded():
+    form = PreviousPartnershipEndedForm()
+    doc_checker_state = DocCheckerDataStore.load_doc_checker_state()
 
     if form.validate_on_submit():
-        session['documentChecker']['partnershipDetails']['endedCheck'] = form.check.data
-        session['documentChecker'] = session['documentChecker']
+        doc_checker_state.previous_partnership_ended = strtobool(form.previous_partnership_ended.data)
+        DocCheckerDataStore.save_doc_checker_state(doc_checker_state)
 
-        # set current step in case user exits the app
-        next_step = 'documentChecker.overseas_approved_check'
+        return redirect(url_for('documentChecker.overseas_approved_check'))
 
-        return redirect(url_for(next_step))
+    if request.method == 'GET':
+        form.previous_partnership_ended.data = doc_checker_state.previous_partnership_ended
 
     return render_template(
-        'document-checker/ended-check.html',
+        'document-checker/previous-partnership-ended.html',
         form=form
     )
 
@@ -136,7 +137,7 @@ def overseas_approved_check():
         return redirect(url_for('documentChecker.your_documents'))
 
     if session['documentChecker']['partnershipDetails']['marriageCivilPartnership'] == 'Neither':
-        back = 'documentChecker.endedCheck'
+        back = 'documentChecker.previousPartnershipEnded'
     else:
         back = 'documentChecker.planToRemainInAPartnership'
 
