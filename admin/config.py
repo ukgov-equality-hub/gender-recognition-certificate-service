@@ -25,7 +25,7 @@ class Config:
     PERMANENT_SESSION_LIFETIME = int(os.environ.get("PERMANENT_SESSION_LIFETIME"))
     WTF_CSRF_ENABLED = True
     AWS_ACCESS_KEY_ID = "sdfsdfsdfsdfsef23rwsef23fdf"
-    AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+    AWS_SECRET_ACCESS_KEY = "sdfsdfsdfsdfsef23rwsef23fdf"
     AWS_REGION = os.environ.get("AWS_REGION")
     AWS_S3_REGION_NAME = os.environ.get("AWS_REGION")
     AWS_S3_SIGNATURE_VERSION = "s3v4"
