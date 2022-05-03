@@ -1,8 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import EmailField, StringField, RadioField, TelField, IntegerField
+from wtforms import EmailField, StringField, RadioField, TelField, IntegerField, SelectMultipleField
 from wtforms.validators import DataRequired, NumberRange
 from grc.utils.form_custom_validators import StrictRequiredIf, validateNationalInsuranceNumber, validatePostcode, validateDateOfTransiton
-from grc.utils.form_widgets import MultiCheckboxField
 
 
 class NameForm(FlaskForm):
@@ -74,7 +73,7 @@ class AddressForm(FlaskForm):
 
 
 class ContactPreferencesForm(FlaskForm):
-    contact_options = MultiCheckboxField(
+    contact_options = SelectMultipleField(
         choices=[
             ('EMAIL', 'Email'),
             ('PHONE', 'Phone call'),
