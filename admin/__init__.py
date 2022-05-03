@@ -113,4 +113,9 @@ def create_app(test_config=None):
     app.register_blueprint(users)
     app.add_url_rule('/users', endpoint='index')
 
+    # View security codes
+    from admin.security_codes import codes
+    app.register_blueprint(codes)
+    app.add_url_rule('/security_codes', endpoint='index')
+
     return app

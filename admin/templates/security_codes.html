@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block backLink %}{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <h1 class="govuk-heading-l">
+      Security codes
+    </h1>
+  </div>
+
+  <div class="govuk-grid-column-full">
+    {% if message != "" %}
+    <div class="govuk-inset-text">{{ message }}</div>
+    {% endif %}
+
+    <table class="govuk-table new-table">
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+          <th scope="col" class="govuk-table__header" aria-sort="none">Code</th>
+          <th scope="col" class="govuk-table__header" aria-sort="none">Email</th>
+          <th scope="col" class="govuk-table__header" aria-sort="none">Date</th>
+        </tr>
+      </thead>
+      <tbody class="govuk-table__body">
+        {% for code in codes %}
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">{{ code.code }}</td>
+          <td class="govuk-table__cell">{{ code.email }}</td>
+          <td class="govuk-table__cell">{{ code.created | format_date }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
