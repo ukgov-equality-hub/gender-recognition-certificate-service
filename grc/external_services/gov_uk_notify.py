@@ -80,6 +80,22 @@ class GovUkNotify:
             personalisation=personalisation
         )
 
+    def send_email_admin_forgot_password(
+            self,
+            email_address: str,
+            expires: str,
+            reset_link: str,
+    ):
+        personalisation = {
+            'expires': expires,
+            'reset_link': reset_link,
+        }
+        return self.send_email(
+            email_address=email_address,
+            template_id='7e2ed682-d120-4937-9154-1966976e0144',
+            personalisation=personalisation
+        )
+
     def send_email_admin_new_user(
             self,
             email_address: str,
