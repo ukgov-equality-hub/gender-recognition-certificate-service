@@ -10,6 +10,22 @@ class GovUkNotify:
         self.notify_override_email = current_app.config['NOTIFY_OVERRIDE_EMAIL']
         self.gov_uk_notify_client = NotificationsAPIClient(gov_uk_notify_api_key)
 
+    def send_email_security_code(
+            self,
+            email_address: str,
+            security_code: str,
+            security_code_timeout: str,
+    ):
+        personalisation = {
+            'security_code': security_code,
+            'security_code_timeout': security_code_timeout,
+        }
+        return self.send_email(
+            email_address=email_address,
+            template_id='d93108b9-4a5b-4268-91ee-2bb59686e702',
+            personalisation=personalisation
+        )
+
     def send_email_documents_you_need_for_your_grc_application(
             self,
             email_address: str,

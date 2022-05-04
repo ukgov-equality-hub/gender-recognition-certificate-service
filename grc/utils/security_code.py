@@ -1,8 +1,7 @@
 import random
 from datetime import datetime, timedelta
 from dateutil import tz
-from flask import current_app
-from notifications_python_client.notifications import NotificationsAPIClient
+from grc.external_services.gov_uk_notify import GovUkNotify
 from grc.models import db, SecurityCode
 
 
@@ -41,21 +40,13 @@ def validate_security_code(email, code):
 
 def send_security_code(email):
     security_code = security_code_generator(email)
-
-    if current_app.config['NOTIFY_OVERRIDE_EMAIL']:
-        send_to = current_app.config['NOTIFY_OVERRIDE_EMAIL']
-    else:
-        send_to = email
-
     local = datetime.now().replace(tzinfo=tz.gettz('UTC')).astimezone(tz.gettz('Europe/London'))
-    notifications_client = NotificationsAPIClient(current_app.config['NOTIFY_API'])
-    response = notifications_client.send_email_notification(
-        email_address=send_to,
-        template_id=current_app.config['NOTIFY_SECURITY_CODE_EMAIL_TEMPLATE_ID'],
-        personalisation={
-            'security_code': security_code,
-            'security_code_timeout': datetime.strftime(local + timedelta(minutes=5), '%d/%m/%Y %H:%M:%S')
-        }
+    security_code_timeout = datetime.strftime(local + timedelta(minutes=5), '%d/%m/%Y %H:%M:%S')
+
+    response = GovUkNotify().send_email_security_code(
+        email_address=email,
+        security_code=security_code,
+        security_code_timeout=security_code_timeout
     )
 
     return response
