@@ -1,10 +1,10 @@
 import string
 import random
-from flask import Blueprint, redirect, render_template, request, url_for, current_app, session
+from flask import Blueprint, redirect, render_template, request, url_for, session
 from werkzeug.security import generate_password_hash
-from notifications_python_client.notifications import NotificationsAPIClient
 from grc.utils.decorators import AdminRequired
 from admin.users.forms import UsersForm
+from grc.external_services.gov_uk_notify import GovUkNotify
 from grc.models import db, AdminUser
 
 users = Blueprint('users', __name__)
@@ -34,14 +34,10 @@ def index():
                 db.session.commit()
 
                 try:
-                    notifications_client = NotificationsAPIClient(current_app.config['NOTIFY_API'])
-                    notifications_client.send_email_notification(
+                    GovUkNotify().send_email_admin_new_user(
                         email_address=emailAddress,
-                        template_id=current_app.config['NOTIFY_ADMIN_NEW_USER_TEMPLATE_ID'],
-                        personalisation={
-                            'temporary_password': temporary_password,
-                            'application_link': request.base_url
-                        }
+                        temporary_password=temporary_password,
+                        application_link=request.base_url
                     )
                 except Exception as e:
                     print(e, flush=True)
@@ -109,14 +105,10 @@ def resend(emailAddress):
         db.session.commit()
 
         try:
-            notifications_client = NotificationsAPIClient(current_app.config['NOTIFY_API'])
-            notifications_client.send_email_notification(
+            GovUkNotify().send_email_admin_new_user(
                 email_address=user.email,
-                template_id=current_app.config['NOTIFY_ADMIN_NEW_USER_TEMPLATE_ID'],
-                personalisation={
-                    'temporary_password': temporary_password,
-                    'application_link': request.base_url
-                }
+                temporary_password=temporary_password,
+                application_link=request.base_url
             )
         except Exception as e:
             print(e, flush=True)

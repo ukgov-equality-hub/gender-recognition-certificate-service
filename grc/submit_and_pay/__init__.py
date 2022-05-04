@@ -4,7 +4,7 @@ import requests
 from requests.structures import CaseInsensitiveDict
 import json
 import uuid
-from notifications_python_client.notifications import NotificationsAPIClient
+from grc.external_services.gov_uk_notify import GovUkNotify
 from grc.models import ListStatus
 from grc.submit_and_pay.forms import MethodCheckForm, HelpTypeForm, CheckYourAnswers
 from grc.utils.decorators import LoginRequired
@@ -174,18 +174,9 @@ def paymentConfirmation(id):
 def confirmation():
     mark_complete()
 
-    if current_app.config['NOTIFY_OVERRIDE_EMAIL']:
-        send_to = current_app.config['NOTIFY_OVERRIDE_EMAIL']
-    else:
-        send_to = session['application']['email']
-
-    notifications_client = NotificationsAPIClient(current_app.config['NOTIFY_API'])
-    notifications_client.send_email_notification(
-        email_address=send_to,
-        template_id=current_app.config['NOTIFY_COMPLETED_APPLICATION_EMAIL_TEMPLATE_ID'],
-        personalisation={
-            'documents_to_be_posted': render_template('documents.html')
-        }
+    GovUkNotify().send_email_completed_application(
+        email_address=session['application']['email'],
+        documents_to_be_posted=render_template('documents.html')
     )
 
     html = render_template('submit-and-pay/confirmation.html')

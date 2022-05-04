@@ -5,8 +5,8 @@ from datetime import datetime, timedelta
 from dateutil import tz
 from flask import Blueprint, redirect, render_template, request, url_for, current_app, session
 from werkzeug.security import check_password_hash, generate_password_hash
-from notifications_python_client.notifications import NotificationsAPIClient
 from admin.admin.forms import LoginForm
+from grc.external_services.gov_uk_notify import GovUkNotify
 from grc.models import db, AdminUser
 
 admin = Blueprint('admin', __name__)
@@ -44,14 +44,12 @@ def index():
                             # Email out 2FA link
                             try:
                                 local = datetime.now().replace(tzinfo=tz.gettz('UTC')).astimezone(tz.gettz('Europe/London'))
-                                notifications_client = NotificationsAPIClient(current_app.config['NOTIFY_API'])
-                                notifications_client.send_email_notification(
+                                expires = datetime.strftime(local + timedelta(hours=1), '%d/%m/%Y %H:%M:%S')
+                                login_link = request.base_url + '?token=' + jwt.encode({'id': user.id, 'email': user.email, 'expires': datetime.strftime(datetime.now() + timedelta(hours=1), '%d/%m/%Y %H:%M:%S')}, current_app.config['SECRET_KEY'], algorithm='HS256')
+                                GovUkNotify().send_email_admin_login_link(
                                     email_address=user.email,
-                                    template_id=current_app.config['NOTIFY_ADMIN_LOGIN_TEMPLATE_ID'],
-                                    personalisation={
-                                        'expires': datetime.strftime(local + timedelta(hours=1), '%d/%m/%Y %H:%M:%S'),
-                                        'login_link': request.base_url + '?token=' + jwt.encode({ 'id': user.id, 'email': user.email, 'expires': datetime.strftime(datetime.now() + timedelta(hours=1), '%d/%m/%Y %H:%M:%S') }, current_app.config['SECRET_KEY'], algorithm='HS256')
-                                    }
+                                    expires=expires,
+                                    login_link=login_link
                                 )
                             except Exception as e:
                                 print(e, flush=True)
@@ -122,14 +120,10 @@ def index():
                 db.session.commit()
 
                 try:
-                    notifications_client = NotificationsAPIClient(current_app.config['NOTIFY_API'])
-                    notifications_client.send_email_notification(
+                    GovUkNotify().send_email_admin_new_user(
                         email_address=defaultEmailAddress,
-                        template_id=current_app.config['NOTIFY_ADMIN_NEW_USER_TEMPLATE_ID'],
-                        personalisation={
-                            'temporary_password': temporary_password,
-                            'application_link': request.base_url
-                        }
+                        temporary_password=temporary_password,
+                        application_link=request.base_url
                     )
                 except Exception as e:
                     print(e, flush=True)

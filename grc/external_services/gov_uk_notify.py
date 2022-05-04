@@ -10,6 +10,52 @@ class GovUkNotify:
         self.notify_override_email = current_app.config['NOTIFY_OVERRIDE_EMAIL']
         self.gov_uk_notify_client = NotificationsAPIClient(gov_uk_notify_api_key)
 
+    def send_email_security_code(
+            self,
+            email_address: str,
+            security_code: str,
+            security_code_timeout: str,
+    ):
+        personalisation = {
+            'security_code': security_code,
+            'security_code_timeout': security_code_timeout,
+        }
+        return self.send_email(
+            email_address=email_address,
+            template_id='d93108b9-4a5b-4268-91ee-2bb59686e702',
+            personalisation=personalisation
+        )
+
+    def send_email_unfinished_application(
+            self,
+            email_address: str,
+            expiry_days: str,
+            grc_return_link: str,
+    ):
+        personalisation = {
+            'expiry_days': expiry_days,
+            'grc_return_link': grc_return_link,
+        }
+        return self.send_email(
+            email_address=email_address,
+            template_id='151fce32-1f66-4efd-a875-28026e8d8d70',
+            personalisation=personalisation
+        )
+
+    def send_email_completed_application(
+            self,
+            email_address: str,
+            documents_to_be_posted: str,
+    ):
+        personalisation = {
+            'documents_to_be_posted': documents_to_be_posted,
+        }
+        return self.send_email(
+            email_address=email_address,
+            template_id='d3a252f7-5580-4299-8889-01ac235e8de7',
+            personalisation=personalisation
+        )
+
     def send_email_documents_you_need_for_your_grc_application(
             self,
             email_address: str,
@@ -45,6 +91,54 @@ class GovUkNotify:
         return self.send_email(
             email_address=email_address,
             template_id='a992b8c5-17e6-4dca-820c-5aa4bdd67b58',
+            personalisation=personalisation
+        )
+
+    def send_email_admin_login_link(
+            self,
+            email_address: str,
+            expires: str,
+            login_link: str,
+    ):
+        personalisation = {
+            'expires': expires,
+            'login_link': login_link,
+        }
+        return self.send_email(
+            email_address=email_address,
+            template_id='ddfa69ca-e89d-49d1-8311-b487732860ec',
+            personalisation=personalisation
+        )
+
+    def send_email_admin_forgot_password(
+            self,
+            email_address: str,
+            expires: str,
+            reset_link: str,
+    ):
+        personalisation = {
+            'expires': expires,
+            'reset_link': reset_link,
+        }
+        return self.send_email(
+            email_address=email_address,
+            template_id='7e2ed682-d120-4937-9154-1966976e0144',
+            personalisation=personalisation
+        )
+
+    def send_email_admin_new_user(
+            self,
+            email_address: str,
+            temporary_password: str,
+            application_link: str,
+    ):
+        personalisation = {
+            'temporary_password': temporary_password,
+            'application_link': application_link,
+        }
+        return self.send_email(
+            email_address=email_address,
+            template_id='0ff48a4c-601e-4cc1-b6c6-30bac012c259',
             personalisation=personalisation
         )
 
