@@ -64,6 +64,22 @@ class GovUkNotify:
             personalisation=personalisation
         )
 
+    def send_email_admin_login_link(
+            self,
+            email_address: str,
+            expires: str,
+            login_link: str,
+    ):
+        personalisation = {
+            'expires': expires,
+            'login_link': login_link,
+        }
+        return self.send_email(
+            email_address=email_address,
+            template_id='ddfa69ca-e89d-49d1-8311-b487732860ec',
+            personalisation=personalisation
+        )
+
     def send_email(self, email_address: str, template_id: str, personalisation: dict):
         if personalisation is None:
             personalisation = {}
