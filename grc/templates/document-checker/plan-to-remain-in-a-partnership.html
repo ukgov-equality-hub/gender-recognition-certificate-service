@@ -15,10 +15,13 @@
             <form method="POST">
                 {{ form.csrf_token }}
 
+                {% set inYourPartnershipName = 'married'
+                       if doc_checker_state.is_married
+                       else 'in your civil partnership' %}
                 {{ radios.renderFor(
                     form,
-                    fieldName='previous_partnership_partner_died',
-                    question="Have you ever been in a marriage or civil partnership where your spouse or partner died?",
+                    fieldName='plan_to_remain_in_a_partnership',
+                    question="Do you plan to remain " + inYourPartnershipName + " after you receive your Gender Recognition Certificate?",
                     radiosOptions={
                         'questionIsPageHeading': true,
                     }

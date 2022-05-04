@@ -3,7 +3,7 @@
 {% import "govuk-design-system-templates/radios.html" as radios %}
 
 {% block backLink %}
-    <a href="{{ url_for('documentChecker.currentlyInAPartnership') }}" class="govuk-back-link">Back</a>
+    <a href="{{ url_for('documentChecker.previousPartnershipPartnerDied') }}" class="govuk-back-link">Back</a>
 {% endblock %}
 
 {% block content %}
@@ -17,8 +17,8 @@
 
                 {{ radios.renderFor(
                     form,
-                    fieldName='previous_partnership_partner_died',
-                    question="Have you ever been in a marriage or civil partnership where your spouse or partner died?",
+                    fieldName='previous_partnership_ended',
+                    question="Have you ever been in a marriage or civil partnership that ended for another reason?",
                     radiosOptions={
                         'questionIsPageHeading': true,
                     }

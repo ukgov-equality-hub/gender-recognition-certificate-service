@@ -1,126 +1,417 @@
-{% extends 'base.html' %}
-{% block serviceTitle %}Check documents needed to apply for a GRC{% endblock %}
-{% block backLink %}<a href="{{ url_for('documentChecker.overseas_approved_check') }}" class="govuk-back-link">Back</a>{% endblock %}
+{% extends 'document-checker/doc-checker-base.html' %}
+
+{% block backLink %}
+    <a href="{{ url_for('documentChecker.genderRecognitionOutsideUK') }}" class="govuk-back-link">Back</a>
+{% endblock %}
+
+{%  set partnerName = 'civil partner'
+    if doc_checker_state.is_in_civil_partnership
+    else 'spouce' %}
+{%  set partnershipName = 'civil partnership'
+    if doc_checker_state.is_in_civil_partnership
+    else 'marriage' %}
+{%  set inPartnershipName = 'in a civil partnership'
+    if doc_checker_state.is_in_civil_partnership
+    else 'married' %}
 
 {% block content %}
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
-    <h1 class="govuk-heading-l">
-      Documents you need to provide
-    </h1>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
 
-    <p class="govuk-body">
-      Based on your answers, these are the documents you'll need for your application.
-    </p>
-    <p class="govuk-body">
-      ome documents you will upload during the application process, while others will need to be posted to us after
-      you've submitted your application.
-    </p>
-    <p class="govuk-body govuk-!-margin-bottom-2">
-      Documents that need to be uploaded when making your application:
-    </p>
-    <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-">
-      {% if session['documentChecker']['previousNamesCheck'] != 'No' %}
-      <li>copies of all change of name documents</li>
-      {% endif %}
-      {% if session['documentChecker']['confirmation']['overseasApprovedCheck'] != 'Yes' %}
-      <li>
-        a medical report that explains in full, the specific details of your gender dysphoria diagnosis, written by a
-        registered medical practitioner or registered psychologist practising in the field of gender dysphoria
-      </li>
-      <li>
-        a medical report that explains in full, the specific details of your treatment, or planned treatment, such as
-        hormone treatments or surgery, written by a registered medical practitioner - this could be your GP or surgeon
-      </li>
-      <li>
-        evidence of living in your gender for 2 years - no more than 8 documents spread throughout those 2 years
-      </li>
-      {% endif %}
-      {% if session['documentChecker']['partnershipDetails']['marriageCivilPartnership'] == 'Neither' %}
-      <li>
-        a <a href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852944/t467-eng.pdf" rel="noreferrer noopener" target="_blank" class="govuk-link">
-        statutory declaration for single applicants (opens in new tab)</a>
-      </li>
-      {% endif %}
-      {% if session['documentChecker']['partnershipDetails']['marriageCivilPartnership'] != 'Neither' %}
-      <li>
-        a <a href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852943/t466-eng.pdf" rel="noreferrer noopener" target="_blank" class="govuk-link">
-        statutory declaration for applicants who are married or in a civil partnership (opens in new tab)</a>
-      </li>
-      {% endif %}
-      {% if session['documentChecker']['partnershipDetails']['marriageCivilPartnership'] == 'Married' and session['documentChecker']['partnershipDetails']['stayTogether'] == 'Yes' %}
-      <li>
-        <a href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852946/t469-eng.pdf" rel="noreferrer noopener" target="_blank" class="govuk-link">
-        your spouse's statutory declaration (opens in new tab)</a>
-      </li>
-      {% endif %}
-      {% if session['documentChecker']['partnershipDetails']['marriageCivilPartnership'] == 'Civil partnership' and session['documentChecker']['partnershipDetails']['stayTogether'] == 'Yes' %}
-      <li>
-        <a href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852946/t469-eng.pdf" rel="noreferrer noopener" target="_blank" class="govuk-link">
-        your civil partner's statutory declaration (opens in new tab)</a>
-      </li>
-      {% endif %}
-      {% if session['documentChecker']['partnershipDetails']['marriageCivilPartnership'] == 'Married' %}
-      <li>
-        your original marriage certificate or a <a href="https://www.gov.uk/certifying-a-document" rel="noreferrer noopener" target="_blank" class="govuk-link">
-        certified copy (opens in new tab)</a>
-      </li>
-      {% endif %}
-      {% if session['documentChecker']['partnershipDetails']['marriageCivilPartnership'] == 'Civil partnership' %}
-      <li>
-        your original civil partnership certificate or a <a href="https://www.gov.uk/certifying-a-document" rel="noreferrer noopener" target="_blank" class="govuk-link">
-        certified copy (opens in new tab)</a>
-      </li>
-      {% endif %}
-      {% if session['documentChecker']['partnershipDetails']['partnerDied'] == 'Yes' %}
-      <li>a copy of your spouse or civil partner's death certificate</li>
-      {% endif %}
-      {% if session['documentChecker']['partnershipDetails']['endedCheck'] == 'Yes' %}
-      <li>a copy of your decree(s) dissolving the marriage or civil partnership</li>
-      {% endif %}
-      {% if session['documentChecker']['confirmation']['overseasApprovedCheck'] == 'Yes' %}
-      <li>official documentation that shows that your affirmed gender has been recognised in an approved country or territory</li>
-      {% endif %}
-    </ul>
+            <h1 class="govuk-heading-l">
+                Documents you need to provide
+            </h1>
 
-    <p class="govuk-body govuk-!-margin-bottom-2">Documents that need to be posted are:</p>
-    <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-">
-      {% if session['documentChecker']['previousNamesCheck'] != 'No' %}
-      <li>your original or a <a href="https://www.gov.uk/certifying-a-document" rel="noreferrer noopener" target="_blank" class="govuk-link">certified copy (opens in new tab)</a> of your full birth certificate</li>
-      {% endif %}
+            <p class="govuk-body">
+                Based on your answers, these are the documents you need for your application.
+            </p>
+            <p class="govuk-body">
+                Some documents will be uploaded during the application process,
+                while others need to be posted to us after you submit an application.
+            </p>
 
-      {#
-      <!-- {{ '' | safe if data['uk-check'] != 'No' and data['adopted'] != 'Yes' }}
-      {{ 
-          '<li>your original or a <a class="govuk-link" href="https://www.gov.uk/certifying-a-document" rel="noreferrer noopener" target="_blank">certified copy (opens in new tab)</a> of your full adoption certificate</li>' | safe
-          if data['uk-check'] != 'No' and data['adopted'] == 'Yes'
-        }}
-      {{ 
-          '<li>an official confirmation of date of birth and birth gender</li>' | safe
-          if data['uk-check'] == 'No'
-        }} -->
-      #}
-    </ul>
+            <h2 class="govuk-heading-m">
+                Documents to upload
+            </h2>
+            <p class="govuk-body">
+                You should upload a scan or good quality photograph of
+                the following documents when you make your application.
+            </p>
 
-    <p class="govuk-body">
-      If your spouse or civil partner does not provide a statutory declaration of consent, then you can still apply for
-      a Gender Recognition Certificate without it, but you will be given an Interim Gender Recognition Certificate. This
-      can be used to end your marriage or civil partnership after which you’ll receive a full certificate.
-    </p>
-    <p class="govuk-body">
-      You can <a href="https://www.gov.uk/order-copy-birth-death-marriage-certificate" class="govuk-link">order a birth, death, marriage
-      or civil partnership certificate</a> online if you live in England and Wales. There's a different process
-      for <a href="http://www.nrscotland.gov.uk/registration/how-to-order-an-official-extract-from-the-registers" class="govuk-link">getting
-      certificates in Scotland</a> and <a href="http://www.nidirect.gov.uk/index/do-it-online/government-citizens-and-rights-online/order-a-birth-adoption-death-marriage-or-civil-partnership-certificate.htm" class="govuk-link">
-      getting certificates in Northern Ireland</a>.
-    </p>
-    <p class="govuk-body govuk-!-margin-bottom-8">
-      Once you have your documents ready you can <a href="{{ url_for('startApplication.index') }}" class="govuk-link">apply for a certificate</a>.
-    </p>
-    <p class="govuk-body govuk-!-margin-bottom-1">
-      If you want us to email you the list of documents please click the button below.
-    </p>
-    <a href="{{ url_for('documentChecker.email') }}" class="govuk-button">Email documents list</a>
-  </div>
-</div>
+
+            {% if doc_checker_state.need_to_send_name_change_documents %}
+                <details class="govuk-details" data-module="govuk-details">
+                    <summary class="govuk-details__summary">
+                        <span class="govuk-details__summary-text">
+                            Copies of all change of name documents
+                        </span>
+                    </summary>
+                    <div class="govuk-details__text">
+                        If you’ve changed your name to reflect your affirmed gender, upload copies of all documents
+                        that show when you’ve done this.
+                        This includes enrolled or unenrolled deed polls and statutory declarations of name changes.
+                        These copies do not need to be certified.
+                    </div>
+                </details>
+            {% endif %}
+
+
+            {% if doc_checker_state.need_to_send_medical_reports %}
+                <details class="govuk-details" data-module="govuk-details">
+                    <summary class="govuk-details__summary">
+                        <span class="govuk-details__summary-text">
+                            Medical reports
+                        </span>
+                    </summary>
+                    <div class="govuk-details__text">
+                        <p class="govuk-body">
+                            You need 2 reports written by 2 different doctors or clinical psychologists registered in the UK.
+                        </p>
+                        <p class="govuk-body">
+                            The reports both need to include the name, practice address and contact details of the person who wrote the report.
+                        </p>
+                        <p class="govuk-body govuk-!-margin-bottom-2">
+                            At least 1 of the 2 reports needs to include details of any gender affirmation treatment
+                            you’ve had or plan to have, including:
+                        </p>
+                        <ol class="govuk-list govuk-list--bullet">
+                            <li>any surgical treatments</li>
+                            <li>any non-surgical treatments, such as hormone therapy</li>
+                            <li>if you’ve not had any treatment and do not plan to have any, why that’s the case</li>
+                        </ol>
+                        <p class="govuk-body govuk-!-margin-bottom-2">
+                            The first report needs to confirm your gender dysphoria diagnosis and the clinical history this was based on, including:
+                        </p>
+                        <ol class="govuk-list govuk-list--bullet">
+                            <li>who made the diagnosis</li>
+                            <li>when the diagnosis was made</li>
+                            <li>what evidence was used to make the diagnosis</li>
+                        </ol>
+                        <p class="govuk-body">
+                            This first report needs to be written by a registered doctor or clinical psychologist who
+                            practises in the field of gender dysphoria. You can find one of these by:
+                        </p>
+                        <ol class="govuk-list govuk-list--bullet">
+                            <li>asking your GP for a referral</li>
+                            <li>
+                                contacting someone on the
+                                <a href="http://www.gov.uk/government/publications/gender-recognition-certificate-list-of-medical-practitioners-in-the-gender-dysphoria-field"
+                                    class="govuk-link">
+                                    list of specialists in the field of gender dysphoria
+                                </a>
+                                - this is not a complete list and it’s not always up-to-date
+                            </li>
+                        </ol>
+                        <p class="govuk-body">
+                            The second report can be written by any registered doctor or clinical psychologist,
+                            including your GP, a surgeon or an endocrinologist.
+                        </p>
+                        <p class="govuk-body">
+                            There’s no required content for this second report, and it can include the same information from the first report.
+                        </p>
+                        <p class="govuk-body">
+                            The reports do not need to be specially written for your application, so long as they meet all the requirements.
+                            You may already have suitable reports in your medical records.
+                        </p>
+                        <p class="govuk-body">
+                            If you do need new reports written, you’ll probably need to pay for them even if you use NHS medical practitioners.
+                        </p>
+                        <p class="govuk-body">
+                            There is a
+                            <a href="https://draft-origin.publishing.service.gov.uk/government/publications/form-t452-guidelines-for-registered-medical-practitioners-and-registered-psychologists-to-facilitate-completion-of-the-medical-report-proforma-for-g"
+                               class="govuk-link">
+                                form that medical practitioners can use to write either of these reports
+                            </a>.
+                        </p>
+                    </div>
+                </details>
+            {% endif %}
+
+
+            {% if doc_checker_state.need_to_send_evidence_of_living_in_gender %}
+                <details class="govuk-details" data-module="govuk-details">
+                    <summary class="govuk-details__summary">
+                        <span class="govuk-details__summary-text">
+                            Evidence of living in your affirmed gender for 2 years
+                        </span>
+                    </summary>
+                    <div class="govuk-details__text">
+                        <p class="govuk-body">
+                            You need copies of evidence to show that you’ve been living in your affirmed gender for the last 2 years.
+                        </p>
+                        <p class="govuk-body">
+                            Each piece of evidence should contain at least one of the following that matches up with your affirmed gender:
+                        </p>
+                        <ul class="govuk-list govuk-list--bullet">
+                            <li>a name</li>
+                            <li>a title, like 'Mr' or 'Miss', but not a gender neutral title like 'Mx'</li>
+                            <li>a gender marker, like 'male' or 'female'</li>
+                        </ul>
+                        <p class="govuk-body govuk-!-margin-bottom-2">
+                            There are no other specific requirements for this evidence, but try to find:
+                        </p>
+                        <ul class="govuk-list govuk-list--bullet">
+                            <li>evidence from different points over the 2 years, with roughly 4 pieces of evidence from each year</li>
+                            <li>at least one piece of evidence from the last 2 or 3 months</li>
+                            <li>evidence from a variety of different sources</li>
+                        </ul>
+                        <p class="govuk-body govuk-!-margin-bottom-2">
+                            The evidence can come from before you were diagnosed with gender dysphoria.
+                        </p>
+                        <p class="govuk-body govuk-!-margin-bottom-2">
+                            Examples of what you can send in include good quality photocopies or photographs of:
+                        </p>
+                        <ul class="govuk-list govuk-list--bullet">
+                            <li>your driving licence</li>
+                            <li>your passport</li>
+                            <li>identity cards, like workplace IDs, railcards, health insurance cards, library cards or supermarket loyalty cards</li>
+                            <li>letters from solicitors, accountants, doctors, dentists or employers</li>
+                            <li>bank statements</li>
+                            <li>payslips, P60s and P45s</li>
+                            <li>benefit letters</li>
+                            <li>tax letters and documents, including council tax</li>
+                            <li>utility bills, such as internet bills</li>
+                            <li>rental agreements</li>
+                            <li>academic certificates and documents</li>
+                        </ul>
+                        <p class="govuk-body">
+                            You might be asked to send in more evidence after you submit your application.
+                        </p>
+                    </div>
+                </details>
+            {% endif %}
+
+
+            {% if doc_checker_state.need_to_send_statutory_declaration_for_single_applicant %}
+                <details class="govuk-details" data-module="govuk-details">
+                    <summary class="govuk-details__summary">
+                        <span class="govuk-details__summary-text">
+                            Statutory declaration for single applicants
+                        </span>
+                    </summary>
+                    <div class="govuk-details__text">
+                        <p class="govuk-body">
+                            Download and fill in a
+                            <a href="https://draft-origin.publishing.service.gov.uk/government/publications/gender-recognition-certificate-statutory-declarations-for-applicants"
+                             class="govuk-link">
+                                statutory declaration
+                            </a>.
+                            Follow the guidance to find out who can act as a witness when you sign your declaration.
+                        </p>
+                    </div>
+                </details>
+            {% endif %}
+
+
+            {% if doc_checker_state.need_to_send_statutory_declaration_for_applicant_in_partnership %}
+                <details class="govuk-details" data-module="govuk-details">
+                    <summary class="govuk-details__summary">
+                        <span class="govuk-details__summary-text">
+                            Statutory declaration for applicants who are {{ inPartnershipName }}
+                        </span>
+                    </summary>
+                    <div class="govuk-details__text">
+                        Download and fill in a
+                        <a href="https://draft-origin.publishing.service.gov.uk/government/publications/gender-recognition-certificate-statutory-declarations-for-applicants"
+                           class="govuk-link">
+                            statutory declaration
+                        </a>.
+                        Follow the guidance to find out who can act as a witness when you sign your declaration.
+                    </div>
+                </details>
+            {% endif %}
+
+
+            {% if doc_checker_state.need_to_send_partners_statutory_declaration %}
+                <details class="govuk-details" data-module="govuk-details">
+                    <summary class="govuk-details__summary">
+                        <span class="govuk-details__summary-text">
+                            Your {{ partnerName }}’s statutory declaration
+                        </span>
+                    </summary>
+                    <div class="govuk-details__text">
+                        <p class="govuk-body">
+                            If you intend to remain {{ inPartnershipName }}, your {{ partnerName }} needs to download and fill in a
+                            <a href="https://draft-origin.publishing.service.gov.uk/government/publications/gender-recognition-certificate-statutory-declarations-for-applicants"
+                             class="govuk-link">
+                                statutory declaration
+                            </a>.
+                        </p>
+                        <p class="govuk-body">
+                            Follow the guidance to find out who can act as a witness when they sign their declaration.
+                        </p>
+                        <p class="govuk-body">
+                            If you are currently {{ inPartnershipName }} and your {{ partnerName }} does not provide a
+                            statutory declaration of consent, or you do not plan to stay {{ inPartnershipName }},
+                            then you can still apply for a Gender Recognition Certificate without it,
+                            but you will be given an Interim Gender Recognition Certificate.
+                            This can be used to end your {{ partnershipName }} after which you’ll receive a full certificate.
+                        </p>
+                    </div>
+                </details>
+            {% endif %}
+
+
+            {% if doc_checker_state.need_to_send_partnership_certificate %}
+                <details class="govuk-details" data-module="govuk-details">
+                    <summary class="govuk-details__summary">
+                        <span class="govuk-details__summary-text">
+                            Your {{ partnershipName }} certificate
+                        </span>
+                    </summary>
+                    <div class="govuk-details__text">
+                        <p class="govuk-body">
+                            Upload a scan or good quality photograph of your {{ partnershipName }} certificate.
+                        </p>
+                    </div>
+                </details>
+            {% endif %}
+
+
+            {% if doc_checker_state.need_to_send_death_certificate %}
+                <details class="govuk-details" data-module="govuk-details">
+                    <summary class="govuk-details__summary">
+                        <span class="govuk-details__summary-text">
+                            Death certificate for your spouse or civil partner
+                        </span>
+                    </summary>
+                    <div class="govuk-details__text">
+                        <p class="govuk-body">
+                            Upload a death certificate for your partner if their death ended the
+                            marriage or civil partnership – you can
+                            <a href="https://draft-origin.publishing.service.gov.uk/order-copy-birth-death-marriage-certificate"
+                               class="govuk-link">
+                                order a death certificate
+                            </a>
+                            if their death was registered in the UK.
+                        </p>
+                    </div>
+                </details>
+            {% endif %}
+
+
+            {% if doc_checker_state.need_to_send_decree_absolute %}
+                <details class="govuk-details" data-module="govuk-details">
+                    <summary class="govuk-details__summary">
+                        <span class="govuk-details__summary-text">
+                            Decree absolute or final order
+                        </span>
+                    </summary>
+                    <div class="govuk-details__text">
+                        <p class="govuk-body">
+                            Upload a scan or good quality photograph of your
+                            <a href="https://draft-origin.publishing.service.gov.uk/copy-decree-absolute-final-order"
+                               class="govuk-link">
+                                decree absolute or final order
+                            </a>
+                            to show the marriage or civil partnership has ended.
+                        </p>
+                        <p class="govuk-body">
+                            If you have been married or in a civil partnership more than once, you need a
+                            separate certificate for each marriage or civil partnership.
+                        </p>
+                    </div>
+                </details>
+            {% endif %}
+
+
+            {% if doc_checker_state.need_to_send_proof_gender_recognised_outside_uk %}
+                <details class="govuk-details" data-module="govuk-details">
+                    <summary class="govuk-details__summary">
+                        <span class="govuk-details__summary-text">
+                            Proof that your affirmed gender is recognised outside the UK
+                        </span>
+                    </summary>
+                    <div class="govuk-details__text">
+                        <p class="govuk-body">
+                            If your affirmed gender is already recognised in an
+                            <a href="https://draft-origin.publishing.service.gov.uk/government/publications/overseas-gender-recognition-2011-t491"
+                               class="govuk-link">
+                                approved country or territory
+                            </a>,
+                            you need a document that proves this.
+                        </p>
+                        <p class="govuk-body">
+                            The document could be:
+                        </p>
+                        <ul class="govuk-list govuk-list--bullet">
+                            <li>something that’s equal to a Gender Recognition Certificate</li>
+                            <li>an updated birth certificate</li>
+                            <li>a court order</li>
+                            <li>an entry in a legal register</li>
+                        </ul>
+                    </div>
+                </details>
+            {% endif %}
+
+
+            <h2 class="govuk-heading-m">
+                Documents to send by post
+            </h2>
+            <p class="govuk-body">
+                You should post the following documents after you have submitted your application.
+            </p>
+
+            <details class="govuk-details" data-module="govuk-details">
+                <summary class="govuk-details__summary">
+                    <span class="govuk-details__summary-text">
+                        Birth or adoption certificate
+                    </span>
+                </summary>
+                <div class="govuk-details__text">
+                    <p class="govuk-body">
+                        Send an original or
+                        <a href="https://draft-origin.publishing.service.gov.uk/certifying-a-document"
+                           class="govuk-link">
+                            certified copy
+                        </a>
+                        of your full birth or adoption certificate.
+                        If your birth or adoption was registered in the UK, find out how to
+                        <a href="https://draft-origin.publishing.service.gov.uk/order-copy-birth-death-marriage-certificate"
+                           class="govuk-link">
+                            order a certificate
+                        </a>
+                        if you do not have it available.
+                    </p>
+                </div>
+            </details>
+
+
+            <h2 class="govuk-heading-m">
+                If any of your documents are not in English
+            </h2>
+            <p class="govuk-body">
+                You’ll need to have your documents translated. The translator does not need to have
+                any qualifications, so the translation can be done by a friend or a family member.
+            </p>
+            <p class="govuk-body">
+                Get the translator to sign the translated documents and
+                write down their translation qualifications if they have any.
+            </p>
+            <p class="govuk-body">
+                You’ll need to send in both the original documents and the translations.
+            </p>
+            <p class="govuk-body">
+                Once you have your documents ready you can
+                <a href="{{ url_for('startApplication.index') }}" class="govuk-link">
+                    apply for a Gender Recognition Certificate
+                </a>.
+            </p>
+
+
+            <h2 class="govuk-heading-m">
+                Get this list by email
+            </h2>
+            <p class="govuk-body">
+                If you want us to email you the list of documents, please click this button.
+            </p>
+            <p class="govuk-body">
+                <a href="{{ url_for('documentChecker.askForEmailAddress') }}"
+                   role="button" draggable="false" class="govuk-button" data-module="govuk-button">
+                    Email documents list
+                </a>
+            </p>
+
+        </div>
+    </div>
 {% endblock %}

@@ -1,29 +1,41 @@
-{% extends 'base.html' %}
-{% block serviceTitle %}Check documents needed to apply for a GRC{% endblock %}
+{% extends 'document-checker/doc-checker-base.html' %}
 
 {% block content %}
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
-    <h1 class="govuk-heading-l">
-      Before you start
-    </h1>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
 
-    <p class="govuk-body">
-      Use this tool to check which documents you need to provide with your Gender Recognition Certificate application.
-    </p>
-    <p class="govuk-body">
-      The tool will ask you questions so we can give you a list of the documents based on your circumstances. This is
-      not part of the application process and is designed only to help you prepare the documents you need before you
-      start the application process.
-    </p>
-    <p class="govuk-body">
-      We do not store any of the information you provide through this tool.
-    </p>
-    <p class="govuk-body govuk-!-margin-bottom-8">
-      If you already have your documents ready you can <a href="{{ url_for('startApplication.index') }}" class="govuk-link">start your application</a>.
-    </p>
+            <h1 class="govuk-heading-l">
+                Before you start
+            </h1>
 
-    <a href="{{ url_for('documentChecker.previousNamesCheck') }}" role="button" draggable="false" class="govuk-button" data-module="govuk-button">Continue</a>
-  </div>
-</div>
+            <p class="govuk-body">
+                Use this tool to check which documents you need for your Gender Recognition Certificate application.
+            </p>
+            <p class="govuk-body">
+                Answering the questions means we can give you a list of documents based on your personal circumstances.
+                You can have the list of documents sent to you by email at the end.
+            </p>
+            <p class="govuk-body">
+                This is not part of the application process and is designed only to help you prepare the documents
+                you need before you start your application.
+            </p>
+            <p class="govuk-body">
+                We do not store any of the information you enter in this tool.
+            </p>
+            <p class="govuk-body govuk-!-margin-bottom-8">
+                If you already have your documents ready you can
+                <a href="{{ url_for('startApplication.index') }}" class="govuk-link">
+                    start your application
+                </a>.
+            </p>
+
+            <p class="govuk-body">
+                <a href="{{ url_for('documentChecker.previousNamesCheck') }}"
+                   role="button" draggable="false" class="govuk-button" data-module="govuk-button">
+                    Continue
+                </a>
+            </p>
+
+        </div>
+    </div>
 {% endblock %}

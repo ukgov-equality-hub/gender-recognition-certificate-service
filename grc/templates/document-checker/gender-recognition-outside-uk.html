@@ -1,0 +1,96 @@
+{% extends 'document-checker/doc-checker-base.html' %}
+{% import "govuk-design-system-templates/error-summary.html" as error_summary %}
+{% import "govuk-design-system-templates/radios.html" as radios %}
+
+{% block backLink %}
+    {% set backLink = 'documentChecker.planToRemainInAPartnership'
+           if doc_checker_state.is_currently_in_partnership
+           else 'documentChecker.previousPartnershipEnded' %}
+    <a href="{{ url_for(backLink) }}" class="govuk-back-link">Back</a>
+{% endblock %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            {{ error_summary.renderFor(form) }}
+
+            <h1 class="govuk-heading-l">
+                Gender recognition outside of the UK
+            </h1>
+
+            <p class="govuk-body">
+                Some people may have already received gender recognition outside of the UK.
+            </p>
+            <p class="govuk-body">
+                The documents you need to provide are different if you have received gender recognition in a country or territory from this list:
+            </p>
+            <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-8">
+                <li>Australia
+                    <span class="govuk-hint govuk-!-margin-bottom-0">(not including the external territories)</span></li>
+                <li>Austria</li>
+                <li>Belgium</li>
+                <li>Bulgaria</li>
+                <li>Canada
+                    <span class="govuk-hint govuk-!-margin-bottom-0">(not including Northwest Territories and Nunavut)</span></li>
+                <li>Croatia</li>
+                <li>Republic of Cyprus</li>
+                <li>Czech Republic</li>
+                <li>Denmark</li>
+                <li>Estonia</li>
+                <li>Finland</li>
+                <li>France</li>
+                <li>Germany</li>
+                <li>Greece</li>
+                <li>Iceland</li>
+                <li>Italy</li>
+                <li>Japan</li>
+                <li>Liechtenstein</li>
+                <li>Luxembourg</li>
+                <li>Malta</li>
+                <li>Federal District of Mexico</li>
+                <li>Moldova</li>
+                <li>Netherlands</li>
+                <li>New Zealand</li>
+                <li>Norway</li>
+                <li>Poland</li>
+                <li>Romania</li>
+                <li>Russian Federation</li>
+                <li>Serbia</li>
+                <li>Singapore</li>
+                <li>Slovakia</li>
+                <li>Slovenia</li>
+                <li>South Africa</li>
+                <li>South Korea</li>
+                <li>Spain</li>
+                <li>Sweden</li>
+                <li>Switzerland</li>
+                <li>Turkey</li>
+                <li>Ukraine</li>
+                <li>United States of America
+                    <span class="govuk-hint govuk-!-margin-bottom-0">(not including Idaho, Ohio, Tennessee and Texas)</span></li>
+                <li>Uruguay</li>
+            </ul>
+
+            <form method="POST" action="{{ url_for('documentChecker.genderRecognitionOutsideUK') }}">
+                {{ form.csrf_token }}
+
+                {{ radios.renderFor(
+                    form,
+                    fieldName='gender_recognition_outside_uk',
+                    question="Have you received gender recognition in one of these countries or territories?",
+                    radiosOptions={
+                        'questionClasses': 'govuk-fieldset__legend--m',
+                    }
+                ) }}
+
+                <div class="govuk-button-group">
+                    <button class="govuk-button" data-module="govuk-button">
+                        Continue
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+{% endblock %}

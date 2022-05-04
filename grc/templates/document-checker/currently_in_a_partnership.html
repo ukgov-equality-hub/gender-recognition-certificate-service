@@ -3,7 +3,7 @@
 {% import "govuk-design-system-templates/radios.html" as radios %}
 
 {% block backLink %}
-    <a href="{{ url_for('documentChecker.currentlyInAPartnership') }}" class="govuk-back-link">Back</a>
+    <a href="{{ url_for('documentChecker.previousNamesCheck') }}" class="govuk-back-link">Back</a>
 {% endblock %}
 
 {% block content %}
@@ -17,10 +17,16 @@
 
                 {{ radios.renderFor(
                     form,
-                    fieldName='previous_partnership_partner_died',
-                    question="Have you ever been in a marriage or civil partnership where your spouse or partner died?",
+                    fieldName='currently_in_a_partnership',
+                    question="Are you currently married or in a civil partnership?",
                     radiosOptions={
                         'questionIsPageHeading': true,
+                        'hintOptions':{
+                            'htmlOrText': 'Select your current legal status, even if you are planning to end your marriage or civil partnership.'
+                        },
+                        'dividerOptions': [
+                            (CurrentlyInAPartnershipEnum.NEITHER.name, 'or')
+                        ]
                     }
                 ) }}
 
