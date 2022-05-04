@@ -1,8 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import EmailField, StringField, SubmitField, RadioField, IntegerField
+from wtforms import EmailField, RadioField
 from wtforms.validators import DataRequired, Email
 from grc.document_checker.doc_checker_state import CurrentlyInAPartnershipEnum
-from grc.utils.form_custom_validators import validateSecurityCode
 
 
 class PreviousNamesCheck(FlaskForm):
@@ -67,20 +66,9 @@ class GenderRecognitionOutsideUKForm(FlaskForm):
 
 
 class EmailForm(FlaskForm):
-    email = EmailField(
-        'email',
-        validators=[DataRequired(message='Email address is required'), Email(message='A valid email address is required')]
+    email_address = EmailField(
+        validators=[
+            DataRequired(message='Enter your email address'),
+            Email(message='Enter a valid email address')
+        ]
     )
-
-    submit = SubmitField('Continue')
-
-
-class ValidateEmailForm(FlaskForm):
-    code = StringField(
-        'code',
-        validators=[DataRequired(message='A valid code is required'), validateSecurityCode]
-    )
-
-    attempt = IntegerField('attempt', default=0)
-
-    submit = SubmitField('Continue')
