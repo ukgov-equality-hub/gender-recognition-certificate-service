@@ -1,4 +1,4 @@
-name: Python package
+name: 'Run python unit tests'
 
 on: [push]
 
@@ -16,7 +16,7 @@ env:
   NOTIFY_API: ${{ secrets.TEST_NOTIFY_API }}
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
