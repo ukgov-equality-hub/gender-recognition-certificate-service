@@ -80,6 +80,22 @@ class GovUkNotify:
             personalisation=personalisation
         )
 
+    def send_email_admin_new_user(
+            self,
+            email_address: str,
+            temporary_password: str,
+            application_link: str,
+    ):
+        personalisation = {
+            'temporary_password': temporary_password,
+            'application_link': application_link,
+        }
+        return self.send_email(
+            email_address=email_address,
+            template_id='0ff48a4c-601e-4cc1-b6c6-30bac012c259',
+            personalisation=personalisation
+        )
+
     def send_email(self, email_address: str, template_id: str, personalisation: dict):
         if personalisation is None:
             personalisation = {}
