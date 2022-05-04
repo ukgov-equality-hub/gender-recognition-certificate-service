@@ -26,6 +26,22 @@ class GovUkNotify:
             personalisation=personalisation
         )
 
+    def send_email_unfinished_application(
+            self,
+            email_address: str,
+            expiry_days: str,
+            grc_return_link: str,
+    ):
+        personalisation = {
+            'expiry_days': expiry_days,
+            'grc_return_link': grc_return_link,
+        }
+        return self.send_email(
+            email_address=email_address,
+            template_id='151fce32-1f66-4efd-a875-28026e8d8d70',
+            personalisation=personalisation
+        )
+
     def send_email_documents_you_need_for_your_grc_application(
             self,
             email_address: str,
