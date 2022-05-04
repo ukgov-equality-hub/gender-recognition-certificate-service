@@ -149,7 +149,12 @@ def genderRecognitionOutsideUK():
 
 @documentChecker.route('/check-documents/your-documents', methods=['GET', 'POST'])
 def your_documents():
-    return render_template('document-checker/your-documents.html')
+    doc_checker_state = DocCheckerDataStore.load_doc_checker_state()
+
+    return render_template(
+        'document-checker/your-documents.html',
+        doc_checker_state=doc_checker_state
+    )
 
 
 @documentChecker.route('/check-documents/email-address', methods=['GET', 'POST'])
