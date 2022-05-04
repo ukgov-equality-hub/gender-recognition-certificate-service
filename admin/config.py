@@ -11,7 +11,6 @@ class Config:
     LOG_LEVEL = logging.getLevelName(os.environ.get("LOG_LEVEL")) if "LOG_LEVEL" in os.environ else logging.INFO
     NOTIFY_OVERRIDE_EMAIL = os.environ.get("NOTIFY_OVERRIDE_EMAIL") if "NOTIFY_OVERRIDE_EMAIL" in os.environ else False
     NOTIFY_API = os.environ.get("NOTIFY_API")
-    NOTIFY_COMPLETED_APPLICATION_EMAIL_TEMPLATE_ID = 'd3a252f7-5580-4299-8889-01ac235e8de7'
     GOVUK_PAY_API = os.environ.get("GOVUK_PAY_API")
     GOVUK_PAY_API_KEY = os.environ.get("GOVUK_PAY_API_KEY")
     SECRET_KEY = os.environ.get("SECRET_KEY")

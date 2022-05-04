@@ -42,6 +42,20 @@ class GovUkNotify:
             personalisation=personalisation
         )
 
+    def send_email_completed_application(
+            self,
+            email_address: str,
+            documents_to_be_posted: str,
+    ):
+        personalisation = {
+            'documents_to_be_posted': documents_to_be_posted,
+        }
+        return self.send_email(
+            email_address=email_address,
+            template_id='d3a252f7-5580-4299-8889-01ac235e8de7',
+            personalisation=personalisation
+        )
+
     def send_email_documents_you_need_for_your_grc_application(
             self,
             email_address: str,
