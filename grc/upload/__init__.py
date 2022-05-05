@@ -4,7 +4,7 @@ from grc.models import ListStatus
 from grc.upload.forms import UploadForm, DeleteForm
 from grc.utils.decorators import LoginRequired
 from grc.utils.application_progress import save_progress
-from grc.utils.s3 import upload_fileobj, delete_object
+from grc.external_services.aws_s3_client import AwsS3Client
 
 upload = Blueprint('upload', __name__)
 
@@ -25,7 +25,7 @@ def medicalReports():
         for document in request.files.getlist('documents'):
             filename = secure_filename(document.filename)
             object_name = session['application']['reference_number'] + '__' + 'medicalReports' + '__' + filename
-            upload_fileobj(document, object_name)
+            AwsS3Client().upload_fileobj(document, object_name)
             session['application']['medicalReports']['files'].append(object_name)
 
         session['application']['medicalReports']['progress'] = ListStatus.COMPLETED.name
@@ -63,7 +63,7 @@ def genderEvidence():
         for document in request.files.getlist('documents'):
             filename = secure_filename(document.filename)
             object_name = session['application']['reference_number'] + '__' + 'genderEvidence' + '__' + filename
-            upload_fileobj(document, object_name)
+            AwsS3Client().upload_fileobj(document, object_name)
             session['application']['genderEvidence']['files'].append(object_name)
 
         session['application']['genderEvidence']['progress'] = ListStatus.COMPLETED.name
@@ -101,7 +101,7 @@ def nameChange():
         for document in request.files.getlist('documents'):
             filename = secure_filename(document.filename)
             object_name = session['application']['reference_number'] + '__' + 'nameChange' + '__' + filename
-            upload_fileobj(document, object_name)
+            AwsS3Client().upload_fileobj(document, object_name)
             session['application']['nameChange']['files'].append(object_name)
 
         session['application']['nameChange']['progress'] = ListStatus.COMPLETED.name
@@ -139,7 +139,7 @@ def marriageDocuments():
         for document in request.files.getlist('documents'):
             filename = secure_filename(document.filename)
             object_name = session['application']['reference_number'] + '__' + 'marriageDocuments' + '__' + filename
-            upload_fileobj(document, object_name)
+            AwsS3Client().upload_fileobj(document, object_name)
             session['application']['marriageDocuments']['files'].append(object_name)
 
         session['application']['marriageDocuments']['progress'] = ListStatus.COMPLETED.name
@@ -177,7 +177,7 @@ def overseasCertificate():
         for document in request.files.getlist('documents'):
             filename = secure_filename(document.filename)
             object_name = session['application']['reference_number'] + '__' + 'overseasCertificate' + '__' + filename
-            upload_fileobj(document, object_name)
+            AwsS3Client().upload_fileobj(document, object_name)
             session['application']['overseasCertificate']['files'].append(object_name)
 
         session['application']['overseasCertificate']['progress'] = ListStatus.COMPLETED.name
@@ -215,7 +215,7 @@ def statutoryDeclarations():
         for document in request.files.getlist('documents'):
             filename = secure_filename(document.filename)
             object_name = session['application']['reference_number'] + '__' + 'statutoryDeclarations' + '__' + filename
-            upload_fileobj(document, object_name)
+            AwsS3Client().upload_fileobj(document, object_name)
             session['application']['statutoryDeclarations']['files'].append(object_name)
 
         session['application']['statutoryDeclarations']['progress'] = ListStatus.COMPLETED.name
@@ -243,7 +243,7 @@ def removeFile():
     form = DeleteForm()
 
     if form.validate_on_submit():
-        delete_object(form.file.data)
+        AwsS3Client().delete_object(form.file.data)
         session['application'][form.section.data]['files'].remove(form.file.data)
         session['application'] = save_progress()
 

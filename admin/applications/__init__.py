@@ -2,7 +2,7 @@ from datetime import datetime
 from flask import Blueprint, render_template, redirect, url_for, session, make_response
 from grc.utils.decorators import AdminViewerRequired
 from grc.models import db, Application, ApplicationStatus
-from grc.utils.s3 import download_object
+from grc.external_services.aws_s3_client import AwsS3Client
 
 applications = Blueprint('applications', __name__)
 
@@ -34,7 +34,7 @@ def index():
 @applications.route('/applications/<file_name>/downloadfile', methods=['GET'])
 @AdminViewerRequired
 def downloadfile(file_name):
-    data = download_object(file_name)
+    data = AwsS3Client().download_object(file_name)
 
     file_type = 'application/octet-stream'
     if '.' in file_name:
@@ -96,7 +96,7 @@ def download(reference_number):
             if '.' in object_name:
                 file_type = object_name[object_name.rindex('.') + 1:]
                 if file_type.lower() == 'pdf':
-                    data = download_object(object_name)
+                    data = AwsS3Client().download_object(object_name)
                     pdfs.append(data)
                     print('Attaching ' + object_name)
 
@@ -180,32 +180,32 @@ def attachments(reference_number):
         with zipfile.ZipFile(zip_buffer, 'x', zipfile.ZIP_DEFLATED, False) as zipper:
             if 'medicalReports' in application.user_input and 'files' in application.user_input['medicalReports']:
                 for object_name in application.user_input['medicalReports']['files']:
-                    data = download_object(object_name)
+                    data = AwsS3Client().download_object(object_name)
                     zipper.writestr(object_name, data.getvalue())
 
             if 'genderEvidence' in application.user_input and 'files' in application.user_input['genderEvidence']:
                 for object_name in application.user_input['genderEvidence']['files']:
-                    data = download_object(object_name)
+                    data = AwsS3Client().download_object(object_name)
                     zipper.writestr(object_name, data.getvalue())
 
             if 'nameChange' in application.user_input and 'files' in application.user_input['nameChange']:
                 for object_name in application.user_input['nameChange']['files']:
-                    data = download_object(object_name)
+                    data = AwsS3Client().download_object(object_name)
                     zipper.writestr(object_name, data.getvalue())
 
             if 'marriageDocuments' in application.user_input and 'files' in application.user_input['marriageDocuments']:
                 for object_name in application.user_input['marriageDocuments']['files']:
-                    data = download_object(object_name)
+                    data = AwsS3Client().download_object(object_name)
                     zipper.writestr(object_name, data.getvalue())
 
             if 'overseasCertificate' in application.user_input and 'files' in application.user_input['overseasCertificate']:
                 for object_name in application.user_input['overseasCertificate']['files']:
-                    data = download_object(object_name)
+                    data = AwsS3Client().download_object(object_name)
                     zipper.writestr(object_name, data.getvalue())
 
             if 'statutoryDeclarations' in application.user_input and 'files' in application.user_input['statutoryDeclarations']:
                 for object_name in application.user_input['statutoryDeclarations']['files']:
-                    data = download_object(object_name)
+                    data = AwsS3Client().download_object(object_name)
                     zipper.writestr(object_name, data.getvalue())
 
         message = "attachments zipped"
