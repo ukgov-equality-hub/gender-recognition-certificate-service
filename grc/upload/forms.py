@@ -1,14 +1,15 @@
 from flask_wtf import FlaskForm
 from wtforms import MultipleFileField, BooleanField, HiddenField
 from wtforms.validators import DataRequired
-from grc.utils.form_custom_validators import MultiFileAllowed, FileSizeLimit
+from grc.utils.form_custom_validators import MultiFileAllowed, fileSizeLimit, fileVirusScan
 
 
 class UploadForm(FlaskForm):
     documents = MultipleFileField(
         validators=[
-            MultiFileAllowed(['jpg', 'png', 'jpeg', 'tif', 'bmp', 'pdf'], message='Select a JPG, BMP, PNG, TIF or PDF file smaller than 10MB'),
-            FileSizeLimit(10)
+            MultiFileAllowed(['jpg', 'png', 'jpeg', 'tif', 'bmp', 'pdf', 'txt'], message='Select a JPG, BMP, PNG, TIF or PDF file smaller than 10MB'),
+            fileSizeLimit(10),
+            fileVirusScan
         ]
     )
 
