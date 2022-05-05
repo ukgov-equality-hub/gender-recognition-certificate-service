@@ -38,14 +38,14 @@ class VcapServicesAwsS3Bucket:
 
 class VcapServicesPostgresCredentials:
     host: str
-    name: str
+    database_name: str
     password: str
     port: int
     username: str
 
     def __init__(self, vcap_services_postgres_credentials_object):
         self.host = vcap_services_postgres_credentials_object['host']
-        self.name = vcap_services_postgres_credentials_object['name']
+        self.database_name = vcap_services_postgres_credentials_object['name']
         self.password = vcap_services_postgres_credentials_object['password']
         self.port = vcap_services_postgres_credentials_object['port']
         self.username = vcap_services_postgres_credentials_object['username']
