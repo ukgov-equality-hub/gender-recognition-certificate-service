@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import SubmitField, RadioField
+from wtforms import RadioField
 from wtforms.validators import DataRequired
 
 
@@ -44,14 +44,14 @@ class PartnerDiedForm(FlaskForm):
     )
 
 
-class EndedCheckForm(FlaskForm):
-    check = RadioField(
-        'check',
-        choices=[('Yes'), ('No')],
-        validators=[DataRequired(message='Select if you have ever been married or in a civil partnership that has now ended')]
+class PreviousPartnershipEndedForm(FlaskForm):
+    previous_partnership_ended = RadioField(
+        choices=[
+            ('Yes', 'Yes'),
+            ('No', 'No')
+        ],
+        validators=[DataRequired(message='Select if you have ever been married or in a civil partnership that has ended')]
     )
-
-    submit = SubmitField('Save and continue')
 
 
 class InterimCheckForm(FlaskForm):
