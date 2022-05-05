@@ -35,13 +35,13 @@ class PartnerAgreesForm(FlaskForm):
 
 
 class PartnerDiedForm(FlaskForm):
-    check = RadioField(
-        'check',
-        choices=[('Yes'), ('No')],
-        validators=[DataRequired(message='Select if you were previously married or in a civil partnership, but your spouse or partner has died')]
+    partner_died = RadioField(
+        choices=[
+            ('Yes', 'Yes'),
+            ('No', 'No')
+        ],
+        validators=[DataRequired(message='Select if you were previously married or in a civil partnership, and your spouse or partner died')]
     )
-
-    submit = SubmitField('Save and continue')
 
 
 class EndedCheckForm(FlaskForm):

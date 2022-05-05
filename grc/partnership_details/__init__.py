@@ -130,11 +130,18 @@ def partnerDied():
     form = PartnerDiedForm()
 
     if form.validate_on_submit():
-        session['application']['partnershipDetails']['partnerDied'] = form.check.data
+        session['application']['partnershipDetails']['partnerDied'] = form.partner_died.data
         session['application']['partnershipDetails']['step'] = 'partnershipDetails.endedCheck'
         session['application'] = save_progress()
 
         return redirect(url_for(session['application']['partnershipDetails']['step']))
+
+    if request.method == 'GET':
+        form.partner_died.data = (
+            session['application']['partnershipDetails']['partnerDied']
+            if 'partnerDied' in session['application']['partnershipDetails']
+            else None
+        )
 
     return render_template(
         'partnership-details/partner-died.html',
