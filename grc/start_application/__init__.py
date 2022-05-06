@@ -1,6 +1,7 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for, session
-from grc.models import ListStatus, Application
-from grc.start_application.forms import SaveYourApplicationForm, ValidateEmailForm, OverseasCheckForm, OverseasApprovedCheckForm, DeclerationForm, IsFirstVisitForm
+from grc.models import ListStatus, Application, ApplicationStatus
+from grc.start_application.forms import SaveYourApplicationForm, ValidateEmailForm, OverseasCheckForm, \
+    OverseasApprovedCheckForm, DeclerationForm, IsFirstVisitForm
 from grc.utils.security_code import send_security_code
 from grc.utils.decorators import EmailRequired, LoginRequired, Unauthorized, ValidatedEmailRequired
 from grc.utils.reference_number import reference_number_generator, reference_number_string
@@ -88,7 +89,19 @@ def isFirstVisit():
 
                 else:
                     if not application.email:
-                        # This application has already been submitted - show the user a friendly page explaining this
+                        # This application has been anonymised (i.e. after it's been submitted and processed)
+                        # Show the user a friendly page explaining this
+                        return render_template(
+                            'start-application/application-already-submitted.html',
+                            reference=reference_number_string(form.reference.data)
+                        )
+
+                    elif application.status == ApplicationStatus.COMPLETED or \
+                            application.status == ApplicationStatus.SUBMITTED or \
+                            application.status == ApplicationStatus.DOWNLOADED or \
+                            application.status == ApplicationStatus.DELETED:
+                        # This application has already been submitted
+                        # Show the user a friendly page explaining this
                         return render_template(
                             'start-application/application-already-submitted.html',
                             reference=reference_number_string(form.reference.data)
@@ -154,7 +167,7 @@ def overseas_check():
         return render_template(
             'start-application/overseas-check.html',
             form=form
-    )
+        )
 
 
 @startApplication.route('/overseas-approved-check', methods=['GET', 'POST'])
@@ -210,7 +223,7 @@ def declaration():
             'start-application/declaration.html',
             form=form,
             back=back
-    )
+        )
 
 
 @startApplication.route('/clearsession', methods=['GET'])
