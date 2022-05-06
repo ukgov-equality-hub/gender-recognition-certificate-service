@@ -18,7 +18,7 @@
 
             {%  set partnerName = 'civil partner'
                 if session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Civil partnership'
-                else 'spouce' %}
+                else 'spouse' %}
             {%  set inPartnershipName = 'in a civil partnership'
                 if session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Civil partnership'
                 else 'married' %}
