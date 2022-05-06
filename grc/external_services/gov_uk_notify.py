@@ -1,12 +1,15 @@
 from flask import current_app
 from notifications_python_client.notifications import NotificationsAPIClient
+from grc.utils.config_helper import ConfigHelper
 
 
 class GovUkNotify:
     def __init__(self):
         gov_uk_notify_api_key = current_app.config['NOTIFY_API']
-        self.environment = current_app.config['ENVIRONMENT'].upper()
-        self.is_production = self.environment == 'PRODUCTION'
+        self.space = (ConfigHelper.get_vcap_application().space_name.lower()
+                      if ConfigHelper.get_vcap_application() is not None
+                      else 'local')
+        self.is_production = self.space == 'production'
         self.notify_override_email = current_app.config['NOTIFY_OVERRIDE_EMAIL']
         self.gov_uk_notify_client = NotificationsAPIClient(gov_uk_notify_api_key)
 
@@ -149,7 +152,7 @@ class GovUkNotify:
         if self.is_production and not self.notify_override_email:
             personalisation['environment_and_email_address'] = ''
         else:
-            personalisation['environment_and_email_address'] = f"[{self.environment} To:{email_address}]"
+            personalisation['environment_and_email_address'] = f"[{self.space} to:{email_address}] "
             email_address = self.notify_override_email
 
         response = self.gov_uk_notify_client.send_email_notification(

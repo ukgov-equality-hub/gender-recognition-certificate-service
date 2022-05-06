@@ -1,6 +1,6 @@
 from flask import Blueprint, redirect, render_template, request, url_for, session
 from grc.models import ListStatus
-from grc.partnership_details.forms import MarriageCivilPartnershipForm, StayTogetherForm, PartnerAgreesForm, PartnerDiedForm, InterimCheckForm, CheckYourAnswers
+from grc.partnership_details.forms import MarriageCivilPartnershipForm, StayTogetherForm, PartnerAgreesForm, PartnerDiedForm, PreviousPartnershipEndedForm, InterimCheckForm, CheckYourAnswers
 from grc.utils.decorators import LoginRequired
 from grc.utils.application_progress import save_progress
 
@@ -130,11 +130,18 @@ def partnerDied():
     form = PartnerDiedForm()
 
     if form.validate_on_submit():
-        session['application']['partnershipDetails']['partnerDied'] = form.check.data
+        session['application']['partnershipDetails']['partnerDied'] = form.partner_died.data
         session['application']['partnershipDetails']['step'] = 'partnershipDetails.endedCheck'
         session['application'] = save_progress()
 
         return redirect(url_for(session['application']['partnershipDetails']['step']))
+
+    if request.method == 'GET':
+        form.partner_died.data = (
+            session['application']['partnershipDetails']['partnerDied']
+            if 'partnerDied' in session['application']['partnershipDetails']
+            else None
+        )
 
     return render_template(
         'partnership-details/partner-died.html',
@@ -145,15 +152,22 @@ def partnerDied():
 @partnershipDetails.route('/partnership-details/ended-check', methods=['GET', 'POST'])
 @LoginRequired
 def endedCheck():
-    form = PartnerDiedForm()
+    form = PreviousPartnershipEndedForm()
 
     if form.validate_on_submit():
-        session['application']['partnershipDetails']['endedCheck'] = form.check.data
+        session['application']['partnershipDetails']['endedCheck'] = form.previous_partnership_ended.data
         session['application']['partnershipDetails']['progress'] = ListStatus.IN_REVIEW.name
         session['application']['partnershipDetails']['step'] = 'partnershipDetails.checkYourAnswers'
         session['application'] = save_progress()
 
         return redirect(url_for(session['application']['partnershipDetails']['step']))
+
+    if request.method == 'GET':
+        form.previous_partnership_ended.data = (
+            session['application']['partnershipDetails']['endedCheck']
+            if 'endedCheck' in session['application']['partnershipDetails']
+            else None
+        )
 
     return render_template(
         'partnership-details/ended-check.html',

@@ -51,7 +51,7 @@ class PreviousPartnershipEndedForm(FlaskForm):
             (True, 'Yes'),
             (False, 'No')
         ],
-        validators=[DataRequired(message='Select if you have ever been married or in a civil partnership that has now ended')]
+        validators=[DataRequired(message='Select if you have ever been married or in a civil partnership that has ended')]
     )
 
 

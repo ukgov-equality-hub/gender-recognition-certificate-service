@@ -14,6 +14,7 @@ env:
   SQLALCHEMY_TRACK_MODIFICATION: False
   DEFAULT_ADMIN_USER: grc-service-account@cabinetoffice.gov.uk
   NOTIFY_API: ${{ secrets.TEST_NOTIFY_API }}
+  NOTIFY_OVERRIDE_EMAIL: test@example.com
 
 jobs:
   build:
