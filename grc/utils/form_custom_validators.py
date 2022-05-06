@@ -229,8 +229,6 @@ def fileVirusScan(form, field):
         return
 
     results = cd.scan_stream(uploaded.stream.read())
-    print('results', flush=True)
-    print(results, flush=True)
     if results is None:
         uploaded.stream.seek(0)
         return
