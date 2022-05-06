@@ -33,6 +33,7 @@ class Config:
     AWS_S3_SIGNATURE_VERSION = "s3v4"
     BUCKET_NAME = os.environ.get("BUCKET_NAME")
     MAINTENANCE_MODE = os.environ.get("MAINTENANCE_MODE")
+    AV_API = os.environ.get("AV_API")
 
 
 class DevConfig(Config):

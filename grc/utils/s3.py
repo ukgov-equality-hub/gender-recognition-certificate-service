@@ -27,8 +27,7 @@ def create_presigned_url(object_name, expiration=36000):
     s3 = boto3.client('s3', region_name=current_app.config['AWS_REGION'], config=Config(signature_version='s3v4'))
 
     try:
-
-        '''s3_ = boto3.client(
+        """s3_ = boto3.client(
             's3',
             #aws_access_key_id=current_app.config['AWS_ACCESS_KEY_ID'],
             #aws_secret_access_key=current_app.config['AWS_SECRET_ACCESS_KEY'],
@@ -47,7 +46,7 @@ def create_presigned_url(object_name, expiration=36000):
 
         print('Bucket: %s' % current_app.config['BUCKET_NAME'], flush=True)
         print('Key: %s' % object_name, flush=True)
-        print('ExpiresIn: %s' % str(expiration), flush=True)'''
+        print('ExpiresIn: %s' % str(expiration), flush=True)"""
 
         url = s3.generate_presigned_url(ClientMethod='get_object', Params={'Bucket': current_app.config['BUCKET_NAME'], 'Key': object_name}, ExpiresIn=expiration, HttpMethod='GET')
 

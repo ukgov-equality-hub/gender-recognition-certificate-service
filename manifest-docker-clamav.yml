@@ -1,0 +1,9 @@
+---
+applications:
+  - name: grc-docker-clamav
+    memory: 1G
+    disk_quota: 5G
+    docker:
+      image: quay.io/ukhomeofficedigital/clamav:latest
+    routes:
+    - route: grc-production-clamav.apps.internal

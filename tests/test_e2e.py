@@ -2,7 +2,7 @@ import os
 import asyncio
 from playwright.async_api import async_playwright
 
-'''
+"""
 To setup on docker container:
 pip install playwright pytest-playwright asyncio
 playwright install
@@ -15,7 +15,7 @@ playwright install --with-deps
 
 To run test locally in debug mode:
 PWDEBUG=1 pytest -s
-'''
+"""
 
 
 TEST_URL = os.getenv('TEST_URL', 'http://localhost:5000')

@@ -1,7 +1,7 @@
 import os
 import re
 from dateutil.relativedelta import relativedelta
-from flask import request, session
+from flask import request, session, current_app
 from wtforms.validators import DataRequired, InputRequired, ValidationError, StopValidation, Optional
 from werkzeug.datastructures import FileStorage
 from collections.abc import Iterable
@@ -149,7 +149,7 @@ def validateDateOfTransiton(form, field):
     earliest_date_of_transition = date.today() - relativedelta(years=earliest_date_of_transition_years)
 
     if date_of_transition < earliest_date_of_transition:
-        raise ValidationError(f"Enter a date within the last {earliest_date_of_transition_years} years")
+        raise ValidationError(f'Enter a date within the last {earliest_date_of_transition_years} years')
 
     latest_date_of_transition = date.today()
 
@@ -194,7 +194,7 @@ class MultiFileAllowed(object):
                 ))
 
 
-def FileSizeLimit(max_size_in_mb):
+def fileSizeLimit(max_size_in_mb):
     max_bytes = max_size_in_mb*1024*1024
 
     def file_length_check(form, field):
@@ -203,3 +203,38 @@ def FileSizeLimit(max_size_in_mb):
                 raise ValidationError(f'The selected file must be smaller than {max_size_in_mb}MB')
 
     return file_length_check
+
+
+def fileVirusScan(form, field):
+    if current_app.config['AV_API'] is None:
+        return
+    if (field.name not in request.files or request.files[field.name].filename == ''):
+        return
+
+    print('Scanning %s' % current_app.config['AV_API'], flush=True)
+    from pyclamd import ClamdNetworkSocket
+
+    uploaded = request.files[field.name]
+    uploaded.stream.seek(0)
+
+    url = current_app.config['AV_API']
+    url = url.replace('http://', '')
+    url = url.replace('https://', '')
+    if url.index(':'):
+        url = url[: url.index(':')]
+
+    cd = ClamdNetworkSocket(host=url, port=3310, timeout=None)
+    if not cd.ping():
+        print('Unable to communicate with virus scanner', flush=True)
+        return
+
+    results = cd.scan_stream(uploaded.stream.read())
+    if results is None:
+        uploaded.stream.seek(0)
+        return
+    else:
+        res_type, res_msg = results['stream']
+        if res_type == 'FOUND':
+            raise ValidationError('Virus found: %s' % res_msg)
+        else:
+            print('Error scanning uploaded file', flush=True)
