@@ -37,7 +37,14 @@ jobs:
           cf auth
           cf target -o "${CF_ORG}" -s "${CF_SPACE}"
 
-      - name: Deploy to PaaS
+      - name: Deploy public-facing app to PaaS
         run: |
           cf push -f manifest.yml --strategy rolling
+
+      - name: Deploy Admin app to PaaS
+        run: |
+          cf push -f manifest-admin.yml --strategy rolling
+
+      - name: Logout of PaaS
+        run: |
           cf logout
