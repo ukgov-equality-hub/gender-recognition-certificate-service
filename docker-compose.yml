@@ -39,7 +39,7 @@ services:
     entrypoint: dockerize -wait tcp://grc_db:5432
     depends_on:
       - grc_db
-    command: /app/run_admin.sh
+    command: /admin/run_admin.sh
 
 volumes:
   dbdata:

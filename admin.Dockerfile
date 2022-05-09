@@ -12,8 +12,8 @@ RUN curl -sL https://deb.nodesource.com/setup_16.x | bash - \
 
 EXPOSE 5001
 
-RUN mkdir -p /app/
-WORKDIR /app
+RUN mkdir -p /admin/
+WORKDIR /admin
 
 COPY requirements.txt requirements.txt
 RUN pip3 install -r requirements.txt
@@ -27,6 +27,6 @@ RUN npm install
 RUN npm run build
 
 #RUN rm /app/grc -r
-RUN chmod 777 /app/run_admin.sh
-CMD /app/run_admin.sh
+RUN chmod 777 /admin/run_admin.sh
+CMD /admin/run_admin.sh
 # CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0" "--port=5001"]
