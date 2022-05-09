@@ -1,17 +1,14 @@
 from flask_wtf import FlaskForm
-from wtforms import EmailField, BooleanField, SubmitField
+from wtforms import EmailField, BooleanField
 from wtforms.validators import DataRequired, Email
 
 
 class UsersForm(FlaskForm):
-    email = EmailField(
-        'email',
+    email_address = EmailField(
         validators=[
-            DataRequired(message='Email address is required'),
-            Email(message='A valid email address is required')
+            DataRequired(message="Enter the new user's email address"),
+            Email(message='Enter a valid email address')
         ]
     )
 
-    userType = BooleanField('check')
-
-    submit = SubmitField('Submit')
+    is_admin_user = BooleanField()

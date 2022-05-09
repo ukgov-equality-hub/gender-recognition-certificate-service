@@ -91,7 +91,7 @@ def validatePasswordStrength(form, field):
         return not (length_error or digit_error or uppercase_error or lowercase_error or symbol_error)
 
     if password_check(field.data) is False:
-        raise ValidationError('Your password needs to contain 8 characters or more and include upper, lower case and special characters')
+        raise ValidationError('Your password needs to contain 8 or more characters, a lower case letter, an upper case letter, a number and a special character')
 
 
 def validateAdopted(form, field):

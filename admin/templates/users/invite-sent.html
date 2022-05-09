@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <h1 class="govuk-heading-l">
+                Invitation sent
+            </h1>
+
+            <p class="govuk-body">
+                An invitation email has been sent to:
+                <strong>{{ email_address }}</strong>
+            </p>
+
+            <p class="govuk-body">
+                <a href="{{ url_for('users.index') }}" class="govuk-link">
+                    Return to manage users
+                </a>
+            </p>
+
+        </div>
+    </div>
+{% endblock %}

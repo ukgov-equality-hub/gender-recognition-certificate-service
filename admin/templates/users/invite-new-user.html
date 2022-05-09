@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% import "govuk-design-system-templates/checkbox-single.html" as checkbox_single %}
+{% import "govuk-design-system-templates/error-summary.html" as error_summary %}
+{% import "govuk-design-system-templates/text-input.html" as textInput %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <h1 class="govuk-heading-l">
+                Invite new user
+            </h1>
+
+            {{ error_summary.renderFor(form) }}
+
+            <form method="POST">
+                {{ form.csrf_token }}
+
+                {{ textInput.renderFor(
+                    form,
+                    fieldName='email_address',
+                    textInputForOptions={
+                        'labelOptions':{ 'htmlOrText': 'Email address' },
+                        'classes': 'govuk-input--width-20',
+                        'type': 'email',
+                        'autocomplete': 'email',
+                        'attributes': [ ('spellcheck', 'false') ]
+                    }
+                ) }}
+
+                {{ checkbox_single.renderFor(
+                    form,
+                    fieldName='is_admin_user',
+                    label='Allow this user to manage users?',
+                    checkboxOptions={}
+                ) }}
+
+                <div class="govuk-button-group">
+                    <button class="govuk-button" data-module="govuk-button">
+                        Invite new user
+                    </button>
+                </div>
+            </form>
+
+            <p class="govuk-body">
+                <a href="{{ url_for('users.index') }}" class="govuk-link">
+                    Return to manage users
+                </a>
+            </p>
+
+        </div>
+    </div>
+{% endblock %}
