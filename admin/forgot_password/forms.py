@@ -1,15 +1,12 @@
 from flask_wtf import FlaskForm
-from wtforms import EmailField, SubmitField
+from wtforms import EmailField
 from wtforms.validators import DataRequired, Email
 
 
 class ForgotPasswordForm(FlaskForm):
-    email = EmailField(
-        'email',
+    email_address = EmailField(
         validators=[
-            DataRequired(message='Email address is required'),
-            Email(message='A valid email address is required')
+            DataRequired(message='Enter your email address'),
+            Email(message='Enter a valid email address')
         ]
     )
-
-    submit = SubmitField('Submit')

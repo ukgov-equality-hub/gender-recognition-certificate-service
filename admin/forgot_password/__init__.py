@@ -12,14 +12,11 @@ forgot_password = Blueprint('forgot_password', __name__)
 @forgot_password.route('/forgot_password', methods=['GET', 'POST'])
 def index():
     form = ForgotPasswordForm()
-    emailAddress = ""
-    message = ""
 
     if request.method == 'POST':
-        emailAddress = form.email.data
         if form.validate_on_submit():
             user = AdminUser.query.filter_by(
-                email=emailAddress
+                email=form.email_address.data
             ).first()
 
             # Email out 2FA link
@@ -36,11 +33,16 @@ def index():
                 except Exception as e:
                     print(e, flush=True)
 
-            message = "If an account matches the email address you entered, a password reset link will be sent"
+                return render_template(
+                    'forgot-password/forgot_password_sent_link.html',
+                    form=form,
+                    email_address=form.email_address.data
+                )
+
+            else:
+                form.email_address.errors.append("A user with this email address was not found")
 
     return render_template(
-        'forgot_password.html',
-        form=form,
-        emailAddress=emailAddress,
-        message=message
+        'forgot-password/forgot_password.html',
+        form=form
     )
