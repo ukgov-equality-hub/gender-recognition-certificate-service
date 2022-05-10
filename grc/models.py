@@ -1,10 +1,15 @@
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.dialects.postgresql import JSON
+import os
 from datetime import datetime
 import enum
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.dialects.postgresql import JSON
+from sqlalchemy_utils import StringEncryptedType
+from sqlalchemy_utils.types.encrypted.encrypted_type import AesEngine
 
 db = SQLAlchemy()
-
+secret_key = os.environ.get('SQLALCHEMY_KEY', '')
+print('secret_key', flush=True)
+print(secret_key, flush=True)
 
 class ApplicationStatus(enum.Enum):
     COMPLETED = "COMPLETED"
@@ -24,12 +29,12 @@ class ListStatus(enum.Enum):
 
 class Application(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    reference_number = db.Column(db.String(8), unique=True, nullable=False)
-    email = db.Column(db.String(180), nullable=True)
-    user_input = db.Column(JSON, nullable=True)
+    reference_number = db.Column(StringEncryptedType(db.String, length=50, key=secret_key, engine=AesEngine, padding='pkcs5'))
+    email = db.Column(StringEncryptedType(db.String, length=500, key=secret_key, engine=AesEngine, padding='pkcs5'))
+    user_input = db.Column(StringEncryptedType(db.String, length=50000, key=secret_key, engine=AesEngine, padding='pkcs5'))
     status = db.Column(
-        db.Enum(ApplicationStatus, name="application_status"),
-        default=ApplicationStatus.STARTED,
+        db.Enum(ApplicationStatus, name='application_status'),
+        default=ApplicationStatus.STARTED
     )
     created = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     updated = db.Column(db.DateTime)

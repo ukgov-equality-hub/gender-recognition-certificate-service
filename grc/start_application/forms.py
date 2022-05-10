@@ -9,7 +9,7 @@ class SaveYourApplicationForm(FlaskForm):
         validators=[
             DataRequired(message='Email address is required'),
             Email(message='A valid email address is required')
-        ],
+        ]
     )
 
 
@@ -33,7 +33,7 @@ class IsFirstVisitForm(FlaskForm):
     )
 
     reference = StringField(
-        validators=[StrictRequiredIf('isFirstVisit', 'HAS_REFERENCE', message='Enter a reference number', validators=[validateReferenceNumber])],
+        validators=[StrictRequiredIf('isFirstVisit', 'HAS_REFERENCE', message='Enter a reference number', validators=[validateReferenceNumber])]
     )
 
 
