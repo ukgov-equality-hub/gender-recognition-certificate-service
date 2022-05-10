@@ -8,8 +8,7 @@ from sqlalchemy_utils.types.encrypted.encrypted_type import AesEngine
 
 db = SQLAlchemy()
 secret_key = os.environ.get('SQLALCHEMY_KEY', '')
-print('secret_key', flush=True)
-print(secret_key, flush=True)
+
 
 class ApplicationStatus(enum.Enum):
     COMPLETED = "COMPLETED"
