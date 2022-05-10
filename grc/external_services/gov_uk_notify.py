@@ -152,8 +152,9 @@ class GovUkNotify:
         if self.is_production and not self.notify_override_email:
             personalisation['environment_and_email_address'] = ''
         else:
-            personalisation['environment_and_email_address'] = f"[{self.space} to:{email_address}] "
-            email_address = self.notify_override_email
+            personalisation['environment_and_email_address'] = f"[{self.space} to:{email_address}]"
+            if self.notify_override_email:
+                email_address = self.notify_override_email
 
         response = self.gov_uk_notify_client.send_email_notification(
             email_address=email_address,

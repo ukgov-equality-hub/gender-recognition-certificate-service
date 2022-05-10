@@ -8,6 +8,7 @@ class Config:
     ENVIRONMENT = os.environ.get("ENVIRONMENT", "PRODUCTION")
     SQLALCHEMY_DATABASE_URI = os.environ.get("SQLALCHEMY_DATABASE_URI")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_KEY = os.environ.get("SQLALCHEMY_KEY")
     LOG_LEVEL = logging.getLevelName(os.environ.get("LOG_LEVEL")) if "LOG_LEVEL" in os.environ else logging.INFO
     NOTIFY_OVERRIDE_EMAIL = os.environ.get("NOTIFY_OVERRIDE_EMAIL") if "NOTIFY_OVERRIDE_EMAIL" in os.environ else False
     NOTIFY_API = os.environ.get("NOTIFY_API")
