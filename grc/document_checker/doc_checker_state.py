@@ -37,10 +37,10 @@ class DocCheckerState(object):
     def need_to_send_evidence_of_living_in_gender(self) -> bool: return not self.gender_recognition_outside_uk
     @property
     def need_to_send_statutory_declaration_for_single_applicant(self) -> bool:
-        return self.is_not_in_partnership or not self.plan_to_remain_in_a_partnership
+        return self.is_not_in_partnership
     @property
     def need_to_send_statutory_declaration_for_applicant_in_partnership(self) -> bool:
-        return self.is_currently_in_partnership and self.plan_to_remain_in_a_partnership
+        return self.is_currently_in_partnership
     @property
     def need_to_send_partners_statutory_declaration(self) -> bool:
         return self.is_currently_in_partnership and self.plan_to_remain_in_a_partnership

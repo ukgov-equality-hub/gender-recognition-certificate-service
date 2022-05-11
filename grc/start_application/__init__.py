@@ -91,10 +91,7 @@ def isFirstVisit():
                     if not application.email:
                         # This application has been anonymised (i.e. after it's been submitted and processed)
                         # Show the user a friendly page explaining this
-                        return render_template(
-                            'start-application/application-already-submitted.html',
-                            reference=reference_number_string(form.reference.data)
-                        )
+                        return render_template('start-application/application-already-submitted.html')
 
                     elif application.status == ApplicationStatus.COMPLETED or \
                             application.status == ApplicationStatus.SUBMITTED or \
@@ -102,10 +99,7 @@ def isFirstVisit():
                             application.status == ApplicationStatus.DELETED:
                         # This application has already been submitted
                         # Show the user a friendly page explaining this
-                        return render_template(
-                            'start-application/application-already-submitted.html',
-                            reference=reference_number_string(form.reference.data)
-                        )
+                        return render_template('start-application/application-already-submitted.html')
 
                     elif application.email == session['validatedEmail']:
                         # The reference number is associated with their email address - load the application
