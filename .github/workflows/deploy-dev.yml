@@ -39,11 +39,11 @@ jobs:
 
       - name: Deploy public-facing app to PaaS
         run: |
-          cf push -f manifest.yml --strategy rolling
+          cf push geo-gender-recognition-certificate -f manifest-sandbox.yml --strategy rolling
 
       - name: Deploy Admin app to PaaS
         run: |
-          cf push -f manifest-admin.yml --strategy rolling
+          cf push geo-gender-recognition-certificate-admin -f manifest-sandbox-admin.yml --strategy rolling
 
       - name: Logout of PaaS
         run: |

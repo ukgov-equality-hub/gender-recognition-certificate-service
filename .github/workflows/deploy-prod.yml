@@ -39,11 +39,11 @@ jobs:
 
       - name: Deploy public-facing app to PaaS
         run: |
-          cf push -f manifest-prod.yml --strategy rolling
+          cf push grc-production -f manifest-prod.yml --strategy rolling
 
       - name: Deploy Admin app to PaaS
         run: |
-          cf push -f manifest-prod-admin.yml --strategy rolling
+          cf push grc-production-admin -f manifest-prod-admin.yml --strategy rolling
 
       - name: Logout of PaaS
         run: |
