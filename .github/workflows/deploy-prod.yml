@@ -1,4 +1,4 @@
-name: Deploy to PaaS production
+name: 'Deploy (production)'
 
 on:
   push:
@@ -7,44 +7,12 @@ on:
 
 jobs:
   deploy:
-    name: Deploy to PaaS production
-    runs-on: ubuntu-latest
-
-    env:
-      CF_API: 'https://api.london.cloud.service.gov.uk'
-      CF_ORG: 'geo-gender-recognition-certificate'
-      CF_SPACE: 'production'
-
-    permissions:
-      contents: read
-
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579
-
-      - name: Install the CF CLI
-        run: |
-          wget -q -O cf.tar.gz "https://packages.cloudfoundry.org/stable?release=linux64-binary&version=7.4.0&source=github-rel"
-          sudo tar xzf cf.tar.gz --wildcards --directory /usr/local/bin/ "cf*"
-
-      - name: Authenticate
-        env:
-          CF_USERNAME: ${{ secrets.CF_USERNAME }}
-          CF_PASSWORD: ${{ secrets.CF_PASSWORD }}
-        run: |
-          echo "Logging into $CF_ORG/$CF_SPACE..."
-          cf api "${CF_API}"
-          cf auth
-          cf target -o "${CF_ORG}" -s "${CF_SPACE}"
-
-      - name: Deploy public-facing app to PaaS
-        run: |
-          cf push grc-production -f manifest-prod.yml --strategy rolling
-
-      - name: Deploy Admin app to PaaS
-        run: |
-          cf push grc-production-admin -f manifest-prod-admin.yml --strategy rolling
-
-      - name: Logout of PaaS
-        run: |
-          cf logout
+    uses: ./.github/workflows/_deploy-shared.yml
+    with:
+      cf_space: 'production'
+      app_name_public: 'grc-production'
+      app_name_admin: 'grc-production-admin'
+      manifest_name: 'prod'
+    secrets:
+      cf_username: ${{ secrets.CF_USERNAME }}
+      cf_password: ${{ secrets.CF_PASSWORD }}
