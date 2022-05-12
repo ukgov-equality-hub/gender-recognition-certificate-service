@@ -3,8 +3,21 @@ from flask import Blueprint, render_template, redirect, url_for, session, make_r
 from grc.utils.decorators import AdminViewerRequired, AdminRequired
 from grc.models import db, Application, ApplicationStatus
 from grc.external_services.aws_s3_client import AwsS3Client
+from grc.birth_registration.forms import AdoptedUKForm
 
 applications = Blueprint('applications', __name__)
+
+
+def get_radio_pretty_value(formName, fieldName, value):
+    if formName == 'AdoptedUKForm':
+        form = AdoptedUKForm()
+    else:
+        return None
+
+    for choiceId, choiceLabel in form[fieldName].choices:
+        if choiceId == value:
+            return choiceLabel
+    return None
 
 
 @applications.route('/applications', methods=['GET'])
@@ -22,18 +35,27 @@ def index():
         status=ApplicationStatus.COMPLETED
     )
 
-    userType = ''
-    if 'userType' in session:
-        if session['userType'] == 'ADMIN':
-            userType = 'Admin'
-
     return render_template(
-        'applications.html',
+        'applications/applications.html',
         message=message,
         newApplications=newApplications,
         downloadedApplications=downloadedApplications,
-        completedApplications=completedApplications,
-        userType=userType
+        completedApplications=completedApplications
+    )
+
+
+@applications.route('/applications/<reference_number>', methods=['GET'])
+@AdminViewerRequired
+def view(reference_number):
+    application = Application.query.filter_by(
+        reference_number=reference_number
+    ).first()
+
+    return render_template(
+        'applications/view-application.html',
+        application=application,
+        strptime=datetime.strptime,
+        get_radio_pretty_value=get_radio_pretty_value
     )
 
 
@@ -48,13 +70,12 @@ def downloadfile(file_name):
         if file_type == 'pdf':
             file_type = 'application/pdf'
         elif file_type == 'jpg':
-            file_type == 'image/jpeg'
+            file_type = 'image/jpeg'
         else:
             file_type = 'image/' + file_type
 
     response = make_response(data.getvalue())
     response.headers.set('Content-Type', file_type)
-    # response.headers.set('Content-Disposition', 'attachment', file_name=file_name)
     return response
 
 
@@ -75,7 +96,7 @@ def download(reference_number):
         application.downloadedBy = session['signedIn']
         db.session.commit()
 
-        html = render_template('download.html', application=application)
+        html = render_template('applications/download.html', application=application)
 
         import io
         from xhtml2pdf import pisa
@@ -135,7 +156,6 @@ def download(reference_number):
             pdfs.insert(0, data)
             data = merge_pdfs(pdfs)
 
-        message = "application updated"
         response = make_response(data.read())
         response.headers.set('Content-Type', 'application/pdf')
         response.headers.set('Content-Disposition', 'attachment', file_name=application.reference_number + '.pdf')
@@ -214,10 +234,9 @@ def attachments(reference_number):
                     data = AwsS3Client().download_object(object_name)
                     zipper.writestr(object_name, data.getvalue())
 
-        message = "attachments zipped"
         response = make_response(zip_buffer.getvalue())
         response.headers.set('Content-Type', 'application/zip')
-        response.headers.set('Content-Disposition', 'attachment', file_name=application.reference_number + '.zip')
+        response.headers.set('Content-Disposition', 'attachment', filename=application.reference_number + '.zip')
         return response
 
     session['message'] = message
