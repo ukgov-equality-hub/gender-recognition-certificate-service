@@ -26,6 +26,7 @@ def index():
             session['application']['submitAndPay']['progress'] = ListStatus.IN_PROGRESS.name
             session['application']['submitAndPay']['step'] = 'submitAndPay.helpType'
         else:
+            session['application']['submitAndPay'].pop('helpType', None)
             session['application']['submitAndPay']['progress'] = ListStatus.IN_REVIEW.name
             session['application']['submitAndPay']['step'] = 'submitAndPay.checkYourAnswers'
 

@@ -358,7 +358,7 @@
                     ) }}
                 {% endif %}
 
-                {% if application.partnershipDetails.marriageCivilPartnership is defined and (application.partnershipDetails.marriageCivilPartnership == 'Married' or (application.partnershipDetails.marriageCivilPartnership == 'Neither' and (application.partnershipDetails.marriageCivilPartnership.partnerDied == 'Yes' or application.partnershipDetails.marriageCivilPartnership.endedCheck == 'Yes'))) %}
+                {% if application.partnershipDetails.marriageCivilPartnership is defined and (application.partnershipDetails.marriageCivilPartnership == 'Married' or (application.partnershipDetails.marriageCivilPartnership == 'Neither' and (application.partnershipDetails.partnerDied == 'Yes' or application.partnershipDetails.endedCheck == 'Yes'))) %}
                     {{ summary_list_item.render(
                         title='Marriage documents',
                         changeLinkHiddenText='the documents you have uploaded as evidence of your marriage or civil partnership',
