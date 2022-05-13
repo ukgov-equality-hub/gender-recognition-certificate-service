@@ -1,6 +1,6 @@
 from datetime import datetime
 from flask import Blueprint, render_template, redirect, url_for, session, make_response
-from grc.utils.decorators import AdminViewerRequired
+from grc.utils.decorators import AdminViewerRequired, AdminRequired
 from grc.models import db, Application, ApplicationStatus
 from grc.external_services.aws_s3_client import AwsS3Client
 
@@ -22,12 +22,18 @@ def index():
         status=ApplicationStatus.COMPLETED
     )
 
+    userType = ''
+    if 'userType' in session:
+        if session['userType'] == 'ADMIN':
+            userType = 'Admin'
+
     return render_template(
         'applications.html',
         message=message,
         newApplications=newApplications,
         downloadedApplications=downloadedApplications,
-        completedApplications=completedApplications
+        completedApplications=completedApplications,
+        userType=userType
     )
 
 
@@ -140,7 +146,7 @@ def download(reference_number):
 
 
 @applications.route('/applications/<reference_number>/completed', methods=['GET'])
-@AdminViewerRequired
+@AdminRequired
 def completed(reference_number):
     message = ""
 

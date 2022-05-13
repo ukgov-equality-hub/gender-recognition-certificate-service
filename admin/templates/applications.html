@@ -58,7 +58,7 @@
                     <a href="javascript:;" class="new-link" style="white-space: nowrap;" onclick="document.getElementById('newApplications_{{ loop.index }}').style.display = document.getElementById('newApplications_{{ loop.index }}').style.display == 'none' ? 'table-row' : 'none'">View</a>
                   </li>
                   <li class="govuk-summary-list__actions-list-item">
-                    <a href="/applications/{{ application.reference_number }}/download" target="_blank" class="new-link" style="white-space: nowrap;">Download application</a>
+                    <a href="javascript:download('{{ application.reference_number }}')" class="new-link" style="white-space: nowrap;">Download application</a>
                   </li>
                   <li class="govuk-summary-list__actions-list-item">
                     <a href="/applications/{{ application.reference_number }}/attachments" target="_blank" class="new-link" style="white-space: nowrap;">Download attachments</a>
@@ -88,9 +88,6 @@
           <thead class="govuk-table__head">
             <tr class="govuk-table__row">
               <th scope="col" colspan="2" class="govuk-table__header" aria-sort="none">Applicant name</th>
-              <!--<th scope="col" class="govuk-table__header" aria-sort="none">Submitted</th>
-              <th scope="col" class="govuk-table__header" aria-sort="descending">Downloaded</th>
-              <th scope="col" class="govuk-table__header" aria-sort="descending">Downloaded by</th>-->
               <th scope="col" class="govuk-table__header" aria-sort="none"><span class="govuk-visually-hidden">Actions</span></th>
             </tr>
           </thead>
@@ -102,9 +99,6 @@
                 {{ application.user_input.personalDetails.first_name }}
                 {{ application.user_input.personalDetails.last_name }}
               </td>
-              <!--<td class="govuk-table__cell">{{ application.updated | format_date }}</td>
-              <td class="govuk-table__cell">{{ application.downloaded | format_date }}</td>
-              <td class="govuk-table__cell">{{ application.downloadedBy }}</td>-->
               <td class="govuk-table__cell" style="border-bottom: none;">
                 <ul class="govuk-summary-list__actions-list" style="text-align: right">
                   <li class="govuk-summary-list__actions-list-item">
@@ -118,9 +112,11 @@
                   <li class="govuk-summary-list__actions-list-item">
                     <a href="/applications/{{ application.reference_number }}/attachments" target="_blank" class="new-link" style="white-space: nowrap;">Download attachments</a>
                   </li>
+                  {% if userType == "Admin" %}
                   <li class="govuk-summary-list__actions-list-item">
-                    <a href="/applications/{{ application.reference_number }}/completed" target="_blank" class="new-link" style="white-space: nowrap;">Complete</a>
+                    <a href="/applications/{{ application.reference_number }}/completed" class="new-link" style="white-space: nowrap;">Complete</a>
                   </li>
+                  {% endif %}
                 </ul>
               </td>
             </tr>
@@ -154,9 +150,6 @@
           <thead class="govuk-table__head">
             <tr class="govuk-table__row">
               <th scope="col" colspan="2" class="govuk-table__header" aria-sort="none">Applicant name</th>
-              <!--<th scope="col" class="govuk-table__header" aria-sort="none">Submitted</th>
-              <th scope="col" class="govuk-table__header" aria-sort="descending">Completed</th>
-              <th scope="col" class="govuk-table__header" aria-sort="descending">Completed by</th>-->
               <th scope="col" class="govuk-table__header" aria-sort="none"><span class="govuk-visually-hidden">Actions</span></th>
             </tr>
           </thead>
@@ -168,9 +161,6 @@
                 {{ application.user_input.personalDetails.first_name }}
                 {{ application.user_input.personalDetails.last_name }}
               </td>
-              <!--<td class="govuk-table__cell">{{ application.updated | format_date }}</td>
-              <td class="govuk-table__cell">{{ application.completed | format_date }}</td>
-              <td class="govuk-table__cell">{{ application.completedBy }}</td>-->
               <td class="govuk-table__cell" style="border-bottom: none;">
                 <ul class="govuk-summary-list__actions-list" style="text-align: right">
                   <li class="govuk-summary-list__actions-list-item">
@@ -205,4 +195,18 @@
     </div>
   </div>
 </div>
+<script>
+  function download(reference_number) {
+    let win
+    function popup(url) {
+      win = win || window.open(url)
+      win.focus()
+      win.onbeforeunload = function () {
+        win = null
+        location.reload()
+      }
+    }
+    popup(`/applications/${reference_number}/download`)
+  }
+</script>
 {% endblock %}

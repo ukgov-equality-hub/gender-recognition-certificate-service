@@ -129,6 +129,12 @@
     </li>
     {% if application.birthRegistration.fathersNameCheck == 'Yes' %}
     <li>Father's name listed: <strong>{{ application.birthRegistration.fathersNameCheck }}</strong></li>
+    <li>Father's name
+        <ul class="govuk-list govuk-list--bullet">
+            <li>First name: <strong>{{ application.birthRegistration.fathers_first_name }}</strong></li>
+            <li>Last name: <strong>{{ application.birthRegistration.fathers_last_name }}</strong></li>
+        </ul>
+    </li>
     {% endif %}
     {% if 'place_of_birth' in application.birthRegistration %}
     <li>Place of birth: <strong>{{ application.birthRegistration.place_of_birth }}</strong></li>
@@ -241,47 +247,5 @@
     {% if application.submitAndPay.helpType == 'Using the EX160 form' %}
     <li>an EX160 form</li>
     {% endif %}
-
-    {#
-    {% if application.birthRegistration.ukCheck == 'Yes' and application.birthRegistration.adopted != 'Yes' %}
-    <li>your original or a certified copy of your full birth certificate</li>
-    {% endif %}
-    {% if application.birthRegistration.ukCheck == 'Yes' and application.birthRegistration.adopted == 'Yes' %}
-    <li>your original or a certified copy of your full adoption certificate</li>
-    {% endif %}
-    {% if application.birthRegistration.ukCheck == 'No' %}
-    <li>an official confirmation of date of birth and birth gender</li>
-    {% endif %}
-    {% if application.partnershipDetails.marriageCivilPartnership == 'Neither' %}
-    <li>a statutory declaration for single applicants</li>
-    {% endif %}
-    {% if application.partnershipDetails.marriageCivilPartnership != 'Neither' %}
-    <li>a statutory declaration for applicants who are married or in a civil partnership.</a></li>
-    {% endif %}
-    {% if application.partnershipDetails.marriageCivilPartnership == 'Married' and application.partnershipDetails.stayTogether == 'Yes' %}
-    <li>your spouse's statutory declaration</li>
-    {% endif %}
-    {% if application.partnershipDetails.marriageCivilPartnership == 'Civil partnership' and application.partnershipDetails.stayTogether == 'Yes' %}
-    <li>your civil partner's statutory declaration</li>
-    {% endif %}
-    {% if application.partnershipDetails.marriageCivilPartnership == 'Married' %}
-    <li>your original marriage certificate or a certified copy</li>
-    {% endif %}
-    {% if application.partnershipDetails.marriageCivilPartnership == 'Civil partnership' %}
-    <li>your original civil partnership certificate or a certified copy</li>
-    {% endif %}
-    {% if application.partnershipDetails.partnerDied == 'Yes' %}
-    <li>a copy of your spouse or civil partner's death certificate</li>
-    {% endif %}
-    {% if application.partnershipDetails.endedCheck == 'Yes' %}
-    <li>a copy of your decree(s) dissolving the marriage or civil partnership</li>
-    {% endif %}
-    {% if application.confirmation.overseasCheck == 'Yes' %}
-    <li>official documentation that shows that your affirmed gender has been recognised in an approved country or territory</li>
-    {% endif %}
-    {% if application.submitAndPay.helpType == 'Using the EX160 form' %}
-    <li>an EX160 form</li>
-    {% endif %}
-    #}
 </ul>
 {% endmacro %}
