@@ -132,12 +132,9 @@ def calculate_progress_status():
                 session['application']['marriageDocuments']['progress'] != ListStatus.CANNOT_START_YET.name
                 and 'marriageCivilPartnership' in session['application']['partnershipDetails']
                 and (
-                    session['application']['partnershipDetails']['marriageCivilPartnership'] != 'Married'
-                    or (
-                        session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Neither'
-                        and session['application']['partnershipDetails']['partnerDied'] != 'Yes'
-                        and session['application']['partnershipDetails']['endedCheck'] != 'Yes'
-                    )
+                    session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Neither'
+                    and session['application']['partnershipDetails']['partnerDied'] == 'No'
+                    and session['application']['partnershipDetails']['endedCheck'] == 'No'
                 )
             ):
                 session['application']['marriageDocuments']['progress'] = ListStatus.CANNOT_START_YET.name
@@ -209,21 +206,21 @@ def calculate_progress_status():
                 and list_status['birthRegistration'] == ListStatus.COMPLETED
                 and list_status['partnershipDetails'] == ListStatus.COMPLETED
                 and list_status['statutoryDeclarations'] == ListStatus.COMPLETED
-                and not (
-                    session['application']['medicalReports']['progress'] != ListStatus.CANNOT_START_YET.name
-                    or session['application']['medicalReports']['progress'] != ListStatus.COMPLETED.name
+                and (
+                    session['application']['medicalReports']['progress'] == ListStatus.CANNOT_START_YET.name
+                    or session['application']['medicalReports']['progress'] == ListStatus.COMPLETED.name
                 )
-                and not (
-                    session['application']['genderEvidence']['progress'] != ListStatus.CANNOT_START_YET.name
-                    or session['application']['genderEvidence']['progress'] != ListStatus.COMPLETED.name
+                and (
+                    session['application']['genderEvidence']['progress'] == ListStatus.CANNOT_START_YET.name
+                    or session['application']['genderEvidence']['progress'] == ListStatus.COMPLETED.name
                 )
-                and not (
-                    session['application']['nameChange']['progress'] != ListStatus.CANNOT_START_YET.name
-                    and session['application']['nameChange']['progress'] != ListStatus.COMPLETED.name
+                and (
+                    session['application']['nameChange']['progress'] == ListStatus.CANNOT_START_YET.name
+                    or session['application']['nameChange']['progress'] == ListStatus.COMPLETED.name
                 )
-                and not (
-                    session['application']['marriageDocuments']['progress'] != ListStatus.CANNOT_START_YET.name
-                    and session['application']['marriageDocuments']['progress'] != ListStatus.COMPLETED.name
+                and (
+                    session['application']['marriageDocuments']['progress'] == ListStatus.CANNOT_START_YET.name
+                    or session['application']['marriageDocuments']['progress'] == ListStatus.COMPLETED.name
                 )
             ):
                 session['application']['submitAndPay']['progress'] = ListStatus.CANNOT_START_YET.name
