@@ -1,5 +1,4 @@
 from datetime import datetime
-import ast
 from flask import session
 from grc.models import db, Application, ListStatus, ApplicationStatus
 
@@ -13,7 +12,7 @@ def save_progress():
     def update_application(application_record):
         application_record.updated = datetime.now()
         db.session.commit()
-        session['application'] = ast.literal_eval(application_record.data())
+        session['application'] = application_record.data()
         return session['application']
 
     if application_record is not None:
@@ -34,9 +33,6 @@ def save_progress():
 def calculate_progress_status():
     try:
         if 'application' in session:
-            if isinstance(session['application'], str):
-                session['application'] = ast.literal_eval(session['application'])
-
             list_status = {
                 'confirmation': ListStatus.NOT_STARTED,
                 'personalDetails': ListStatus.NOT_STARTED,
@@ -272,7 +268,7 @@ def mark_complete():
                 application_record.updated = datetime.now()
                 application_record.status = ApplicationStatus.SUBMITTED
                 db.session.commit()
-                session['application'] = ast.literal_eval(application_record.data())
+                session['application'] = application_record.data()
         except ValueError:
             print('Oops!  Something went wrong.', flush=True)
     else:

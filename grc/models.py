@@ -1,8 +1,8 @@
 import os
 from datetime import datetime
 import enum
+import ast
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy_utils import StringEncryptedType
 from sqlalchemy_utils.types.encrypted.encrypted_type import AesEngine
 
@@ -28,8 +28,8 @@ class ListStatus(enum.Enum):
 
 class Application(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    reference_number = db.Column(StringEncryptedType(db.String, length=50, key=secret_key, engine=AesEngine, padding='pkcs5'))
-    email = db.Column(StringEncryptedType(db.String, length=500, key=secret_key, engine=AesEngine, padding='pkcs5'))
+    reference_number = db.Column(StringEncryptedType(db.String, length=50, key=secret_key, engine=AesEngine, padding='pkcs5'), unique=True, nullable=False)
+    email = db.Column(StringEncryptedType(db.String, length=500, key=secret_key, engine=AesEngine, padding='pkcs5'), nullable=False)
     user_input = db.Column(StringEncryptedType(db.String, length=50000, key=secret_key, engine=AesEngine, padding='pkcs5'))
     status = db.Column(
         db.Enum(ApplicationStatus, name='application_status'),
@@ -44,7 +44,7 @@ class Application(db.Model):
 
     def data(self):
         if self.user_input:
-            return self.user_input
+            return ast.literal_eval(self.user_input)
         else:
             return {
                 "reference_number": self.reference_number,
@@ -101,8 +101,8 @@ class Application(db.Model):
 
 class SecurityCode(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    code = db.Column(db.String(5), unique=True, nullable=False)
-    email = db.Column(db.String(180), nullable=False)
+    code = db.Column(StringEncryptedType(db.String, length=50, key=secret_key, engine=AesEngine, padding='pkcs5'), unique=True, nullable=False)
+    email = db.Column(StringEncryptedType(db.String, length=500, key=secret_key, engine=AesEngine, padding='pkcs5'), nullable=False)
     created = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
 

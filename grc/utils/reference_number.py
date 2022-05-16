@@ -8,7 +8,7 @@ def reference_number_generator(email):
 
     if application_record is None:
         try:
-            record = Application(reference_number=ref_number,email=email)
+            record = Application(reference_number=ref_number, email=email)
             db.session.add(record)
             db.session.commit()
             return ref_number
