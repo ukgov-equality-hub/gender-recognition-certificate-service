@@ -6,7 +6,6 @@ from grc.utils.security_code import send_security_code
 from grc.utils.decorators import EmailRequired, LoginRequired, Unauthorized, ValidatedEmailRequired
 from grc.utils.reference_number import reference_number_generator, reference_number_string
 from grc.utils.application_progress import save_progress
-from grc.utils.threading import Threading
 
 startApplication = Blueprint('startApplication', __name__)
 
@@ -42,9 +41,6 @@ def emailConfirmation():
         if form.validate_on_submit():
             session['validatedEmail'] = session['email']
             return redirect(url_for('startApplication.isFirstVisit'))
-        else:
-            threading = Threading(form.attempt.data)
-            form.attempt.data = threading.throttle()
 
     elif request.args.get('resend') == 'true':
         try:

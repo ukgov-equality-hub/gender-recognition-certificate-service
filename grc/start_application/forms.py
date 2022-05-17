@@ -19,8 +19,6 @@ class ValidateEmailForm(FlaskForm):
         validators=[DataRequired(message='Enter a security code'), validateSecurityCode]
     )
 
-    attempt = IntegerField('attempt', default=0)
-
 
 class IsFirstVisitForm(FlaskForm):
     isFirstVisit = RadioField(
