@@ -1,0 +1,50 @@
+name: 'Deploy (_shared functionality_)'
+
+on:
+  workflow_call:
+    inputs:
+      cf_space:
+        required: true
+        type: string
+      app_name_public:
+        required: true
+        type: string
+      app_name_admin:
+        required: true
+        type: string
+      manifest_name:
+        required: true
+        type: string
+    secrets:
+      cf_username:
+        required: true
+      cf_password:
+        required: true
+
+jobs:
+  deploy:
+    name: 'Deploy to PaaS'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 'Checkout Code'
+        uses: actions/checkout@v3
+
+      - name: 'Install the Cloud Foundry CLI'
+        run: |
+          wget -q -O - https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key | sudo apt-key add -
+          echo "deb https://packages.cloudfoundry.org/debian stable main" | sudo tee /etc/apt/sources.list.d/cloudfoundry-cli.list
+          sudo apt-get update
+          sudo apt-get install cf7-cli
+
+      - name: 'Login to Gov.UK PaaS'
+        run: |
+          cf login -a api.london.cloud.service.gov.uk -u ${{ secrets.cf_username }} -p '${{ secrets.cf_password }}' -o 'geo-gender-recognition-certificate' -s '${{ inputs.cf_space }}'
+
+      - name: 'Deploy Public-facing app to Gov.UK PaaS'
+        run: |
+          cf push "${{ inputs.app_name_public }}" --manifest manifest-${{ inputs.manifest_name }}.yml --strategy rolling
+
+      - name: 'Deploy Admin app to Gov.UK PaaS'
+        run: |
+          cf push "${{ inputs.app_name_admin }}" --manifest manifest-${{ inputs.manifest_name }}-admin.yml --strategy rolling

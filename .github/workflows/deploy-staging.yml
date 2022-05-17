@@ -1,4 +1,4 @@
-name: Deploy to PaaS staging
+name: 'Deploy (staging)'
 
 on:
   push:
@@ -7,37 +7,12 @@ on:
 
 jobs:
   deploy:
-    name: Deploy to PaaS staging
-    runs-on: ubuntu-latest
-
-    env:
-      CF_API: 'https://api.london.cloud.service.gov.uk'
-      CF_ORG: 'geo-gender-recognition-certificate'
-      CF_SPACE: 'staging'
-
-    permissions:
-      contents: read
-
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579
-
-      - name: Install the CF CLI
-        run: |
-          wget -q -O cf.tar.gz "https://packages.cloudfoundry.org/stable?release=linux64-binary&version=7.4.0&source=github-rel"
-          sudo tar xzf cf.tar.gz --wildcards --directory /usr/local/bin/ "cf*"
-
-      - name: Authenticate
-        env:
-          CF_USERNAME: ${{ secrets.CF_USERNAME }}
-          CF_PASSWORD: ${{ secrets.CF_PASSWORD }}
-        run: |
-          echo "Logging into $CF_ORG/$CF_SPACE..."
-          cf api "${CF_API}"
-          cf auth
-          cf target -o "${CF_ORG}" -s "${CF_SPACE}"
-
-      - name: Deploy to PaaS
-        run: |
-          cf push -f manifest-staging.yml --strategy rolling
-          cf logout
+    uses: ./.github/workflows/_deploy-shared.yml
+    with:
+      cf_space: 'staging'
+      app_name_public: 'grc-staging'
+      app_name_admin: 'grc-staging-admin'
+      manifest_name: 'staging'
+    secrets:
+      cf_username: ${{ secrets.CF_USERNAME }}
+      cf_password: ${{ secrets.CF_PASSWORD }}

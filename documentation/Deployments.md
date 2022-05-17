@@ -8,6 +8,35 @@ Deployments
 We use [GitHub Actions](https://docs.github.com/en/actions) for our deployments.  
 Here are the [GitHub Actions pipelines for the GRC service](https://github.com/cabinetoffice/grc-app/actions).
 
-## TODO
-Add details of how each deployment work
-(e.g. pushing to X branch deploys to Y environment and does Z other thing)
+## When are deployments run?
+* Pushing to the `master` **branch** deploys to the `sandbox` environment  
+  You can see the [sandbox deployments here](https://github.com/cabinetoffice/grc-app/actions/workflows/deploy-sandbox.yml)
+
+* Pushing a **tag** named `stage-*` deploys to the `staging` environment  
+  You can see the [staging deployments here](https://github.com/cabinetoffice/grc-app/actions/workflows/deploy-staging.yml)
+
+* Pushing a **tag** named `v*` deploys to the `production` environment  
+  You can see the [production deployments here](https://github.com/cabinetoffice/grc-app/actions/workflows/deploy-prod.yml)
+
+
+## How to deploy to Gov.UK PaaS manually
+Normally, it shouldn't be necessary to deploy to PaaS manually.
+
+But, there might be cases where you want to test something quickly in the PaaS sandbox environment.  
+To deploy to PaaS sandbox, follow these instructions:
+
+* Follow the instructions on the [Hosting and live databases](Hosting_and_live_databases.md) page to connect to the hosting environments
+
+* Open a Bash terminal in the `hosting` folder
+
+* Run `./LoginToGovPaas.sh`  
+  This should log you in to Gov.UK PaaS. You will be targeting the GRC organisation and the *sandbox* space:
+
+* Return to the root folder:  
+  `cd ..`
+
+* Run this command  
+  ```shell
+  cf target -s sandbox
+  cf push geo-gender-recognition-certificate --manifest manifest.yml --strategy rolling
+  ```

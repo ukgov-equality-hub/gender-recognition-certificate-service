@@ -1,4 +1,4 @@
-name: Python package
+name: 'Run python unit tests'
 
 on: [push]
 
@@ -17,7 +17,7 @@ env:
   NOTIFY_OVERRIDE_EMAIL: test@example.com
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
