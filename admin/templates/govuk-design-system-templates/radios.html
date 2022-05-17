@@ -1,0 +1,61 @@
+{% import "govuk-design-system-templates/error-message.html" as errorMessage %}
+{% import "govuk-design-system-templates/hint.html" as hint %}
+
+{% macro renderFor(form, fieldName, question, radiosOptions) %}
+
+    <div class="govuk-form-group {{ 'govuk-form-group--error' if form[fieldName].errors }}">
+        <fieldset class="govuk-fieldset">
+            {% if radiosOptions.questionIsPageHeading %}
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                    <h1 class="govuk-fieldset__heading">
+                        {{ question }}
+                    </h1>
+                </legend>
+            {% else %}
+                <legend class="govuk-fieldset__legend {{ radiosOptions.questionClasses }}">
+                    {{ question }}
+                </legend>
+            {% endif %}
+
+            {{ hint.render(radiosOptions.hintOptions) }}
+
+            {{ errorMessage.renderFor(fieldName, form[fieldName].errors, radiosOptions.errorMessageOptions) }}
+
+            <div class="govuk-radios" data-module="govuk-radios">
+                {% for choiceId, choiceLabel in form[fieldName].choices %}
+                    {% set index = form[fieldName].choices.index((choiceId, choiceLabel)) %}
+
+                    {% if radiosOptions.dividerOptions %}
+                        {% for dividerChoiceId, dividerHtml in radiosOptions.dividerOptions %}
+                            {%  if dividerChoiceId == choiceId %}
+                                <div class="govuk-radios__divider">
+                                    {{ dividerHtml }}
+                                </div>
+                            {%  endif %}
+                        {% endfor %}
+                    {% endif %}
+
+                    <div class="govuk-radios__item">
+                        <input id="{{ fieldName }}-{{ index }}" type="radio" name="{{ fieldName }}"
+                               value="{{ choiceId }}" class="govuk-radios__input" {{ 'checked' if form[fieldName].data == choiceId }}
+                               data-aria-controls="conditional-{{ fieldName }}-{{ index }}">
+                        <label for="{{ fieldName }}-{{ index }}" class="govuk-label govuk-radios__label">
+                            {{ choiceLabel }}
+                        </label>
+                    </div>
+
+                    {% if radiosOptions.conditionalOptions %}
+                        {% for optionChoiceId, conditionalHtml in radiosOptions.conditionalOptions %}
+                            {%  if optionChoiceId == choiceId %}
+                                <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-{{ fieldName }}-{{ index }}">
+                                    {{ conditionalHtml }}
+                                </div>
+                            {%  endif %}
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </fieldset>
+    </div>
+
+{% endmacro %}
