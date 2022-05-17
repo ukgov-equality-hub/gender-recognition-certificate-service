@@ -2,6 +2,8 @@
 {% import "govuk-design-system-templates/error-summary.html" as error_summary %}
 {% import "govuk-design-system-templates/radios.html" as radios %}
 
+{% block title %}Have you ever been married or in a civil partnership that ended?{% endblock %}
+
 {% block backLink %}
     <a href="{{ url_for('partnershipDetails.partnerDied') }}" class="govuk-back-link">Back</a>
 {% endblock %}

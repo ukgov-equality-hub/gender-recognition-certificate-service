@@ -2,6 +2,8 @@
 {% import "govuk-design-system-templates/error-summary.html" as error_summary %}
 {% import "govuk-design-system-templates/radios.html" as radios %}
 
+{% block title %}Was your birth registered by a Forces registering service?{% endblock %}
+
 {% block backLink %}
     <a href="{{ url_for('birthRegistration.adopted') }}" class="govuk-back-link">Back</a>
 {% endblock %}

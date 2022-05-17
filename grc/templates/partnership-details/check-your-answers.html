@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% import "govuk-design-system-templates/_summary-list-item.html" as summary_list_item %}
 
+{% block title %}Check your answers: Marriage or civil partnership details{% endblock %}
+
 {% block backLink %}
     <a href="{{ url_for('taskList.index') }}" class="govuk-back-link">Back</a>
 {% endblock %}

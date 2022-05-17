@@ -3,6 +3,8 @@
 {% import "govuk-design-system-templates/radios.html" as radios %}
 {% import "govuk-design-system-templates/text-input.html" as textInput %}
 
+{% block title %}Have you already started an application?{% endblock %}
+
 {% block backLink %}
     <a href="{{ url_for('startApplication.index') }}"
        class="govuk-back-link">

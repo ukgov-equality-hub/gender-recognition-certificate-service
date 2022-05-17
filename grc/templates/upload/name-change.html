@@ -2,6 +2,8 @@
 {% import "govuk-design-system-templates/error-summary.html" as error_summary %}
 {% import "upload/_upload-files-section.html" as upload_files_section %}
 
+{% block title %}Upload name change documents{% endblock %}
+
 {% block backLink %}
     <a href="{{ url_for('taskList.index') }}" class="govuk-back-link">Back</a>
 {% endblock %}

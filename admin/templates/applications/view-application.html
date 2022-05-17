@@ -1,6 +1,13 @@
 {% extends 'base.html' %}
 {% import "helper-macros/random-id.html" as random_id %}
 
+{% block title %}
+    Application for
+    {{ applicationData.personalDetails.title }}
+    {{ applicationData.personalDetails.first_name }}
+    {{ applicationData.personalDetails.last_name }}
+{% endblock %}
+
 {% set applicationData = application.data() %}
 
 {% block backLink %}
