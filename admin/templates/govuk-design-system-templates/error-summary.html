@@ -10,7 +10,7 @@
                     {% for error in form.errors %}
                         {% for e in form[error].errors %}
                             <li>
-                                <a href="#{{ error }}-error">
+                                <a href="#{{ error }}">
                                     {{ e }}
                                 </a>
                             </li>
