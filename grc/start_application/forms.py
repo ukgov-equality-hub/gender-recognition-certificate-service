@@ -7,8 +7,8 @@ from grc.utils.form_custom_validators import validateSecurityCode, validateRefer
 class SaveYourApplicationForm(FlaskForm):
     email = EmailField(
         validators=[
-            DataRequired(message='Email address is required'),
-            Email(message='A valid email address is required')
+            DataRequired(message='Enter your email address'),
+            Email(message='Enter a valid email address')
         ]
     )
 
@@ -16,7 +16,7 @@ class SaveYourApplicationForm(FlaskForm):
 class ValidateEmailForm(FlaskForm):
     code = StringField(
         'code',
-        validators=[DataRequired(message='Enter the security code that we emailed you'), validateSecurityCode]
+        validators=[DataRequired(message='Enter a security code'), validateSecurityCode]
     )
 
     attempt = IntegerField('attempt', default=0)

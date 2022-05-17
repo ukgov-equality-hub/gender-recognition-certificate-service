@@ -67,7 +67,7 @@ def validateSecurityCode(form, field):
     if is_test and field.data == '11111':
         pass
     elif validate_security_code(session['email'], field.data) is False:
-        raise ValidationError('Enter a valid security code')
+        raise ValidationError('Enter the security code that we emailed you')
 
 
 def validateReferenceNumber(form, field):
