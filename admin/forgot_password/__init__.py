@@ -1,7 +1,7 @@
 import jwt
 from datetime import datetime, timedelta
 from dateutil import tz
-from flask import Blueprint, render_template, request, current_app
+from flask import Blueprint, render_template, request, current_app, url_for
 from admin.forgot_password.forms import ForgotPasswordForm
 from grc.external_services.gov_uk_notify import GovUkNotify
 from grc.models import AdminUser
@@ -12,14 +12,11 @@ forgot_password = Blueprint('forgot_password', __name__)
 @forgot_password.route('/forgot_password', methods=['GET', 'POST'])
 def index():
     form = ForgotPasswordForm()
-    emailAddress = ""
-    message = ""
 
     if request.method == 'POST':
-        emailAddress = form.email.data
         if form.validate_on_submit():
             user = AdminUser.query.filter_by(
-                email=emailAddress
+                email=form.email_address.data
             ).first()
 
             # Email out 2FA link
@@ -27,7 +24,7 @@ def index():
                 try:
                     local = datetime.now().replace(tzinfo=tz.gettz('UTC')).astimezone(tz.gettz('Europe/London'))
                     expires = datetime.strftime(local + timedelta(hours=1), '%d/%m/%Y %H:%M:%S')
-                    reset_link=request.base_url[: request.base_url.rindex('/') + 1]    + 'password_reset?token=' + jwt.encode({ 'id': user.id, 'email': user.email, 'expires': datetime.strftime(datetime.now() + timedelta(hours=1), '%d/%m/%Y %H:%M:%S') }, current_app.config['SECRET_KEY'], algorithm='HS256')
+                    reset_link=request.host_url[:-1] + url_for('password_reset.reset_password_with_token') + '?token=' + jwt.encode({ 'id': user.id, 'email': user.email, 'expires': datetime.strftime(datetime.now() + timedelta(hours=1), '%d/%m/%Y %H:%M:%S') }, current_app.config['SECRET_KEY'], algorithm='HS256')
                     GovUkNotify().send_email_admin_forgot_password(
                         email_address=user.email,
                         expires=expires,
@@ -36,11 +33,16 @@ def index():
                 except Exception as e:
                     print(e, flush=True)
 
-            message = "If an account matches the email address you entered, a password reset link will be sent"
+                return render_template(
+                    'forgot-password/forgot_password_sent_link.html',
+                    form=form,
+                    email_address=form.email_address.data
+                )
+
+            else:
+                form.email_address.errors.append("A user with this email address was not found")
 
     return render_template(
-        'forgot_password.html',
-        form=form,
-        emailAddress=emailAddress,
-        message=message
+        'forgot-password/forgot_password.html',
+        form=form
     )

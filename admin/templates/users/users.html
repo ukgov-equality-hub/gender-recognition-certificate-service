@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+
+            <h1 class="govuk-heading-l">
+                GRC admin team users
+            </h1>
+
+            <p class="govuk-body">
+                <a href="{{ url_for('users.invite_new_admin_user') }}" class="govuk-link">
+                    Invite a new user
+                </a>
+            </p>
+
+            <table class="govuk-table new-table">
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th scope="col" class="govuk-table__header" aria-sort="none">Email address</th>
+                        <th scope="col" class="govuk-table__header" aria-sort="none">User type</th>
+                        <th scope="col" class="govuk-table__header" aria-sort="none">Last login</th>
+                        <th scope="col" class="govuk-table__header" aria-sort="none"><span class="govuk-visually-hidden">Actions</span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+                    {% for user in users %}
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">{{ user.email }}</td>
+                            <td class="govuk-table__cell">{{ user.userType }}</td>
+                            <td class="govuk-table__cell">{{ user.dateLastLogin }}</td>
+                            <td class="govuk-table__cell">
+                                <ul class="govuk-summary-list__actions-list" style="text-align: right">
+                                    {% if not user.dateLastLogin %}
+                                        <li class="govuk-summary-list__actions-list-item">
+                                            <a href="/users/{{ user.email }}/resend" class="new-link">
+                                                Resend invite
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                    <li class="govuk-summary-list__actions-list-item">
+                                        <a href="/users/{{ user.email }}/delete" class="new-link">
+                                            Delete
+                                        </a>
+                                    </li>
+                                </ul>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+{% endblock %}

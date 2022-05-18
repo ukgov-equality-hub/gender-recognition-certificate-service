@@ -23,7 +23,11 @@
 
             <div class="govuk-radios" data-module="govuk-radios">
                 {% for choiceId, choiceLabel in form[fieldName].choices %}
+                    {% macro str(value) %}{{ value }}{% endmacro %}
                     {% set index = form[fieldName].choices.index((choiceId, choiceLabel)) %}
+                    {% set indexSuffix = ('-' + str(index))
+                                         if index > 0
+                                         else '' %}
 
                     {% if radiosOptions.dividerOptions %}
                         {% for dividerChoiceId, dividerHtml in radiosOptions.dividerOptions %}
@@ -36,10 +40,10 @@
                     {% endif %}
 
                     <div class="govuk-radios__item">
-                        <input id="{{ fieldName }}-{{ index }}" type="radio" name="{{ fieldName }}"
+                        <input id="{{ fieldName }}{{ indexSuffix }}" type="radio" name="{{ fieldName }}"
                                value="{{ choiceId }}" class="govuk-radios__input" {{ 'checked' if form[fieldName].data == choiceId }}
-                               data-aria-controls="conditional-{{ fieldName }}-{{ index }}">
-                        <label for="{{ fieldName }}-{{ index }}" class="govuk-label govuk-radios__label">
+                               data-aria-controls="conditional-{{ fieldName }}{{ indexSuffix }}">
+                        <label for="{{ fieldName }}{{ indexSuffix }}" class="govuk-label govuk-radios__label">
                             {{ choiceLabel }}
                         </label>
                     </div>
@@ -47,7 +51,7 @@
                     {% if radiosOptions.conditionalOptions %}
                         {% for optionChoiceId, conditionalHtml in radiosOptions.conditionalOptions %}
                             {%  if optionChoiceId == choiceId %}
-                                <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-{{ fieldName }}-{{ index }}">
+                                <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-{{ fieldName }}{{ indexSuffix }}">
                                     {{ conditionalHtml }}
                                 </div>
                             {%  endif %}

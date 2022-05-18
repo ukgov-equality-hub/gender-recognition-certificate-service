@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <h1 class="govuk-heading-l">
+                Failed to re-send invitation
+            </h1>
+
+            <p class="govuk-body">
+                A user with email address
+                <strong>{{ email_address }}</strong>
+                cannot be found
+            </p>
+
+            <p class="govuk-body">
+                <a href="{{ url_for('users.index') }}" class="govuk-link">
+                    Return to manage users
+                </a>
+            </p>
+
+        </div>
+    </div>
+{% endblock %}

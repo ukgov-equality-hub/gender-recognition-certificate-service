@@ -1,22 +1,16 @@
 from flask_wtf import FlaskForm
-from wtforms import HiddenField, EmailField, PasswordField, SubmitField
+from wtforms import EmailField, PasswordField
 from wtforms.validators import DataRequired, Email
 
 
 class LoginForm(FlaskForm):
-    action = HiddenField('action')
-
-    email = EmailField(
-        'email',
+    email_address = EmailField(
         validators=[
-            DataRequired(message='Email address is required'),
-            Email(message='A valid email address is required')
+            DataRequired(message='Enter your email address'),
+            Email(message='Enter a valid email address')
         ]
     )
 
     password = PasswordField(
-        'password',
-        validators=[DataRequired(message='Please enter your password')]
+        validators=[DataRequired(message='Enter your password')]
     )
-
-    submit = SubmitField('Login')

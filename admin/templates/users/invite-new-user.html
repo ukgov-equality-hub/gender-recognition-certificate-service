@@ -1,14 +1,15 @@
-{% extends 'document-checker/doc-checker-base.html' %}
+{% extends 'base.html' %}
+{% import "govuk-design-system-templates/checkbox-single.html" as checkbox_single %}
 {% import "govuk-design-system-templates/error-summary.html" as error_summary %}
 {% import "govuk-design-system-templates/text-input.html" as textInput %}
-
-{% block backLink %}
-    <a href="{{ url_for('documentChecker.your_documents') }}" class="govuk-back-link">Back</a>
-{% endblock %}
 
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
+
+            <h1 class="govuk-heading-l">
+                Invite new user
+            </h1>
 
             {{ error_summary.renderFor(form) }}
 
@@ -19,29 +20,33 @@
                     form,
                     fieldName='email_address',
                     textInputForOptions={
-                        'labelOptions':{
-                            'htmlOrText': 'What is your email address?',
-                            'isPageHeading': true,
-                            'classes': 'govuk-label--l'
-                        },
-                        'hintOptions':{
-                            'htmlOrText': 'If you would like to receive your list of documents by email, enter your email address here'
-                        },
+                        'labelOptions':{ 'htmlOrText': 'Email address' },
                         'classes': 'govuk-input--width-20',
+                        'type': 'email',
                         'autocomplete': 'email',
                         'attributes': [ ('spellcheck', 'false') ]
                     }
                 ) }}
 
+                {{ checkbox_single.renderFor(
+                    form,
+                    fieldName='is_admin_user',
+                    label='Allow this user to manage users?',
+                    checkboxOptions={}
+                ) }}
+
                 <div class="govuk-button-group">
                     <button class="govuk-button" data-module="govuk-button">
-                        Continue
+                        Invite new user
                     </button>
-                    <a href="{{ url_for('documentChecker.your_documents') }}" class="govuk-link govuk-link--no-visited-state">
-                        Return to your documents list
-                    </a>
                 </div>
             </form>
+
+            <p class="govuk-body">
+                <a href="{{ url_for('users.index') }}" class="govuk-link">
+                    Return to manage users
+                </a>
+            </p>
 
         </div>
     </div>

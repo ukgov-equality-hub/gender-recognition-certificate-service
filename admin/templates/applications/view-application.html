@@ -1,0 +1,567 @@
+{% extends 'base.html' %}
+{% import "helper-macros/random-id.html" as random_id %}
+
+{% set applicationData = application.data() %}
+
+{% block backLink %}
+    <div class="govuk-breadcrumbs">
+        <ol class="govuk-breadcrumbs__list">
+            <li class="govuk-breadcrumbs__list-item">
+                <a class="govuk-breadcrumbs__link" href="{{ url_for('admin.index') }}">GRC applications</a>
+            </li>
+            <li class="govuk-breadcrumbs__list-item">
+                Application for
+                {{ applicationData.personalDetails.title }}
+                {{ applicationData.personalDetails.first_name }}
+                {{ applicationData.personalDetails.last_name }}
+            </li>
+        </ol>
+    </div>
+{% endblock %}
+
+{% macro table_caption_and_head_rows(caption) %}
+    <caption class="govuk-table__caption govuk-table__caption--m">
+        {{ caption }}
+    </caption>
+    <thead class="govuk-table__head govuk-visually-hidden">
+        <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header">Question</th>
+            <th scope="col" class="govuk-table__header">Sub-question</th>
+            <th scope="col" class="govuk-table__header">Answer</th>
+            <th scope="col" class="govuk-table__header">Copy button</th>
+        </tr>
+    </thead>
+{% endmacro %}
+
+{% macro summary_list_item(title, value, subtitle=None, rowsWithThisTitle=None, noWrap=False, noCopyButton=False, alternativeCopyValue=None) %}
+    {% set id = random_id.randomId(10) %}
+    <tr class="govuk-table__row">
+        {% if title %}
+            <th scope="row"
+                rowspan="{{ (rowsWithThisTitle if rowsWithThisTitle else 1) }}"
+                {{ ('colspan=2') if subtitle==None }}
+                class="govuk-table__header govuk-!-font-weight-regular">
+                {{ title }}
+            </th>
+        {% endif %}
+        {% if subtitle %}
+            <th scope="row" class="govuk-table__header govuk-!-font-weight-regular">
+                {{ subtitle }}
+            </th>
+        {% endif %}
+        <td class="govuk-table__cell govuk-!-font-weight-bold"
+            style="{{ 'white-space: nowrap' if noWrap }}">
+            {{ value }}
+        </td>
+        <td class="govuk-table__cell">
+            {% if not noCopyButton %}
+                {# Note: the following line should all be on one line to allow copy/paste to work without copying line breaks #}
+                <div style="display: none" id="value-{{ id }}">{% if alternativeCopyValue %}{{ alternativeCopyValue }}{% else %}{{ value }}{% endif %}</div>
+                <button class="govuk-button govuk-button--secondary copyToClipboardButton" data-module="govuk-button"
+                        id="button-{{ id }}" onclick="copyToClipboard('{{ id }}')">
+                    Copy
+                    <span class="govuk-visually-hidden">
+                        the value
+                        "{% if alternativeCopyValue %}{{ alternativeCopyValue }}{% else %}{{ value }}{% endif %}"
+                        to the clipboard
+                    </span>
+                </button>
+            {% endif %}
+        </td>
+    </tr>
+{% endmacro %}
+
+{% block content %}
+    <script>
+        function copyToClipboard(id) {
+            var valueElement = document.getElementById('value-' + id);
+            var buttonElement = document.getElementById('button-' + id);
+            var valueToCopy = valueElement.innerText;
+            navigator.clipboard
+                .writeText(valueToCopy)
+                .then(function () {
+                    buttonElement.innerText = 'Copied';
+                    window.setTimeout(() => { buttonElement.innerText = 'Copy'; }, 2000);
+                }, function () {
+                    buttonElement.innerText = 'Copy failed';
+                });
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            document.querySelectorAll(".copyToClipboardButton").forEach(el => el.style.display = 'block');
+        }
+    </script>
+    <style>
+        .copyToClipboardButton {
+            //display: none;
+        }
+    </style>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <h1 class="govuk-heading-l">
+                Application for
+                {{ applicationData.personalDetails.title }}
+                {{ applicationData.personalDetails.first_name }}
+                {{ applicationData.personalDetails.last_name }}
+
+                <span class="govuk-caption-l">
+                    {% if (applicationData.partnershipDetails.marriageCivilPartnership == 'Married' or
+                           applicationData.partnershipDetails.marriageCivilPartnership == 'Civil partnership') and
+                          (applicationData.partnershipDetails.stayTogether == 'No' or
+                           applicationData.partnershipDetails.partnerAgrees == 'No') %}
+                        INTERIM CERTIFICATE APPLICATION
+                    {% else %}
+                        FULL CERTIFICATE APPLICATION
+                    {% endif %}
+                </span>
+            </h1>
+
+
+            <p class="govuk-body">
+                <a href="{{ url_for('applications.download', reference_number=application.reference_number) }}"
+                   target="_blank" class="govuk-link">
+                    Download application
+                </a>
+            </p>
+            <p class="govuk-body govuk-!-margin-bottom-8">
+                <a href="{{ url_for('applications.attachments', reference_number=application.reference_number) }}"
+                   target="_blank" class="govuk-link">
+                    Download attachments
+                </a>
+            </p>
+
+
+            <table class="govuk-table">
+                {{ table_caption_and_head_rows(caption="Confirmation") }}
+                
+                <tbody class="govuk-table__body">
+                    {{ summary_list_item(
+                        title="Have you ever been issued a Gender Recognition Certificate (or its equivalent) in another country?",
+                        value=applicationData.confirmation.overseasCheck
+                    ) }}
+
+                    {{ summary_list_item(
+                        title="Do you have official documentation that shows your affirmed gender has been recognised in an approved country or territory?",
+                        value=applicationData.confirmation.overseasApprovedCheck
+                    ) }}
+
+                    {{ summary_list_item(
+                        title="I confirm that I meet the requirements for applying for a Gender Recognition Certificate and
+                               I consent to the General Register Office contacting me about my application:",
+                        value=('Yes' if applicationData.confirmation.declaration else 'No')
+                    ) }}
+                </tbody>
+            </table>
+
+
+            <table class="govuk-table">
+                {{ table_caption_and_head_rows(caption="Personal details") }}
+                
+                <tbody class="govuk-table__body">
+                    {{ summary_list_item(
+                        title="Name (as you would like it to appear on your Gender Recognition Certificate)",
+                        subtitle="Title",
+                        value=applicationData.personalDetails.title,
+                        rowsWithThisTitle='3'
+                    ) }}
+
+                    {{ summary_list_item(
+                        subtitle="First name(s)",
+                        value=applicationData.personalDetails.first_name
+                    ) }}
+
+                    {{ summary_list_item(
+                        subtitle="Last name",
+                        value=applicationData.personalDetails.last_name
+                    ) }}
+
+                    {{ summary_list_item(
+                        title="Affirmed gender",
+                        value=('Male' if applicationData.personalDetails.affirmed_gender == 'MALE' else 'Female')
+                    ) }}
+
+                    {% set transitionDate = strptime('{}-{}-1'.format(
+                            applicationData.personalDetails.transition_date_year,
+                            applicationData.personalDetails.transition_date_month),
+                         '%Y-%m-%d') %}
+                    {{ summary_list_item(
+                        title="When you transitioned",
+                        value=(transitionDate.strftime('%B %Y')),
+                        alternativeCopyValue=(transitionDate.strftime('%d/%m/%Y'))
+                    ) }}
+
+                    {{ summary_list_item(
+                            title="Ever changed name",
+                            value=(applicationData.personalDetails.previousNamesCheck)
+                    ) }}
+
+                    {% macro addressValue() %}
+                        {{ applicationData.personalDetails.address.address_line_one }}<br>
+                        {{ applicationData.personalDetails.address.address_line_two }}<br>
+                        {{ applicationData.personalDetails.address.town }}<br>
+                        {{ applicationData.personalDetails.address.postcode }}
+                    {% endmacro %}
+                    {{ summary_list_item(
+                        title="Address",
+                        value=(addressValue())
+                    ) }}
+
+                    {% set contactPreferencesLines = (
+                           (1 if applicationData.personalDetails.contactPreferences.email else 0) +
+                           (1 if applicationData.personalDetails.contactPreferences.phone else 0) +
+                           (1 if applicationData.personalDetails.contactPreferences.post else 0)
+                    ) %}
+                    {% set phoneFirst = (
+                            not applicationData.personalDetails.contactPreferences.email and
+                            applicationData.personalDetails.contactPreferences.phone
+                    ) %}
+                    {% set postFirst = (
+                            not applicationData.personalDetails.contactPreferences.email and
+                            not applicationData.personalDetails.contactPreferences.phone and
+                            applicationData.personalDetails.contactPreferences.post
+                    ) %}
+
+                    {% if applicationData.personalDetails.contactPreferences.email %}
+                        {{ summary_list_item(
+                            title="Contact preferences",
+                            subtitle="Email",
+                            value=(applicationData.personalDetails.contactPreferences.email),
+                            rowsWithThisTitle=contactPreferencesLines
+                        ) }}
+                    {% endif %}
+
+                    {% if applicationData.personalDetails.contactPreferences.phone %}
+                        {% if phoneFirst %}
+                            {{ summary_list_item(
+                                title="Contact preferences",
+                                subtitle="Phone",
+                                value=(applicationData.personalDetails.contactPreferences.phone),
+                                rowsWithThisTitle=contactPreferencesLines
+                            ) }}
+                        {% else %}
+                            {{ summary_list_item(
+                                subtitle="Phone",
+                                value=(applicationData.personalDetails.contactPreferences.phone)
+                            ) }}
+                        {% endif %}
+                    {% endif %}
+
+                    {% if applicationData.personalDetails.contactPreferences.post %}
+                        {% if postFirst %}
+                            {{ summary_list_item(
+                                title="Contact preferences",
+                                subtitle="Post",
+                                value=(applicationData.personalDetails.contactPreferences.post),
+                                rowsWithThisTitle=contactPreferencesLines
+                            ) }}
+                        {% else %}
+                            {{ summary_list_item(
+                                subtitle="Post",
+                                value=(applicationData.personalDetails.contactPreferences.post)
+                            ) }}
+                        {% endif %}
+                    {% endif %}
+
+                    {{ summary_list_item(
+                        title="Unavailable over the next 6 months",
+                        value=(applicationData.personalDetails.contactDates.answer)
+                    ) }}
+                    {% if applicationData.personalDetails.contactDates.answer == 'Yes' %}
+                        {% macro unavailabilityDates() %}
+                            {# Note: The following <span> should all be on one line, to allow the line breaks to work correctly #}
+                            <span style="white-space: pre-line;">{{ applicationData.personalDetails.contactDates.dates }}</span>
+                        {% endmacro %}
+                        {{ summary_list_item(
+                            title="Unavailability dates",
+                            value=(unavailabilityDates()),
+                            alternativeCopyValue=(applicationData.personalDetails.contactDates.dates)
+                        ) }}
+                    {% endif %}
+
+                    {{ summary_list_item(
+                        title="Notify HMRC",
+                        value=(applicationData.personalDetails.hmrc.answer)
+                    ) }}
+
+                    {% if applicationData.personalDetails.hmrc.answer == 'Yes' %}
+                        {{ summary_list_item(
+                            title="National insurance number",
+                            value=(applicationData.personalDetails.hmrc.national_insurance_number)
+                        ) }}
+                    {% endif %}
+                </tbody>
+            </table>
+
+
+            <table class="govuk-table">
+                {{ table_caption_and_head_rows(caption="Birth registration details") }}
+                
+                <tbody class="govuk-table__body">
+                    {{ summary_list_item(
+                        title="Birth name",
+                        subtitle="First name",
+                        value=(applicationData['birthRegistration']['first_name']),
+                        rowsWithThisTitle='3'
+                    ) }}
+
+                    {{ summary_list_item(
+                        subtitle="Middle names",
+                        value=(applicationData['birthRegistration']['middle_names'])
+                    ) }}
+
+                    {{ summary_list_item(
+                        subtitle="Last name",
+                        value=(applicationData['birthRegistration']['last_name'])
+                    ) }}
+
+                    {{ summary_list_item(
+                        title="Date of birth",
+                        value=(
+                            strptime('{}-{}-{}'.format(applicationData['birthRegistration']['dob']['year'],
+                                 applicationData['birthRegistration']['dob']['month'],
+                                 applicationData['birthRegistration']['dob']['day']),
+                                 '%Y-%m-%d')
+                                 .strftime('%d %B %Y')
+                        ),
+                        noWrap=True
+                    ) }}
+
+                    {{ summary_list_item(
+                        title="Birth registered in UK",
+                        value=(applicationData['birthRegistration']['ukCheck'])
+                    ) }}
+
+                    {% if applicationData['birthRegistration']['ukCheck'] == 'Yes' %}
+                        {{ summary_list_item(
+                            title='Town or city of birth',
+                            value=(applicationData['birthRegistration']['place_of_birth'])
+                        ) }}
+
+                        {{ summary_list_item(
+                            title="Mother's name",
+                            subtitle="First name",
+                            value=(applicationData['birthRegistration']['mothers_first_name']),
+                            rowsWithThisTitle='3'
+                        ) }}
+                        {{ summary_list_item(
+                            subtitle="Last name",
+                            value=(applicationData['birthRegistration']['mothers_last_name'])
+                        ) }}
+                        {{ summary_list_item(
+                            subtitle="Maiden name",
+                            value=(applicationData['birthRegistration']['mothers_maiden_name'])
+                        ) }}
+
+                        {{ summary_list_item(
+                            title="Father's name listed",
+                            value=(applicationData['birthRegistration']['fathersNameCheck'])
+                        ) }}
+
+                        {% if applicationData['birthRegistration']['fathersNameCheck'] == 'Yes' %}
+                            {{ summary_list_item(
+                                title="Father's name",
+                                subtitle="First name(s)",
+                                value=(applicationData['birthRegistration']['fathers_first_name']),
+                                rowsWithThisTitle='2'
+                            ) }}
+                            {{ summary_list_item(
+                                subtitle="Last name",
+                                value=(applicationData['birthRegistration']['fathers_last_name'])
+                            ) }}
+                        {% endif %}
+
+                        {{ summary_list_item(
+                            title="Adopted",
+                            value=(applicationData['birthRegistration']['adopted'])
+                        ) }}
+
+                        {% if applicationData['birthRegistration']['adopted'] == 'Yes' %}
+                            {{ summary_list_item(
+                                title="Adopted in UK",
+                                value=(get_radio_pretty_value('AdoptedUKForm', 'adopted_uk', applicationData['birthRegistration']['adopted_uk']))
+                            ) }}
+                        {% endif %}
+
+                        {{ summary_list_item(
+                            title="Forces registering service, British Consul or High Commission, or under
+                                   Merchant Shipping or Civil Aviation provisions",
+                            value=(applicationData['birthRegistration']['forces'])
+                        ) }}
+
+                    {% else %}
+                        {{ summary_list_item(
+                            title="Registered birth country",
+                            value=(applicationData['birthRegistration']['country'])
+                        ) }}
+                    {% endif %}
+                </tbody>
+            </table>
+
+
+            <table class="govuk-table">
+                {{ table_caption_and_head_rows(caption="Marriage or civil partnership details") }}
+                
+                <tbody class="govuk-table__body">
+                    {{ summary_list_item(
+                        title='Currently married or in a civil partnership',
+                        value=(applicationData['partnershipDetails']['marriageCivilPartnership'])
+                    ) }}
+    
+                    {% if applicationData['partnershipDetails']['marriageCivilPartnership'] == 'Neither' %}
+                        {{ summary_list_item(
+                            title='Spouse or partner has died',
+                            value=(applicationData['partnershipDetails']['partnerDied'])
+                        ) }}
+    
+                        {{ summary_list_item(
+                            title='Marriage or civil partnership has ended',
+                            value=(applicationData['partnershipDetails']['endedCheck'])
+                        ) }}
+    
+                    {% else %}
+                        {{ summary_list_item(
+                            title='Remain married',
+                            value=(applicationData['partnershipDetails']['stayTogether'])
+                        ) }}
+    
+                        {% if applicationData['partnershipDetails']['stayTogether'] == 'Yes' %}
+                            {{ summary_list_item(
+                                title='Can provide a declaration of consent from your spouse',
+                                value=(applicationData['partnershipDetails']['partnerAgrees'])
+                            ) }}
+                        {% endif %}
+    
+                        {% if applicationData['partnershipDetails']['stayTogether'] == 'No' or applicationData['partnershipDetails']['partnerAgrees'] == 'No' %}
+                            {{ summary_list_item(
+                                title='Interim GRC',
+                                value=(applicationData['partnershipDetails']['interimCheck'])
+                            ) }}
+                        {% endif %}
+                    {% endif %}
+                </tbody>
+            </table>
+
+
+            <table class="govuk-table">
+                {{ table_caption_and_head_rows(caption="Your uploaded documents") }}
+                
+                {% macro uploadedDocumentsList(section) %}
+                    <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0">
+                        {% for item in applicationData[section]['files'] %}
+                            <li>
+                                <a href="{{ request.host_url[:-1] + url_for('applications.downloadfile', file_name=item) }}"
+                                   class="govuk-link">
+                                    {{ item | replace(applicationData['reference_number'] + '__' + section + '__', '') }}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endmacro %}
+            
+                <tbody class="govuk-table__body">
+                    {% if applicationData.confirmation.overseasCheck == 'No' %}
+                        {{ summary_list_item(
+                            title='Your medical reports',
+                            value=(uploadedDocumentsList('medicalReports')),
+                            noCopyButton=True
+                        ) }}
+    
+                        {{ summary_list_item(
+                            title='Evidence of living in your gender',
+                            value=(uploadedDocumentsList('genderEvidence')),
+                            noCopyButton=True
+                        ) }}
+    
+                        {% if applicationData.personalDetails.previousNamesCheck is defined and
+                              applicationData.personalDetails.previousNamesCheck == 'Yes' %}
+                            {{ summary_list_item(
+                                title='Name change documents',
+                                value=(uploadedDocumentsList('nameChange')),
+                                noCopyButton=True
+                            ) }}
+                        {% endif %}
+    
+                    {% elif applicationData.confirmation.overseasCheck == 'Yes' and
+                            applicationData.personalDetails.previousNamesCheck is defined and
+                            applicationData.personalDetails.previousNamesCheck == 'Yes' %}
+                        {{ summary_list_item(
+                            title='Name change documents',
+                            value=(uploadedDocumentsList('nameChange')),
+                            noCopyButton=True
+                        ) }}
+                    {% endif %}
+    
+                    {% if applicationData.partnershipDetails.marriageCivilPartnership is defined and
+                          (applicationData.partnershipDetails.marriageCivilPartnership == 'Married' or
+                           (applicationData.partnershipDetails.marriageCivilPartnership == 'Neither' and
+                            (applicationData.partnershipDetails.marriageCivilPartnership.partnerDied == 'Yes' or
+                             applicationData.partnershipDetails.marriageCivilPartnership.endedCheck == 'Yes'))) %}
+                        {{ summary_list_item(
+                            title='Marriage documents',
+                            value=(uploadedDocumentsList('marriageDocuments')),
+                            noCopyButton=True
+                        ) }}
+                    {% endif %}
+    
+                    {% if applicationData.confirmation.overseasApprovedCheck == 'Yes' %}
+                        {{ summary_list_item(
+                            title='Overseas certificate documents',
+                            value=(uploadedDocumentsList('overseasCertificate')),
+                            noCopyButton=True
+                        ) }}
+                    {% endif %}
+    
+                    {{ summary_list_item(
+                        title='Statutory declarations',
+                        value=(uploadedDocumentsList('statutoryDeclarations')),
+                        noCopyButton=True
+                    ) }}
+                </tbody>
+            </table>
+
+
+            <table class="govuk-table">
+                {{ table_caption_and_head_rows(caption="Payment details") }}
+                
+                <tbody class="govuk-table__body">
+                    {{ summary_list_item(
+                        title='Payment method',
+                        value=(applicationData['submitAndPay']['method'])
+                    ) }}
+    
+                    {% if applicationData['submitAndPay']['method'] == 'Help' %}
+                        {{ summary_list_item(
+                            title='Help type',
+                            value=(applicationData['submitAndPay']['helpType'])
+                        ) }}
+    
+                        {% if applicationData['submitAndPay']['helpType'] == 'Using the online service' %}
+                            {{ summary_list_item(
+                                title='Help with Fees reference number',
+                                value=(applicationData['submitAndPay']['referenceNumber'])
+                            ) }}
+                        {% endif %}
+                    {% endif %}
+                </tbody>
+            </table>
+
+
+            <table class="govuk-table">
+                {{ table_caption_and_head_rows(caption="Documents to post") }}
+
+                <tbody class="govuk-table__body">
+                    {{ summary_list_item(
+                        title='Your original or a certified copy (opens in new tab) of your full birth or adoption certificate',
+                        value='Yes'
+                    ) }}
+
+                    {{ summary_list_item(
+                        title='An EX160 form',
+                        value=('Yes' if applicationData.submitAndPay.helpType == 'Using the EX160 form' else 'No')
+                    ) }}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+{%  endblock %}

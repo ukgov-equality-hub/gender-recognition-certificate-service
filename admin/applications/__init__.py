@@ -3,8 +3,21 @@ from flask import Blueprint, render_template, redirect, url_for, session, make_r
 from grc.utils.decorators import AdminViewerRequired, AdminRequired
 from grc.models import db, Application, ApplicationStatus
 from grc.external_services.aws_s3_client import AwsS3Client
+from grc.birth_registration.forms import AdoptedUKForm
 
 applications = Blueprint('applications', __name__)
+
+
+def get_radio_pretty_value(formName, fieldName, value):
+    if formName == 'AdoptedUKForm':
+        form = AdoptedUKForm()
+    else:
+        return None
+
+    for choiceId, choiceLabel in form[fieldName].choices:
+        if choiceId == value:
+            return choiceLabel
+    return None
 
 
 @applications.route('/applications', methods=['GET'])
@@ -22,18 +35,27 @@ def index():
         status=ApplicationStatus.COMPLETED
     )
 
-    userType = ''
-    if 'userType' in session:
-        if session['userType'] == 'ADMIN':
-            userType = 'Admin'
-
     return render_template(
-        'applications.html',
+        'applications/applications.html',
         message=message,
         newApplications=newApplications,
         downloadedApplications=downloadedApplications,
-        completedApplications=completedApplications,
-        userType=userType
+        completedApplications=completedApplications
+    )
+
+
+@applications.route('/applications/<reference_number>', methods=['GET'])
+@AdminViewerRequired
+def view(reference_number):
+    application = Application.query.filter_by(
+        reference_number=reference_number
+    ).first()
+
+    return render_template(
+        'applications/view-application.html',
+        application=application,
+        strptime=datetime.strptime,
+        get_radio_pretty_value=get_radio_pretty_value
     )
 
 
@@ -48,13 +70,12 @@ def downloadfile(file_name):
         if file_type == 'pdf':
             file_type = 'application/pdf'
         elif file_type == 'jpg':
-            file_type == 'image/jpeg'
+            file_type = 'image/jpeg'
         else:
             file_type = 'image/' + file_type
 
     response = make_response(data.getvalue())
     response.headers.set('Content-Type', file_type)
-    # response.headers.set('Content-Disposition', 'attachment', file_name=file_name)
     return response
 
 
@@ -75,7 +96,7 @@ def download(reference_number):
         application.downloadedBy = session['signedIn']
         db.session.commit()
 
-        html = render_template('download.html', application=application)
+        html = render_template('applications/download.html', application=application)
 
         import io
         from xhtml2pdf import pisa
@@ -107,35 +128,35 @@ def download(reference_number):
                     print('Attaching ' + object_name)
 
         pdfs = []
-        if 'medicalReports' in application.user_input and 'files' in application.user_input['medicalReports']:
-            for object_name in application.user_input['medicalReports']['files']:
+        application_data = application.data()
+        if 'medicalReports' in application_data and 'files' in application_data['medicalReports']:
+            for object_name in application_data['medicalReports']['files']:
                 add_pdf(object_name)
 
-        if 'genderEvidence' in application.user_input and 'files' in application.user_input['genderEvidence']:
-            for object_name in application.user_input['genderEvidence']['files']:
+        if 'genderEvidence' in application_data and 'files' in application_data['genderEvidence']:
+            for object_name in application_data['genderEvidence']['files']:
                 add_pdf(object_name)
 
-        if 'nameChange' in application.user_input and 'files' in application.user_input['nameChange']:
-            for object_name in application.user_input['nameChange']['files']:
+        if 'nameChange' in application_data and 'files' in application_data['nameChange']:
+            for object_name in application_data['nameChange']['files']:
                 add_pdf(object_name)
 
-        if 'marriageDocuments' in application.user_input and 'files' in application.user_input['marriageDocuments']:
-            for object_name in application.user_input['marriageDocuments']['files']:
+        if 'marriageDocuments' in application_data and 'files' in application_data['marriageDocuments']:
+            for object_name in application_data['marriageDocuments']['files']:
                 add_pdf(object_name)
 
-        if 'overseasCertificate' in application.user_input and 'files' in application.user_input['overseasCertificate']:
-            for object_name in application.user_input['overseasCertificate']['files']:
+        if 'overseasCertificate' in application_data and 'files' in application_data['overseasCertificate']:
+            for object_name in application_data['overseasCertificate']['files']:
                 add_pdf(object_name)
 
-        if 'statutoryDeclarations' in application.user_input and 'files' in application.user_input['statutoryDeclarations']:
-            for object_name in application.user_input['statutoryDeclarations']['files']:
+        if 'statutoryDeclarations' in application_data and 'files' in application_data['statutoryDeclarations']:
+            for object_name in application_data['statutoryDeclarations']['files']:
                 add_pdf(object_name)
 
         if len(pdfs) > 0:
             pdfs.insert(0, data)
             data = merge_pdfs(pdfs)
 
-        message = "application updated"
         response = make_response(data.read())
         response.headers.set('Content-Type', 'application/pdf')
         response.headers.set('Content-Disposition', 'attachment', file_name=application.reference_number + '.pdf')
@@ -184,40 +205,40 @@ def attachments(reference_number):
 
         zip_buffer = io.BytesIO()
         with zipfile.ZipFile(zip_buffer, 'x', zipfile.ZIP_DEFLATED, False) as zipper:
-            if 'medicalReports' in application.user_input and 'files' in application.user_input['medicalReports']:
-                for object_name in application.user_input['medicalReports']['files']:
+            application_data = application.data()
+            if 'medicalReports' in application_data and 'files' in application_data['medicalReports']:
+                for object_name in application_data['medicalReports']['files']:
                     data = AwsS3Client().download_object(object_name)
                     zipper.writestr(object_name, data.getvalue())
 
-            if 'genderEvidence' in application.user_input and 'files' in application.user_input['genderEvidence']:
-                for object_name in application.user_input['genderEvidence']['files']:
+            if 'genderEvidence' in application_data and 'files' in application_data['genderEvidence']:
+                for object_name in application_data['genderEvidence']['files']:
                     data = AwsS3Client().download_object(object_name)
                     zipper.writestr(object_name, data.getvalue())
 
-            if 'nameChange' in application.user_input and 'files' in application.user_input['nameChange']:
-                for object_name in application.user_input['nameChange']['files']:
+            if 'nameChange' in application_data and 'files' in application_data['nameChange']:
+                for object_name in application_data['nameChange']['files']:
                     data = AwsS3Client().download_object(object_name)
                     zipper.writestr(object_name, data.getvalue())
 
-            if 'marriageDocuments' in application.user_input and 'files' in application.user_input['marriageDocuments']:
-                for object_name in application.user_input['marriageDocuments']['files']:
+            if 'marriageDocuments' in application_data and 'files' in application_data['marriageDocuments']:
+                for object_name in application_data['marriageDocuments']['files']:
                     data = AwsS3Client().download_object(object_name)
                     zipper.writestr(object_name, data.getvalue())
 
-            if 'overseasCertificate' in application.user_input and 'files' in application.user_input['overseasCertificate']:
-                for object_name in application.user_input['overseasCertificate']['files']:
+            if 'overseasCertificate' in application_data and 'files' in application_data['overseasCertificate']:
+                for object_name in application_data['overseasCertificate']['files']:
                     data = AwsS3Client().download_object(object_name)
                     zipper.writestr(object_name, data.getvalue())
 
-            if 'statutoryDeclarations' in application.user_input and 'files' in application.user_input['statutoryDeclarations']:
-                for object_name in application.user_input['statutoryDeclarations']['files']:
+            if 'statutoryDeclarations' in application_data and 'files' in application_data['statutoryDeclarations']:
+                for object_name in application_data['statutoryDeclarations']['files']:
                     data = AwsS3Client().download_object(object_name)
                     zipper.writestr(object_name, data.getvalue())
 
-        message = "attachments zipped"
         response = make_response(zip_buffer.getvalue())
         response.headers.set('Content-Type', 'application/zip')
-        response.headers.set('Content-Disposition', 'attachment', file_name=application.reference_number + '.zip')
+        response.headers.set('Content-Disposition', 'attachment', filename=application.reference_number + '.zip')
         return response
 
     session['message'] = message
