@@ -179,45 +179,13 @@ def attachments(reference_number):
     if application is None:
         message = "An application with that reference number cannot be found"
     else:
-        import io
-        import zipfile
-
-        zip_buffer = io.BytesIO()
-        with zipfile.ZipFile(zip_buffer, 'x', zipfile.ZIP_DEFLATED, False) as zipper:
-            if 'medicalReports' in application.user_input and 'files' in application.user_input['medicalReports']:
-                for object_name in application.user_input['medicalReports']['files']:
-                    data = AwsS3Client().download_object(object_name)
-                    zipper.writestr(object_name, data.getvalue())
-
-            if 'genderEvidence' in application.user_input and 'files' in application.user_input['genderEvidence']:
-                for object_name in application.user_input['genderEvidence']['files']:
-                    data = AwsS3Client().download_object(object_name)
-                    zipper.writestr(object_name, data.getvalue())
-
-            if 'nameChange' in application.user_input and 'files' in application.user_input['nameChange']:
-                for object_name in application.user_input['nameChange']['files']:
-                    data = AwsS3Client().download_object(object_name)
-                    zipper.writestr(object_name, data.getvalue())
-
-            if 'marriageDocuments' in application.user_input and 'files' in application.user_input['marriageDocuments']:
-                for object_name in application.user_input['marriageDocuments']['files']:
-                    data = AwsS3Client().download_object(object_name)
-                    zipper.writestr(object_name, data.getvalue())
-
-            if 'overseasCertificate' in application.user_input and 'files' in application.user_input['overseasCertificate']:
-                for object_name in application.user_input['overseasCertificate']['files']:
-                    data = AwsS3Client().download_object(object_name)
-                    zipper.writestr(object_name, data.getvalue())
-
-            if 'statutoryDeclarations' in application.user_input and 'files' in application.user_input['statutoryDeclarations']:
-                for object_name in application.user_input['statutoryDeclarations']['files']:
-                    data = AwsS3Client().download_object(object_name)
-                    zipper.writestr(object_name, data.getvalue())
+        from grc.utils.zip_file import create_or_download_attachments
+        bytes, file_name = create_or_download_attachments(application, download=True)
 
         message = "attachments zipped"
-        response = make_response(zip_buffer.getvalue())
+        response = make_response(bytes)
         response.headers.set('Content-Type', 'application/zip')
-        response.headers.set('Content-Disposition', 'attachment', file_name=application.reference_number + '.zip')
+        response.headers.set('Content-Disposition', 'attachment', file_name=file_name)
         return response
 
     session['message'] = message
