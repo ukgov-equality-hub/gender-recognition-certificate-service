@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import EmailField, StringField, SubmitField, RadioField, BooleanField, IntegerField
+from wtforms import EmailField, StringField, RadioField, BooleanField
 from wtforms.validators import DataRequired, Email
 from grc.utils.form_custom_validators import validateSecurityCode, validateReferenceNumber, StrictRequiredIf
 
