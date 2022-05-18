@@ -128,28 +128,29 @@ def download(reference_number):
                     print('Attaching ' + object_name)
 
         pdfs = []
-        if 'medicalReports' in application.user_input and 'files' in application.user_input['medicalReports']:
-            for object_name in application.user_input['medicalReports']['files']:
+        application_data = application.data()
+        if 'medicalReports' in application_data and 'files' in application_data['medicalReports']:
+            for object_name in application_data['medicalReports']['files']:
                 add_pdf(object_name)
 
-        if 'genderEvidence' in application.user_input and 'files' in application.user_input['genderEvidence']:
-            for object_name in application.user_input['genderEvidence']['files']:
+        if 'genderEvidence' in application_data and 'files' in application_data['genderEvidence']:
+            for object_name in application_data['genderEvidence']['files']:
                 add_pdf(object_name)
 
-        if 'nameChange' in application.user_input and 'files' in application.user_input['nameChange']:
-            for object_name in application.user_input['nameChange']['files']:
+        if 'nameChange' in application_data and 'files' in application_data['nameChange']:
+            for object_name in application_data['nameChange']['files']:
                 add_pdf(object_name)
 
-        if 'marriageDocuments' in application.user_input and 'files' in application.user_input['marriageDocuments']:
-            for object_name in application.user_input['marriageDocuments']['files']:
+        if 'marriageDocuments' in application_data and 'files' in application_data['marriageDocuments']:
+            for object_name in application_data['marriageDocuments']['files']:
                 add_pdf(object_name)
 
-        if 'overseasCertificate' in application.user_input and 'files' in application.user_input['overseasCertificate']:
-            for object_name in application.user_input['overseasCertificate']['files']:
+        if 'overseasCertificate' in application_data and 'files' in application_data['overseasCertificate']:
+            for object_name in application_data['overseasCertificate']['files']:
                 add_pdf(object_name)
 
-        if 'statutoryDeclarations' in application.user_input and 'files' in application.user_input['statutoryDeclarations']:
-            for object_name in application.user_input['statutoryDeclarations']['files']:
+        if 'statutoryDeclarations' in application_data and 'files' in application_data['statutoryDeclarations']:
+            for object_name in application_data['statutoryDeclarations']['files']:
                 add_pdf(object_name)
 
         if len(pdfs) > 0:
@@ -204,33 +205,34 @@ def attachments(reference_number):
 
         zip_buffer = io.BytesIO()
         with zipfile.ZipFile(zip_buffer, 'x', zipfile.ZIP_DEFLATED, False) as zipper:
-            if 'medicalReports' in application.user_input and 'files' in application.user_input['medicalReports']:
-                for object_name in application.user_input['medicalReports']['files']:
+            application_data = application.data()
+            if 'medicalReports' in application_data and 'files' in application_data['medicalReports']:
+                for object_name in application_data['medicalReports']['files']:
                     data = AwsS3Client().download_object(object_name)
                     zipper.writestr(object_name, data.getvalue())
 
-            if 'genderEvidence' in application.user_input and 'files' in application.user_input['genderEvidence']:
-                for object_name in application.user_input['genderEvidence']['files']:
+            if 'genderEvidence' in application_data and 'files' in application_data['genderEvidence']:
+                for object_name in application_data['genderEvidence']['files']:
                     data = AwsS3Client().download_object(object_name)
                     zipper.writestr(object_name, data.getvalue())
 
-            if 'nameChange' in application.user_input and 'files' in application.user_input['nameChange']:
-                for object_name in application.user_input['nameChange']['files']:
+            if 'nameChange' in application_data and 'files' in application_data['nameChange']:
+                for object_name in application_data['nameChange']['files']:
                     data = AwsS3Client().download_object(object_name)
                     zipper.writestr(object_name, data.getvalue())
 
-            if 'marriageDocuments' in application.user_input and 'files' in application.user_input['marriageDocuments']:
-                for object_name in application.user_input['marriageDocuments']['files']:
+            if 'marriageDocuments' in application_data and 'files' in application_data['marriageDocuments']:
+                for object_name in application_data['marriageDocuments']['files']:
                     data = AwsS3Client().download_object(object_name)
                     zipper.writestr(object_name, data.getvalue())
 
-            if 'overseasCertificate' in application.user_input and 'files' in application.user_input['overseasCertificate']:
-                for object_name in application.user_input['overseasCertificate']['files']:
+            if 'overseasCertificate' in application_data and 'files' in application_data['overseasCertificate']:
+                for object_name in application_data['overseasCertificate']['files']:
                     data = AwsS3Client().download_object(object_name)
                     zipper.writestr(object_name, data.getvalue())
 
-            if 'statutoryDeclarations' in application.user_input and 'files' in application.user_input['statutoryDeclarations']:
-                for object_name in application.user_input['statutoryDeclarations']['files']:
+            if 'statutoryDeclarations' in application_data and 'files' in application_data['statutoryDeclarations']:
+                for object_name in application_data['statutoryDeclarations']['files']:
                     data = AwsS3Client().download_object(object_name)
                     zipper.writestr(object_name, data.getvalue())
 
