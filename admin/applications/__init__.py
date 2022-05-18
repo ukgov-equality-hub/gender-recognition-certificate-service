@@ -200,6 +200,7 @@ def attachments(reference_number):
     if application is None:
         message = "An application with that reference number cannot be found"
     else:
+<<<<<<< HEAD
         import io
         import zipfile
 
@@ -239,6 +240,15 @@ def attachments(reference_number):
         response = make_response(zip_buffer.getvalue())
         response.headers.set('Content-Type', 'application/zip')
         response.headers.set('Content-Disposition', 'attachment', filename=application.reference_number + '.zip')
+=======
+        from grc.utils.zip_file import create_or_download_attachments
+        bytes, file_name = create_or_download_attachments(application, download=True)
+
+        message = "attachments zipped"
+        response = make_response(bytes)
+        response.headers.set('Content-Type', 'application/zip')
+        response.headers.set('Content-Disposition', 'attachment', file_name=file_name)
+>>>>>>> 24f63d4 (Initial commit)
         return response
 
     session['message'] = message
