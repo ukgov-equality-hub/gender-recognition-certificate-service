@@ -42,7 +42,6 @@ def test_email_page():
     response = client.post('/', data=data)
     assert response.status_code == 302
     assert b"Enter a valid email address" not in response.data
-    assert b"Enter security code" in response.data
 
 
 def test_validatePasswordStrength():
