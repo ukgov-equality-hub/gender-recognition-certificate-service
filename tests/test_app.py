@@ -222,4 +222,3 @@ def test_security_code_generator():
 def test_404_page():
     response = client.get('/this_page_does_not_exist')
     assert response.status_code == 404
-
