@@ -36,12 +36,13 @@ def test_email_page():
     assert b"The CSRF token is missing" not in response.data
     assert b"Enter a valid email address" in response.data
 
-    #data = {
-    #    "email": "test@example.com"
-    #}
-    #response = client.post('/', data=data)
-    #assert response.status_code == 200
-    #assert b"Enter a valid email address" not in response.data
+    data = {
+        "email": "test@example.com"
+    }
+    response = client.post('/', data=data)
+    assert response.status_code == 302
+    assert b"Enter a valid email address" not in response.data
+    assert b"Enter security code" in response.data
 
 
 def test_validatePasswordStrength():
