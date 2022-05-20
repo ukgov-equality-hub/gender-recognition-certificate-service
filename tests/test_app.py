@@ -37,7 +37,7 @@ def test_email_page():
     assert b"Enter a valid email address" in response.data
 
     data = {
-        "email": "test@example.com"
+        "email": "alistair@nts-graphics.co.uk"
     }
     response = client.post('/', data=data)
     print(response, flush=True)
