@@ -16,4 +16,3 @@ def test_maintenance_mode():
     response = client.get('/')
     print(response, flush=True)
     assert response.status_code == 503
-    assert b"Service Unavailable" in response.data
