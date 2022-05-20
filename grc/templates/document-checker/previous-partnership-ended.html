@@ -2,6 +2,8 @@
 {% import "govuk-design-system-templates/error-summary.html" as error_summary %}
 {% import "govuk-design-system-templates/radios.html" as radios %}
 
+{% block title %}Have you ever been in a marriage or civil partnership that ended for another reason?{% endblock %}
+
 {% block backLink %}
     <a href="{{ url_for('documentChecker.previousPartnershipPartnerDied') }}" class="govuk-back-link">Back</a>
 {% endblock %}

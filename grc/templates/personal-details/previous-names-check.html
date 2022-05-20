@@ -2,6 +2,8 @@
 {% import "govuk-design-system-templates/error-summary.html" as error_summary %}
 {% import "govuk-design-system-templates/radios.html" as radios %}
 
+{% block title %}If you have ever changed your name to reflect your gender{% endblock %}
+
 {% block backLink %}
     <a href="{{ url_for('personalDetails.transitionDate') }}" class="govuk-back-link">Back</a>
 {% endblock %}

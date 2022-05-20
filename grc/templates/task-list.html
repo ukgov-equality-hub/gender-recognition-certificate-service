@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% import "helper-macros/random-id.html" as random_id %}
 
+{% block title %}Your application{% endblock %}
+
 {% macro taskListItem(text, url, status, suffix, id=None) %}
     {% set id = id or 'id-' + random_id.randomId(10) %}
 

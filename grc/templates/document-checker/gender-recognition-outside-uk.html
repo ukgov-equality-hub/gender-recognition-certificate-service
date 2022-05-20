@@ -2,6 +2,8 @@
 {% import "govuk-design-system-templates/error-summary.html" as error_summary %}
 {% import "govuk-design-system-templates/radios.html" as radios %}
 
+{% block title %}Gender recognition outside of the UK{% endblock %}
+
 {% block backLink %}
     {% set backLink = 'documentChecker.planToRemainInAPartnership'
            if doc_checker_state.is_currently_in_partnership

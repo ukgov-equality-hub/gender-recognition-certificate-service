@@ -2,6 +2,11 @@
 {% import "govuk-design-system-templates/error-summary.html" as error_summary %}
 {% import "govuk-design-system-templates/radios.html" as radios %}
 
+{% set inYourPartnershipName = 'married'
+       if doc_checker_state.is_married
+       else 'in your civil partnership' %}
+{% block title %}Do you plan to remain {{ inYourPartnershipName }} after you receive your Gender Recognition Certificate?{% endblock %}
+
 {% block backLink %}
     <a href="{{ url_for('documentChecker.currentlyInAPartnership') }}" class="govuk-back-link">Back</a>
 {% endblock %}
@@ -15,9 +20,6 @@
             <form method="POST">
                 {{ form.csrf_token }}
 
-                {% set inYourPartnershipName = 'married'
-                       if doc_checker_state.is_married
-                       else 'in your civil partnership' %}
                 {{ radios.renderFor(
                     form,
                     fieldName='plan_to_remain_in_a_partnership',

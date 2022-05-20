@@ -3,6 +3,8 @@
 {% import "govuk-design-system-templates/error-summary.html" as error_summary %}
 {% import "govuk-design-system-templates/text-input.html" as textInput %}
 
+{% block title %}How would you like to be contacted if we have any questions about your application?{% endblock %}
+
 {% block backLink %}
     <a href="{{ url_for('personalDetails.contactDates') }}" class="govuk-back-link">Back</a>
 {% endblock %}
