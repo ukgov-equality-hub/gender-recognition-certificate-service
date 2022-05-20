@@ -1,11 +1,12 @@
+import threading
 from datetime import datetime
-from flask import Blueprint, flash, redirect, render_template, request, current_app, url_for, session
+from flask import Blueprint, flash, redirect, render_template, request, current_app, url_for, session, copy_current_request_context
 import requests
 from requests.structures import CaseInsensitiveDict
 import json
 import uuid
 from grc.external_services.gov_uk_notify import GovUkNotify
-from grc.models import ListStatus
+from grc.models import db, Application, ListStatus
 from grc.submit_and_pay.forms import MethodCheckForm, HelpTypeForm, CheckYourAnswers
 from grc.utils.decorators import LoginRequired
 from grc.utils.application_progress import save_progress, mark_complete
@@ -174,6 +175,30 @@ def paymentConfirmation(id):
 @LoginRequired
 def confirmation():
     mark_complete()
+
+    @copy_current_request_context
+    def create_files(reference_number, application):
+        from grc.utils.application_files import ApplicationFiles
+        ApplicationFiles().create_or_download_attachments(
+            reference_number,
+            application,
+            download=False
+        )
+        ApplicationFiles().create_or_download_pdf(
+            reference_number,
+            application,
+            download=False
+        )
+
+        application = Application.query.filter_by(
+            reference_number=reference_number
+        ).first()
+
+        if application is not None:
+            application.filesCreated = True
+            db.session.commit()
+
+    threading.Thread(target=create_files, args=[session['reference_number'], session['application']]).start()
 
     GovUkNotify().send_email_completed_application(
         email_address=session['application']['email'],

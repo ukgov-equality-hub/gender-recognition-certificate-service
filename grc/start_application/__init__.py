@@ -101,6 +101,7 @@ def isFirstVisit():
                         # The reference number is associated with their email address - load the application
                         session['reference_number'] = application.reference_number
                         session['application'] = application.data()
+                        save_progress()
                         return redirect(url_for('taskList.index'))
 
                     else:

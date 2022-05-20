@@ -4,6 +4,7 @@ from flask import Flask
 from flask_migrate import Migrate
 from flask_uuid import FlaskUUID
 from grc.models import db
+from grc.utils import filters
 from grc.config import Config, DevConfig, TestConfig
 from grc.utils.maintenance_mode import Maintenance
 from grc.utils.custom_error_handlers import CustomErrorHandlers
@@ -34,16 +35,19 @@ def create_app(test_config=None):
         Maintenance(app)
         return app
 
-    # database
+    # Database
     db.init_app(app)
     migrate.init_app(app, db)
 
     flask_uuid.init_app(app)
 
-    # update session timeout time
+    # Update session timeout time
     @app.before_request
     def make_before_request():
         app.permanent_session_lifetime = timedelta(minutes=int(config_object.PERMANENT_SESSION_LIFETIME))
+
+    # Filters
+    app.register_blueprint(filters.blueprint)
 
     # Homepage
     from grc.start_application import startApplication
