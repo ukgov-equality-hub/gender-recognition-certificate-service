@@ -1,10 +1,10 @@
-from distutils.util import strtobool
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from grc.document_checker.doc_checker_data_store import DocCheckerDataStore
 from grc.document_checker.doc_checker_state import DocCheckerState, CurrentlyInAPartnershipEnum
 from grc.document_checker.forms import PreviousNamesCheck, MarriageCivilPartnershipForm, PlanToRemainInAPartnershipForm, \
     PartnerDiedForm, PreviousPartnershipEndedForm, GenderRecognitionOutsideUKForm, EmailForm
 from grc.external_services.gov_uk_notify import GovUkNotify
+from grc.utils.strtobool import strtobool
 
 documentChecker = Blueprint('documentChecker', __name__)
 
