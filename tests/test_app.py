@@ -40,6 +40,7 @@ def test_email_page():
         "email": "test@example.com"
     }
     response = client.post('/', data=data)
+    print(response, flush=True)
     assert response.status_code == 200
     assert b"Enter a valid email address" not in response.data
 
