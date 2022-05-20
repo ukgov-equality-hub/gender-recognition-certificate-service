@@ -17,7 +17,9 @@ def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
 
-    if os.environ['FLASK_ENV'] == 'production':
+    if test_config is not None:
+        config_object = test_config
+    elif os.environ['FLASK_ENV'] == 'production':
         config_object = Config
     elif os.environ['FLASK_ENV'] == 'development':
         config_object = DevConfig

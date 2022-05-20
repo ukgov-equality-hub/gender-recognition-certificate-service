@@ -1,8 +1,12 @@
+import re
 from grc import create_app
 from grc.config import TestConfig
-from grc.utils.form_custom_validators import validatePasswordStrength, validatePostcode, validateDOB, validateDateOfTransiton, validateNationalInsuranceNumber
+from grc.utils import form_custom_validators
+from grc.utils import reference_number
+from grc.utils import security_code
 from wtforms.validators import ValidationError
 
+# FLASK_ENV='production' pytest tests/test_app.py
 
 flask_app = create_app(TestConfig)
 flask_app.config['TESTING'] = True
@@ -23,49 +27,49 @@ def test_home_page():
     assert b"Apply for a Gender Recognition Certificate" in response.data
 
 
-def test_email_page():
+def test_email_page1():
     data = {
-        "email": "blah"
+        "email": "test"
     }
     response = client.post('/', data=data)
-    print(response.data, flush=True)
     assert response.status_code==200
     assert b"The CSRF token is missing" not in response.data
-    assert b"A valid email address is required" in response.data
+    assert b"Enter a valid email address" in response.data
 
+
+def test_email_page2():
     data = {
-        "email": "blah@blah.com"
+        "email": "test@example.com"
     }
     response = client.post('/', data=data)
-    print(response.data, flush=True)
     assert response.status_code==200
-    assert b"A valid email address is required" not in response.data
+    assert b"Enter a valid email address" not in response.data
 
 
 def test_validatePasswordStrength():
 
     # Password fails
     try:
-        validatePasswordStrength(None, FormItem('', 'password'))
+        form_custom_validators.validatePasswordStrength(None, FormItem('', 'password'))
         assert False
     except ValidationError:
         assert True
 
     try:
-        validatePasswordStrength(None, FormItem('', 'Password'))
+        form_custom_validators.validatePasswordStrength(None, FormItem('', 'Password'))
         assert False
     except ValidationError:
         assert True
 
     try:
-        validatePasswordStrength(None, FormItem('', 'Password123'))
+        form_custom_validators.validatePasswordStrength(None, FormItem('', 'Password123'))
         assert False
     except ValidationError:
         assert True
 
     # Pass
     try:
-        validatePasswordStrength(None, FormItem('', 'Password!123'))
+        form_custom_validators.validatePasswordStrength(None, FormItem('', 'Password!123'))
         assert True
     except ValidationError:
         assert False
@@ -73,13 +77,13 @@ def test_validatePasswordStrength():
 
 def test_validatePostcode():
     try:
-        validatePostcode(None, FormItem('', 'AA'))
+        form_custom_validators.validatePostcode(None, FormItem('', 'AA'))
         assert False
     except ValidationError:
         assert True
 
     try:
-        validatePostcode(None, FormItem('', 'AB12CD'))
+        form_custom_validators.validatePostcode(None, FormItem('', 'AB12CD'))
         assert True
     except ValidationError:
         assert False
@@ -93,7 +97,7 @@ def test_validateDOB():
     }
 
     try:
-        validateDOB(form, FormItem('year', 2001))
+        form_custom_validators.validateDOB(form, FormItem('year', 2001))
         assert False
     except TypeError:
         assert True
@@ -107,7 +111,7 @@ def test_validateDOB():
     }
 
     try:
-        validateDOB(form, FormItem('year', 2001))
+        form_custom_validators.validateDOB(form, FormItem('year', 2001))
         assert False
     except ValidationError:
         assert True
@@ -119,7 +123,7 @@ def test_validateDOB():
     }
 
     try:
-        validateDOB(form, FormItem('year', 2021))
+        form_custom_validators.validateDOB(form, FormItem('year', 2021))
         assert False
     except ValidationError:
         assert True
@@ -131,25 +135,91 @@ def test_validateDOB():
     }
 
     try:
-        validateDOB(form, FormItem('year', 2001))
+        form_custom_validators.validateDOB(form, FormItem('year', 2001))
         assert True
     except ValidationError:
         assert False
 
 
 def test_validateDateOfTransiton():
-    pass
+    form = {
+        'transition_date_month': FormItem('transition_date_month', 'a'),
+        'transition_date_year': FormItem('transition_date_year', 2001)
+    }
+
+    try:
+        form_custom_validators.validateDateOfTransiton(form, FormItem('year', 2001))
+        assert False
+    except TypeError:
+        assert True
+    except ValidationError:
+        assert True
+
+    form = {
+        'transition_date_month': FormItem('transition_date_month', 20),
+        'transition_date_year': FormItem('transition_date_year', 2001)
+    }
+
+    try:
+        form_custom_validators.validateDateOfTransiton(form, FormItem('year', 2001))
+        assert False
+    except ValidationError:
+        assert True
+
+    form = {
+        'transition_date_month': FormItem('transition_date_month', 1),
+        'transition_date_year': FormItem('transition_date_year', 2030)
+    }
+
+    try:
+        form_custom_validators.validateDateOfTransiton(form, FormItem('year', 2030))
+        assert False
+    except ValidationError:
+        assert True
+
+    form = {
+        'transition_date_month': FormItem('transition_date_month', 1),
+        'transition_date_year': FormItem('transition_date_year', 2001)
+    }
+
+    try:
+        form_custom_validators.validateDateOfTransiton(form, FormItem('year', 2001))
+        assert True
+    except ValidationError:
+        assert False
 
 
 def test_validateNationalInsuranceNumber():
     try:
-        validateNationalInsuranceNumber(None, FormItem('', 'AA'))
+        form_custom_validators.validateNationalInsuranceNumber(None, FormItem('', 'AA'))
         assert False
     except ValidationError:
         assert True
 
     try:
-        validateNationalInsuranceNumber(None, FormItem('', 'AA123456A'))
+        form_custom_validators.validateNationalInsuranceNumber(None, FormItem('', 'AA123456A'))
         assert True
     except ValidationError:
         assert False
+
+
+def test_reference_number_generator():
+    code = reference_number.generate_reference_number(8)
+    match = re.search('^[0-9A-Z]{8}$', code)
+    assert match is not None
+
+    code = reference_number.reference_number_string(code)
+    match = re.search('^[0-9A-Z]{4}-[0-9A-Z]{4}$', code)
+    assert match is not None
+
+
+def test_security_code_generator():
+    code = security_code.generate_security_code(5)
+    match = re.search('^[0-9]{5}$', code)
+    assert match is not None
+
+
+def test_404_page():
+    response = client.get('/this_page_does_not_exist')
+    assert response.status_code == 404
+

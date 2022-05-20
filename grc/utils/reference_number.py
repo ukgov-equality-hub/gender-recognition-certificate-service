@@ -2,8 +2,12 @@ import random, string
 from grc.models import db, Application
 
 
+def generate_reference_number(len):
+    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=len))
+
+
 def reference_number_generator(email):
-    ref_number = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
+    ref_number = generate_reference_number(8)
     application_record = Application.query.filter_by(reference_number=ref_number).first()
 
     if application_record is None:
@@ -21,7 +25,7 @@ def reference_number_generator(email):
 
 def reference_number_string(reference_number):
     trimmed_reference = reference_number.replace('-', '').replace(' ', '').upper()
-    formatted_reference = trimmed_reference[0:4] + '-' + trimmed_reference[4: 8]
+    formatted_reference = trimmed_reference[0: 4] + '-' + trimmed_reference[4: 8]
     return formatted_reference
 
 

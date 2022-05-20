@@ -11,11 +11,15 @@ def delete_all_user_codes(email):
     db.session.commit()
 
 
+def generate_security_code(len):
+    return ''.join(random.sample('0123456789', len))
+
+
 def security_code_generator(email):
     delete_all_user_codes(email)
 
     try:
-        code = ''.join(random.sample('0123456789', 5))
+        code = generate_security_code(5)
         record = SecurityCode(code=code, email=email)
         db.session.add(record)
         db.session.commit()
