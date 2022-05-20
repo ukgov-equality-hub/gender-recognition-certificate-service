@@ -27,22 +27,18 @@ def test_home_page():
     assert b"Apply for a Gender Recognition Certificate" in response.data
 
 
-def test_email_page1():
+def test_email_page():
     data = {
         "email": "test"
     }
-
     response = client.post('/', data=data)
     assert response.status_code == 200
     assert b"The CSRF token is missing" not in response.data
     assert b"Enter a valid email address" in response.data
 
-
-def test_email_page2():
     data = {
         "email": "test@example.com"
     }
-
     response = client.post('/', data=data)
     assert response.status_code == 200
     assert b"Enter a valid email address" not in response.data
