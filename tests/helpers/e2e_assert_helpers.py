@@ -1,3 +1,5 @@
+from typing import List
+
 from playwright.async_api import Page
 from tests.accessibility.accessibility_checks import AccessibilityChecks
 from tests.helpers.e2e_page_helpers import PageHelpers, clean_string
@@ -48,6 +50,13 @@ class AssertHelpers:
         actual_fieldset_legend_text = clean_string(await self.page.inner_text('.govuk-fieldset__legend'))
         assert_equal(actual_fieldset_legend_text, expected_fieldset_legend_text)
 
+    async def page_does_not_contain_text(self, *not_expected_text_list: str):
+        page_text = await self.page.inner_text('body')
+        page_text_lowercase = page_text.lower()
+        for not_expected_text in not_expected_text_list:
+            not_expected_text_lowercase = not_expected_text.lower()
+            assert not_expected_text_lowercase not in page_text_lowercase
+
     async def accessibility(self, page_description: str = None):
         await self.accessibility_checks.run_checks_on_page(self.page, page_description)
 
@@ -55,7 +64,12 @@ class AssertHelpers:
         self.accessibility_checks.run_final_checks()
 
     async def task_list_sections(self, expected_number_of_sections: int):
-        number_of_sections = await self.page.locator('.app-task-list__item').count()
+        sections = self.page.locator('.app-task-list__item')
+        number_of_sections = await sections.count()
+        if (number_of_sections != expected_number_of_sections):
+            for n in range(number_of_sections):
+                section = sections.nth(n)
+                print(await section.inner_text())
         assert_equal(number_of_sections, expected_number_of_sections)
 
     async def task_list_section(self, section: str, expected_status: str):
