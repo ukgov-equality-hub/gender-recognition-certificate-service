@@ -15,7 +15,7 @@
                         <dd class="govuk-summary-list__actions">
 
                             <form method="POST" action="{{ url_for('upload.removeFile') }}#file-upload-section">
-                                {{ deleteform.csrf_token }}
+                                <input type="hidden" name="csrf_token" value="{{ deleteform.get_csrf_token() }}">
 
                                 <input type="hidden" name="section" value="{{ section }}">
                                 <input type="hidden" name="file" value="{{ item }}">
@@ -36,7 +36,7 @@
 
         <form method="POST" enctype="multipart/form-data"
               onsubmit="document.getElementById('documents').style.display = 'none'; document.getElementById('loading').style.display = 'inline-block';">
-            {{ form.csrf_token }}
+            <input type="hidden" name="csrf_token" value="{{ form.get_csrf_token() }}">
 
             <div class="govuk-form-group {{ 'govuk-form-group--error' if form.errors }}">
                 <label for="documents" class="govuk-label govuk-label--m">

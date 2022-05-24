@@ -50,15 +50,49 @@ class StrictRequiredIf(DataRequired):
 
     def __call__(self, form, field):
         other_field = form[self.other_field_name]
+
         if other_field is None:
             raise Exception('no field named "%s" in form' % self.other_field_name)
-        if other_field.data == self.other_field_value:
+
+        if (other_field.data == self.other_field_value or
+           (isinstance(other_field.data, list) and self.other_field_value in other_field.data)):
             super(StrictRequiredIf, self).__call__(form, field)
             if self.validators:
                 for validator in self.validators:
                     validator(form, field)
-        elif isinstance(other_field.data, list) and self.other_field_value in other_field.data:
-            super(StrictRequiredIf, self).__call__(form, field)
+
+
+class Integer(DataRequired):
+    def __init__(self, min: int = None, max: int = None, message: str = None, validators=None):
+        self.min = min
+        self.max = max
+        self.message = message
+        self.validators = validators
+
+    def __call__(self, form, field):
+        string_value: str = field.data
+
+        try:
+            int_value = int(string_value)
+
+            if self.min and int_value < self.min:
+                raise ValidationError(
+                    self.message if self.message else f"{field} must be at least {self.min}"
+                )
+
+            if self.max and int_value > self.max:
+                raise ValidationError(
+                    self.message if self.message else f"{field} must be at most {self.max}"
+                )
+
+        except Exception as e:
+            raise ValidationError(
+                self.message if self.message else f"{field} must be a whole number"
+            )
+
+        if self.validators:
+            for validator in self.validators:
+                validator(form, field)
 
 
 def validateSecurityCode(form, field):
@@ -113,15 +147,15 @@ def validatePostcode(form, field):
 
 
 def validateDOB(form, field):
-    d = form['day'].data or 0
-    m = form['month'].data or 0
-    y = form['year'].data or 0
-    if d > 0 and m > 0 and y > 0:
+    if not form['day'].errors and not form['month'].errors:
         try:
+            d = int(form['day'].data)
+            m = int(form['month'].data)
+            y = int(form['year'].data)
             dt = datetime(y, m, d, 00, 00)
         except Exception as e:
             if field.name == 'year':
-                raise ValidationError('Enter a valid year')
+                raise ValidationError('Enter a valid date')
             return
 
         def age(dt):
@@ -135,15 +169,12 @@ def validateDOB(form, field):
 
 
 def validateDateOfTransiton(form, field):
-    transition_date_month = form['transition_date_month'].data
-    transition_date_year = form['transition_date_year'].data
-
     try:
+        transition_date_month = int(form['transition_date_month'].data)
+        transition_date_year = int(form['transition_date_year'].data)
         date_of_transition = date(transition_date_year, transition_date_month, 1)
     except Exception as e:
-        if field.name == 'year':
-            raise ValidationError('Enter a valid year')
-        return
+        raise ValidationError('Enter a valid year')
 
     earliest_date_of_transition_years = 100
     earliest_date_of_transition = date.today() - relativedelta(years=earliest_date_of_transition_years)

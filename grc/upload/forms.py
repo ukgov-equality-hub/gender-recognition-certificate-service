@@ -15,6 +15,9 @@ class UploadForm(FlaskForm):
 
     more_files = BooleanField('more_files')
 
+    def get_csrf_token(self):
+        return self._csrf.generate_csrf_token('csrf_token')
+
 
 class DeleteForm(FlaskForm):
     section = HiddenField(
@@ -24,3 +27,6 @@ class DeleteForm(FlaskForm):
     file = HiddenField(
         validators=[DataRequired(message='Field is required')]
     )
+
+    def get_csrf_token(self):
+        return self._csrf.generate_csrf_token('csrf_token')

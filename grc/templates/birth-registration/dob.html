@@ -14,34 +14,37 @@
 
             {{ error_summary.renderFor(form) }}
 
-            <form method="POST" action="{{ url_for('birthRegistration.dob') }}">
+            <form method="POST" action="{{ url_for('birthRegistration.dob') }}"
+                  novalidate {# We add "novalidate" to prevent the HTML5 error messages (because they are inaccessible) #}>
                 {{ form.csrf_token }}
 
                 <div class="govuk-form-group {{ 'govuk-form-group--error' if form.errors }}">
-                    <fieldset class="govuk-fieldset" role="group" aria-describedby="adoption-certificate-dob-hint">
+                    <fieldset class="govuk-fieldset" role="group" aria-describedby="dob-hint">
                         <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
                             <h1 class="govuk-fieldset__heading">
                                 What is the date of birth on your birth or adoption certificate?
                             </h1>
                         </legend>
 
-                        <div id="adoption-certificate-dob-hint" class="govuk-hint">
+                        <div id="dob-hint" class="govuk-hint">
                             Enter the year in full - for example, 1987
                         </div>
 
                         {% if form.errors %}
-                            <p id="adoption-certificate-dob-error" class="govuk-error-message">
+                            <div class="govuk-!-margin-top-3 govuk-!-margin-bottom-3">
                                 {% for error in form.errors %}
-                                    <span id="{{ error }}-error">
-                                        {% for e in form[error].errors %}
-                                            <span class="govuk-visually-hidden">Error:</span> {{ e }}<br>
-                                        {% endfor %}
-                                    </span>
+                                    <p class="govuk-error-message govuk-!-margin-top-1 govuk-!-margin-bottom-1">
+                                        <span id="{{ error }}-error">
+                                            {% for e in form[error].errors %}
+                                                <span class="govuk-visually-hidden">Error:</span> {{ e }}<br>
+                                            {% endfor %}
+                                        </span>
+                                    </p>
                                 {% endfor %}
-                            </p>
+                            </div>
                         {% endif %}
 
-                        <div id="adoption-certificate-dob" class="govuk-date-input">
+                        <div class="govuk-date-input">
                             <div class="govuk-date-input__item">
                                 <div class="govuk-form-group">
                                     <label for="day" class="govuk-label govuk-date-input__label">

@@ -7,7 +7,7 @@
        {{ attributes.render(errorMessageOptions.attributes) }}
     >
         <span class="govuk-visually-hidden">
-            {{ errorMessageOptions.visuallyHiddenText if errorMessageOptions.visuallyHiddenText else 'Error' }}
+            {{ errorMessageOptions.visuallyHiddenText if errorMessageOptions.visuallyHiddenText else 'Error:' }}
         </span>
         {{ errorMessageOptions.text }}
     </p>
