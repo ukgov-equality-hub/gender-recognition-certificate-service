@@ -96,9 +96,17 @@ def ukCheck():
         session['application']['birthRegistration']['ukCheck'] = form.birth_registered_in_uk.data
 
         if form.birth_registered_in_uk.data == 'Yes':
-            session['application']['birthRegistration']['step'] = 'birthRegistration.placeOfBirth'
+            if 'place_of_birth' in session['application']['birthRegistration']:
+                session['application']['birthRegistration']['step'] = 'birthRegistration.checkYourAnswers'
+            else:
+                session['application']['birthRegistration']['progress'] = ListStatus.IN_PROGRESS.name
+                session['application']['birthRegistration']['step'] = 'birthRegistration.placeOfBirth'
         else:
-            session['application']['birthRegistration']['step'] = 'birthRegistration.country'
+            if 'country' in session['application']['birthRegistration']:
+                session['application']['birthRegistration']['step'] = 'birthRegistration.checkYourAnswers'
+            else:
+                session['application']['birthRegistration']['progress'] = ListStatus.IN_PROGRESS.name
+                session['application']['birthRegistration']['step'] = 'birthRegistration.country'
 
         session['application'] = save_progress()
 

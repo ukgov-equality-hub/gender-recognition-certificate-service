@@ -184,7 +184,9 @@ def overseas_approved_check():
 @LoginRequired
 def declaration():
     form = DeclerationForm()
-    back = url_for('startApplication.overseas_check')
+    back = (url_for('startApplication.overseas_approved_check')
+            if session['application']['confirmation']['overseasCheck'] == 'Yes'
+            else url_for('startApplication.overseas_check'))
 
     if request.method == 'POST':
         if form.validate_on_submit():

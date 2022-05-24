@@ -3,8 +3,28 @@
 
 {% block title %}Check your answers: Marriage or civil partnership details{% endblock %}
 
+{%  set partnerName = 'civil partner'
+    if session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Civil partnership'
+    else 'spouse' %}
+{%  set inYourPartnershipName = 'in your civil partnership'
+    if session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Civil partnership'
+    else 'married' %}
+
 {% block backLink %}
-    <a href="{{ url_for('taskList.index') }}" class="govuk-back-link">Back</a>
+    {% set backLink = (
+        url_for('partnershipDetails.endedCheck')
+        if session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Neither'
+        else (
+            url_for('partnershipDetails.interimCheck')
+            if session['application']['partnershipDetails']['stayTogether'] == 'No'
+            else (
+                url_for('partnershipDetails.partnerAgrees')
+                if session['application']['partnershipDetails']['partnerAgrees'] == 'Yes'
+                else url_for('partnershipDetails.interimCheck')
+            )
+        )
+    ) %}
+    <a href="{{ backLink }}" class="govuk-back-link">Back</a>
 {% endblock %}
 
 {% block content %}
@@ -40,16 +60,16 @@
 
                 {% else %}
                     {{ summary_list_item.render(
-                        title='Remain married',
-                        changeLinkHiddenText='if you plan to remain married after receiving your Gender Recognition Certificate',
+                        title='Remain ' + inYourPartnershipName,
+                        changeLinkHiddenText='if you plan to remain ' + inYourPartnershipName + ' after receiving your Gender Recognition Certificate',
                         changeLinkUrl=url_for('partnershipDetails.stayTogether'),
                         value=(session['application']['partnershipDetails']['stayTogether'])
                     ) }}
 
                     {% if session['application']['partnershipDetails']['stayTogether'] == 'Yes' %}
                         {{ summary_list_item.render(
-                            title='Can provide a declaration of consent from your spouse',
-                            changeLinkHiddenText='if you can provide a declaration of consent from your spouse',
+                            title='Can provide a declaration of consent from your ' + partnerName,
+                            changeLinkHiddenText='if you can provide a declaration of consent from your ' + partnerName,
                             changeLinkUrl=url_for('partnershipDetails.partnerAgrees'),
                             value=(session['application']['partnershipDetails']['partnerAgrees'])
                         ) }}

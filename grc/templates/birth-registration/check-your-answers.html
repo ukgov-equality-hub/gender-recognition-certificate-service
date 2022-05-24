@@ -4,7 +4,10 @@
 {% block title %}Check your answers: Birth registration details{% endblock %}
 
 {% block backLink %}
-    <a href="{{ url_for('birthRegistration.forces') }}" class="govuk-back-link">Back</a>
+    {% set backLink = (url_for('birthRegistration.forces')
+                       if session['application']['birthRegistration']['ukCheck'] == 'Yes'
+                       else url_for('birthRegistration.country')) %}
+    <a href="{{ backLink }}" class="govuk-back-link">Back</a>
 {% endblock %}
 
 {% block content %}

@@ -20,7 +20,7 @@ class StayTogetherForm(FlaskForm):
             ('Yes', 'Yes'),
             ('No', 'No')
         ],
-        validators=[DataRequired(message='Select if you plan to remain married after receiving your Gender Recognition Certificate')]
+        validators=[DataRequired(message='Select if you plan to remain married or in your civil partnership after receiving your Gender Recognition Certificate')]
     )
 
 
@@ -30,7 +30,7 @@ class PartnerAgreesForm(FlaskForm):
             ('Yes', 'Yes'),
             ('No', 'No')
         ],
-        validators=[DataRequired(message='Select if you can provide a declaration of consent from your spouse')]
+        validators=[DataRequired(message='Select if you can provide a declaration of consent from your spouse or civil partner')]
     )
 
 
