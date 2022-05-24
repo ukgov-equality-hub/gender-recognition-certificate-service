@@ -117,6 +117,7 @@ def calculate_progress_status():
                 and 'marriageCivilPartnership' in session['application']['partnershipDetails']
                 and (
                     session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Married'
+                    or session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Civil partnership'
                     or (
                         session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Neither'
                         and (

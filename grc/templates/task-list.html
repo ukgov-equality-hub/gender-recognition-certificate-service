@@ -125,9 +125,9 @@
                             }}
                         {% endif %}
 
-                        {% if application.partnershipDetails.marriageCivilPartnership is defined and (application.partnershipDetails.marriageCivilPartnership == 'Married' or (application.partnershipDetails.marriageCivilPartnership == 'Neither' and (application.partnershipDetails.partnerDied == 'Yes' or application.partnershipDetails.endedCheck == 'Yes'))) %}
+                        {% if application.partnershipDetails.marriageCivilPartnership is defined and (application.partnershipDetails.marriageCivilPartnership == 'Married' or application.partnershipDetails.marriageCivilPartnership == 'Civil partnership' or (application.partnershipDetails.marriageCivilPartnership == 'Neither' and (application.partnershipDetails.partnerDied == 'Yes' or application.partnershipDetails.endedCheck == 'Yes'))) %}
                             {{ taskListItem(
-                                "Marriage documents",
+                                "Marriage and civil partnership documents",
                                 url_for('upload.marriageDocuments'),
                                 list_status['marriageDocuments'])
                             }}

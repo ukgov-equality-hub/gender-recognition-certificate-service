@@ -36,7 +36,7 @@ def medicalReports():
         else:
             return redirect(url_for('upload.medicalReports') + '#file-upload-section')
 
-    elif request.method == 'POST' and 'document' not in request.files and len(session['application']['medicalReports']['files']) > 0:
+    elif request.method == 'POST' and 'document' not in request.files and 'files' in session['application']['medicalReports'] and len(session['application']['medicalReports']['files']) > 0:
         return redirect(url_for('taskList.index'))
 
     if request.method == 'GET' and 'files' in session['application']['medicalReports'] and len(session['application']['medicalReports']['files']) == 0:
@@ -77,7 +77,7 @@ def genderEvidence():
         else:
             return redirect(url_for('upload.genderEvidence') + '#file-upload-section')
 
-    elif request.method == 'POST' and 'document' not in request.files and len(session['application']['medicalReports']['files']) > 0:
+    elif request.method == 'POST' and 'document' not in request.files and 'files' in session['application']['genderEvidence'] and len(session['application']['genderEvidence']['files']) > 0:
         return redirect(url_for('taskList.index'))
 
     if request.method == 'GET' and 'files' in session['application']['genderEvidence'] and len(session['application']['genderEvidence']['files']) == 0:
@@ -118,7 +118,7 @@ def nameChange():
         else:
             return redirect(url_for('upload.nameChange') + '#file-upload-section')
 
-    elif request.method == 'POST' and 'document' not in request.files and len(session['application']['medicalReports']['files']) > 0:
+    elif request.method == 'POST' and 'document' not in request.files and 'files' in session['application']['nameChange'] and len(session['application']['nameChange']['files']) > 0:
         return redirect(url_for('taskList.index'))
 
     if request.method == 'GET' and 'files' in session['application']['nameChange'] and len(session['application']['nameChange']['files']) == 0:
@@ -159,7 +159,7 @@ def marriageDocuments():
         else:
             return redirect(url_for('upload.marriageDocuments') + '#file-upload-section')
 
-    elif request.method == 'POST' and 'document' not in request.files and len(session['application']['medicalReports']['files']) > 0:
+    elif request.method == 'POST' and 'document' not in request.files and 'files' in session['application']['marriageDocuments'] and len(session['application']['marriageDocuments']['files']) > 0:
         return redirect(url_for('taskList.index'))
 
     if request.method == 'GET' and 'files' in session['application']['marriageDocuments'] and len(session['application']['marriageDocuments']['files']) == 0:
@@ -200,7 +200,7 @@ def overseasCertificate():
         else:
             return redirect(url_for('upload.overseasCertificate') + '#file-upload-section')
 
-    elif request.method == 'POST' and 'document' not in request.files and len(session['application']['medicalReports']['files']) > 0:
+    elif request.method == 'POST' and 'document' not in request.files and 'files' in session['application']['overseasCertificate'] and len(session['application']['overseasCertificate']['files']) > 0:
         return redirect(url_for('taskList.index'))
 
     if request.method == 'GET' and 'files' in session['application']['overseasCertificate'] and len(session['application']['overseasCertificate']['files']) == 0:
@@ -241,7 +241,7 @@ def statutoryDeclarations():
         else:
             return redirect(url_for('upload.statutoryDeclarations') + '#file-upload-section')
 
-    elif request.method == 'POST' and 'document' not in request.files and len(session['application']['medicalReports']['files']) > 0:
+    elif request.method == 'POST' and 'document' not in request.files and 'files' in session['application']['statutoryDeclarations'] and len(session['application']['statutoryDeclarations']['files']) > 0:
         return redirect(url_for('taskList.index'))
 
     if request.method == 'GET' and 'files' in session['application']['statutoryDeclarations'] and len(session['application']['statutoryDeclarations']['files']) == 0:
