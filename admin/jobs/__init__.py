@@ -1,9 +1,11 @@
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from flask import Blueprint, request
+from sqlalchemy.sql import extract
 from grc.utils.decorators import JobTokenRequired
 from grc.models import db, Application, ApplicationStatus, SecurityCode
 from grc.utils.application_files import ApplicationFiles
+from grc.external_services.gov_uk_notify import GovUkNotify
 
 jobs = Blueprint('jobs', __name__)
 
@@ -51,14 +53,12 @@ def backup_db():
 @jobs.route('/jobs/application-notifications', methods=['GET'])
 @JobTokenRequired
 def application_notifications():
-    from grc.utils.application_files import ApplicationFiles
-    from grc.external_services.gov_uk_notify import GovUkNotify
-    from sqlalchemy.sql import extract
 
     # Deletion after not logging in for six months
     updated = False
     dt = datetime.today() + relativedelta(months=+6)
     applications = Application.query.filter(
+        Application.status == ApplicationStatus.STARTED,
         extract('day', Application.updated) == dt.day,
         extract('month', Application.updated) == dt.month,
         extract('year', Application.updated) == dt.year
@@ -83,6 +83,7 @@ def application_notifications():
             dt = datetime.today() + relativedelta(weeks=+int(expiry[: expiry.index(' ')]))
 
         applications = Application.query.filter(
+            Application.status == ApplicationStatus.STARTED,
             extract('day', Application.updated) == dt.day,
             extract('month', Application.updated) == dt.month,
             extract('year', Application.updated) == dt.year
