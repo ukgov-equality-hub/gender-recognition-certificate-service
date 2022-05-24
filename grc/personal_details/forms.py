@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import EmailField, StringField, RadioField, TelField, IntegerField, SelectMultipleField
-from wtforms.validators import DataRequired, NumberRange
-from grc.utils.form_custom_validators import StrictRequiredIf, validateNationalInsuranceNumber, validatePostcode, validateDateOfTransiton
+from wtforms import EmailField, StringField, RadioField, TelField, SelectMultipleField
+from wtforms.validators import DataRequired, Email
+from grc.utils.form_custom_validators import StrictRequiredIf, validateNationalInsuranceNumber, validatePostcode, validateDateOfTransiton, Integer
 
 
 class NameForm(FlaskForm):
@@ -29,16 +29,17 @@ class AffirmedGenderForm(FlaskForm):
 
 
 class TransitionDateForm(FlaskForm):
-    transition_date_month = IntegerField(
+    transition_date_month = StringField(
         validators=[
             DataRequired(message='Enter a month'),
-            NumberRange(min=1, max=12, message='Enter a valid month')
+            Integer(min=1, max=12, message='Enter a month as a number between 1 and 12')
         ]
     )
 
-    transition_date_year = IntegerField(
+    transition_date_year = StringField(
         validators=[
             DataRequired(message='Enter a year'),
+            Integer(min=1000, message='Enter a year as a 4-digit number, like 2000'),
             validateDateOfTransiton
         ]
     )
@@ -83,7 +84,8 @@ class ContactPreferencesForm(FlaskForm):
     )
 
     email = EmailField(
-        validators=[StrictRequiredIf('contact_options', 'EMAIL', message='Enter your email address')]
+        validators=[StrictRequiredIf('contact_options', 'EMAIL', message='Enter your email address',
+                                     validators=[Email('Enter a valid email address')])]
     )
 
     phone = TelField(

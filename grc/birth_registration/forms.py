@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, RadioField, IntegerField
-from wtforms.validators import DataRequired, NumberRange
-from grc.utils.form_custom_validators import validateDOB
+from wtforms import StringField, RadioField
+from wtforms.validators import DataRequired
+from grc.utils.form_custom_validators import validateDOB, Integer
 
 
 class NameForm(FlaskForm):
@@ -17,27 +17,25 @@ class NameForm(FlaskForm):
 
 
 class DobForm(FlaskForm):
-    day = IntegerField(
+    day = StringField(
         validators=[
             DataRequired(message='Enter a day'),
-            NumberRange(min=1, max=31, message='Enter a valid day'),
-            validateDOB
+            Integer(min=1, max=31, message='Enter a day as a number between 1 and 31')
         ]
     )
 
-    month = IntegerField(
+    month = StringField(
         validators=[
             DataRequired(message='Enter a month'),
-            NumberRange(min=1, max=12, message='Enter a valid month'),
-            validateDOB
+            Integer(min=1, max=12, message='Enter a month as a number between 1 and 12')
         ]
     )
 
     # The user must be 18 years old or older to apply
-    year = IntegerField(
+    year = StringField(
         validators=[
             DataRequired(message='Enter a year'),
-            validateDOB
+            Integer(min=1000, message='Enter a year as a 4-digit number, like 2000', validators=[validateDOB])
         ]
     )
 
