@@ -15,14 +15,17 @@
             </h1>
 
             <div class="govuk-inset-text callout">
-                <p>Your reference number is: <br><span class="callout__title">{{ reference_number }}</span></p>
+                <p>Your reference number is: <br>
+                <span id="reference-number" class="callout__title">{{ reference_number }}</span></p>
             </div>
             <p class="govuk-body">
                 You will need your reference number to return to your application.
                 Keep a record of it – it can't be recovered if you lose it.
             </p>
 
-            <a href="{{ url_for('startApplication.overseas_check') }}" role="button" draggable="false" class="govuk-button" data-module="govuk-button">Continue</a>
+            <a href="{{ url_for('startApplication.overseas_check') }}" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
+                Continue
+            </a>
 
         </div>
     </div>
