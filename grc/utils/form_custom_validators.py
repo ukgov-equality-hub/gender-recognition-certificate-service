@@ -169,23 +169,24 @@ def validateDOB(form, field):
 
 
 def validateDateOfTransiton(form, field):
-    try:
-        transition_date_month = int(form['transition_date_month'].data)
-        transition_date_year = int(form['transition_date_year'].data)
-        date_of_transition = date(transition_date_year, transition_date_month, 1)
-    except Exception as e:
-        raise ValidationError('Enter a valid year')
+    if not form['transition_date_month'].errors:
+        try:
+            transition_date_month = int(form['transition_date_month'].data)
+            transition_date_year = int(form['transition_date_year'].data)
+            date_of_transition = date(transition_date_year, transition_date_month, 1)
+        except Exception as e:
+            raise ValidationError('Enter a valid year')
+    
+        earliest_date_of_transition_years = 100
+        earliest_date_of_transition = date.today() - relativedelta(years=earliest_date_of_transition_years)
 
-    earliest_date_of_transition_years = 100
-    earliest_date_of_transition = date.today() - relativedelta(years=earliest_date_of_transition_years)
+        if date_of_transition < earliest_date_of_transition:
+            raise ValidationError(f'Enter a date within the last {earliest_date_of_transition_years} years')
 
-    if date_of_transition < earliest_date_of_transition:
-        raise ValidationError(f'Enter a date within the last {earliest_date_of_transition_years} years')
+        latest_date_of_transition = date.today()
 
-    latest_date_of_transition = date.today()
-
-    if date_of_transition > latest_date_of_transition:
-        raise ValidationError('Enter a date in the past')
+        if date_of_transition > latest_date_of_transition:
+            raise ValidationError('Enter a date in the past')
 
 
 def validateNationalInsuranceNumber(form, field):

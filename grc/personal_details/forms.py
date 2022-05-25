@@ -39,8 +39,7 @@ class TransitionDateForm(FlaskForm):
     transition_date_year = StringField(
         validators=[
             DataRequired(message='Enter a year'),
-            Integer(min=1000, message='Enter a year as a 4-digit number, like 2000'),
-            validateDateOfTransiton
+            Integer(min=1000, message='Enter a year as a 4-digit number, like 2000', validators=[validateDateOfTransiton])
         ]
     )
 
