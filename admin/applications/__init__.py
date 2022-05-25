@@ -96,70 +96,16 @@ def download(reference_number):
         application.downloadedBy = session['signedIn']
         db.session.commit()
 
-        html = render_template('applications/download.html', application=application)
+        from grc.utils.application_files import ApplicationFiles
+        bytes, file_name = ApplicationFiles().create_or_download_pdf(
+            application.reference_number,
+            application.data(),
+            download=True
+        )
 
-        import io
-        from xhtml2pdf import pisa
-        data = io.BytesIO()
-        pisa_status = pisa.CreatePDF(html, dest=data)
-        data.seek(0)
-
-        # Attach any PDF's
-        def merge_pdfs(pdfs):
-            import io
-            import PyPDF2
-            merger = PyPDF2.PdfFileMerger()
-            for pdf_fileobj in pdfs:
-                merger.append(pdf_fileobj)
-
-            pdf = io.BytesIO()
-            merger.write(pdf)
-            merger.close()
-            pdf.seek(0)
-            return pdf
-
-        def add_pdf(object_name):
-            file_type = ''
-            if '.' in object_name:
-                file_type = object_name[object_name.rindex('.') + 1:]
-                if file_type.lower() == 'pdf':
-                    data = AwsS3Client().download_object(object_name)
-                    pdfs.append(data)
-                    print('Attaching ' + object_name)
-
-        pdfs = []
-        application_data = application.data()
-        if 'medicalReports' in application_data and 'files' in application_data['medicalReports']:
-            for object_name in application_data['medicalReports']['files']:
-                add_pdf(object_name)
-
-        if 'genderEvidence' in application_data and 'files' in application_data['genderEvidence']:
-            for object_name in application_data['genderEvidence']['files']:
-                add_pdf(object_name)
-
-        if 'nameChange' in application_data and 'files' in application_data['nameChange']:
-            for object_name in application_data['nameChange']['files']:
-                add_pdf(object_name)
-
-        if 'marriageDocuments' in application_data and 'files' in application_data['marriageDocuments']:
-            for object_name in application_data['marriageDocuments']['files']:
-                add_pdf(object_name)
-
-        if 'overseasCertificate' in application_data and 'files' in application_data['overseasCertificate']:
-            for object_name in application_data['overseasCertificate']['files']:
-                add_pdf(object_name)
-
-        if 'statutoryDeclarations' in application_data and 'files' in application_data['statutoryDeclarations']:
-            for object_name in application_data['statutoryDeclarations']['files']:
-                add_pdf(object_name)
-
-        if len(pdfs) > 0:
-            pdfs.insert(0, data)
-            data = merge_pdfs(pdfs)
-
-        response = make_response(data.read())
+        response = make_response(bytes)
         response.headers.set('Content-Type', 'application/pdf')
-        response.headers.set('Content-Disposition', 'attachment', file_name=application.reference_number + '.pdf')
+        response.headers.set('Content-Disposition', 'attachment', filename=file_name)
         return response
 
     session['message'] = message
@@ -200,45 +146,17 @@ def attachments(reference_number):
     if application is None:
         message = "An application with that reference number cannot be found"
     else:
-        import io
-        import zipfile
+        from grc.utils.application_files import ApplicationFiles
+        bytes, file_name = ApplicationFiles().create_or_download_attachments(
+            application.reference_number,
+            application.data(),
+            download=True
+        )
 
-        zip_buffer = io.BytesIO()
-        with zipfile.ZipFile(zip_buffer, 'x', zipfile.ZIP_DEFLATED, False) as zipper:
-            application_data = application.data()
-            if 'medicalReports' in application_data and 'files' in application_data['medicalReports']:
-                for object_name in application_data['medicalReports']['files']:
-                    data = AwsS3Client().download_object(object_name)
-                    zipper.writestr(object_name, data.getvalue())
-
-            if 'genderEvidence' in application_data and 'files' in application_data['genderEvidence']:
-                for object_name in application_data['genderEvidence']['files']:
-                    data = AwsS3Client().download_object(object_name)
-                    zipper.writestr(object_name, data.getvalue())
-
-            if 'nameChange' in application_data and 'files' in application_data['nameChange']:
-                for object_name in application_data['nameChange']['files']:
-                    data = AwsS3Client().download_object(object_name)
-                    zipper.writestr(object_name, data.getvalue())
-
-            if 'marriageDocuments' in application_data and 'files' in application_data['marriageDocuments']:
-                for object_name in application_data['marriageDocuments']['files']:
-                    data = AwsS3Client().download_object(object_name)
-                    zipper.writestr(object_name, data.getvalue())
-
-            if 'overseasCertificate' in application_data and 'files' in application_data['overseasCertificate']:
-                for object_name in application_data['overseasCertificate']['files']:
-                    data = AwsS3Client().download_object(object_name)
-                    zipper.writestr(object_name, data.getvalue())
-
-            if 'statutoryDeclarations' in application_data and 'files' in application_data['statutoryDeclarations']:
-                for object_name in application_data['statutoryDeclarations']['files']:
-                    data = AwsS3Client().download_object(object_name)
-                    zipper.writestr(object_name, data.getvalue())
-
-        response = make_response(zip_buffer.getvalue())
+        message = "attachments zipped"
+        response = make_response(bytes)
         response.headers.set('Content-Type', 'application/zip')
-        response.headers.set('Content-Disposition', 'attachment', filename=application.reference_number + '.zip')
+        response.headers.set('Content-Disposition', 'attachment', filename=file_name)
         return response
 
     session['message'] = message

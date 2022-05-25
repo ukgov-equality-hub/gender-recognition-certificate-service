@@ -1,5 +1,5 @@
 from functools import wraps
-from flask import g, request, redirect, url_for, session
+from flask import g, request, abort, redirect, url_for, current_app, session
 
 def EmailRequired(f):
     @wraps(f)
@@ -53,5 +53,14 @@ def Unauthorized(f):
     def decorated_function(*args, **kwargs):
         if 'application' in session:
             return redirect(url_for('taskList.index'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+def JobTokenRequired(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if request.args.get('token') != current_app.config['JOB_TOKEN']:
+            return abort(403)
         return f(*args, **kwargs)
     return decorated_function

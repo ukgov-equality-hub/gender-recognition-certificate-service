@@ -41,6 +41,7 @@ class Application(db.Model):
     downloadedBy = db.Column(db.String(180))
     completed = db.Column(db.DateTime)
     completedBy = db.Column(db.String(180))
+    filesCreated = db.Column(db.Boolean, default=False)
 
     def data(self):
         if self.user_input:

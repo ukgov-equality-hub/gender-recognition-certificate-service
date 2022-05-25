@@ -38,5 +38,5 @@ To deploy to PaaS sandbox, follow these instructions:
 * Run this command  
   ```shell
   cf target -s sandbox
-  cf push geo-gender-recognition-certificate --manifest manifest.yml --strategy rolling
+  cf push geo-gender-recognition-certificate --manifest manifest-sandbox.yml --strategy rolling
   ```
