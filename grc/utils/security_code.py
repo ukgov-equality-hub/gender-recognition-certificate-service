@@ -27,7 +27,7 @@ def security_code_generator(email):
 
 def validate_security_code(email, code):
     code_record = SecurityCode.query.filter_by(code=code, email=email).first()
-    validPastTime = datetime.now() - timedelta(minutes=5)
+    validPastTime = datetime.now() - timedelta(hours=24)
 
     if code_record is None or validPastTime > code_record.created:
         print("The code has expired")
@@ -41,7 +41,7 @@ def validate_security_code(email, code):
 def send_security_code(email):
     security_code = security_code_generator(email)
     local = datetime.now().replace(tzinfo=tz.gettz('UTC')).astimezone(tz.gettz('Europe/London'))
-    security_code_timeout = datetime.strftime(local + timedelta(minutes=5), '%d/%m/%Y %H:%M:%S')
+    security_code_timeout = datetime.strftime(local + timedelta(hours=24), '%H:%M on %d %b %Y')
 
     response = GovUkNotify().send_email_security_code(
         email_address=email,
