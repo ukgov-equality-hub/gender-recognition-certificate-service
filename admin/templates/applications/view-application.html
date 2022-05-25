@@ -14,7 +14,9 @@
     <div class="govuk-breadcrumbs">
         <ol class="govuk-breadcrumbs__list">
             <li class="govuk-breadcrumbs__list-item">
-                <a class="govuk-breadcrumbs__link" href="{{ url_for('admin.index') }}">GRC applications</a>
+                <a class="govuk-breadcrumbs__link" href="{{ url_for('admin.index') }}">
+                    Download GRC applications
+                </a>
             </li>
             <li class="govuk-breadcrumbs__list-item">
                 Application for
@@ -450,7 +452,7 @@
 
 
             <table class="govuk-table">
-                {{ table_caption_and_head_rows(caption="Your uploaded documents") }}
+                {{ table_caption_and_head_rows(caption="Uploaded documents") }}
                 
                 {% macro uploadedDocumentsList(section) %}
                     <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0">
