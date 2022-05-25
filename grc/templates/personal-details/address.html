@@ -28,26 +28,20 @@
                             This should be the address that you want us to send your Gender Recognition Certificate to.
                         </div>
 
-                        {% macro addressLineOneLabel() %}
-                            Building and street <span class="govuk-visually-hidden">line 1 of 2</span>
-                        {% endmacro %}
                         {{ textInput.renderFor(
                             form,
                             fieldName='address_line_one',
                             textInputForOptions={
-                                'labelOptions':{ 'htmlOrText': addressLineOneLabel() },
+                                'labelOptions':{ 'htmlOrText': 'Address line 1' },
                                 'autocomplete': 'address-line1'
                             }
                         ) }}
 
-                        {% macro addressLineTwoLabel() %}
-                            <span class="govuk-visually-hidden">Building and street line 2 of 2</span>
-                        {% endmacro %}
                         {{ textInput.renderFor(
                             form,
                             fieldName='address_line_two',
                             textInputForOptions={
-                                'labelOptions':{ 'htmlOrText': addressLineTwoLabel() },
+                                'labelOptions':{ 'htmlOrText': 'Address line 2 (optional)' },
                                 'autocomplete': 'address-line2'
                             }
                         ) }}
@@ -58,7 +52,7 @@
                             textInputForOptions={
                                 'labelOptions':{ 'htmlOrText': 'Town or city' },
                                 'autocomplete': 'address-level2',
-                                'classes': 'govuk-!-width-two-thirds'
+                                'classes': 'govuk-input--width-20'
                             }
                         ) }}
 

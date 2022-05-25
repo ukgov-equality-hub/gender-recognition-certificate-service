@@ -401,12 +401,11 @@
             <p class="govuk-body">
                 If you want us to email you the list of documents, please click this button.
             </p>
-            <p class="govuk-body">
-                <a href="{{ url_for('documentChecker.askForEmailAddress') }}"
-                   role="button" draggable="false" class="govuk-button" data-module="govuk-button">
+            <form method="get" action="{{ url_for('documentChecker.askForEmailAddress') }}">
+                <button class="govuk-button" data-module="govuk-button">
                     Email documents list
-                </a>
-            </p>
+                </button>
+            </form>
 
         </div>
     </div>

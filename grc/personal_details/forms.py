@@ -57,12 +57,10 @@ class PreviousNamesCheck(FlaskForm):
 
 class AddressForm(FlaskForm):
     address_line_one = StringField(
-        validators=[DataRequired(message='Enter your building')]
+        validators=[DataRequired(message='Enter your address')]
     )
 
-    address_line_two = StringField(
-        validators=[DataRequired(message='Enter your street')]
-    )
+    address_line_two = StringField()  # This field is optional, so has no validators
 
     town = StringField(
         validators=[DataRequired(message='Enter your town or city')]
