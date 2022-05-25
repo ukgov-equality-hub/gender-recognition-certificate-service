@@ -56,7 +56,7 @@ def application_notifications():
 
     # Deletion after not logging in for six months
     updated = False
-    dt = datetime.today() + relativedelta(months=+6)
+    dt = datetime.today() + relativedelta(days=-183)
     applications = Application.query.filter(
         Application.status == ApplicationStatus.STARTED,
         extract('day', Application.updated) == dt.day,
@@ -78,9 +78,9 @@ def application_notifications():
 
     # Reminders 3 months, 1 month & 1 week before deletion
     for expiry in ['3 months', '1 month', '1 week']:
-        dt = datetime.today() + relativedelta(months=+int(expiry[: expiry.index(' ')]))
+        dt = datetime.today() + relativedelta(days=-(int(expiry[: expiry.index(' ')]) * 30))
         if expiry[expiry.index(' ') + 1:] == 'week':
-            dt = datetime.today() + relativedelta(weeks=+int(expiry[: expiry.index(' ')]))
+            dt = datetime.today() + relativedelta(days=-7)
 
         applications = Application.query.filter(
             Application.status == ApplicationStatus.STARTED,
@@ -98,7 +98,7 @@ def application_notifications():
 
     # Completed applications
     updated = False
-    dt = datetime.today() + relativedelta(weeks=+1)
+    dt = datetime.today() + relativedelta(days=-7)
     applications = Application.query.filter(
         Application.status == ApplicationStatus.COMPLETED,
         extract('day', Application.completed) == dt.day,
@@ -119,7 +119,7 @@ def application_notifications():
         db.session.commit()
 
     # Delete security codes
-    dt = datetime.today() + relativedelta(days=+1)
+    dt = datetime.today() + relativedelta(days=-1)
     security_codes = SecurityCode.query.filter(
         extract('day', SecurityCode.created) == dt.day,
         extract('month', SecurityCode.created) == dt.month,
