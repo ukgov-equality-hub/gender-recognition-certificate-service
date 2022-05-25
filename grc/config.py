@@ -34,7 +34,6 @@ class Config:
     GOVUK_PAY_API_KEY = os.environ.get("GOVUK_PAY_API_KEY")
     SECRET_KEY = os.environ.get("SECRET_KEY")
     SESSION_COOKIE_SECURE = True
-    PERMANENT_SESSION_LIFETIME = int(os.environ.get("PERMANENT_SESSION_LIFETIME", 1200))
     WTF_CSRF_ENABLED = True
     WTF_CSRF_TIME_LIMIT = None  # Stops the CSRF token expiring (before the lifetime of the session). This was an accessibility problem
     AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")

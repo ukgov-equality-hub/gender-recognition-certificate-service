@@ -44,7 +44,7 @@ def create_app(test_config=None):
     # Update session timeout time
     @app.before_request
     def make_before_request():
-        app.permanent_session_lifetime = timedelta(minutes=int(config_object.PERMANENT_SESSION_LIFETIME))
+        app.permanent_session_lifetime = timedelta(hours=24)
 
     # Filters
     app.register_blueprint(filters.blueprint)
