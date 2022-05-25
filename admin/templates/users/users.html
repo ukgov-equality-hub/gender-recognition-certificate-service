@@ -36,14 +36,20 @@
                                 <ul class="govuk-summary-list__actions-list" style="text-align: right">
                                     {% if not user.dateLastLogin %}
                                         <li class="govuk-summary-list__actions-list-item">
-                                            <a href="/users/{{ user.email }}/resend" class="new-link">
+                                            <a href="/users/{{ user.email }}/resend" class="govuk-link">
                                                 Resend invite
+                                                <span class="govuk-visually-hidden">
+                                                    to user {{ user.email }}
+                                                </span>
                                             </a>
                                         </li>
                                     {% endif %}
                                     <li class="govuk-summary-list__actions-list-item">
-                                        <a href="/users/{{ user.email }}/delete" class="new-link">
+                                        <a href="/users/{{ user.email }}/delete" class="govuk-link">
                                             Delete
+                                            <span class="govuk-visually-hidden">
+                                                user {{ user.email }}
+                                            </span>
                                         </a>
                                     </li>
                                 </ul>
