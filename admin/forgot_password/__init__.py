@@ -23,8 +23,8 @@ def index():
             if user is not None:
                 try:
                     local = datetime.now().replace(tzinfo=tz.gettz('UTC')).astimezone(tz.gettz('Europe/London'))
-                    expires = datetime.strftime(local + timedelta(hours=1), '%d/%m/%Y %H:%M:%S')
-                    reset_link=request.host_url[:-1] + url_for('password_reset.reset_password_with_token') + '?token=' + jwt.encode({ 'id': user.id, 'email': user.email, 'expires': datetime.strftime(datetime.now() + timedelta(hours=1), '%d/%m/%Y %H:%M:%S') }, current_app.config['SECRET_KEY'], algorithm='HS256')
+                    expires = datetime.strftime(local + timedelta(hours=24), '%H:%M on %d %b %Y')
+                    reset_link=request.host_url[:-1] + url_for('password_reset.reset_password_with_token') + '?token=' + jwt.encode({ 'id': user.id, 'email': user.email, 'expires': datetime.strftime(datetime.now() + timedelta(hours=24), '%d/%m/%Y %H:%M:%S') }, current_app.config['SECRET_KEY'], algorithm='HS256')
                     GovUkNotify().send_email_admin_forgot_password(
                         email_address=user.email,
                         expires=expires,
