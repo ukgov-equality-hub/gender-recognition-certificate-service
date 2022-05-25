@@ -1,4 +1,4 @@
-{% macro userapplication(application, format) %}
+{% macro userapplication(application) %}
 <h1>
     {% if (application.partnershipDetails.marriageCivilPartnership == 'Married' or application.partnershipDetails.marriageCivilPartnership == 'Civil partnership') and (application.partnershipDetails.stayTogether == 'No' or application.partnershipDetails.partnerAgrees == 'No') %}
     INTERIM CERTIFICATE APPLICATION
@@ -160,7 +160,7 @@
 <ul class="govuk-list govuk-list--bullet">
     {% for item in application.statutoryDeclarations.files %}
     <li>
-        {% if format == 'pdf' %}{{ item | replace(application.reference_number + '__statutoryDeclarations__', '') }}{% else %}<a href="https://geo-gender-recognition-certificate-admin.london.cloudapps.digital/applications/{{ item }}/downloadfile" target="_blank">{{item | replace(application.reference_number + '__statutoryDeclarations__', '') }}</a>{% endif %}
+        {{ item | replace(application.reference_number + '__statutoryDeclarations__', '') }}
         {% if '.pdf' not in item | lower %}
         <img src="{{ item | image_data }}" width="{{ item | image_width }}" height="{{ item | image_height }}" style="max-width: 90%;">
         {% endif %}
@@ -174,8 +174,8 @@
 <ul class="govuk-list govuk-list--bullet">
     {% for item in application.marriageDocuments.files %}
     <li>
-        {% if format == 'pdf' %}{{ item | replace(application.reference_number + '__marriageDocuments__', '') }}{% else %}<a href="https://geo-gender-recognition-certificate-admin.london.cloudapps.digital/applications/{{ item }}/downloadfile" target="_blank">{{item | replace(application.reference_number + '__marriageDocuments__', '') }}</a>{% endif %}
-        {% if format == 'pdf' and '.pdf' not in item | lower %}
+        {{ item | replace(application.reference_number + '__marriageDocuments__', '') }}
+        {% if '.pdf' not in item | lower %}
         <img src="{{ item | image_data }}" width="{{ item | image_width }}" height="{{ item | image_height }}" style="max-width: 90%;">
         {% endif %}
     </li>
@@ -188,8 +188,8 @@
 <ul class="govuk-list govuk-list--bullet">
     {% for item in application.medicalReports.files %}
     <li>
-        {% if format == 'pdf' %}{{ item | replace(application.reference_number + '__medicalReports__', '') }}{% else %}<a href="/applications/{{ item }}/downloadfile" target="_blank">{{ item | replace(application.reference_number + '__medicalReports__', '') }}</a>{% endif %}
-        {% if format == 'pdf' and '.pdf' not in item | lower %}
+        {{ item | replace(application.reference_number + '__medicalReports__', '') }}
+        {% if '.pdf' not in item | lower %}
         <img src="{{ item | image_data }}" width="{{ item | image_width }}" height="{{ item | image_height }}" style="max-width: 90%;">
         {% endif %}
     </li>
@@ -202,8 +202,8 @@
 <ul class="govuk-list govuk-list--bullet">
     {% for item in application.genderEvidence.files %}
     <li>
-        {% if format == 'pdf' %}{{ item | replace(application.reference_number + '__genderEvidence__', '') }}{% else %}<a href="https://geo-gender-recognition-certificate-admin.london.cloudapps.digital/applications/{{ item }}/downloadfile" target="_blank">{{item | replace(application.reference_number + '__genderEvidence__', '') }}</a>{% endif %}
-        {% if format == 'pdf' and '.pdf' not in item | lower %}
+        {{ item | replace(application.reference_number + '__genderEvidence__', '') }}
+        {% if '.pdf' not in item | lower %}
         <img src="{{ item | image_data }}" width="{{ item | image_width }}" height="{{ item | image_height }}" style="max-width: 90%;">
         {% endif %}
     </li>
@@ -216,8 +216,8 @@
 <ul class="govuk-list govuk-list--bullet">
     {% for item in application.nameChange.files %}
     <li>
-        {% if format == 'pdf' %}{{ item | replace(application.reference_number + '__nameChange__', '') }}{% else %}<a href="https://geo-gender-recognition-certificate-admin.london.cloudapps.digital/applications/{{ item }}/downloadfile" target="_blank">{{item | replace(application.reference_number + '__nameChange__', '') }}</a>{% endif %}
-        {% if format == 'pdf' and '.pdf' not in item | lower %}
+        {{ item | replace(application.reference_number + '__nameChange__', '') }}
+        {% if '.pdf' not in item | lower %}
         <img src="{{ item | image_data }}" width="{{ item | image_width }}" height="{{ item | image_height }}" style="max-width: 90%;">
         {% endif %}
     </li>
@@ -230,8 +230,8 @@
 <ul class="govuk-list govuk-list--bullet">
     {% for item in application.overseasCertificate.files %}
     <li>
-        {% if format == 'pdf' %}{{ item | replace(application.reference_number + '__overseasCertificate__', '') }}{% else %}<a href="https://geo-gender-recognition-certificate-admin.london.cloudapps.digital/applications/{{ item }}/downloadfile" target="_blank">{{item | replace(application.reference_number + '__overseasCertificate__', '') }}</a>{% endif %}
-        {% if format == 'pdf' and '.pdf' not in item | lower %}
+        {{ item | replace(application.reference_number + '__overseasCertificate__', '') }}
+        {% if '.pdf' not in item | lower %}
         <img src="{{ item | image_data }}" width="{{ item | image_width }}" height="{{ item | image_height }}" style="max-width: 90%;">
         {% endif %}
     </li>
