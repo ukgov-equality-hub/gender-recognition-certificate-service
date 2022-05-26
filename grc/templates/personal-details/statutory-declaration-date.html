@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% import "govuk-design-system-templates/error-summary.html" as error_summary %}
+{% import "govuk-design-system-templates/text-input.html" as textInput %}
+
+{% block title %}When did you sign your statutory declaration?{% endblock %}
+
+{% block backLink %}
+    <a href="{{ url_for('personalDetails.transitionDate') }}" class="govuk-back-link">Back</a>
+{% endblock %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            {{ error_summary.renderFor(form) }}
+
+            <form method="POST"
+                  novalidate {# We add "novalidate" to prevent the HTML5 error messages (because they are inaccessible) #}>
+                {{ form.csrf_token }}
+
+                <div class="govuk-form-group {{ 'govuk-form-group--error' if form.errors }}">
+                    <fieldset class="govuk-fieldset" role="group" aria-describedby="statutory-declaration-date-hint">
+                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                            <h1 class="govuk-fieldset__heading">
+                                When did you sign your statutory declaration?
+                            </h1>
+                        </legend>
+
+                        <div id="statutory-declaration-date-hint" class="govuk-hint">
+                            Enter the date you signed your statutory declaration in front of someone authorised to
+                            administer oaths.
+                        </div>
+
+                        {% if form.errors %}
+                            <div class="govuk-!-margin-top-3 govuk-!-margin-bottom-3">
+                                {% for error in form.errors %}
+                                    <p class="govuk-error-message govuk-!-margin-top-1 govuk-!-margin-bottom-1">
+                                        <span id="{{ error }}-error">
+                                            {% for e in form[error].errors %}
+                                                <span class="govuk-visually-hidden">Error:</span> {{ e }}<br>
+                                            {% endfor %}
+                                        </span>
+                                    </p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <div class="govuk-date-input">
+                            <div class="govuk-date-input__item">
+                                <div class="govuk-form-group">
+                                    <label for="statutory_declaration_date_day" class="govuk-label govuk-date-input__label">
+                                        Day
+                                    </label>
+                                    <input type="text"
+                                           id="statutory_declaration_date_day" name="statutory_declaration_date_day"
+                                           value="{{ form.statutory_declaration_date_day.data if form.statutory_declaration_date_day.data is not none }}"
+                                           pattern="[0-9]*"
+                                           inputmode="numeric"
+                                           class="govuk-input govuk-date-input__input govuk-input--width-2  {{ 'govuk-input--error' if form.statutory_declaration_date_day.errors }}">
+                                </div>
+                            </div>
+                            <div class="govuk-date-input__item">
+                                <div class="govuk-form-group">
+                                    <label for="statutory_declaration_date_month" class="govuk-label govuk-date-input__label">
+                                        Month
+                                    </label>
+                                    <input type="text"
+                                           id="statutory_declaration_date_month" name="statutory_declaration_date_month"
+                                           value="{{ form.statutory_declaration_date_month.data if form.statutory_declaration_date_month.data is not none }}"
+                                           pattern="[0-9]*"
+                                           inputmode="numeric"
+                                           class="govuk-input govuk-date-input__input govuk-input--width-2  {{ 'govuk-input--error' if form.statutory_declaration_date_month.errors }}">
+                                </div>
+                            </div>
+                            <div class="govuk-date-input__item">
+                                <div class="govuk-form-group">
+                                    <label for="statutory_declaration_date_year" class="govuk-label govuk-date-input__label">
+                                        Year
+                                    </label>
+                                    <input type="text"
+                                           id="statutory_declaration_date_year" name="statutory_declaration_date_year"
+                                           value="{{ form.statutory_declaration_date_year.data if form.statutory_declaration_date_year.data is not none }}"
+                                           pattern="[0-9]*"
+                                           inputmode="numeric"
+                                           class="govuk-input govuk-date-input__input govuk-input--width-4  {{ 'govuk-input--error' if form.statutory_declaration_date_year.errors }}">
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <div class="govuk-button-group">
+                    <button class="govuk-button" data-module="govuk-button">
+                        Save and continue
+                    </button>
+                    <a href="{{ url_for('taskList.index') }}" class="govuk-link govuk-link--no-visited-state">
+                        Return to task list
+                    </a>
+                </div>
+            </form>
+
+        </div>
+    </div>
+{% endblock %}

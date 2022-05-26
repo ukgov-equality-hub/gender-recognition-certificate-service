@@ -199,6 +199,17 @@
                         alternativeCopyValue=(transitionDate.strftime('%d/%m/%Y'))
                     ) }}
 
+                    {% set statutoryDeclarationDate = strptime('{}-{}-{}'.format(
+                            applicationData.personalDetails.statutory_declaration_date_year,
+                            applicationData.personalDetails.statutory_declaration_date_month,
+                            applicationData.personalDetails.statutory_declaration_date_day),
+                         '%Y-%m-%d') %}
+                    {{ summary_list_item(
+                        title="When you signed your statutory declaration",
+                        value=(statutoryDeclarationDate.strftime('%d %B %Y')),
+                        alternativeCopyValue=(statutoryDeclarationDate.strftime('%d/%m/%Y'))
+                    ) }}
+
                     {{ summary_list_item(
                             title="Ever changed name",
                             value=(applicationData.personalDetails.previousNamesCheck)

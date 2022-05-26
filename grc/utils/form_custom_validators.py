@@ -189,6 +189,28 @@ def validateDateOfTransiton(form, field):
             raise ValidationError('Enter a date in the past')
 
 
+def validateStatutoryDeclarationDate(form, field):
+    if not form['statutory_declaration_date_day'].errors and not form['statutory_declaration_date_month'].errors:
+        try:
+            statutory_declaration_date_day = int(form['statutory_declaration_date_day'].data)
+            statutory_declaration_date_month = int(form['statutory_declaration_date_month'].data)
+            statutory_declaration_date_year = int(form['statutory_declaration_date_year'].data)
+            statutory_declaration_date = date(statutory_declaration_date_year, statutory_declaration_date_month, statutory_declaration_date_day)
+        except Exception as e:
+            raise ValidationError('Enter a valid year')
+
+        earliest_statutory_declaration_date_years = 100
+        earliest_statutory_declaration_date = date.today() - relativedelta(years=earliest_statutory_declaration_date_years)
+
+        if statutory_declaration_date < earliest_statutory_declaration_date:
+            raise ValidationError(f'Enter a date within the last {earliest_statutory_declaration_date_years} years')
+
+        latest_statutory_declaration_date = date.today()
+
+        if statutory_declaration_date > latest_statutory_declaration_date:
+            raise ValidationError('Enter a date in the past')
+
+
 def validateNationalInsuranceNumber(form, field):
 
     # https://www.gov.uk/hmrc-internal-manuals/national-insurance-manual/nim39110
