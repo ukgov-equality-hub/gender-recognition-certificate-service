@@ -112,10 +112,14 @@ class AccessibilityChecks:
 
 
     async def save_page_title(self, page: Page):
+        page_url = page.url
+        hash_position = page_url.find('#')
+        if hash_position != -1:
+            page_url = page_url[:hash_position]
         page_title = await page.title()
         if page_title not in self.page_titles_and_urls:
             self.page_titles_and_urls[page_title] = set()
-        self.page_titles_and_urls[page_title].add(page.url)
+        self.page_titles_and_urls[page_title].add(page_url)
 
     #
     # --------------------------------------------------------------------------------------------

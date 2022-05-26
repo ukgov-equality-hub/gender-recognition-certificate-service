@@ -21,6 +21,9 @@ class AssertHelpers:
     async def url(self, expected_url: str):
         await self.page.wait_for_load_state()
         actual_url = self.page.url[len(self.base_url):]
+        hash_position = actual_url.find('#')
+        if hash_position != -1:
+            actual_url = actual_url[:hash_position]
         assert_equal(actual_url, expected_url)
 
     async def error(self, field: str, message: str):
@@ -96,7 +99,12 @@ class AssertHelpers:
         assert_equal(element_is_checked, False)
 
     async def check_your_answers_rows(self, expected_number_of_rows: int):
-        actual_number_of_rows = await self.page.locator('.govuk-summary-list__row').count()
+        rows = self.page.locator('.govuk-summary-list__row')
+        actual_number_of_rows = await rows.count()
+        if (actual_number_of_rows != expected_number_of_rows):
+            for n in range(actual_number_of_rows):
+                row = rows.nth(n)
+                print(await row.inner_text())
         assert_equal(actual_number_of_rows, expected_number_of_rows)
 
     async def check_your_answers_row(self, row_name: str, expected_value: str):
@@ -123,6 +131,15 @@ class AssertHelpers:
         await self.page.wait_for_load_state()
         url_after = self.page.url
         assert_equal(url_after, url_before)
+
+    async def documents_uploaded(self, expected_number_of_documents_already_uploaded):
+        actual_number_of_documents_already_uploaded = await self.page.locator('.govuk-summary-list__row').count()
+        assert_equal(actual_number_of_documents_already_uploaded, expected_number_of_documents_already_uploaded)
+
+    async def document_uploaded(self, file_name):
+        selector = f".govuk-summary-list__row:has(.govuk-summary-list__value:text-is(\"{file_name}\"))"
+        matching_elements = await self.page.locator(selector).count()
+        assert_equal(matching_elements, 1)
 
 
 # This method looks pointless, but helps give informative stack traces

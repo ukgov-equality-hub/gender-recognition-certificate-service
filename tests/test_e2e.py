@@ -8,6 +8,7 @@ import tests.end_to_end_tests.journey_1.personal_details.section as section_pers
 import tests.end_to_end_tests.journey_1.birth_registration.section as section_birth_registration
 import tests.end_to_end_tests.journey_1.partnership_details.section as section_partnership_details
 import tests.end_to_end_tests.journey_1.uploads.section as section_uploads
+import tests.end_to_end_tests.journey_1.submit_and_pay.section as section_submit_and_pay
 
 
 """
@@ -65,9 +66,12 @@ async def run_script_for_browser(browser_type):
     # ------------------------------------------------
     await section_uploads.run_checks_on_section(page, asserts, helpers)
 
+    # ------------------------------------------------
+    # ---- SUBMIT AND PAY section
+    # ------------------------------------------------
+    await section_submit_and_pay.run_checks_on_section(page, asserts, helpers)
 
-
-
+    # Tidy up
     await browser.close()
     asserts.run_final_accessibility_checks()
 

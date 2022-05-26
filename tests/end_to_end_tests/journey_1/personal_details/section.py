@@ -242,11 +242,11 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await helpers.click_button('Save and continue')
 
     # ------------------------------------------------
-    # ---- Previous Name Check page
+    # ---- Statutory Declaration Date page
     # ------------------------------------------------
-    await asserts.url('/personal-details/previous-names-check')
+    await asserts.url('/personal-details/statutory-declaration-date')
     await asserts.accessibility()
-    await asserts.h1('If you have ever changed your name to reflect your gender')
+    await asserts.h1('When did you sign your statutory declaration?')
     await asserts.number_of_errors(0)
 
     # "Back" link should take you to the Transition Date page
@@ -263,6 +263,122 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     # The fields should be pre-populated with the values we just entered
     await asserts.field_value(field='transition_date_month', expected_value=data.TRANSITION_DATE_MONTH)
     await asserts.field_value(field='transition_date_year', expected_value=data.TRANSITION_DATE_YEAR)
+
+    # Click Save and continue to return to Statutory Declaration Date page
+    await helpers.click_button('Save and continue')
+
+    # ------------------------------------------------
+    # ---- Statutory Declaration Date page
+    # ------------------------------------------------
+    await asserts.url('/personal-details/statutory-declaration-date')
+    await asserts.accessibility()
+    await asserts.h1('When did you sign your statutory declaration?')
+    await asserts.number_of_errors(0)
+
+    # Don't enter any values, click Save and continue
+    await helpers.fill_textbox(field='statutory_declaration_date_day', value='')
+    await helpers.fill_textbox(field='statutory_declaration_date_month', value='')
+    await helpers.fill_textbox(field='statutory_declaration_date_year', value='')
+    await helpers.click_button('Save and continue')
+    await asserts.url('/personal-details/statutory-declaration-date')
+    await asserts.accessibility()
+    await asserts.h1('When did you sign your statutory declaration?')
+    await asserts.number_of_errors(3)
+    await asserts.error(field='statutory_declaration_date_day', message='Enter a day')
+    await asserts.error(field='statutory_declaration_date_month', message='Enter a month')
+    await asserts.error(field='statutory_declaration_date_year', message='Enter a year')
+
+    # Enter values that aren't numbers, click Save and continue
+    await helpers.fill_textbox(field='statutory_declaration_date_day', value='AA')
+    await helpers.fill_textbox(field='statutory_declaration_date_month', value='BB')
+    await helpers.fill_textbox(field='statutory_declaration_date_year', value='CCCC')
+    await helpers.click_button('Save and continue')
+    await asserts.url('/personal-details/statutory-declaration-date')
+    await asserts.accessibility()
+    await asserts.h1('When did you sign your statutory declaration?')
+    await asserts.number_of_errors(3)
+    await asserts.error(field='statutory_declaration_date_day', message='Enter a day as a number between 1 and 31')
+    await asserts.error(field='statutory_declaration_date_month', message='Enter a month as a number between 1 and 12')
+    await asserts.error(field='statutory_declaration_date_year', message='Enter a year as a 4-digit number, like 2000')
+
+    # Enter values that are fractional numbers
+    await helpers.fill_textbox(field='statutory_declaration_date_day', value='1.2')
+    await helpers.fill_textbox(field='statutory_declaration_date_month', value='3.4')
+    await helpers.fill_textbox(field='statutory_declaration_date_year', value='2000.4')
+    await helpers.click_button('Save and continue')
+    await asserts.url('/personal-details/statutory-declaration-date')
+    await asserts.accessibility()
+    await asserts.h1('When did you sign your statutory declaration?')
+    await asserts.number_of_errors(3)
+    await asserts.error(field='statutory_declaration_date_day', message='Enter a day as a number between 1 and 31')
+    await asserts.error(field='statutory_declaration_date_month', message='Enter a month as a number between 1 and 12')
+    await asserts.error(field='statutory_declaration_date_year', message='Enter a year as a 4-digit number, like 2000')
+
+    # Enter values that are too low
+    await helpers.fill_textbox(field='statutory_declaration_date_day', value='0')
+    await helpers.fill_textbox(field='statutory_declaration_date_month', value='0')
+    await helpers.fill_textbox(field='statutory_declaration_date_year', value='999')
+    await helpers.click_button('Save and continue')
+    await asserts.url('/personal-details/statutory-declaration-date')
+    await asserts.accessibility()
+    await asserts.h1('When did you sign your statutory declaration?')
+    await asserts.number_of_errors(3)
+    await asserts.error(field='statutory_declaration_date_day', message='Enter a day as a number between 1 and 31')
+    await asserts.error(field='statutory_declaration_date_month', message='Enter a month as a number between 1 and 12')
+    await asserts.error(field='statutory_declaration_date_year', message='Enter a year as a 4-digit number, like 2000')
+
+    # Enter a month that is too high
+    await helpers.fill_textbox(field='statutory_declaration_date_day', value='32')
+    await helpers.fill_textbox(field='statutory_declaration_date_month', value='13')
+    await helpers.fill_textbox(field='statutory_declaration_date_year', value='2000')
+    await helpers.click_button('Save and continue')
+    await asserts.url('/personal-details/statutory-declaration-date')
+    await asserts.accessibility()
+    await asserts.h1('When did you sign your statutory declaration?')
+    await asserts.number_of_errors(2)
+    await asserts.error(field='statutory_declaration_date_day', message='Enter a day as a number between 1 and 31')
+    await asserts.error(field='statutory_declaration_date_month', message='Enter a month as a number between 1 and 12')
+
+    # Enter a valid date that is more than 100 years' ago
+    await helpers.fill_textbox(field='statutory_declaration_date_day', value='6')
+    await helpers.fill_textbox(field='statutory_declaration_date_month', value='7')
+    await helpers.fill_textbox(field='statutory_declaration_date_year', value='1900')
+    await helpers.click_button('Save and continue')
+    await asserts.url('/personal-details/statutory-declaration-date')
+    await asserts.accessibility()
+    await asserts.h1('When did you sign your statutory declaration?')
+    await asserts.number_of_errors(1)
+    await asserts.error(field='statutory_declaration_date_year', message='Enter a date within the last 100 years')
+
+    # Enter a valid date
+    await helpers.fill_textbox(field='statutory_declaration_date_day', value=data.STATUTORY_DECLARATION_DATE_DAY)
+    await helpers.fill_textbox(field='statutory_declaration_date_month', value=data.STATUTORY_DECLARATION_DATE_MONTH)
+    await helpers.fill_textbox(field='statutory_declaration_date_year', value=data.STATUTORY_DECLARATION_DATE_YEAR)
+    await helpers.click_button('Save and continue')
+
+    # ------------------------------------------------
+    # ---- Previous Name Check page
+    # ------------------------------------------------
+    await asserts.url('/personal-details/previous-names-check')
+    await asserts.accessibility()
+    await asserts.h1('If you have ever changed your name to reflect your gender')
+    await asserts.number_of_errors(0)
+
+    # "Back" link should take you to the Statutory Declaration Date page
+    await helpers.click_button('Back')
+
+    # ------------------------------------------------
+    # ---- Statutory Declaration Date page
+    # ------------------------------------------------
+    await asserts.url('/personal-details/statutory-declaration-date')
+    await asserts.accessibility()
+    await asserts.h1('When did you sign your statutory declaration?')
+    await asserts.number_of_errors(0)
+
+    # The fields should be pre-populated with the values we just entered
+    await asserts.field_value(field='statutory_declaration_date_day', expected_value=data.STATUTORY_DECLARATION_DATE_DAY)
+    await asserts.field_value(field='statutory_declaration_date_month', expected_value=data.STATUTORY_DECLARATION_DATE_MONTH)
+    await asserts.field_value(field='statutory_declaration_date_year', expected_value=data.STATUTORY_DECLARATION_DATE_YEAR)
 
     # Click Save and continue to return to Previous Name Check page
     await helpers.click_button('Save and continue')
@@ -330,9 +446,8 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.url('/personal-details/address')
     await asserts.accessibility()
     await asserts.h1('What is your address?')
-    await asserts.number_of_errors(4)
-    await asserts.error(field='address_line_one', message='Enter your building')
-    await asserts.error(field='address_line_two', message='Enter your street')
+    await asserts.number_of_errors(3)
+    await asserts.error(field='address_line_one', message='Enter your address')
     await asserts.error(field='town', message='Enter your town or city')
     await asserts.error(field='postcode', message='Enter your postcode')
 
@@ -579,10 +694,11 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(0)
 
     # Check the values in the summary table
-    await asserts.check_your_answers_rows(9)
+    await asserts.check_your_answers_rows(10)
     await asserts.check_your_answers_row(row_name='Name', expected_value=f"{data.TITLE} {data.FIRST_NAME} {data.LAST_NAME}")
     await asserts.check_your_answers_row(row_name='Affirmed gender', expected_value='Male')
-    await asserts.check_your_answers_row(row_name='When you transitioned', expected_value='March 2000')
+    await asserts.check_your_answers_row(row_name='When you transitioned', expected_value=data.TRANSITION_DATE_FORMATTED)
+    await asserts.check_your_answers_row(row_name='When you signed your statutory declaration', expected_value=data.STATUTORY_DECLARATION_DATE_FORMATTED)
     await asserts.check_your_answers_row(row_name='Ever changed name', expected_value='Yes')
     await asserts.check_your_answers_row(row_name='Address', expected_value=f"{data.ADDRESS_LINE_ONE}\n{data.ADDRESS_LINE_TWO}\n{data.TOWN}\n{data.POSTCODE}")
     await asserts.check_your_answers_row(row_name='Contact preferences', expected_value=f"Email: {data.EMAIL_ADDRESS}\nPhone: {data.PHONE_NUMBER}\nPost: {data.ADDRESS_LINE_ONE}, {data.ADDRESS_LINE_TWO}, {data.TOWN}, {data.POSTCODE}")
@@ -594,6 +710,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.change_links_to_url(link_text='Change name', expected_url='/personal-details')
     await asserts.change_links_to_url(link_text='Change affirmed gender', expected_url='/personal-details/affirmed-gender')
     await asserts.change_links_to_url(link_text='Change when you transitioned', expected_url='/personal-details/transition-date')
+    await asserts.change_links_to_url(link_text='Change when you signed your statutory declaration', expected_url='/personal-details/statutory-declaration-date')
     await asserts.change_links_to_url(link_text='Change whether you have changed your name to reflect your gender', expected_url='/personal-details/previous-names-check')
     await asserts.change_links_to_url(link_text='Change address', expected_url='/personal-details/address')
     await asserts.change_links_to_url(link_text='Change contact preferences', expected_url='/personal-details/contact-preferences')
@@ -624,7 +741,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.h1('Check your answers: Your personal details')
     await asserts.number_of_errors(0)
 
-    await asserts.check_your_answers_rows(8)
+    await asserts.check_your_answers_rows(9)
     await asserts.check_your_answers_row(row_name='Notify HMRC', expected_value='No')
     await asserts.check_your_answers_row_missing(row_name='National insurance number')
 
