@@ -11,3 +11,8 @@ def privacy_policy():
 @policies.route('/accessibility-statement', methods=['GET'])
 def accessibility_statement():
     return render_template('policies/accessibility-statement.html')
+
+
+@policies.route('/cookies', methods=['GET'])
+def cookies():
+    return render_template('policies/cookies.html')

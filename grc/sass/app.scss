@@ -34,5 +34,10 @@ body {
   }
 }
 
+// cookie banner
+div.govuk-cookie-banner[hidden] {
+  display: none;
+}
+
 @import "./task-list";
 @import "./admin";
