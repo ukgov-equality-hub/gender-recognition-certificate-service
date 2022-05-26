@@ -22,22 +22,14 @@
     <script src="/html5-shiv/html5shiv.js"></script>
     <![endif]-->
     <meta property="og:image" content="/assets/images/govuk-opengraph-image.png">
-
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-W2GNNKWTEF"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-
-        gtag('config', 'G-W2GNNKWTEF');
-    </script>
 </head>
 
 <body class="govuk-template__body">
 <script>
     document.body.className = document.body.className ? document.body.className + ' js-enabled' : 'js-enabled'
 </script>
+
+{% include "policies/cookie-banner.html" %}
 
 <a href="#main-content" class="govuk-skip-link">Skip to main content</a>
 
@@ -150,6 +142,11 @@
                             Accessibility statement
                         </a>
                     </li>
+                    <li class="govuk-footer__inline-list-item">
+                        <a class="govuk-footer__link" href="{{ url_for('policies.cookies') }}">
+                            Cookies
+                        </a>
+                    </li>
                 </ul>
 
                 <svg aria-hidden="true" focusable="false" class="govuk-footer__licence-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 483.2 195.7" height="17" width="41">
@@ -173,6 +170,7 @@
 </footer>
 
 <script src="{{ url_for('static', filename='assets/govuk-frontend-3.14.0.min.js') }}"></script>
+<script src="{{ url_for('static', filename='application.js') }}"></script>
 <script>
     window.GOVUKFrontend.initAll()
 </script>
