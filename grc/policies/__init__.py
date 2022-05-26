@@ -6,3 +6,8 @@ policies = Blueprint('policies', __name__)
 @policies.route('/privacy-policy', methods=['GET'])
 def privacy_policy():
     return render_template('policies/privacy-policy.html')
+
+
+@policies.route('/accessibility-statement', methods=['GET'])
+def accessibility_statement():
+    return render_template('policies/accessibility-statement.html')
