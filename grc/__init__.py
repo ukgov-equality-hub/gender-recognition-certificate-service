@@ -89,6 +89,10 @@ def create_app(test_config=None):
     app.register_blueprint(submitAndPay)
     app.add_url_rule('/submit-and-pay', endpoint='index')
 
+    # Policies
+    from grc.policies import policies
+    app.register_blueprint(policies)
+
     # Document checker
     from grc.document_checker import documentChecker
     app.register_blueprint(documentChecker)
