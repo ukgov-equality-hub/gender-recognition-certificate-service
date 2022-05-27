@@ -9,12 +9,6 @@ from grc.utils.application_progress import save_progress
 saveAndReturn = Blueprint('saveAndReturn', __name__)
 
 
-@saveAndReturn.route('/save-and-return', methods=['GET'])
-@Unauthorized
-def index():
-    return redirect(url_for('startApplication.index'))
-
-
 @saveAndReturn.route('/save-and-return/exit-application', methods=['GET'])
 @LoginRequired
 def exitApplication():
@@ -22,7 +16,7 @@ def exitApplication():
     GovUkNotify().send_email_unfinished_application(
         email_address=session['application']['email'],
         expiry_days=datetime.strftime(local + timedelta(days=90), '%d/%m/%Y %H:%M:%S'),
-        grc_return_link=request.url_root + 'save-and-return'
+        grc_return_link=request.url_root
     )
 
     reference_number = reference_number_string(session['reference_number'])

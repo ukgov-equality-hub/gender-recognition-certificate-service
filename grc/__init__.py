@@ -57,7 +57,6 @@ def create_app(test_config=None):
     # Save And Return
     from grc.save_and_return import saveAndReturn
     app.register_blueprint(saveAndReturn)
-    app.add_url_rule('/save-and-return', endpoint='index')
 
     # Task List
     from grc.task_list import taskList
