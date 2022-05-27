@@ -23,7 +23,7 @@ def ValidatedEmailRequired(f):
 def LoginRequired(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if 'email' not in session or session['email'] is None:
+        if 'reference_number' not in session or session['reference_number'] is None:
             return local_redirect(url_for('startApplication.index'))
         return f(*args, **kwargs)
     return decorated_function

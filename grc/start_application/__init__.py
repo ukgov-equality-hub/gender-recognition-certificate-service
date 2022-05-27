@@ -40,7 +40,9 @@ def emailConfirmation():
 
     if request.method == 'POST':
         if form.validate_on_submit():
-            session['validatedEmail'] = session['email']
+            email = session['email']
+            session.clear()  # Clear out session['email']
+            session['validatedEmail'] = email
             return local_redirect(url_for('startApplication.isFirstVisit'))
 
     elif request.args.get('resend') == 'true':
@@ -69,8 +71,10 @@ def isFirstVisit():
     if request.method == 'POST':
         if form.validate_on_submit():
             if form.isFirstVisit.data == 'FIRST_VISIT' or form.isFirstVisit.data == 'LOST_REFERENCE':
-                session['reference_number'] = reference_number_generator(session['email'])
-                if session['reference_number'] != False:
+                reference_number = reference_number_generator(session['validatedEmail'])
+                if reference_number != False:
+                    session.clear()  # Clear out session['validatedEmail']
+                    session['reference_number'] = reference_number
                     session['application'] = save_progress()
                     return local_redirect(url_for('startApplication.reference'))
 
@@ -100,6 +104,7 @@ def isFirstVisit():
 
                     elif application.email == session['validatedEmail']:
                         # The reference number is associated with their email address - load the application
+                        session.clear()  # Clear out session['validatedEmail']
                         session['reference_number'] = application.reference_number
                         session['application'] = application.data()
                         save_progress()
