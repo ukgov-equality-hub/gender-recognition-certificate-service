@@ -1,6 +1,15 @@
 import os
 import asyncio
 from playwright.async_api import async_playwright
+from tests.helpers.e2e_assert_helpers import AssertHelpers
+from tests.helpers.e2e_page_helpers import PageHelpers
+import tests.end_to_end_tests.journey_1.login_and_confirmation.section as section_login_and_confirmation
+import tests.end_to_end_tests.journey_1.personal_details.section as section_personal_details
+import tests.end_to_end_tests.journey_1.birth_registration.section as section_birth_registration
+import tests.end_to_end_tests.journey_1.partnership_details.section as section_partnership_details
+import tests.end_to_end_tests.journey_1.uploads.section as section_uploads
+import tests.end_to_end_tests.journey_1.submit_and_pay.section as section_submit_and_pay
+
 
 """
 To setup on docker container:
@@ -17,31 +26,62 @@ To run test locally in debug mode:
 PWDEBUG=1 pytest -s
 """
 
-
 TEST_URL = os.getenv('TEST_URL', 'http://localhost:5000')
 print('Running tests on %s' % TEST_URL)
 
-async def main():
+
+async def run_script_for_browser(browser_type):
+    browser = await browser_type.launch()
+    page = await browser.new_page()
+    page.set_default_timeout(3000)  # Wait a maximum of 3 seconds
+
+    helpers = PageHelpers(page)
+    asserts = AssertHelpers(page, helpers, TEST_URL)
+
+    # Open homepage ("Email address")
+    await page.goto(TEST_URL)
+
+    # ------------------------------------------------
+    # ---- LOGIN / CONFIRMATION section
+    # ------------------------------------------------
+    await section_login_and_confirmation.run_checks_on_section(page, asserts, helpers)
+
+    # ------------------------------------------------
+    # ---- PERSONAL DETAILS section
+    # ------------------------------------------------
+    await section_personal_details.run_checks_on_section(page, asserts, helpers)
+
+    # ------------------------------------------------
+    # ---- BIRTH REGISTRATION section
+    # ------------------------------------------------
+    await section_birth_registration.run_checks_on_section(page, asserts, helpers)
+
+    # ------------------------------------------------
+    # ---- PARTNERSHIP DETAILS section
+    # ------------------------------------------------
+    await section_partnership_details.run_checks_on_section(page, asserts, helpers)
+
+    # ------------------------------------------------
+    # ---- UPLOADS section
+    # ------------------------------------------------
+    await section_uploads.run_checks_on_section(page, asserts, helpers)
+
+    # ------------------------------------------------
+    # ---- SUBMIT AND PAY section
+    # ------------------------------------------------
+    await section_submit_and_pay.run_checks_on_section(page, asserts, helpers)
+
+    # Tidy up
+    await browser.close()
+    asserts.run_final_accessibility_checks()
+
+
+async def e2e_main():
+    print("")  # Blank line to improve formatting
     async with async_playwright() as p:
         for browser_type in [p.chromium]: #, p.firefox, p.webkit]:
-            browser = await browser_type.launch()
-            page = await browser.new_page()
-            await page.goto(TEST_URL)
-            assert await page.inner_text('a.govuk-header__link.govuk-header__link--service-name') == 'Apply for a Gender Recognition Certificate'
+            await run_script_for_browser(browser_type)
 
-            await page.type('#email', 'alistair@nts-graphics.co.uk')
-            await page.click('button.govuk-button')
-            #await page.wait_for_timeout(3000)
-            assert await page.inner_text('h1.govuk-heading-l') == 'Enter security code'
 
-            # If we need to test...
-            #page.on('console', lambda msg: print(msg.text))
-            #await page.screenshot(path=f'example-{browser_type.name}.png')
-
-            await page.type('#code', '11111')
-            await page.click('button.govuk-button')
-            assert await page.inner_text('h1.govuk-fieldset__heading') == 'Have you already started an application?'
-
-            await browser.close()
-
-asyncio.run(main())
+def test_e2e():
+    asyncio.run(e2e_main())
