@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import EmailField, StringField, RadioField, TelField, SelectMultipleField
 from wtforms.validators import DataRequired, Email
-from grc.utils.form_custom_validators import StrictRequiredIf, validateNationalInsuranceNumber, validatePostcode, validateDateOfTransiton, Integer
+from grc.utils.form_custom_validators import StrictRequiredIf, validateNationalInsuranceNumber, validatePostcode, validateDateOfTransiton, validateStatutoryDeclarationDate, Integer
 
 
 class NameForm(FlaskForm):
@@ -40,6 +40,30 @@ class TransitionDateForm(FlaskForm):
         validators=[
             DataRequired(message='Enter a year'),
             Integer(min=1000, message='Enter a year as a 4-digit number, like 2000', validators=[validateDateOfTransiton])
+        ]
+    )
+
+
+class StatutoryDeclarationDateForm(FlaskForm):
+    statutory_declaration_date_day = StringField(
+        validators=[
+            DataRequired(message='Enter a day'),
+            Integer(min=1, max=31, message='Enter a day as a number between 1 and 31')
+        ]
+    )
+
+    statutory_declaration_date_month = StringField(
+        validators=[
+            DataRequired(message='Enter a month'),
+            Integer(min=1, max=12, message='Enter a month as a number between 1 and 12')
+        ]
+    )
+
+    statutory_declaration_date_year = StringField(
+        validators=[
+            DataRequired(message='Enter a year'),
+            Integer(min=1000, message='Enter a year as a 4-digit number, like 2000',
+                    validators=[validateStatutoryDeclarationDate])
         ]
     )
 

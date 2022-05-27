@@ -1,7 +1,7 @@
 from datetime import datetime
 from flask import Blueprint, redirect, render_template, request, url_for, session
 from grc.models import ListStatus
-from grc.personal_details.forms import NameForm, AffirmedGenderForm, TransitionDateForm, PreviousNamesCheck, AddressForm, ContactPreferencesForm, ContactDatesForm, HmrcForm, CheckYourAnswers
+from grc.personal_details.forms import NameForm, AffirmedGenderForm, TransitionDateForm, StatutoryDeclarationDateForm, PreviousNamesCheck, AddressForm, ContactPreferencesForm, ContactDatesForm, HmrcForm, CheckYourAnswers
 from grc.utils.decorators import LoginRequired
 from grc.utils.application_progress import save_progress
 
@@ -83,7 +83,7 @@ def transitionDate():
         session['application']['personalDetails']['transition_date_year'] = form.transition_date_year.data
 
         if ListStatus[session['application']['personalDetails']['progress']] == ListStatus.IN_PROGRESS:
-            session['application']['personalDetails']['step'] = 'personalDetails.previousNamesCheck'
+            session['application']['personalDetails']['step'] = 'personalDetails.statutoryDeclarationDate'
 
         session['application'] = save_progress()
 
@@ -101,6 +101,43 @@ def transitionDate():
 
     return render_template(
         'personal-details/transition-date.html',
+        form=form
+    )
+
+
+@personalDetails.route('/personal-details/statutory-declaration-date', methods=['GET', 'POST'])
+@LoginRequired
+def statutoryDeclarationDate():
+    form = StatutoryDeclarationDateForm()
+
+    if form.validate_on_submit():
+        session['application']['personalDetails']['statutory_declaration_date_day'] = form.statutory_declaration_date_day.data
+        session['application']['personalDetails']['statutory_declaration_date_month'] = form.statutory_declaration_date_month.data
+        session['application']['personalDetails']['statutory_declaration_date_year'] = form.statutory_declaration_date_year.data
+
+        if ListStatus[session['application']['personalDetails']['progress']] == ListStatus.IN_PROGRESS:
+            session['application']['personalDetails']['step'] = 'personalDetails.previousNamesCheck'
+
+        session['application'] = save_progress()
+
+        return redirect(url_for(session['application']['personalDetails']['step']))
+
+    if request.method == 'GET':
+        form.statutory_declaration_date_day.data = (
+            session['application']['personalDetails']['statutory_declaration_date_day']
+            if 'statutory_declaration_date_day' in session['application']['personalDetails'] else None
+        )
+        form.statutory_declaration_date_month.data = (
+            session['application']['personalDetails']['statutory_declaration_date_month']
+            if 'statutory_declaration_date_month' in session['application']['personalDetails'] else None
+        )
+        form.statutory_declaration_date_year.data = (
+            session['application']['personalDetails']['statutory_declaration_date_year']
+            if 'statutory_declaration_date_year' in session['application']['personalDetails'] else None
+        )
+
+    return render_template(
+        'personal-details/statutory-declaration-date.html',
         form=form
     )
 

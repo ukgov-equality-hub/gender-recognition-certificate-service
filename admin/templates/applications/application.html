@@ -56,6 +56,8 @@
         </ul>
     </li>
     <li>Changed name: <strong>{{ application.personalDetails.previousNamesCheck }}</strong></li>
+    <li>Transition date: <strong>{{ application.personalDetails.transition_date_month }}/{{ application.personalDetails.transition_date_year }}</strong></li>
+    <li>Statutory Declaration date: <strong>{{ application.personalDetails.statutory_declaration_date_day }}/{{ application.personalDetails.statutory_declaration_date_month }}/{{ application.personalDetails.statutory_declaration_date_year }}</strong></li>
     {% if 'contactPreferences' in application.personalDetails %}
     <li>Contact preferences
         <ul class="govuk-list govuk-list--bullet">

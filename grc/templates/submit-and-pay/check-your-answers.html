@@ -91,6 +91,18 @@
                 ) }}
 
                 {{ summary_list_item.render(
+                    title='When you signed your statutory declaration',
+                    changeLinkHiddenText='when you signed your statutory declaration',
+                    changeLinkUrl=url_for('personalDetails.statutoryDeclarationDate'),
+                    value=(strptime('{}-{}-{}'.format(session['application']['personalDetails']['statutory_declaration_date_year'],
+                                 session['application']['personalDetails']['statutory_declaration_date_month'],
+                                 session['application']['personalDetails']['statutory_declaration_date_day']),
+                                 '%Y-%m-%d')
+                                 .strftime('%d %B %Y')
+                    )
+                ) }}
+
+                {{ summary_list_item.render(
                     title='Ever changed name',
                     changeLinkHiddenText='whether you have changed your name to reflect your gender',
                     changeLinkUrl=url_for('personalDetails.previousNamesCheck'),
