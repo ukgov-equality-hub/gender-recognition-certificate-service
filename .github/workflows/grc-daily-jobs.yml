@@ -17,3 +17,7 @@ jobs:
       - name: Send notifications
         run: |
           curl https://grc-production-admin.london.cloudapps.digital/jobs/application-notifications?token=${{ secrets.JOB_TOKEN }}
+
+      - name: Backup database to S3
+        run: |
+          curl https://grc-production-admin.london.cloudapps.digital/jobs/backup-db?token=${{ secrets.JOB_TOKEN }}

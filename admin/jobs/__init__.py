@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from flask import Blueprint, request
@@ -5,7 +6,6 @@ from sqlalchemy.sql import extract
 from grc.utils.decorators import JobTokenRequired
 from grc.models import db, Application, ApplicationStatus, SecurityCode
 from grc.utils.application_files import ApplicationFiles
-from grc.external_services.gov_uk_notify import GovUkNotify
 
 jobs = Blueprint('jobs', __name__)
 
@@ -47,12 +47,100 @@ def create_files():
 @jobs.route('/jobs/backup-db', methods=['GET'])
 @JobTokenRequired
 def backup_db():
+    import csv
+    import io
+    from sqlalchemy.inspection import inspect
+    from cryptography.fernet import Fernet
+    from grc.external_services.aws_s3_client import AwsS3Client
+
+    def row2dict(row):
+        return dict((col, getattr(row, col)) for col in row.__table__.columns.keys())
+
+    def parse_datetime(dt):
+        return str(dt)
+
+    try:
+        data = []
+        secret_key = os.environ.get('SQLALCHEMY_KEY', '')
+        f = Fernet(secret_key)
+        columns = get_columns()
+        #data.append(columns)
+
+        applications = Application.query.all()
+        for application in applications:
+            a = row2dict(application)
+            record = []
+            for idx, column in enumerate(columns):
+                if column in ['status']:
+                    record.append(application_status(a[column]) if a[column] is not None else '')
+                elif column in ['created', 'updated', 'downloaded', 'completed']:
+                    record.append(parse_datetime(a[column]) if a[column] is not None else '')
+                else:
+                    record.append(f.encrypt(str.encode(str(a[column]))))
+
+            data.append(record)
+
+        csv_buffer = io.StringIO()
+        csv.writer(csv_buffer).writerows(data)
+        csv_file = io.BytesIO(csv_buffer.getvalue().encode(encoding='utf-8'))
+        object_name = datetime.now().strftime('%d%m%Y') + '.csv'
+        AwsS3Client().delete_object(object_name)
+        AwsS3Client().upload_fileobj(csv_file, object_name)
+
+    except Exception as e:
+        print(e, flush=True)
+
+    return ('', 200)
+
+
+@jobs.route('/jobs/restore-db/<db_file>', methods=['GET'])
+@JobTokenRequired
+def restore_db(db_file):
+    import csv
+    import io
+    from cryptography.fernet import Fernet
+    from grc.external_services.aws_s3_client import AwsS3Client
+
+    try:
+        data = AwsS3Client().download_object(db_file + '.csv')
+        secret_key = os.environ.get('SQLALCHEMY_KEY', '')
+        f = Fernet(secret_key)
+        columns = get_columns()
+
+        applications = data.getvalue().splitlines()
+        for application in applications:
+            a = application.decode(encoding='utf-8').split(',')
+            record = Application()
+            for idx, column in enumerate(columns):
+                if a[idx] != '':
+                    if column in ['status']:
+                        setattr(record, column, application_status(a[idx]))
+                    elif column in ['created', 'updated', 'downloaded', 'completed']:
+                        setattr(record, column, datetime.strptime(a[idx], '%Y-%m-%d  %H:%M:%S.%f'))
+                    else:
+                        val = str(f.decrypt(eval(a[idx])), 'utf-8')
+                        if val == 'True':
+                            val = True
+                        elif val == 'False':
+                            val = False
+                        elif val == 'None':
+                            val = None
+                        if val != None:
+                            setattr(record, column, val)
+
+            db.session.add(record)
+            db.session.commit()
+
+    except Exception as e:
+        print(e, flush=True)
+
     return ('', 200)
 
 
 @jobs.route('/jobs/application-notifications', methods=['GET'])
 @JobTokenRequired
 def application_notifications():
+    from grc.external_services.gov_uk_notify import GovUkNotify
 
     # Deletion after not logging in for six months
     updated = False
@@ -130,3 +218,33 @@ def application_notifications():
         db.session.delete(security_code)
 
     return ('', 200)
+
+
+def get_columns():
+    return ['reference_number', 'email', 'user_input', 'status', 'created', 'updated', 'downloaded', 'downloadedBy', 'completed', 'completedBy', 'filesCreated']
+
+
+def application_status(status):
+    if status == ApplicationStatus.COMPLETED:
+        return 'COMPLETED'
+    elif status == ApplicationStatus.DELETED:
+        return 'DELETED'
+    elif status == ApplicationStatus.STARTED:
+        return 'STARTED'
+    elif status == ApplicationStatus.SUBMITTED:
+        return 'SUBMITTED'
+    elif status == ApplicationStatus. DOWNLOADED:
+        return 'DOWNLOADED'
+
+    if status == 'COMPLETED':
+        return ApplicationStatus.COMPLETED
+    elif status == 'DELETED':
+        return ApplicationStatus.DELETED
+    elif status == 'STARTED':
+        return ApplicationStatus.STARTED
+    elif status == 'SUBMITTED':
+        return ApplicationStatus.SUBMITTED
+    elif status == 'DOWNLOADED':
+        return ApplicationStatus. DOWNLOADED
+
+    return ''
