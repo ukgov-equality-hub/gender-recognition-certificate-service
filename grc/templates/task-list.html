@@ -55,7 +55,7 @@
                     <ul class="app-task-list__items">
                         {{ taskListItem(
                             "Confirmation",
-                            url_for(session['application']['confirmation']['step']),
+                            url_for('startApplication.overseas_check'),
                             list_status['confirmation'])
                         }}
                     </ul>
@@ -70,19 +70,25 @@
                     <ul class="app-task-list__items">
                         {{ taskListItem(
                             "Your personal details",
-                            url_for(session['application']['personalDetails']['step']),
+                            (url_for('personalDetails.checkYourAnswers')
+                             if ListStatus[session['application']['personalDetails']['progress']] in [ListStatus.IN_REVIEW, ListStatus.COMPLETED]
+                             else url_for('personalDetails.index')),
                             list_status['personalDetails'])
                         }}
 
                         {{ taskListItem(
                             "Your birth registration information",
-                            url_for(session['application']['birthRegistration']['step']),
+                            (url_for('birthRegistration.checkYourAnswers')
+                             if ListStatus[session['application']['birthRegistration']['progress']] in [ListStatus.IN_REVIEW, ListStatus.COMPLETED]
+                             else url_for('birthRegistration.index')),
                             list_status['birthRegistration'])
                         }}
 
                         {{ taskListItem(
                             "Marriage or civil partnership details",
-                            url_for(session['application']['partnershipDetails']['step']),
+                            (url_for('partnershipDetails.checkYourAnswers')
+                             if ListStatus[session['application']['partnershipDetails']['progress']] in [ListStatus.IN_REVIEW, ListStatus.COMPLETED]
+                             else url_for('partnershipDetails.index')),
                             list_status['partnershipDetails'])
                         }}
                     </ul>

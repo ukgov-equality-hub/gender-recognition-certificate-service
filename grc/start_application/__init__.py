@@ -72,7 +72,7 @@ def isFirstVisit():
                 session['reference_number'] = reference_number_generator(session['email'])
                 if session['reference_number'] != False:
                     session['application'] = save_progress()
-                    return local_redirect(url_for(session['application']['confirmation']['step']))
+                    return local_redirect(url_for('startApplication.reference'))
 
                 else:
                     flash('There is a problem creating a new application', 'error')
@@ -141,18 +141,12 @@ def overseas_check():
 
     if form.validate_on_submit():
         session['application']['confirmation']['overseasCheck'] = form.overseasCheck.data
-
-        if ListStatus[session['application']['confirmation']['progress']] == ListStatus.IN_PROGRESS:
-            if form.overseasCheck.data == 'Yes':
-                session['application']['confirmation']['step'] = 'startApplication.overseas_approved_check'
-            else:
-                session['application']['confirmation']['step'] = 'startApplication.declaration'
-        elif form.overseasCheck.data == 'Yes':
-            session['application']['confirmation']['step'] = 'startApplication.overseas_approved_check'
-
         session['application'] = save_progress()
 
-        return local_redirect(url_for(session['application']['confirmation']['step']))
+        if form.overseasCheck.data == 'Yes':
+            return local_redirect(url_for('startApplication.overseas_approved_check'))
+        else:
+            return local_redirect(url_for('startApplication.declaration'))
 
     else:
         form.overseasCheck.data = session['application']['confirmation']['overseasCheck']
@@ -169,10 +163,9 @@ def overseas_approved_check():
 
     if form.validate_on_submit():
         session['application']['confirmation']['overseasApprovedCheck'] = form.overseasApprovedCheck.data
-        session['application']['confirmation']['step'] = 'startApplication.declaration'
         session['application'] = save_progress()
 
-        return local_redirect(url_for(session['application']['confirmation']['step']))
+        return local_redirect(url_for('startApplication.declaration'))
 
     else:
         form.overseasApprovedCheck.data = session['application']['confirmation']['overseasApprovedCheck']
@@ -194,7 +187,6 @@ def declaration():
         if form.validate_on_submit():
             session['application']['confirmation']['declaration'] = form.consent.data
             session['application']['confirmation']['progress'] = ListStatus.COMPLETED.name
-            session['application']['confirmation']['step'] = 'startApplication.declaration'
             session['application'] = save_progress()
 
             return local_redirect(url_for('taskList.index'))

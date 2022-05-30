@@ -21,11 +21,14 @@ def index():
 
         if ListStatus[session['application']['personalDetails']['progress']] == ListStatus.NOT_STARTED:
             session['application']['personalDetails']['progress'] = ListStatus.IN_PROGRESS.name
-            session['application']['personalDetails']['step'] = 'personalDetails.affirmedGender'
 
         session['application'] = save_progress()
 
-        return local_redirect(url_for(session['application']['personalDetails']['step']))
+        next_page = ('personalDetails.checkYourAnswers'
+                     if ListStatus[session['application']['birthRegistration']['progress']] == ListStatus.IN_REVIEW
+                     else 'personalDetails.affirmedGender')
+
+        return local_redirect(url_for(next_page))
 
     if request.method == 'GET':
         form.title.data = (
@@ -54,13 +57,13 @@ def affirmedGender():
 
     if form.validate_on_submit():
         session['application']['personalDetails']['affirmed_gender'] = form.affirmedGender.data
-
-        if ListStatus[session['application']['personalDetails']['progress']] == ListStatus.IN_PROGRESS:
-            session['application']['personalDetails']['step'] = 'personalDetails.transitionDate'
-
         session['application'] = save_progress()
 
-        return local_redirect(url_for(session['application']['personalDetails']['step']))
+        next_page = ('personalDetails.checkYourAnswers'
+                     if ListStatus[session['application']['birthRegistration']['progress']] == ListStatus.IN_REVIEW
+                     else 'personalDetails.transitionDate')
+
+        return local_redirect(url_for(next_page))
 
     if request.method == 'GET':
         form.affirmedGender.data = (
@@ -82,13 +85,13 @@ def transitionDate():
     if form.validate_on_submit():
         session['application']['personalDetails']['transition_date_month'] = form.transition_date_month.data
         session['application']['personalDetails']['transition_date_year'] = form.transition_date_year.data
-
-        if ListStatus[session['application']['personalDetails']['progress']] == ListStatus.IN_PROGRESS:
-            session['application']['personalDetails']['step'] = 'personalDetails.statutoryDeclarationDate'
-
         session['application'] = save_progress()
 
-        return local_redirect(url_for(session['application']['personalDetails']['step']))
+        next_page = ('personalDetails.checkYourAnswers'
+                     if ListStatus[session['application']['birthRegistration']['progress']] == ListStatus.IN_REVIEW
+                     else 'personalDetails.statutoryDeclarationDate')
+
+        return local_redirect(url_for(next_page))
 
     if request.method == 'GET':
         form.transition_date_month.data = (
@@ -115,13 +118,13 @@ def statutoryDeclarationDate():
         session['application']['personalDetails']['statutory_declaration_date_day'] = form.statutory_declaration_date_day.data
         session['application']['personalDetails']['statutory_declaration_date_month'] = form.statutory_declaration_date_month.data
         session['application']['personalDetails']['statutory_declaration_date_year'] = form.statutory_declaration_date_year.data
-
-        if ListStatus[session['application']['personalDetails']['progress']] == ListStatus.IN_PROGRESS:
-            session['application']['personalDetails']['step'] = 'personalDetails.previousNamesCheck'
-
         session['application'] = save_progress()
 
-        return local_redirect(url_for(session['application']['personalDetails']['step']))
+        next_page = ('personalDetails.checkYourAnswers'
+                     if ListStatus[session['application']['birthRegistration']['progress']] == ListStatus.IN_REVIEW
+                     else 'personalDetails.previousNamesCheck')
+
+        return local_redirect(url_for(next_page))
 
     if request.method == 'GET':
         form.statutory_declaration_date_day.data = (
@@ -150,13 +153,13 @@ def previousNamesCheck():
 
     if form.validate_on_submit():
         session['application']['personalDetails']['previousNamesCheck'] = form.previousNameCheck.data
-
-        if ListStatus[session['application']['personalDetails']['progress']] == ListStatus.IN_PROGRESS:
-            session['application']['personalDetails']['step'] = 'personalDetails.address'
-
         session['application'] = save_progress()
 
-        return local_redirect(url_for(session['application']['personalDetails']['step']))
+        next_page = ('personalDetails.checkYourAnswers'
+                     if ListStatus[session['application']['birthRegistration']['progress']] == ListStatus.IN_REVIEW
+                     else 'personalDetails.address')
+
+        return local_redirect(url_for(next_page))
 
     if request.method == 'GET':
         form.previousNameCheck.data = (
@@ -183,13 +186,13 @@ def address():
         session['application']['personalDetails']['address']['address_line_two'] = form.address_line_two.data
         session['application']['personalDetails']['address']['town'] = form.town.data
         session['application']['personalDetails']['address']['postcode'] = form.postcode.data
-
-        if ListStatus[session['application']['personalDetails']['progress']] == ListStatus.IN_PROGRESS:
-            session['application']['personalDetails']['step'] = 'personalDetails.contactDates'
-
         session['application'] = save_progress()
 
-        return local_redirect(url_for(session['application']['personalDetails']['step']))
+        next_page = ('personalDetails.checkYourAnswers'
+                     if ListStatus[session['application']['birthRegistration']['progress']] == ListStatus.IN_REVIEW
+                     else 'personalDetails.contactDates')
+
+        return local_redirect(url_for(next_page))
 
     if request.method == 'GET'  and 'address' in session['application']['personalDetails']:
         form.address_line_one.data = (
@@ -251,12 +254,13 @@ def contactPreferences():
             else:
                 session['application']['personalDetails']['contactPreferences']['post'] = ''
 
-            if ListStatus[session['application']['personalDetails']['progress']] == ListStatus.IN_PROGRESS:
-                session['application']['personalDetails']['step'] = 'personalDetails.hmrc'
-
             session['application'] = save_progress()
 
-            return local_redirect(url_for(session['application']['personalDetails']['step']))
+            next_page = ('personalDetails.checkYourAnswers'
+                         if ListStatus[session['application']['birthRegistration']['progress']] == ListStatus.IN_REVIEW
+                         else 'personalDetails.hmrc')
+
+            return local_redirect(url_for(next_page))
 
     if request.method == 'GET' and 'contactPreferences' in session['application']['personalDetails']:
         form.contact_options.data = []
@@ -305,13 +309,13 @@ def contactDates():
 
             session['application']['personalDetails']['contactDates']['dates'] = form.dates.data
             session['application']['personalDetails']['contactDates']['answer'] = form.contactDatesCheck.data
-
-            if ListStatus[session['application']['personalDetails']['progress']] == ListStatus.IN_PROGRESS:
-                session['application']['personalDetails']['step'] = 'personalDetails.contactPreferences'
-
             session['application'] = save_progress()
 
-            return local_redirect(url_for(session['application']['personalDetails']['step']))
+            next_page = ('personalDetails.checkYourAnswers'
+                         if ListStatus[session['application']['birthRegistration']['progress']] == ListStatus.IN_REVIEW
+                         else 'personalDetails.contactPreferences')
+
+            return local_redirect(url_for(next_page))
 
     if request.method == 'GET' and 'contactDates' in session['application']['personalDetails']:
         form.contactDatesCheck.data = (
@@ -351,10 +355,9 @@ def hmrc():
             session['application']['personalDetails']['hmrc']['national_insurance_number'] = form.national_insurance_number.data
             session['application']['personalDetails']['hmrc']['answer'] = form.tell_hmrc.data
             session['application']['personalDetails']['progress'] = ListStatus.IN_REVIEW.name
-            session['application']['personalDetails']['step'] = 'personalDetails.checkYourAnswers'
             session['application'] = save_progress()
 
-            return local_redirect(url_for(session['application']['personalDetails']['step']))
+            return local_redirect(url_for('personalDetails.checkYourAnswers'))
 
     if request.method == 'GET' and 'hmrc' in session['application']['personalDetails']:
         form.tell_hmrc.data = (
@@ -382,7 +385,6 @@ def checkYourAnswers():
 
     if request.method == 'POST':
         session['application']['personalDetails']['progress'] = ListStatus.COMPLETED.name
-        session['application']['personalDetails']['step'] = 'personalDetails.checkYourAnswers'
         session['application'] = save_progress()
 
         return local_redirect(url_for('taskList.index'))

@@ -15,15 +15,12 @@ def index():
 
     if form.validate_on_submit():
         session['application']['partnershipDetails']['marriageCivilPartnership'] = form.currently_married.data
-
-        if form.currently_married.data == 'Neither':
-            session['application']['partnershipDetails']['step'] = 'partnershipDetails.partnerDied'
-        else:
-            session['application']['partnershipDetails']['step'] = 'partnershipDetails.stayTogether'
-
         session['application'] = save_progress()
 
-        return local_redirect(url_for(session['application']['partnershipDetails']['step']))
+        if form.currently_married.data == 'Neither':
+            return local_redirect(url_for('partnershipDetails.partnerDied'))
+        else:
+            return local_redirect(url_for('partnershipDetails.stayTogether'))
 
     if request.method == 'GET':
         form.currently_married.data = (
@@ -45,15 +42,12 @@ def stayTogether():
 
     if form.validate_on_submit():
         session['application']['partnershipDetails']['stayTogether'] = form.stay_together.data
-
-        if form.stay_together.data == 'Yes':
-            session['application']['partnershipDetails']['step'] = 'partnershipDetails.partnerAgrees'
-        else:
-            session['application']['partnershipDetails']['step'] = 'partnershipDetails.interimCheck'
-
         session['application'] = save_progress()
 
-        return local_redirect(url_for(session['application']['partnershipDetails']['step']))
+        if form.stay_together.data == 'Yes':
+            return local_redirect(url_for('partnershipDetails.partnerAgrees'))
+        else:
+            return local_redirect(url_for('partnershipDetails.interimCheck'))
 
     if request.method == 'GET':
         form.stay_together.data = (
@@ -75,16 +69,13 @@ def partnerAgrees():
 
     if form.validate_on_submit():
         session['application']['partnershipDetails']['partnerAgrees'] = form.partner_agrees.data
+        session['application'] = save_progress()
 
         if form.partner_agrees.data == 'Yes':
             session['application']['partnershipDetails']['progress'] = ListStatus.IN_REVIEW.name
-            session['application']['partnershipDetails']['step'] = 'partnershipDetails.checkYourAnswers'
+            return local_redirect(url_for('partnershipDetails.checkYourAnswers'))
         else:
-            session['application']['partnershipDetails']['step'] = 'partnershipDetails.interimCheck'
-
-        session['application'] = save_progress()
-
-        return local_redirect(url_for(session['application']['partnershipDetails']['step']))
+            return local_redirect(url_for('partnershipDetails.interimCheck'))
 
     if request.method == 'GET':
         form.partner_agrees.data = (
@@ -107,10 +98,9 @@ def interimCheck():
     if request.method == 'POST':
         session['application']['partnershipDetails']['interimCheck'] = 'Yes'
         session['application']['partnershipDetails']['progress'] = ListStatus.IN_REVIEW.name
-        session['application']['partnershipDetails']['step'] = 'partnershipDetails.checkYourAnswers'
         session['application'] = save_progress()
 
-        return local_redirect(url_for(session['application']['partnershipDetails']['step']))
+        return local_redirect(url_for('partnershipDetails.checkYourAnswers'))
 
     if session['application']['partnershipDetails']['stayTogether'] == 'No':
         back = 'partnershipDetails.stayTogether'
@@ -132,10 +122,9 @@ def partnerDied():
 
     if form.validate_on_submit():
         session['application']['partnershipDetails']['partnerDied'] = form.partner_died.data
-        session['application']['partnershipDetails']['step'] = 'partnershipDetails.endedCheck'
         session['application'] = save_progress()
 
-        return local_redirect(url_for(session['application']['partnershipDetails']['step']))
+        return local_redirect(url_for('partnershipDetails.endedCheck'))
 
     if request.method == 'GET':
         form.partner_died.data = (
@@ -158,10 +147,9 @@ def endedCheck():
     if form.validate_on_submit():
         session['application']['partnershipDetails']['endedCheck'] = form.previous_partnership_ended.data
         session['application']['partnershipDetails']['progress'] = ListStatus.IN_REVIEW.name
-        session['application']['partnershipDetails']['step'] = 'partnershipDetails.checkYourAnswers'
         session['application'] = save_progress()
 
-        return local_redirect(url_for(session['application']['partnershipDetails']['step']))
+        return local_redirect(url_for('partnershipDetails.checkYourAnswers'))
 
     if request.method == 'GET':
         form.previous_partnership_ended.data = (
@@ -183,8 +171,6 @@ def checkYourAnswers():
 
     if 'partnershipDetails' not in session['application'] or (session['application']['partnershipDetails']['progress'] != ListStatus.IN_REVIEW.name and session['application']['partnershipDetails']['progress'] != ListStatus.COMPLETED.name):
         return local_redirect(url_for('taskList.index'))
-
-    session['application']['partnershipDetails']['step'] = 'partnershipDetails.checkYourAnswers'
 
     if request.method == 'POST':
         session['application']['partnershipDetails']['progress'] = ListStatus.COMPLETED.name
