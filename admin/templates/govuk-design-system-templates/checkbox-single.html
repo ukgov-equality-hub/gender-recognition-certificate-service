@@ -3,8 +3,18 @@
 
 {% macro renderFor(form, fieldName, question, label, checkboxOptions) %}
 
+    {% set hintOptions = None %}
+    {% if checkboxOptions.hintOptions %}
+        {% set hintOptions = {
+            'hintId': (checkboxOptions.hintOptions.hintId if 'hintId' in checkboxOptions.hintOptions else 'fieldset-hint'),
+            'htmlOrText': checkboxOptions.hintOptions.htmlOrText,
+            'classes': checkboxOptions.hintOptions.classes,
+            'attributes': checkboxOptions.hintOptions.attributes
+        } %}
+    {% endif %}
+
     <div class="govuk-form-group {{ 'govuk-form-group--error' if form[fieldName].errors }}">
-        <fieldset class="govuk-fieldset">
+        <fieldset class="govuk-fieldset" {% if hintOptions and 'hintId' in hintOptions %} aria-describedby="{{ hintOptions.hintId }}" {% endif %}>
             {% if question %}
                 {% if checkboxOptions.questionIsPageHeading %}
                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
@@ -19,7 +29,7 @@
                 {% endif %}
             {% endif %}
 
-            {{ hint.render(checkboxOptions.hintOptions) }}
+            {{ hint.render(hintOptions) }}
 
             {{ errorMessage.renderFor(fieldName, form[fieldName].errors, checkboxOptions.errorMessageOptions) }}
 

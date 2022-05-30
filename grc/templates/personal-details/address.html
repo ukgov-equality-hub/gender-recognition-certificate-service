@@ -18,13 +18,13 @@
                 {{ form.csrf_token }}
 
                 <div class="govuk-form-group {{ 'govuk-form-group--error' if form.errors }}">
-                    <fieldset class="govuk-fieldset">
+                    <fieldset class="govuk-fieldset" aria-describedby="fieldset-hint">
                         <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
                             <h1 class="govuk-fieldset__heading">
                                 What is your address?
                             </h1>
                         </legend>
-                        <div id="address-hint" class="govuk-hint">
+                        <div class="govuk-hint" id="fieldset-hint">
                             This should be the address that you want us to send your Gender Recognition Certificate to.
                         </div>
 
