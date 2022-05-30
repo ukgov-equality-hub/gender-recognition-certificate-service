@@ -30,7 +30,9 @@
 
 {% macro table_caption_and_head_rows(caption) %}
     <caption class="govuk-table__caption govuk-table__caption--m">
-        {{ caption }}
+        <h2 class="govuk-heading-m govuk-!-margin-bottom-0">
+            {{ caption }}
+        </h2>
     </caption>
     <thead class="govuk-table__head govuk-visually-hidden">
         <tr class="govuk-table__row">
@@ -46,7 +48,7 @@
     {% set id = random_id.randomId(10) %}
     <tr class="govuk-table__row">
         {% if title %}
-            <th scope="row"
+            <th scope="row" id="row-header-{{ id }}"
                 rowspan="{{ (rowsWithThisTitle if rowsWithThisTitle else 1) }}"
                 {{ ('colspan=2') if subtitle==None }}
                 class="govuk-table__header govuk-!-font-weight-regular">
@@ -67,8 +69,10 @@
                 {# Note: the following line should all be on one line to allow copy/paste to work without copying line breaks #}
                 <div style="display: none" id="value-{{ id }}">{% if alternativeCopyValue %}{{ alternativeCopyValue }}{% else %}{{ value }}{% endif %}</div>
                 <button class="govuk-button govuk-button--secondary copyToClipboardButton" data-module="govuk-button"
-                        id="button-{{ id }}" onclick="copyToClipboard('{{ id }}')">
-                    Copy
+                        id="button-{{ id }}" aria-describedby="row-header-{{ id }} button-{{ id }}" onclick="copyToClipboard('{{ id }}')">
+                    <span id="button-text-{{ id }}">
+                        Copy
+                    </span>
                     <span class="govuk-visually-hidden">
                         the value
                         "{% if alternativeCopyValue %}{{ alternativeCopyValue }}{% else %}{{ value }}{% endif %}"
@@ -84,15 +88,15 @@
     <script>
         function copyToClipboard(id) {
             var valueElement = document.getElementById('value-' + id);
-            var buttonElement = document.getElementById('button-' + id);
+            var buttonTextElement = document.getElementById('button-text-' + id);
             var valueToCopy = valueElement.innerText;
             navigator.clipboard
                 .writeText(valueToCopy)
                 .then(function () {
-                    buttonElement.innerText = 'Copied';
-                    window.setTimeout(() => { buttonElement.innerText = 'Copy'; }, 2000);
+                    buttonTextElement.innerText = 'Copied';
+                    window.setTimeout(() => { buttonTextElement.innerText = 'Copy'; }, 2000);
                 }, function () {
-                    buttonElement.innerText = 'Copy failed';
+                    buttonTextElement.innerText = 'Copy failed';
                 });
         }
         if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -129,13 +133,13 @@
             <p class="govuk-body">
                 <a href="{{ url_for('applications.download', reference_number=application.reference_number) }}"
                    target="_blank" class="govuk-link">
-                    Download application
+                    Download application (PDF)
                 </a>
             </p>
             <p class="govuk-body govuk-!-margin-bottom-8">
                 <a href="{{ url_for('applications.attachments', reference_number=application.reference_number) }}"
                    target="_blank" class="govuk-link">
-                    Download attachments
+                    Download attachments (ZIP file)
                 </a>
             </p>
 
