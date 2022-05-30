@@ -68,10 +68,12 @@ def calculate_progress_status():
             )
 
             # Medical reports
-            if session['application']['medicalReports']['progress'] == ListStatus.CANNOT_START_YET.name and session['application']['confirmation']['overseasCheck'] == 'No':
+            if session['application']['medicalReports']['progress'] == ListStatus.CANNOT_START_YET.name and \
+                    (session['application']['confirmation']['overseasCheck'] == 'No' or session['application']['confirmation']['overseasApprovedCheck'] == 'No'):
                 session['application']['medicalReports']['progress'] = ListStatus.NOT_STARTED.name
                 session['application'] = save_progress()
-            elif session['application']['medicalReports']['progress'] != ListStatus.CANNOT_START_YET.name and session['application']['confirmation']['overseasCheck'] == 'Yes':
+            elif session['application']['medicalReports']['progress'] != ListStatus.CANNOT_START_YET.name and \
+                    (session['application']['confirmation']['overseasCheck'] == 'Yes' and session['application']['confirmation']['overseasApprovedCheck'] == 'Yes'):
                 session['application']['medicalReports']['progress'] = ListStatus.CANNOT_START_YET.name
                 session['application'] = save_progress()
 
@@ -80,10 +82,12 @@ def calculate_progress_status():
             )
 
             # Gender evidence
-            if session['application']['genderEvidence']['progress'] == ListStatus.CANNOT_START_YET.name and session['application']['confirmation']['overseasCheck'] == 'No':
+            if session['application']['genderEvidence']['progress'] == ListStatus.CANNOT_START_YET.name and \
+                    (session['application']['confirmation']['overseasCheck'] == 'No' or session['application']['confirmation']['overseasApprovedCheck'] == 'No'):
                 session['application']['genderEvidence']['progress'] = ListStatus.NOT_STARTED.name
                 session['application'] = save_progress()
-            elif session['application']['genderEvidence']['progress'] != ListStatus.CANNOT_START_YET.name and session['application']['confirmation']['overseasCheck'] == 'Yes':
+            elif session['application']['genderEvidence']['progress'] != ListStatus.CANNOT_START_YET.name and \
+                    (session['application']['confirmation']['overseasCheck'] == 'Yes' and session['application']['confirmation']['overseasApprovedCheck'] == 'Yes'):
                 session['application']['genderEvidence']['progress'] = ListStatus.CANNOT_START_YET.name
                 session['application'] = save_progress()
 

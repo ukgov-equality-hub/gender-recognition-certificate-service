@@ -96,7 +96,7 @@
                     </h2>
 
                     <ul class="app-task-list__items">
-                        {% if application.confirmation.overseasCheck == 'No' %}
+                        {% if application.confirmation.overseasCheck == 'No' or application.confirmation.overseasApprovedCheck == 'No' %}
                             {{ taskListItem(
                                 "Your medical reports",
                                 url_for('upload.medicalReports'),
@@ -108,16 +108,9 @@
                                 url_for('upload.genderEvidence'),
                                 list_status['genderEvidence'])
                             }}
+                        {% endif %}
 
-                            {% if application.personalDetails.previousNamesCheck is defined and application.personalDetails.previousNamesCheck == 'Yes' %}
-                                {{ taskListItem(
-                                    "Name change documents",
-                                    url_for('upload.nameChange'),
-                                    list_status['nameChange'])
-                                }}
-                            {% endif %}
-
-                        {% elif application.confirmation.overseasCheck == 'Yes' and application.personalDetails.previousNamesCheck is defined and application.personalDetails.previousNamesCheck == 'Yes' %}
+                        {% if application.personalDetails.previousNamesCheck is defined and application.personalDetails.previousNamesCheck == 'Yes' %}
                             {{ taskListItem(
                                 "Name change documents",
                                 url_for('upload.nameChange'),
@@ -125,7 +118,14 @@
                             }}
                         {% endif %}
 
-                        {% if application.partnershipDetails.marriageCivilPartnership is defined and (application.partnershipDetails.marriageCivilPartnership == 'Married' or application.partnershipDetails.marriageCivilPartnership == 'Civil partnership' or (application.partnershipDetails.marriageCivilPartnership == 'Neither' and (application.partnershipDetails.partnerDied == 'Yes' or application.partnershipDetails.endedCheck == 'Yes'))) %}
+                        {% if application.partnershipDetails.marriageCivilPartnership is defined and (
+                               application.partnershipDetails.marriageCivilPartnership == 'Married' or
+                               application.partnershipDetails.marriageCivilPartnership == 'Civil partnership' or
+                               (application.partnershipDetails.marriageCivilPartnership == 'Neither' and
+                                (application.partnershipDetails.partnerDied == 'Yes' or
+                                 application.partnershipDetails.endedCheck == 'Yes')
+                               )
+                              ) %}
                             {{ taskListItem(
                                 "Marriage and civil partnership documents",
                                 url_for('upload.marriageDocuments'),
@@ -133,7 +133,7 @@
                             }}
                         {% endif %}
 
-                        {% if application.confirmation.overseasApprovedCheck == 'Yes' %}
+                        {% if application.confirmation.overseasCheck == 'Yes' and application.confirmation.overseasApprovedCheck == 'Yes' %}
                             {{ taskListItem(
                                 "Overseas certificate documents",
                                 url_for('upload.overseasCertificate'),
