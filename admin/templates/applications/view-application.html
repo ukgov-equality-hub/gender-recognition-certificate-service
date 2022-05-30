@@ -30,7 +30,9 @@
 
 {% macro table_caption_and_head_rows(caption) %}
     <caption class="govuk-table__caption govuk-table__caption--m">
-        {{ caption }}
+        <h2 class="govuk-heading-m govuk-!-margin-bottom-0">
+            {{ caption }}
+        </h2>
     </caption>
     <thead class="govuk-table__head govuk-visually-hidden">
         <tr class="govuk-table__row">
