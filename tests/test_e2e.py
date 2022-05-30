@@ -3,6 +3,7 @@ import asyncio
 from playwright.async_api import async_playwright
 from tests.helpers.e2e_assert_helpers import AssertHelpers
 from tests.helpers.e2e_page_helpers import PageHelpers
+import tests.end_to_end_tests.journey_1.data as data
 import tests.end_to_end_tests.journey_1.login_and_confirmation.section as section_login_and_confirmation
 import tests.end_to_end_tests.journey_1.personal_details.section as section_personal_details
 import tests.end_to_end_tests.journey_1.birth_registration.section as section_birth_registration
@@ -33,7 +34,7 @@ print('Running tests on %s' % TEST_URL)
 async def run_script_for_browser(browser_type):
     browser = await browser_type.launch()
     page = await browser.new_page()
-    page.set_default_timeout(3000)  # Wait a maximum of 3 seconds
+    page.set_default_timeout(data.DEFAULT_TIMEOUT)
 
     helpers = PageHelpers(page)
     asserts = AssertHelpers(page, helpers, TEST_URL)
