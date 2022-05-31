@@ -19,14 +19,14 @@
                 {{ form.csrf_token }}
 
                 <div class="govuk-form-group {{ 'govuk-form-group--error' if form.errors }}">
-                    <fieldset class="govuk-fieldset" role="group" aria-describedby="dob-hint">
+                    <fieldset class="govuk-fieldset" role="group" aria-describedby="fieldset-hint">
                         <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
                             <h1 class="govuk-fieldset__heading">
                                 What is the date of birth on your birth or adoption certificate?
                             </h1>
                         </legend>
 
-                        <div id="dob-hint" class="govuk-hint">
+                        <div class="govuk-hint" id="fieldset-hint">
                             Enter the year in full - for example, 1987
                         </div>
 

@@ -3,8 +3,18 @@
 
 {% macro renderFor(form, fieldName, question, radiosOptions) %}
 
+    {% set hintOptions = None %}
+    {% if radiosOptions.hintOptions %}
+        {% set hintOptions = {
+            'hintId': (radiosOptions.hintOptions.hintId if 'hintId' in radiosOptions.hintOptions else 'fieldset-hint'),
+            'htmlOrText': radiosOptions.hintOptions.htmlOrText,
+            'classes': radiosOptions.hintOptions.classes,
+            'attributes': radiosOptions.hintOptions.attributes
+        } %}
+    {% endif %}
+
     <div class="govuk-form-group {{ 'govuk-form-group--error' if form[fieldName].errors }}">
-        <fieldset class="govuk-fieldset">
+        <fieldset class="govuk-fieldset" {% if hintOptions and 'hintId' in hintOptions %} aria-describedby="{{ hintOptions.hintId }}" {% endif %}>
             {% if radiosOptions.questionIsPageHeading %}
                 <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
                     <h1 class="govuk-fieldset__heading">
@@ -17,7 +27,7 @@
                 </legend>
             {% endif %}
 
-            {{ hint.render(radiosOptions.hintOptions) }}
+            {{ hint.render(hintOptions) }}
 
             {{ errorMessage.renderFor(fieldName, form[fieldName].errors, radiosOptions.errorMessageOptions) }}
 

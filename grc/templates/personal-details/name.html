@@ -18,17 +18,17 @@
                 {{ form.csrf_token }}
 
                 <div class="govuk-form-group {{ 'govuk-form-group--error' if form.errors }}">
-                    <fieldset class="govuk-fieldset">
+                    <fieldset class="govuk-fieldset" aria-describedby="fieldset-hint">
                         <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
                             <h1 class="govuk-fieldset__heading">
                                 What is your name?
                             </h1>
                         </legend>
 
-                        <p class="govuk-hint">
+                        <div class="govuk-hint" id="fieldset-hint">
                             This will appear on your Gender Recognition Certificate. It must be the same as the name
                             on either your latest deed poll or your birth certificate.
-                        </p>
+                        </div>
 
                         {{ textInput.renderFor(
                             form,
