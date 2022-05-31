@@ -1,0 +1,15 @@
+name: Run GRC daily jobs
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+
+jobs:
+  deploy:
+    name: Backup GRC
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Backup database to S3
+        run: |
+          curl https://grc-production-admin.london.cloudapps.digital/jobs/backup-db?token=${{ secrets.JOB_TOKEN }}
