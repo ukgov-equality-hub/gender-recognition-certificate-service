@@ -96,8 +96,6 @@ def backup_db():
 @jobs.route('/jobs/restore-db/<db_file>', methods=['GET'])
 @JobTokenRequired
 def restore_db(db_file):
-    import csv
-    import io
     from cryptography.fernet import Fernet
     from grc.external_services.aws_s3_client import AwsS3Client
 
