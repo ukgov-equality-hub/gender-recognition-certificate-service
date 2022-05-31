@@ -44,6 +44,36 @@ def create_files():
     return ('', 200)
 
 
+@jobs.route('/jobs/dump-db', methods=['GET'])
+#@JobTokenRequired
+def dump_db():
+    from subprocess import Popen, PIPE
+    from grc.utils.config_helper import ConfigHelper
+
+    if ConfigHelper.get_vcap_services() is not None:
+        creds = ConfigHelper.get_vcap_services().postgres[0].credentials
+        dump_success = 1
+        print('Backing up %s database ' % (creds.database_name))
+        dbcmd = f"pg_dump --host={creds.host} " \
+                f"--dbname={creds.database_name} " \
+                f"--username={creds.username} " \
+                f"--no-password " \
+                f"--file=backup.dmp " \
+                f"--format=custom"
+        try:
+            proc = Popen(dbcmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, env={ 'PGPASSWORD': creds.password })
+            proc.wait()
+            out, err = proc.communicate()
+            print(out, flush=True)
+            print(err, flush=True)
+
+        except Exception as e:
+            dump_success = 0
+            print(e, flush=True)
+
+    return ('', 200)
+
+
 @jobs.route('/jobs/backup-db', methods=['GET'])
 @JobTokenRequired
 def backup_db():

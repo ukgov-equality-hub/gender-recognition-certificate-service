@@ -106,3 +106,16 @@ class AwsS3Client:
             return False
 
         return True
+
+    def list_objects(self):
+        data = []
+        try:
+            for key in self.s3.list_objects(Bucket=self.bucket_name)['Contents']:
+                data.append(key['Key'])
+
+        except ClientError as e:
+            logging.error(e)
+            print(e, flush=True)
+            return None
+
+        return data
