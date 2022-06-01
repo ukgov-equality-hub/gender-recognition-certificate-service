@@ -44,7 +44,7 @@ def create_app(test_config=None):
                                                         "script-src 'self' 'unsafe-inline'; " \
                                                         "script-src-elem 'self' 'unsafe-inline'; " \
                                                         "script-src-attr 'self' 'unsafe-inline'; " \
-                                                        "style-src 'self'; " \
+                                                        "style-src 'self' 'unsafe-inline'; " \
                                                         "img-src 'self'; " \
                                                         "font-src 'self'; " \
                                                         "connect-src 'self'; " \
