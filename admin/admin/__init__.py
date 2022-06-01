@@ -1,6 +1,5 @@
 import jwt
-import string
-import random
+import random, string
 from datetime import datetime, timedelta
 from dateutil import tz
 from flask import Blueprint, redirect, render_template, request, url_for, current_app, session

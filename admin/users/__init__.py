@@ -1,5 +1,4 @@
-import string
-import random
+import random, string
 from flask import Blueprint, render_template, request
 from werkzeug.security import generate_password_hash
 from grc.utils.decorators import AdminRequired

@@ -18,7 +18,7 @@
         j.async = true;
         j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
         document.head.appendChild(j);
-      })(window, document, 'script', 'dataLayer', 'GTM-53XG2JT');
+      })(window, document, 'script', 'dataLayer', 'GTM-KMCNGTZ');
     }
   }
 
@@ -40,12 +40,12 @@
   var CONSENT_COOKIE_NAME = 'grc_cookies_policy';
 
   /* Google Analytics tracking IDs for preview and live environments. */
-  var TRACKING_PREVIEW_ID = 'W2GNNKWTEF';
-  var TRACKING_LIVE_ID = 'W2GNNKWTEF';
+  //var TRACKING_PREVIEW_ID = '09GCMPLXM8';
+  //var TRACKING_LIVE_ID = '09GCMPLXM8';
 
   /* Users can (dis)allow different groups of cookies. */
   var COOKIE_CATEGORIES = {
-    analytics: ['_ga', '_gid', '_gat_UA-' + TRACKING_PREVIEW_ID, '_gat_UA-' + TRACKING_LIVE_ID],
+    analytics: ['_ga', '_gid', '_gat_UA-' + window.TRACKING_PREVIEW_ID, '_gat_UA-' + window.TRACKING_LIVE_ID],
     /* Essential cookies
      *
      * Essential cookies cannot be deselected, but we want our cookie code to
@@ -179,13 +179,13 @@
       // Initialise analytics if allowed
       if (cookieType === 'analytics' && options[cookieType]) {
         // Enable GA if allowed
-        window['ga-disable-UA-' + TRACKING_PREVIEW_ID] = false;
-        window['ga-disable-UA-' + TRACKING_LIVE_ID] = false;
+        window['ga-disable-UA-' + window.TRACKING_PREVIEW_ID] = false;
+        window['ga-disable-UA-' + window.TRACKING_LIVE_ID] = false;
         loadAnalytics();
       } else {
         // Disable GA if not allowed
-        window['ga-disable-UA-' + TRACKING_PREVIEW_ID] = true;
-        window['ga-disable-UA-' + TRACKING_LIVE_ID] = true;
+        window['ga-disable-UA-' + window.TRACKING_PREVIEW_ID] = true;
+        window['ga-disable-UA-' + window.TRACKING_LIVE_ID] = true;
       }
 
       if (!options[cookieType]) {
