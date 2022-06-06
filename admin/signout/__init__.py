@@ -1,4 +1,5 @@
-from flask import Blueprint, redirect, url_for, session
+from flask import Blueprint, url_for, session
+from grc.utils.redirect import local_redirect
 
 signout = Blueprint('signout', __name__)
 
@@ -8,4 +9,4 @@ def index():
     session.pop('signedIn', None)
     session.pop('emailAddress', None)
     session.pop('userType', None)
-    return redirect(url_for('admin.index'))
+    return local_redirect(url_for('admin.index'))

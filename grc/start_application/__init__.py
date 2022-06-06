@@ -1,4 +1,4 @@
-from flask import Blueprint, flash, redirect, render_template, request, url_for, session
+from flask import Blueprint, flash, render_template, request, url_for, session
 from grc.models import ListStatus, Application, ApplicationStatus
 from grc.start_application.forms import SaveYourApplicationForm, ValidateEmailForm, OverseasCheckForm, \
     OverseasApprovedCheckForm, DeclerationForm, IsFirstVisitForm
@@ -6,6 +6,7 @@ from grc.utils.security_code import send_security_code
 from grc.utils.decorators import EmailRequired, LoginRequired, Unauthorized, ValidatedEmailRequired
 from grc.utils.reference_number import reference_number_generator, reference_number_string
 from grc.utils.application_progress import save_progress
+from grc.utils.redirect import local_redirect
 
 startApplication = Blueprint('startApplication', __name__)
 
@@ -20,7 +21,7 @@ def index():
         session['email'] = form.email.data
         try:
             send_security_code(form.email.data)
-            return redirect(url_for('startApplication.emailConfirmation'))
+            return local_redirect(url_for('startApplication.emailConfirmation'))
         except BaseException as err:
             error = err.args[0].json()
             flash(error['errors'][0]['message'], 'error')
@@ -40,7 +41,7 @@ def emailConfirmation():
     if request.method == 'POST':
         if form.validate_on_submit():
             session['validatedEmail'] = session['email']
-            return redirect(url_for('startApplication.isFirstVisit'))
+            return local_redirect(url_for('startApplication.isFirstVisit'))
 
     elif request.args.get('resend') == 'true':
         try:
@@ -71,7 +72,7 @@ def isFirstVisit():
                 session['reference_number'] = reference_number_generator(session['email'])
                 if session['reference_number'] != False:
                     session['application'] = save_progress()
-                    return redirect(url_for(session['application']['confirmation']['step']))
+                    return local_redirect(url_for(session['application']['confirmation']['step']))
 
                 else:
                     flash('There is a problem creating a new application', 'error')
@@ -102,7 +103,7 @@ def isFirstVisit():
                         session['reference_number'] = application.reference_number
                         session['application'] = application.data()
                         save_progress()
-                        return redirect(url_for('taskList.index'))
+                        return local_redirect(url_for('taskList.index'))
 
                     else:
                         # This reference number is owned by another email address - pretend it doesn't exist
@@ -151,7 +152,7 @@ def overseas_check():
 
         session['application'] = save_progress()
 
-        return redirect(url_for(session['application']['confirmation']['step']))
+        return local_redirect(url_for(session['application']['confirmation']['step']))
 
     else:
         form.overseasCheck.data = session['application']['confirmation']['overseasCheck']
@@ -171,7 +172,7 @@ def overseas_approved_check():
         session['application']['confirmation']['step'] = 'startApplication.declaration'
         session['application'] = save_progress()
 
-        return redirect(url_for(session['application']['confirmation']['step']))
+        return local_redirect(url_for(session['application']['confirmation']['step']))
 
     else:
         form.overseasApprovedCheck.data = session['application']['confirmation']['overseasApprovedCheck']
@@ -196,7 +197,7 @@ def declaration():
             session['application']['confirmation']['step'] = 'startApplication.declaration'
             session['application'] = save_progress()
 
-            return redirect(url_for('taskList.index'))
+            return local_redirect(url_for('taskList.index'))
 
         session['application']['confirmation']['progress'] = ListStatus.IN_REVIEW.name
         session['application'] = save_progress()
@@ -223,4 +224,4 @@ def declaration():
 @LoginRequired
 def clearsession():
     session.clear()
-    return redirect(url_for('startApplication.index'))
+    return local_redirect(url_for('startApplication.index'))

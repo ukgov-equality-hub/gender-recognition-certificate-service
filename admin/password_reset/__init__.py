@@ -1,9 +1,10 @@
 import jwt
 from datetime import datetime
-from flask import Blueprint, render_template, request, current_app, session, redirect, url_for
+from flask import Blueprint, render_template, request, current_app, session, url_for
 from werkzeug.security import generate_password_hash
 from admin.password_reset.forms import PasswordResetForm
 from grc.models import db, AdminUser
+from grc.utils.redirect import local_redirect
 
 password_reset = Blueprint('password_reset', __name__)
 
@@ -11,7 +12,7 @@ password_reset = Blueprint('password_reset', __name__)
 @password_reset.route('/password_reset', methods=['GET', 'POST'])
 def index():
     if 'emailAddress' not in session:
-        return redirect(url_for('forgot_password.index'))
+        return local_redirect(url_for('forgot_password.index'))
 
     form = PasswordResetForm()
 
@@ -53,7 +54,7 @@ def reset_password_with_token():
                         message="We could not find your user details for this password reset link. Please try resetting your password again"
                     else:
                         session['emailAddress'] = login_token['email']
-                        return redirect(url_for('password_reset.index'))
+                        return local_redirect(url_for('password_reset.index'))
         except Exception as e:
             print(e, flush=True)
 

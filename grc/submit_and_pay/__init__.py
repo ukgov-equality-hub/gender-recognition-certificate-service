@@ -1,6 +1,6 @@
 import threading
 from datetime import datetime
-from flask import Blueprint, flash, redirect, render_template, request, current_app, url_for, session, copy_current_request_context
+from flask import Blueprint, flash, render_template, request, current_app, url_for, session, copy_current_request_context
 import requests
 from requests.structures import CaseInsensitiveDict
 import json
@@ -11,6 +11,7 @@ from grc.submit_and_pay.forms import MethodCheckForm, HelpTypeForm, CheckYourAns
 from grc.utils.decorators import LoginRequired
 from grc.utils.application_progress import save_progress, mark_complete
 from grc.utils.radio_values_helper import get_radio_pretty_value
+from grc.utils.redirect import local_redirect
 
 submitAndPay = Blueprint('submitAndPay', __name__)
 
@@ -33,7 +34,7 @@ def index():
 
         session['application'] = save_progress()
 
-        return redirect(url_for(session['application']['submitAndPay']['step']))
+        return local_redirect(url_for(session['application']['submitAndPay']['step']))
 
     if request.method == 'GET':
         form.applying_for_help_with_fee.data = (
@@ -69,7 +70,7 @@ def helpType():
             session['application']['submitAndPay']['step'] = 'submitAndPay.checkYourAnswers'
             session['application'] = save_progress()
 
-            return redirect(url_for(session['application']['submitAndPay']['step']))
+            return local_redirect(url_for(session['application']['submitAndPay']['step']))
 
     if request.method == 'GET' and 'helpType' in session['application']['submitAndPay']:
         form.how_applying_for_fees.data = session['application']['submitAndPay']['helpType']
@@ -87,7 +88,7 @@ def checkYourAnswers():
     form = CheckYourAnswers()
 
     if 'submitAndPay' not in session['application'] or (session['application']['submitAndPay']['progress'] != ListStatus.IN_REVIEW.name and session['application']['submitAndPay']['progress'] != ListStatus.COMPLETED.name):
-        return redirect(url_for('taskList.index'))
+        return local_redirect(url_for('taskList.index'))
 
     if request.method == 'POST' and form.validate_on_submit():
         session['application']['submitAndPay']['declaration'] = form.certify.data
@@ -97,7 +98,7 @@ def checkYourAnswers():
             session['application']['submitAndPay']['step'] = 'submitAndPay.confirmation'
             session['application'] = save_progress()
 
-            return redirect(url_for(session['application']['submitAndPay']['step']))
+            return local_redirect(url_for(session['application']['submitAndPay']['step']))
         else:
             random_uuid = str(uuid.uuid4())
             data = {
@@ -125,7 +126,7 @@ def checkYourAnswers():
                 session['application']['submitAndPay']['uuid'] = random_uuid
                 session['application'] = save_progress()
 
-                return redirect(res['_links']['next_url']['href'])
+                return local_redirect(res['_links']['next_url']['href'])
             except BaseException as err:
                 flash(err, 'error')
 
@@ -160,7 +161,7 @@ def paymentConfirmation(id):
                 session['application']['submitAndPay']['step'] = 'submitAndPay.confirmation'
                 session['application']['submitAndPay']['paymentDetails'] = r.text
                 session['application'] = save_progress()
-                return redirect(url_for('submitAndPay.confirmation'))
+                return local_redirect(url_for('submitAndPay.confirmation'))
             elif res['state']['status'] == 'failed':
                 flash(res['state']['message'], 'error')
         except BaseException as err:
@@ -168,7 +169,7 @@ def paymentConfirmation(id):
     else:
         flash('Something went wrong', 'error')
 
-    return redirect(url_for('submitAndPay.checkYourAnswers'))
+    return local_redirect(url_for('submitAndPay.checkYourAnswers'))
 
 
 @submitAndPay.route('/submit-and-pay/confirmation', methods=['GET'])

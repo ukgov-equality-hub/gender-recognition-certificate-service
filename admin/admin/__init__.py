@@ -2,11 +2,12 @@ import jwt
 import random, string
 from datetime import datetime, timedelta
 from dateutil import tz
-from flask import Blueprint, redirect, render_template, request, url_for, current_app, session
+from flask import Blueprint, render_template, request, url_for, current_app, session
 from werkzeug.security import check_password_hash, generate_password_hash
 from admin.admin.forms import LoginForm
 from grc.external_services.gov_uk_notify import GovUkNotify
 from grc.models import db, AdminUser
+from grc.utils.redirect import local_redirect
 
 admin = Blueprint('admin', __name__)
 
@@ -15,7 +16,7 @@ admin = Blueprint('admin', __name__)
 def index():
     form = LoginForm()
     if 'signedIn' in session:
-        return redirect(url_for('applications.index'))
+        return local_redirect(url_for('applications.index'))
 
     if request.method == 'POST':
         if form.validate_on_submit():
@@ -28,7 +29,7 @@ def index():
                 if password_ok:
                     if user.passwordResetRequired:
                         session['emailAddress'] = form.email_address.data
-                        return redirect(url_for('password_reset.index'))
+                        return local_redirect(url_for('password_reset.index'))
                     else:
                         # Email out 2FA link
                         try:
@@ -96,7 +97,7 @@ def sign_in_with_token():
                         session['signedIn'] = signedIn
                         session['userType'] = user.userType
 
-                        return redirect(url_for('applications.index'))
+                        return local_redirect(url_for('applications.index'))
             else:
                 message = "The login link was incorrect. If you pasted the web address, check you copied the entire address."
 

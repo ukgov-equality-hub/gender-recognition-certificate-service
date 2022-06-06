@@ -1,10 +1,11 @@
-from flask import Blueprint, flash, redirect, render_template, request, url_for
+from flask import Blueprint, flash, render_template, request, url_for
 from grc.document_checker.doc_checker_data_store import DocCheckerDataStore
 from grc.document_checker.doc_checker_state import DocCheckerState, CurrentlyInAPartnershipEnum
 from grc.document_checker.forms import PreviousNamesCheck, MarriageCivilPartnershipForm, PlanToRemainInAPartnershipForm, \
     PartnerDiedForm, PreviousPartnershipEndedForm, GenderRecognitionOutsideUKForm, EmailForm
 from grc.external_services.gov_uk_notify import GovUkNotify
 from grc.utils.strtobool import strtobool
+from grc.utils.redirect import local_redirect
 
 documentChecker = Blueprint('documentChecker', __name__)
 
@@ -23,7 +24,7 @@ def previousNamesCheck():
         doc_checker_state.changed_name_to_reflect_gender = strtobool(form.changed_name_to_reflect_gender.data)
         DocCheckerDataStore.save_doc_checker_state(doc_checker_state)
 
-        return redirect(url_for('documentChecker.currentlyInAPartnership'))
+        return local_redirect(url_for('documentChecker.currentlyInAPartnership'))
 
     if request.method == 'GET':
         form.changed_name_to_reflect_gender.data = doc_checker_state.changed_name_to_reflect_gender
@@ -48,7 +49,7 @@ def currentlyInAPartnership():
         else:
             next_step = 'documentChecker.previousPartnershipPartnerDied'
 
-        return redirect(url_for(next_step))
+        return local_redirect(url_for(next_step))
 
     if request.method == 'GET':
         form.currently_in_a_partnership.data = (
@@ -73,7 +74,7 @@ def planToRemainInAPartnership():
         doc_checker_state.plan_to_remain_in_a_partnership = strtobool(form.plan_to_remain_in_a_partnership.data)
         DocCheckerDataStore.save_doc_checker_state(doc_checker_state)
 
-        return redirect(url_for('documentChecker.genderRecognitionOutsideUK'))
+        return local_redirect(url_for('documentChecker.genderRecognitionOutsideUK'))
 
     if request.method == 'GET':
         form.plan_to_remain_in_a_partnership.data = doc_checker_state.plan_to_remain_in_a_partnership
@@ -94,7 +95,7 @@ def previousPartnershipPartnerDied():
         doc_checker_state.previous_partnership_partner_died = strtobool(form.previous_partnership_partner_died.data)
         DocCheckerDataStore.save_doc_checker_state(doc_checker_state)
 
-        return redirect(url_for('documentChecker.previousPartnershipEnded'))
+        return local_redirect(url_for('documentChecker.previousPartnershipEnded'))
 
     if request.method == 'GET':
         form.previous_partnership_partner_died.data = doc_checker_state.previous_partnership_partner_died
@@ -114,7 +115,7 @@ def previousPartnershipEnded():
         doc_checker_state.previous_partnership_ended = strtobool(form.previous_partnership_ended.data)
         DocCheckerDataStore.save_doc_checker_state(doc_checker_state)
 
-        return redirect(url_for('documentChecker.genderRecognitionOutsideUK'))
+        return local_redirect(url_for('documentChecker.genderRecognitionOutsideUK'))
 
     if request.method == 'GET':
         form.previous_partnership_ended.data = doc_checker_state.previous_partnership_ended
@@ -134,7 +135,7 @@ def genderRecognitionOutsideUK():
         doc_checker_state.gender_recognition_outside_uk = strtobool(form.gender_recognition_outside_uk.data)
         DocCheckerDataStore.save_doc_checker_state(doc_checker_state)
 
-        return redirect(url_for('documentChecker.your_documents'))
+        return local_redirect(url_for('documentChecker.your_documents'))
 
     if request.method == 'GET':
         form.gender_recognition_outside_uk.data = doc_checker_state.gender_recognition_outside_uk
@@ -151,7 +152,7 @@ def your_documents():
     doc_checker_state = DocCheckerDataStore.load_doc_checker_state()
 
     if not hasUserAnswersAllTheQuestions():
-        return redirect(getUrlForNextUnansweredQuestion())
+        return local_redirect(getUrlForNextUnansweredQuestion())
 
     return render_template(
         'document-checker/your-documents.html',
@@ -162,7 +163,7 @@ def your_documents():
 @documentChecker.route('/check-documents/email-address', methods=['GET', 'POST'])
 def askForEmailAddress():
     if not hasUserAnswersAllTheQuestions():
-        return redirect(getUrlForNextUnansweredQuestion())
+        return local_redirect(getUrlForNextUnansweredQuestion())
 
     doc_checker_state = DocCheckerDataStore.load_doc_checker_state()
     form = EmailForm()
@@ -206,7 +207,7 @@ def askForEmailAddress():
                     doc_checker_state.need_to_send_proof_gender_recognised_outside_uk
             )
 
-            return redirect(url_for('documentChecker.emailSent'))
+            return local_redirect(url_for('documentChecker.emailSent'))
         except BaseException as err:
             error = err.args[0].json()
             flash(error['errors'][0]['message'], 'error')

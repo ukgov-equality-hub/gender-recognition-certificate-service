@@ -1,10 +1,11 @@
-from flask import Blueprint, redirect, render_template, request, url_for, session
+from flask import Blueprint, render_template, request, url_for, session
 from werkzeug.utils import secure_filename
 from grc.models import ListStatus
 from grc.upload.forms import UploadForm, DeleteForm
 from grc.utils.decorators import LoginRequired
 from grc.utils.application_progress import save_progress
 from grc.external_services.aws_s3_client import AwsS3Client
+from grc.utils.redirect import local_redirect
 
 upload = Blueprint('upload', __name__)
 
@@ -32,12 +33,12 @@ def medicalReports():
         session['application'] = save_progress()
 
         if not form.more_files.data == True:
-            return redirect(url_for('taskList.index'))
+            return local_redirect(url_for('taskList.index'))
         else:
-            return redirect(url_for('upload.medicalReports') + '#file-upload-section')
+            return local_redirect(url_for('upload.medicalReports') + '#file-upload-section')
 
     elif request.method == 'POST' and 'document' not in request.files and 'files' in session['application']['medicalReports'] and len(session['application']['medicalReports']['files']) > 0:
-        return redirect(url_for('taskList.index'))
+        return local_redirect(url_for('taskList.index'))
 
     if request.method == 'GET' and 'files' in session['application']['medicalReports'] and len(session['application']['medicalReports']['files']) == 0:
         session['application']['medicalReports']['progress'] = ListStatus.IN_PROGRESS.name
@@ -73,12 +74,12 @@ def genderEvidence():
         session['application'] = save_progress()
 
         if not form.more_files.data == True:
-            return redirect(url_for('taskList.index'))
+            return local_redirect(url_for('taskList.index'))
         else:
-            return redirect(url_for('upload.genderEvidence') + '#file-upload-section')
+            return local_redirect(url_for('upload.genderEvidence') + '#file-upload-section')
 
     elif request.method == 'POST' and 'document' not in request.files and 'files' in session['application']['genderEvidence'] and len(session['application']['genderEvidence']['files']) > 0:
-        return redirect(url_for('taskList.index'))
+        return local_redirect(url_for('taskList.index'))
 
     if request.method == 'GET' and 'files' in session['application']['genderEvidence'] and len(session['application']['genderEvidence']['files']) == 0:
         session['application']['genderEvidence']['progress'] = ListStatus.IN_PROGRESS.name
@@ -114,12 +115,12 @@ def nameChange():
         session['application'] = save_progress()
 
         if not form.more_files.data == True:
-            return redirect(url_for('taskList.index'))
+            return local_redirect(url_for('taskList.index'))
         else:
-            return redirect(url_for('upload.nameChange') + '#file-upload-section')
+            return local_redirect(url_for('upload.nameChange') + '#file-upload-section')
 
     elif request.method == 'POST' and 'document' not in request.files and 'files' in session['application']['nameChange'] and len(session['application']['nameChange']['files']) > 0:
-        return redirect(url_for('taskList.index'))
+        return local_redirect(url_for('taskList.index'))
 
     if request.method == 'GET' and 'files' in session['application']['nameChange'] and len(session['application']['nameChange']['files']) == 0:
         session['application']['nameChange']['progress'] = ListStatus.IN_PROGRESS.name
@@ -155,12 +156,12 @@ def marriageDocuments():
         session['application'] = save_progress()
 
         if not form.more_files.data == True:
-            return redirect(url_for('taskList.index'))
+            return local_redirect(url_for('taskList.index'))
         else:
-            return redirect(url_for('upload.marriageDocuments') + '#file-upload-section')
+            return local_redirect(url_for('upload.marriageDocuments') + '#file-upload-section')
 
     elif request.method == 'POST' and 'document' not in request.files and 'files' in session['application']['marriageDocuments'] and len(session['application']['marriageDocuments']['files']) > 0:
-        return redirect(url_for('taskList.index'))
+        return local_redirect(url_for('taskList.index'))
 
     if request.method == 'GET' and 'files' in session['application']['marriageDocuments'] and len(session['application']['marriageDocuments']['files']) == 0:
         session['application']['marriageDocuments']['progress'] = ListStatus.IN_PROGRESS.name
@@ -196,12 +197,12 @@ def overseasCertificate():
         session['application'] = save_progress()
 
         if not form.more_files.data == True:
-            return redirect(url_for('taskList.index'))
+            return local_redirect(url_for('taskList.index'))
         else:
-            return redirect(url_for('upload.overseasCertificate') + '#file-upload-section')
+            return local_redirect(url_for('upload.overseasCertificate') + '#file-upload-section')
 
     elif request.method == 'POST' and 'document' not in request.files and 'files' in session['application']['overseasCertificate'] and len(session['application']['overseasCertificate']['files']) > 0:
-        return redirect(url_for('taskList.index'))
+        return local_redirect(url_for('taskList.index'))
 
     if request.method == 'GET' and 'files' in session['application']['overseasCertificate'] and len(session['application']['overseasCertificate']['files']) == 0:
         session['application']['overseasCertificate']['progress'] = ListStatus.IN_PROGRESS.name
@@ -237,12 +238,12 @@ def statutoryDeclarations():
         session['application'] = save_progress()
 
         if not form.more_files.data == True:
-            return redirect(url_for('taskList.index'))
+            return local_redirect(url_for('taskList.index'))
         else:
-            return redirect(url_for('upload.statutoryDeclarations') + '#file-upload-section')
+            return local_redirect(url_for('upload.statutoryDeclarations') + '#file-upload-section')
 
     elif request.method == 'POST' and 'document' not in request.files and 'files' in session['application']['statutoryDeclarations'] and len(session['application']['statutoryDeclarations']['files']) > 0:
-        return redirect(url_for('taskList.index'))
+        return local_redirect(url_for('taskList.index'))
 
     if request.method == 'GET' and 'files' in session['application']['statutoryDeclarations'] and len(session['application']['statutoryDeclarations']['files']) == 0:
         session['application']['statutoryDeclarations']['progress'] = ListStatus.IN_PROGRESS.name
@@ -265,4 +266,4 @@ def removeFile():
         session['application'][form.section.data]['files'].remove(form.file.data)
         session['application'] = save_progress()
 
-    return redirect(url_for('upload.' + form.section.data) + '#file-upload-section')
+    return local_redirect(url_for('upload.' + form.section.data) + '#file-upload-section')

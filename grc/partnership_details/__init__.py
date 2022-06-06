@@ -1,8 +1,9 @@
-from flask import Blueprint, redirect, render_template, request, url_for, session
+from flask import Blueprint, render_template, request, url_for, session
 from grc.models import ListStatus
 from grc.partnership_details.forms import MarriageCivilPartnershipForm, StayTogetherForm, PartnerAgreesForm, PartnerDiedForm, PreviousPartnershipEndedForm, InterimCheckForm, CheckYourAnswers
 from grc.utils.decorators import LoginRequired
 from grc.utils.application_progress import save_progress
+from grc.utils.redirect import local_redirect
 
 partnershipDetails = Blueprint('partnershipDetails', __name__)
 
@@ -22,7 +23,7 @@ def index():
 
         session['application'] = save_progress()
 
-        return redirect(url_for(session['application']['partnershipDetails']['step']))
+        return local_redirect(url_for(session['application']['partnershipDetails']['step']))
 
     if request.method == 'GET':
         form.currently_married.data = (
@@ -52,7 +53,7 @@ def stayTogether():
 
         session['application'] = save_progress()
 
-        return redirect(url_for(session['application']['partnershipDetails']['step']))
+        return local_redirect(url_for(session['application']['partnershipDetails']['step']))
 
     if request.method == 'GET':
         form.stay_together.data = (
@@ -83,7 +84,7 @@ def partnerAgrees():
 
         session['application'] = save_progress()
 
-        return redirect(url_for(session['application']['partnershipDetails']['step']))
+        return local_redirect(url_for(session['application']['partnershipDetails']['step']))
 
     if request.method == 'GET':
         form.partner_agrees.data = (
@@ -109,7 +110,7 @@ def interimCheck():
         session['application']['partnershipDetails']['step'] = 'partnershipDetails.checkYourAnswers'
         session['application'] = save_progress()
 
-        return redirect(url_for(session['application']['partnershipDetails']['step']))
+        return local_redirect(url_for(session['application']['partnershipDetails']['step']))
 
     if session['application']['partnershipDetails']['stayTogether'] == 'No':
         back = 'partnershipDetails.stayTogether'
@@ -134,7 +135,7 @@ def partnerDied():
         session['application']['partnershipDetails']['step'] = 'partnershipDetails.endedCheck'
         session['application'] = save_progress()
 
-        return redirect(url_for(session['application']['partnershipDetails']['step']))
+        return local_redirect(url_for(session['application']['partnershipDetails']['step']))
 
     if request.method == 'GET':
         form.partner_died.data = (
@@ -160,7 +161,7 @@ def endedCheck():
         session['application']['partnershipDetails']['step'] = 'partnershipDetails.checkYourAnswers'
         session['application'] = save_progress()
 
-        return redirect(url_for(session['application']['partnershipDetails']['step']))
+        return local_redirect(url_for(session['application']['partnershipDetails']['step']))
 
     if request.method == 'GET':
         form.previous_partnership_ended.data = (
@@ -181,7 +182,7 @@ def checkYourAnswers():
     form = CheckYourAnswers()
 
     if 'partnershipDetails' not in session['application'] or (session['application']['partnershipDetails']['progress'] != ListStatus.IN_REVIEW.name and session['application']['partnershipDetails']['progress'] != ListStatus.COMPLETED.name):
-        return redirect(url_for('taskList.index'))
+        return local_redirect(url_for('taskList.index'))
 
     session['application']['partnershipDetails']['step'] = 'partnershipDetails.checkYourAnswers'
 
@@ -189,7 +190,7 @@ def checkYourAnswers():
         session['application']['partnershipDetails']['progress'] = ListStatus.COMPLETED.name
         session['application'] = save_progress()
 
-        return redirect(url_for('taskList.index'))
+        return local_redirect(url_for('taskList.index'))
 
     session['application']['partnershipDetails']['progress'] = ListStatus.IN_REVIEW.name
     session['application'] = save_progress()
