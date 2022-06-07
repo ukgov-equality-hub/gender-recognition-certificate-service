@@ -1,9 +1,10 @@
 from datetime import datetime
-from flask import Blueprint, redirect, render_template, request, url_for, session
+from flask import Blueprint, render_template, request, url_for, session
 from grc.models import ListStatus
 from grc.personal_details.forms import NameForm, AffirmedGenderForm, TransitionDateForm, StatutoryDeclarationDateForm, PreviousNamesCheck, AddressForm, ContactPreferencesForm, ContactDatesForm, HmrcForm, CheckYourAnswers
 from grc.utils.decorators import LoginRequired
 from grc.utils.application_progress import save_progress
+from grc.utils.redirect import local_redirect
 
 personalDetails = Blueprint('personalDetails', __name__)
 
@@ -24,7 +25,7 @@ def index():
 
         session['application'] = save_progress()
 
-        return redirect(url_for(session['application']['personalDetails']['step']))
+        return local_redirect(url_for(session['application']['personalDetails']['step']))
 
     if request.method == 'GET':
         form.title.data = (
@@ -59,7 +60,7 @@ def affirmedGender():
 
         session['application'] = save_progress()
 
-        return redirect(url_for(session['application']['personalDetails']['step']))
+        return local_redirect(url_for(session['application']['personalDetails']['step']))
 
     if request.method == 'GET':
         form.affirmedGender.data = (
@@ -87,7 +88,7 @@ def transitionDate():
 
         session['application'] = save_progress()
 
-        return redirect(url_for(session['application']['personalDetails']['step']))
+        return local_redirect(url_for(session['application']['personalDetails']['step']))
 
     if request.method == 'GET':
         form.transition_date_month.data = (
@@ -120,7 +121,7 @@ def statutoryDeclarationDate():
 
         session['application'] = save_progress()
 
-        return redirect(url_for(session['application']['personalDetails']['step']))
+        return local_redirect(url_for(session['application']['personalDetails']['step']))
 
     if request.method == 'GET':
         form.statutory_declaration_date_day.data = (
@@ -155,7 +156,7 @@ def previousNamesCheck():
 
         session['application'] = save_progress()
 
-        return redirect(url_for(session['application']['personalDetails']['step']))
+        return local_redirect(url_for(session['application']['personalDetails']['step']))
 
     if request.method == 'GET':
         form.previousNameCheck.data = (
@@ -188,7 +189,7 @@ def address():
 
         session['application'] = save_progress()
 
-        return redirect(url_for(session['application']['personalDetails']['step']))
+        return local_redirect(url_for(session['application']['personalDetails']['step']))
 
     if request.method == 'GET'  and 'address' in session['application']['personalDetails']:
         form.address_line_one.data = (
@@ -255,7 +256,7 @@ def contactPreferences():
 
             session['application'] = save_progress()
 
-            return redirect(url_for(session['application']['personalDetails']['step']))
+            return local_redirect(url_for(session['application']['personalDetails']['step']))
 
     if request.method == 'GET' and 'contactPreferences' in session['application']['personalDetails']:
         form.contact_options.data = []
@@ -310,7 +311,7 @@ def contactDates():
 
             session['application'] = save_progress()
 
-            return redirect(url_for(session['application']['personalDetails']['step']))
+            return local_redirect(url_for(session['application']['personalDetails']['step']))
 
     if request.method == 'GET' and 'contactDates' in session['application']['personalDetails']:
         form.contactDatesCheck.data = (
@@ -353,7 +354,7 @@ def hmrc():
             session['application']['personalDetails']['step'] = 'personalDetails.checkYourAnswers'
             session['application'] = save_progress()
 
-            return redirect(url_for(session['application']['personalDetails']['step']))
+            return local_redirect(url_for(session['application']['personalDetails']['step']))
 
     if request.method == 'GET' and 'hmrc' in session['application']['personalDetails']:
         form.tell_hmrc.data = (
@@ -377,14 +378,14 @@ def checkYourAnswers():
     form = CheckYourAnswers()
 
     if 'personalDetails' not in session['application'] or (session['application']['personalDetails']['progress'] != ListStatus.IN_REVIEW.name and session['application']['personalDetails']['progress'] != ListStatus.COMPLETED.name):
-        return redirect(url_for('taskList.index'))
+        return local_redirect(url_for('taskList.index'))
 
     if request.method == 'POST':
         session['application']['personalDetails']['progress'] = ListStatus.COMPLETED.name
         session['application']['personalDetails']['step'] = 'personalDetails.checkYourAnswers'
         session['application'] = save_progress()
 
-        return redirect(url_for('taskList.index'))
+        return local_redirect(url_for('taskList.index'))
 
     session['application']['personalDetails']['progress'] = ListStatus.IN_REVIEW.name
     session['application'] = save_progress()

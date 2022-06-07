@@ -1,10 +1,11 @@
 from datetime import datetime
-from flask import Blueprint, redirect, render_template, request, url_for, session
+from flask import Blueprint, render_template, request, url_for, session
 from grc.models import ListStatus
 from grc.birth_registration.forms import  NameForm, DobForm, UkCheckForm, CountryForm, PlaceOfBirthForm, MothersNameForm, FatherNameCheckForm, FathersNameForm, AdoptedForm, AdoptedUKForm, ForcesForm, CheckYourAnswers
 from grc.utils.decorators import LoginRequired
 from grc.utils.application_progress import save_progress
 from grc.utils.radio_values_helper import get_radio_pretty_value
+from grc.utils.redirect import local_redirect
 
 birthRegistration = Blueprint('birthRegistration', __name__)
 
@@ -25,7 +26,7 @@ def index():
 
         session['application'] = save_progress()
 
-        return redirect(url_for(session['application']['birthRegistration']['step']))
+        return local_redirect(url_for(session['application']['birthRegistration']['step']))
 
     if request.method == 'GET':
         form.first_name.data = (
@@ -65,7 +66,7 @@ def dob():
 
         session['application'] = save_progress()
 
-        return redirect(url_for(session['application']['birthRegistration']['step']))
+        return local_redirect(url_for(session['application']['birthRegistration']['step']))
 
     if request.method == 'GET' and 'dob' in session['application']['birthRegistration']:
         form.day.data = (
@@ -110,7 +111,7 @@ def ukCheck():
 
         session['application'] = save_progress()
 
-        return redirect(url_for(session['application']['birthRegistration']['step']))
+        return local_redirect(url_for(session['application']['birthRegistration']['step']))
 
     else:
         form.birth_registered_in_uk.data = (
@@ -136,7 +137,7 @@ def country():
         session['application']['birthRegistration']['step'] = 'birthRegistration.checkYourAnswers'
         session['application'] = save_progress()
 
-        return redirect(url_for(session['application']['birthRegistration']['step']))
+        return local_redirect(url_for(session['application']['birthRegistration']['step']))
 
     if request.method == 'GET':
         form.country_of_birth.data = (
@@ -165,7 +166,7 @@ def placeOfBirth():
 
         session['application'] = save_progress()
 
-        return redirect(url_for(session['application']['birthRegistration']['step']))
+        return local_redirect(url_for(session['application']['birthRegistration']['step']))
 
     if request.method == 'GET':
         form.place_of_birth.data = (
@@ -194,7 +195,7 @@ def mothersName():
 
         session['application'] = save_progress()
 
-        return redirect(url_for(session['application']['birthRegistration']['step']))
+        return local_redirect(url_for(session['application']['birthRegistration']['step']))
 
     if request.method == 'GET':
         form.first_name.data = (
@@ -234,7 +235,7 @@ def fathersNameCheck():
 
         session['application'] = save_progress()
 
-        return redirect(url_for(session['application']['birthRegistration']['step']))
+        return local_redirect(url_for(session['application']['birthRegistration']['step']))
 
     else:
         form.fathers_name_on_certificate.data = (
@@ -265,7 +266,7 @@ def fathersName():
 
         session['application'] = save_progress()
 
-        return redirect(url_for(session['application']['birthRegistration']['step']))
+        return local_redirect(url_for(session['application']['birthRegistration']['step']))
 
     if request.method == 'GET':
         form.first_name.data = (
@@ -308,7 +309,7 @@ def adopted():
 
         session['application'] = save_progress()
 
-        return redirect(url_for(session['application']['birthRegistration']['step']))
+        return local_redirect(url_for(session['application']['birthRegistration']['step']))
 
     if request.method == 'GET':
         form.adopted.data = (
@@ -339,7 +340,7 @@ def adoptedUK():
 
         session['application'] = save_progress()
 
-        return redirect(url_for(session['application']['birthRegistration']['step']))
+        return local_redirect(url_for(session['application']['birthRegistration']['step']))
 
     if request.method == 'GET':
         form.adopted_uk.data = (
@@ -365,7 +366,7 @@ def forces():
         session['application']['birthRegistration']['step'] = 'birthRegistration.checkYourAnswers'
         session['application'] = save_progress()
 
-        return redirect(url_for(session['application']['birthRegistration']['step']))
+        return local_redirect(url_for(session['application']['birthRegistration']['step']))
 
     if request.method == 'GET':
         form.forces.data = (
@@ -389,14 +390,14 @@ def checkYourAnswers():
         session['application']['birthRegistration']['progress'] != ListStatus.IN_REVIEW.name
         and session['application']['birthRegistration']['progress'] != ListStatus.COMPLETED.name
     ):
-        return redirect(url_for('taskList.index'))
+        return local_redirect(url_for('taskList.index'))
 
     if request.method == 'POST':
         session['application']['birthRegistration']['progress'] = ListStatus.COMPLETED.name
         session['application']['birthRegistration']['step'] = 'birthRegistration.checkYourAnswers'
         session['application'] = save_progress()
 
-        return redirect(url_for('taskList.index'))
+        return local_redirect(url_for('taskList.index'))
 
     session['application']['birthRegistration']['progress'] = ListStatus.IN_REVIEW.name
     session['application'] = save_progress()

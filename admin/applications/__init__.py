@@ -1,9 +1,10 @@
 from datetime import datetime
-from flask import Blueprint, render_template, redirect, url_for, session, make_response
+from flask import Blueprint, render_template, url_for, session, make_response
 from grc.utils.decorators import AdminViewerRequired, AdminRequired
 from grc.models import db, Application, ApplicationStatus
 from grc.external_services.aws_s3_client import AwsS3Client
 from grc.birth_registration.forms import AdoptedUKForm
+from grc.utils.redirect import local_redirect
 
 applications = Blueprint('applications', __name__)
 
@@ -109,7 +110,7 @@ def download(reference_number):
         return response
 
     session['message'] = message
-    return redirect(url_for('applications.index', _anchor='downloaded'))
+    return local_redirect(url_for('applications.index', _anchor='downloaded'))
 
 
 @applications.route('/applications/<reference_number>/completed', methods=['GET'])
@@ -131,7 +132,7 @@ def completed(reference_number):
         message = "application updated"
 
     session['message'] = message
-    return redirect(url_for('applications.index', _anchor='completed'))
+    return local_redirect(url_for('applications.index', _anchor='completed'))
 
 
 @applications.route('/applications/<reference_number>/attachments', methods=['GET'])
@@ -160,7 +161,7 @@ def attachments(reference_number):
         return response
 
     session['message'] = message
-    return redirect(url_for('applications.index', _anchor='completed'))
+    return local_redirect(url_for('applications.index', _anchor='completed'))
 
 
 @applications.route('/applications/<reference_number>/delete', methods=['GET'])
@@ -180,4 +181,4 @@ def delete(reference_number):
         message = "application deleted"
 
     session['message'] = message
-    return redirect(url_for('applications.index', _anchor='new'))
+    return local_redirect(url_for('applications.index', _anchor='new'))
