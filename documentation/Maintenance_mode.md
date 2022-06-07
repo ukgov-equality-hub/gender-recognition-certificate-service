@@ -18,7 +18,22 @@ We use the [Gov.UK Design System "Service unavailable" pattern](https://design-s
 All pages on the website will be replaced with a page saying "Sorry, the service is unavailable"
 
 
-## How to activate / deactivate Maintenance Mode
+## How to activate / deactivate Maintenance Mode (via GitHub Actions)
+
+The simplest way to activate / deactivate Maintenance Mode is via GitHub Actions.
+
+* Go to [The "Maintenance Mode" GitHub Action](https://github.com/cabinetoffice/grc-app/actions/workflows/maintenance-mode.yml)
+* Click "Run workflow"
+* Select the **Environment** (sandbox, staging or production)
+* Select the **Maintenance Mode** setting (ON or OFF)
+* Click "Run workflow"  
+  <img src="screenshot-of-setting-maintenance-mode-via-GitHub-Actions.png" width="717" alt="Screenshot of setting Maintenance Mode via GitHub Actions">
+* The GitHub Action should then run and turn Maintenance Mode on or off for the environment you selected.  
+  Check the result of the workflow to check this was successful
+* Check the application itself to ensure Maintenance Mode is working (enabled or disabled) as you expect
+
+
+## How to activate / deactivate Maintenance Mode (via the command line)
 
 * Follow the instructions on the [Hosting and live databases](Hosting_and_live_databases.md) page to connect to the hosting environments
 
