@@ -42,6 +42,8 @@ class Config:
     AWS_S3_SIGNATURE_VERSION = "s3v4"
     BUCKET_NAME = os.environ.get("BUCKET_NAME")
     JOB_TOKEN = os.environ.get("JOB_TOKEN")
+    BASIC_AUTH_USERNAME = os.environ.get("BASIC_AUTH_USERNAME")
+    BASIC_AUTH_PASSWORD = os.environ.get("BASIC_AUTH_PASSWORD")
 
 
 class DevConfig(Config):

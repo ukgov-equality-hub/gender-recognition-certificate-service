@@ -6,6 +6,7 @@ from flask_uuid import FlaskUUID
 from grc.models import db
 from grc.utils import filters
 from grc.config import Config, DevConfig, TestConfig
+from grc.utils.http_basic_authentication import HttpBasicAuthentication
 from grc.utils.maintenance_mode import Maintenance
 from grc.utils.custom_error_handlers import CustomErrorHandlers
 
@@ -34,6 +35,10 @@ def create_app(test_config=None):
     if app.config['MAINTENANCE_MODE'] == 'ON':
         Maintenance(app)
         return app
+
+    # Require HTTP Basic Authentication if both the username and password are set
+    if app.config['BASIC_AUTH_USERNAME'] and app.config['BASIC_AUTH_PASSWORD']:
+        HttpBasicAuthentication(app)
 
     # Database
     db.init_app(app)
