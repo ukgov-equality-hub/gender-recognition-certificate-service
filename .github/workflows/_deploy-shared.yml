@@ -1,4 +1,4 @@
-name: 'Deploy (_shared functionality_)'
+name: '(shared functionality) Deploy'
 
 on:
   workflow_call:

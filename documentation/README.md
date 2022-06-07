@@ -18,6 +18,9 @@ Environments and deployments:
 Database:
 * TODO Database migrations
 
+Backups:
+* [Backing up the database and files externally to Gov.UK PaaS](External_backups.md)
+
 How-to:
 * [How to put the service into Maintenance Mode / "Service unavailable"](Maintenance_mode.md)
 
