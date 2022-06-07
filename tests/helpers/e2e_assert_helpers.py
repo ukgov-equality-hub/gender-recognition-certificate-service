@@ -1,5 +1,4 @@
-from typing import List
-
+import re
 from playwright.async_api import Page
 from tests.accessibility.accessibility_checks import AccessibilityChecks
 from tests.helpers.e2e_page_helpers import PageHelpers, clean_string
@@ -20,11 +19,13 @@ class AssertHelpers:
 
     async def url(self, expected_url: str):
         await self.page.wait_for_load_state()
-        actual_url = self.page.url[len(self.base_url):]
-        hash_position = actual_url.find('#')
-        if hash_position != -1:
-            actual_url = actual_url[:hash_position]
+        actual_url = get_url_path(self.page.url)
         assert_equal(actual_url, expected_url)
+
+    async def url_matches_regex(self, expected_url_regex: str):
+        await self.page.wait_for_load_state()
+        actual_url = get_url_path(self.page.url)
+        assert_matches_regex(actual_url, expected_url_regex)
 
     async def error(self, field: str, message: str):
         error_summary_message = clean_string(await self.page.inner_text(f".govuk-error-summary__list a[href=\"#{field}\"]"))
@@ -142,6 +143,24 @@ class AssertHelpers:
         assert_equal(matching_elements, 1)
 
 
+def get_url_path(url: str):
+    if url.startswith('http://'):
+        url = url[7:]
+    elif url.startswith('https://'):
+        url = url[8:]
+
+    first_slash_position = url.find('/')
+    url = url[first_slash_position:]
+
+    question_mark_position = url.find('?')
+    if question_mark_position != -1:
+        url = url[:question_mark_position]
+
+    hash_position = url.find('#')
+    if hash_position != -1:
+        url = url[:hash_position]
+    return url
+
 # This method looks pointless, but helps give informative stack traces
 # The parameter values are shown in the stack trace,
 #   so it's really clear to see what the expected and actual values are
@@ -151,3 +170,12 @@ def assert_equal(actual_value, expected_value):
               f"- actual value: ({actual_value})\n"
               f"- expected value: ({expected_value})", flush=True)
     assert actual_value == expected_value
+
+def assert_matches_regex(actual_value, expected_regex):
+    pattern = re.compile(expected_regex)
+    matches = pattern.match(actual_value)
+    if matches is None:
+        print(f"Actual value does not match expected regex\n"
+              f"- actual value: ({actual_value})\n"
+              f"- expected regex: ({expected_regex})", flush=True)
+    assert matches is not None
