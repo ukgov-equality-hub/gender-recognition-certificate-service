@@ -114,7 +114,38 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(0)
 
     # Copy reference number so we can use it later
+    initial_reference_number_on_reference_number_page = await page.inner_text('#reference-number')
+
+    # Clicking "Back" should take us to the Is First Visit page
+    await helpers.click_button('Back')
+
+    # ------------------------------------------------
+    # ---- Is First Visit page
+    # ------------------------------------------------
+    await asserts.url('/is-first-visit')
+    await asserts.accessibility()
+    await asserts.h1('Have you already started an application?')
+    await asserts.number_of_errors(0)
+
+    # Choose the "No" (this is my first visit) option
+    await helpers.check_radio(field='isFirstVisit', value='FIRST_VISIT')
+    await helpers.click_button('Continue')
+
+    # ------------------------------------------------
+    # ---- Reference Number page
+    # ------------------------------------------------
+    await asserts.url('/reference-number')
+    await asserts.accessibility()
+    await asserts.h1('Your reference number')
+    await asserts.number_of_errors(0)
+
+    # Copy reference number so we can use it later
     reference_number_on_reference_number_page = await page.inner_text('#reference-number')
+
+    # The reference number should be different to the one we saw earlier
+    assert reference_number_on_reference_number_page != initial_reference_number_on_reference_number_page
+
+    # CLick "Continue"
     await helpers.click_button('Continue')
 
     # ------------------------------------------------

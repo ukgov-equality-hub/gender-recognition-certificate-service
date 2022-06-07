@@ -128,6 +128,15 @@ def returnToIsFirstVisitPageWithInvalidReferenceError(form):
     return render_template('start-application/is-first-visit.html', form=form)
 
 
+@startApplication.route('/back-to-is-first-visit', methods=['GET', 'POST'])
+@LoginRequired
+def backToIsFirstVisit():
+    application = loadApplicationFromDatabaseByReferenceNumber(session['reference_number'])
+    session.clear()  # Clear out session['reference_number'] session['application']
+    session['validatedEmail'] = application.email
+    return local_redirect(url_for('startApplication.isFirstVisit'))
+
+
 @startApplication.route('/reference-number', methods=['GET'])
 @LoginRequired
 def reference():
