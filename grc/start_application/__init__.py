@@ -1,6 +1,6 @@
 from flask import Blueprint, flash, render_template, request, url_for, session
 from grc.models import ListStatus, Application, ApplicationStatus
-from grc.start_application.forms import SaveYourApplicationForm, ValidateEmailForm, OverseasCheckForm, \
+from grc.start_application.forms import EmailAddressForm, SecurityCodeForm, OverseasCheckForm, \
     OverseasApprovedCheckForm, DeclerationForm, IsFirstVisitForm
 from grc.utils.security_code import send_security_code
 from grc.utils.decorators import EmailRequired, LoginRequired, Unauthorized, ValidatedEmailRequired
@@ -14,14 +14,14 @@ startApplication = Blueprint('startApplication', __name__)
 @startApplication.route('/', methods=['GET', 'POST'])
 @Unauthorized
 def index():
-    form = SaveYourApplicationForm()
+    form = EmailAddressForm()
 
     if form.validate_on_submit():
         session.clear()
         session['email'] = form.email.data
         try:
             send_security_code(form.email.data)
-            return local_redirect(url_for('startApplication.emailConfirmation'))
+            return local_redirect(url_for('startApplication.securityCode'))
         except BaseException as err:
             error = err.args[0].json()
             flash(error['errors'][0]['message'], 'error')
@@ -32,11 +32,11 @@ def index():
     )
 
 
-@startApplication.route('/email-confirmation', methods=['GET', 'POST'])
+@startApplication.route('/security-code', methods=['GET', 'POST'])
 @EmailRequired
 @Unauthorized
-def emailConfirmation():
-    form = ValidateEmailForm()
+def securityCode():
+    form = SecurityCodeForm()
 
     if request.method == 'POST':
         if form.validate_on_submit():
@@ -56,8 +56,6 @@ def emailConfirmation():
     return render_template(
         'security-code.html',
         form=form,
-        action=url_for('startApplication.emailConfirmation'),
-        back=url_for('startApplication.index'),
         email=session['email']
     )
 

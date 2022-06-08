@@ -20,13 +20,13 @@ async def fill_in_application(page: Page, asserts: AssertHelpers, helpers: PageH
     # ------------------------------------------------
     # ---- Security Code page
     # ------------------------------------------------
-    await asserts.url('/email-confirmation')
+    await asserts.url('/security-code')
     await asserts.accessibility()
     await asserts.h1('Enter security code')
     await asserts.number_of_errors(0)
 
     # Enter a valid Security Code, click Continue button
-    await helpers.fill_textbox(field='code', value='11111')
+    await helpers.fill_textbox(field='security_code', value='11111')
     await helpers.click_button('Continue')
 
     # ------------------------------------------------

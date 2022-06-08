@@ -4,7 +4,7 @@ from wtforms.validators import DataRequired, Email
 from grc.utils.form_custom_validators import validateSecurityCode, validateReferenceNumber, StrictRequiredIf
 
 
-class SaveYourApplicationForm(FlaskForm):
+class EmailAddressForm(FlaskForm):
     email = EmailField(
         validators=[
             DataRequired(message='Enter your email address'),
@@ -13,9 +13,8 @@ class SaveYourApplicationForm(FlaskForm):
     )
 
 
-class ValidateEmailForm(FlaskForm):
-    code = StringField(
-        'code',
+class SecurityCodeForm(FlaskForm):
+    security_code = StringField(
         validators=[DataRequired(message='Enter a security code'), validateSecurityCode]
     )
 
