@@ -23,18 +23,15 @@ def index():
 
     if form.validate_on_submit():
         session['application']['submitAndPay']['method'] = form.applying_for_help_with_fee.data
+        session['application'] = save_progress()
 
         if form.applying_for_help_with_fee.data == 'Help':
             session['application']['submitAndPay']['progress'] = ListStatus.IN_PROGRESS.name
-            session['application']['submitAndPay']['step'] = 'submitAndPay.helpType'
+            return local_redirect(url_for('submitAndPay.helpType'))
         else:
             session['application']['submitAndPay'].pop('helpType', None)
             session['application']['submitAndPay']['progress'] = ListStatus.IN_REVIEW.name
-            session['application']['submitAndPay']['step'] = 'submitAndPay.checkYourAnswers'
-
-        session['application'] = save_progress()
-
-        return local_redirect(url_for(session['application']['submitAndPay']['step']))
+            return local_redirect(url_for('submitAndPay.checkYourAnswers'))
 
     if request.method == 'GET':
         form.applying_for_help_with_fee.data = (
@@ -67,10 +64,9 @@ def helpType():
                 session['application']['submitAndPay']['referenceNumber'] = None
 
             session['application']['submitAndPay']['progress'] = ListStatus.IN_REVIEW.name
-            session['application']['submitAndPay']['step'] = 'submitAndPay.checkYourAnswers'
             session['application'] = save_progress()
 
-            return local_redirect(url_for(session['application']['submitAndPay']['step']))
+            return local_redirect(url_for('submitAndPay.checkYourAnswers'))
 
     if request.method == 'GET' and 'helpType' in session['application']['submitAndPay']:
         form.how_applying_for_fees.data = session['application']['submitAndPay']['helpType']
@@ -95,10 +91,9 @@ def checkYourAnswers():
 
         if session['application']['submitAndPay']['method'] == 'Help':
             session['application']['submitAndPay']['progress'] = ListStatus.COMPLETED.name
-            session['application']['submitAndPay']['step'] = 'submitAndPay.confirmation'
             session['application'] = save_progress()
 
-            return local_redirect(url_for(session['application']['submitAndPay']['step']))
+            return local_redirect(url_for('submitAndPay.confirmation'))
         else:
             random_uuid = str(uuid.uuid4())
             data = {
@@ -158,7 +153,6 @@ def paymentConfirmation(id):
             res = json.loads(r.text)
             if res['state']['status'] == 'success' and res['state']['finished'] == True:
                 session['application']['submitAndPay']['progress'] = ListStatus.COMPLETED.name
-                session['application']['submitAndPay']['step'] = 'submitAndPay.confirmation'
                 session['application']['submitAndPay']['paymentDetails'] = r.text
                 session['application'] = save_progress()
                 return local_redirect(url_for('submitAndPay.confirmation'))

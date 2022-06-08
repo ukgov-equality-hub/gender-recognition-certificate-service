@@ -22,11 +22,14 @@ def index():
 
         if ListStatus[session['application']['birthRegistration']['progress']] == ListStatus.NOT_STARTED:
             session['application']['birthRegistration']['progress'] = ListStatus.IN_PROGRESS.name
-            session['application']['birthRegistration']['step'] = 'birthRegistration.dob'
 
         session['application'] = save_progress()
 
-        return local_redirect(url_for(session['application']['birthRegistration']['step']))
+        next_page = ('birthRegistration.checkYourAnswers'
+                     if ListStatus[session['application']['birthRegistration']['progress']] == ListStatus.IN_REVIEW
+                     else 'birthRegistration.dob')
+
+        return local_redirect(url_for(next_page))
 
     if request.method == 'GET':
         form.first_name.data = (
@@ -60,13 +63,13 @@ def dob():
         session['application']['birthRegistration']['dob']['day'] = form.day.data
         session['application']['birthRegistration']['dob']['month'] = form.month.data
         session['application']['birthRegistration']['dob']['year'] = form.year.data
-
-        if ListStatus[session['application']['birthRegistration']['progress']] == ListStatus.IN_PROGRESS:
-            session['application']['birthRegistration']['step'] = 'birthRegistration.ukCheck'
-
         session['application'] = save_progress()
 
-        return local_redirect(url_for(session['application']['birthRegistration']['step']))
+        next_page = ('birthRegistration.checkYourAnswers'
+                     if ListStatus[session['application']['birthRegistration']['progress']] == ListStatus.IN_REVIEW
+                     else 'birthRegistration.ukCheck')
+
+        return local_redirect(url_for(next_page))
 
     if request.method == 'GET' and 'dob' in session['application']['birthRegistration']:
         form.day.data = (
@@ -95,23 +98,22 @@ def ukCheck():
 
     if form.validate_on_submit():
         session['application']['birthRegistration']['ukCheck'] = form.birth_registered_in_uk.data
+        session['application'] = save_progress()
 
         if form.birth_registered_in_uk.data == 'Yes':
             if 'place_of_birth' in session['application']['birthRegistration']:
-                session['application']['birthRegistration']['step'] = 'birthRegistration.checkYourAnswers'
+                next_page = 'birthRegistration.checkYourAnswers'
             else:
                 session['application']['birthRegistration']['progress'] = ListStatus.IN_PROGRESS.name
-                session['application']['birthRegistration']['step'] = 'birthRegistration.placeOfBirth'
+                next_page = 'birthRegistration.placeOfBirth'
         else:
             if 'country' in session['application']['birthRegistration']:
-                session['application']['birthRegistration']['step'] = 'birthRegistration.checkYourAnswers'
+                next_page = 'birthRegistration.checkYourAnswers'
             else:
                 session['application']['birthRegistration']['progress'] = ListStatus.IN_PROGRESS.name
-                session['application']['birthRegistration']['step'] = 'birthRegistration.country'
+                next_page = 'birthRegistration.country'
 
-        session['application'] = save_progress()
-
-        return local_redirect(url_for(session['application']['birthRegistration']['step']))
+        return local_redirect(url_for(next_page))
 
     else:
         form.birth_registered_in_uk.data = (
@@ -134,10 +136,9 @@ def country():
     if form.validate_on_submit():
         session['application']['birthRegistration']['country'] = form.country_of_birth.data
         session['application']['birthRegistration']['progress'] = ListStatus.IN_REVIEW.name
-        session['application']['birthRegistration']['step'] = 'birthRegistration.checkYourAnswers'
         session['application'] = save_progress()
 
-        return local_redirect(url_for(session['application']['birthRegistration']['step']))
+        return local_redirect(url_for('birthRegistration.checkYourAnswers'))
 
     if request.method == 'GET':
         form.country_of_birth.data = (
@@ -158,15 +159,13 @@ def placeOfBirth():
 
     if form.validate_on_submit():
         session['application']['birthRegistration']['place_of_birth'] = form.place_of_birth.data
-
-        if ListStatus[session['application']['birthRegistration']['progress']] == ListStatus.IN_PROGRESS:
-            session['application']['birthRegistration']['step'] = 'birthRegistration.mothersName'
-        else:
-            session['application']['birthRegistration']['step'] = 'birthRegistration.checkYourAnswers'
-
         session['application'] = save_progress()
 
-        return local_redirect(url_for(session['application']['birthRegistration']['step']))
+        next_page = ('birthRegistration.checkYourAnswers'
+                     if ListStatus[session['application']['birthRegistration']['progress']] == ListStatus.IN_REVIEW
+                     else 'birthRegistration.mothersName')
+
+        return local_redirect(url_for(next_page))
 
     if request.method == 'GET':
         form.place_of_birth.data = (
@@ -189,13 +188,13 @@ def mothersName():
         session['application']['birthRegistration']['mothers_first_name'] = form.first_name.data
         session['application']['birthRegistration']['mothers_last_name'] = form.last_name.data
         session['application']['birthRegistration']['mothers_maiden_name'] = form.maiden_name.data
-
-        if ListStatus[session['application']['birthRegistration']['progress']] == ListStatus.IN_PROGRESS:
-            session['application']['birthRegistration']['step'] = 'birthRegistration.fathersNameCheck'
-
         session['application'] = save_progress()
 
-        return local_redirect(url_for(session['application']['birthRegistration']['step']))
+        next_page = ('birthRegistration.checkYourAnswers'
+                     if ListStatus[session['application']['birthRegistration']['progress']] == ListStatus.IN_REVIEW
+                     else 'birthRegistration.fathersNameCheck')
+
+        return local_redirect(url_for(next_page))
 
     if request.method == 'GET':
         form.first_name.data = (
@@ -225,17 +224,21 @@ def fathersNameCheck():
     if form.validate_on_submit():
         session['application']['birthRegistration']['fathersNameCheck'] = form.fathers_name_on_certificate.data
 
-        if ListStatus[session['application']['birthRegistration']['progress']] == ListStatus.IN_PROGRESS:
-            if form.fathers_name_on_certificate.data == 'Yes':
-                session['application']['birthRegistration']['step'] = 'birthRegistration.fathersName'
-            else:
-                session['application']['birthRegistration']['step'] = 'birthRegistration.adopted'
-        elif form.fathers_name_on_certificate.data == 'Yes':
-            session['application']['birthRegistration']['step'] = 'birthRegistration.fathersName'
-
         session['application'] = save_progress()
 
-        return local_redirect(url_for(session['application']['birthRegistration']['step']))
+        if form.fathers_name_on_certificate.data == 'Yes' and \
+            ('fathers_first_name' not in session['application']['birthRegistration'] or
+             'fathers_last_name' not in session['application']['birthRegistration']):
+            # We are missing Father's Name - go to that page (even if we're IN_REVIEW)
+            next_page = 'birthRegistration.fathersName'
+        elif ListStatus[session['application']['birthRegistration']['progress']] == ListStatus.IN_REVIEW:
+            next_page = 'birthRegistration.checkYourAnswers'
+        elif form.fathers_name_on_certificate.data == 'Yes':
+            next_page = 'birthRegistration.fathersName'
+        else:
+            next_page = 'birthRegistration.adopted'
+
+        return local_redirect(url_for(next_page))
 
     else:
         form.fathers_name_on_certificate.data = (
@@ -258,15 +261,13 @@ def fathersName():
     if form.validate_on_submit():
         session['application']['birthRegistration']['fathers_first_name'] = form.first_name.data
         session['application']['birthRegistration']['fathers_last_name'] = form.last_name.data
-
-        if ListStatus[session['application']['birthRegistration']['progress']] == ListStatus.IN_PROGRESS:
-            session['application']['birthRegistration']['step'] = 'birthRegistration.adopted'
-        else:
-            session['application']['birthRegistration']['step'] = 'birthRegistration.checkYourAnswers'
-
         session['application'] = save_progress()
 
-        return local_redirect(url_for(session['application']['birthRegistration']['step']))
+        next_page = ('birthRegistration.checkYourAnswers'
+                     if ListStatus[session['application']['birthRegistration']['progress']] == ListStatus.IN_REVIEW
+                     else 'birthRegistration.adopted')
+
+        return local_redirect(url_for(next_page))
 
     if request.method == 'GET':
         form.first_name.data = (
@@ -299,17 +300,20 @@ def adopted():
         if form.adopted.data == 'No':
             session['application']['birthRegistration'].pop('adopted_uk', None)
 
-        if ListStatus[session['application']['birthRegistration']['progress']] == ListStatus.IN_PROGRESS:
-            if session['application']['birthRegistration']['adopted'] == 'Yes':
-                session['application']['birthRegistration']['step'] = 'birthRegistration.adoptedUK'
-            else:
-                session['application']['birthRegistration']['step'] = 'birthRegistration.forces'
-        elif form.adopted.data == 'Yes':
-            session['application']['birthRegistration']['step'] = 'birthRegistration.adoptedUK'
-
         session['application'] = save_progress()
 
-        return local_redirect(url_for(session['application']['birthRegistration']['step']))
+        if form.adopted.data == 'Yes' and \
+            ('adopted_uk' not in session['application']['birthRegistration']):
+            # We are missing "Adopted in the UK" - go to that page (even if we're IN_REVIEW)
+            next_page = 'birthRegistration.adoptedUK'
+        elif ListStatus[session['application']['birthRegistration']['progress']] == ListStatus.IN_REVIEW:
+            next_page = 'birthRegistration.checkYourAnswers'
+        elif form.adopted.data == 'Yes':
+            next_page = 'birthRegistration.adoptedUK'
+        else:
+            next_page = 'birthRegistration.forces'
+
+        return local_redirect(url_for(next_page))
 
     if request.method == 'GET':
         form.adopted.data = (
@@ -332,15 +336,13 @@ def adoptedUK():
 
     if form.validate_on_submit():
         session['application']['birthRegistration']['adopted_uk'] = form.adopted_uk.data
-
-        if ListStatus[session['application']['birthRegistration']['progress']] == ListStatus.IN_PROGRESS:
-            session['application']['birthRegistration']['step'] = 'birthRegistration.forces'
-        else:
-            session['application']['birthRegistration']['step'] = 'birthRegistration.checkYourAnswers'
-
         session['application'] = save_progress()
 
-        return local_redirect(url_for(session['application']['birthRegistration']['step']))
+        next_page = ('birthRegistration.checkYourAnswers'
+                     if ListStatus[session['application']['birthRegistration']['progress']] == ListStatus.IN_REVIEW
+                     else 'birthRegistration.forces')
+
+        return local_redirect(url_for(next_page))
 
     if request.method == 'GET':
         form.adopted_uk.data = (
@@ -363,10 +365,9 @@ def forces():
     if form.validate_on_submit():
         session['application']['birthRegistration']['forces'] = form.forces.data
         session['application']['birthRegistration']['progress'] = ListStatus.IN_REVIEW.name
-        session['application']['birthRegistration']['step'] = 'birthRegistration.checkYourAnswers'
         session['application'] = save_progress()
 
-        return local_redirect(url_for(session['application']['birthRegistration']['step']))
+        return local_redirect(url_for('birthRegistration.checkYourAnswers'))
 
     if request.method == 'GET':
         form.forces.data = (
@@ -394,7 +395,6 @@ def checkYourAnswers():
 
     if request.method == 'POST':
         session['application']['birthRegistration']['progress'] = ListStatus.COMPLETED.name
-        session['application']['birthRegistration']['step'] = 'birthRegistration.checkYourAnswers'
         session['application'] = save_progress()
 
         return local_redirect(url_for('taskList.index'))

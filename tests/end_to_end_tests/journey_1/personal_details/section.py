@@ -115,8 +115,19 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.task_list_section(section='Submit and pay', expected_status='CANNOT START YET')
 
     # Click "Your personal details"
-    # This should now take you to the Affirmed Gender page
+    # This should now take you to the "Your Name" page
     await helpers.click_button('Your personal details')
+
+    # ------------------------------------------------
+    # ---- Your Name page
+    # ------------------------------------------------
+    await asserts.url('/personal-details')
+    await asserts.accessibility()
+    await asserts.h1('What is your name?')
+    await asserts.number_of_errors(0)
+
+    # Continue on to the Affirmed Gender page
+    await helpers.click_button('Save and continue')
 
     # ------------------------------------------------
     # ---- Affirmed Gender page

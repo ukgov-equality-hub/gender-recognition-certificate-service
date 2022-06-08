@@ -54,48 +54,37 @@ class Application(db.Model):
                     "overseasCheck": "None",
                     "overseasApprovedCheck": "None",
                     "declaration": "None",
-                    "progress": ListStatus.IN_PROGRESS.name,
-                    "step": "startApplication.reference",
+                    "progress": ListStatus.IN_PROGRESS.name
                 },
                 "personalDetails": {
-                    "progress": ListStatus.NOT_STARTED.name,
-                    "step": "personalDetails.index",
+                    "progress": ListStatus.NOT_STARTED.name
                 },
                 "birthRegistration": {
-                    "progress": ListStatus.NOT_STARTED.name,
-                    "step": "birthRegistration.index",
+                    "progress": ListStatus.NOT_STARTED.name
                 },
                 "partnershipDetails": {
-                    "progress": ListStatus.NOT_STARTED.name,
-                    "step": "partnershipDetails.index",
+                    "progress": ListStatus.NOT_STARTED.name
                 },
                 "medicalReports": {
-                    "progress": ListStatus.CANNOT_START_YET.name,
-                    "step": "upload.medicalReports",
+                    "progress": ListStatus.CANNOT_START_YET.name
                 },
                 "genderEvidence": {
-                    "progress": ListStatus.CANNOT_START_YET.name,
-                    "step": "upload.genderEvidence",
+                    "progress": ListStatus.CANNOT_START_YET.name
                 },
                 "nameChange": {
-                    "progress": ListStatus.CANNOT_START_YET.name,
-                    "step": "upload.nameChange",
+                    "progress": ListStatus.CANNOT_START_YET.name
                 },
                 "marriageDocuments": {
-                    "progress": ListStatus.CANNOT_START_YET.name,
-                    "step": "upload.marriageDocuments",
+                    "progress": ListStatus.CANNOT_START_YET.name
                 },
                 "overseasCertificate": {
-                    "progress": ListStatus.CANNOT_START_YET.name,
-                    "step": "overseasCertificate.index"
+                    "progress": ListStatus.CANNOT_START_YET.name
                 },
                 "statutoryDeclarations": {
-                    "progress": ListStatus.NOT_STARTED.name,
-                    "step": "upload.statutoryDeclarations",
+                    "progress": ListStatus.NOT_STARTED.name
                 },
                 "submitAndPay": {
-                    "progress": ListStatus.CANNOT_START_YET.name,
-                    "step": "submitAndPay.index",
+                    "progress": ListStatus.CANNOT_START_YET.name
                 },
             }
 
