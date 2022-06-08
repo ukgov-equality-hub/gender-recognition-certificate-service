@@ -45,22 +45,23 @@ def uploadInfoPage(section_url: str):
         if 'files' not in session['application'][section.data_section]:
             session['application'][section.data_section]['files'] = []
 
-        for document in request.files.getlist('documents'):
-            filename = secure_filename(document.filename)
-            object_name = session['application']['reference_number'] + '__' + section.data_section + '__' + filename
-            AwsS3Client().upload_fileobj(document, object_name)
-            session['application'][section.data_section]['files'].append(object_name)
+        if form.button_clicked.data == 'Upload file':
+            for document in request.files.getlist('documents'):
+                filename = secure_filename(document.filename)
+                object_name = session['application']['reference_number'] + '__' + section.data_section + '__' + filename
+                AwsS3Client().upload_fileobj(document, object_name)
+                session['application'][section.data_section]['files'].append(object_name)
 
-        session['application'][section.data_section]['progress'] = ListStatus.COMPLETED.name
-        session['application'] = save_progress()
+            session['application'][section.data_section]['progress'] = ListStatus.COMPLETED.name
+            session['application'] = save_progress()
 
-        if not form.more_files.data == True:
-            return local_redirect(url_for('taskList.index'))
-        else:
             return local_redirect(url_for('upload.uploadInfoPage', section_url=section.url) + '#file-upload-section')
 
-    elif request.method == 'POST' and 'document' not in request.files and 'files' in session['application'][section.data_section] and len(session['application'][section.data_section]['files']) > 0:
-        return local_redirect(url_for('taskList.index'))
+        elif form.button_clicked.data == 'Save and continue':
+            if len(session['application'][section.data_section]['files']) > 0:
+                return local_redirect(url_for('taskList.index'))
+            else:
+                form.documents.errors.append('Select a JPG, BMP, PNG, TIF or PDF file smaller than 10MB')
 
     if request.method == 'GET' and 'files' in session['application'][section.data_section] and len(session['application'][section.data_section]['files']) == 0:
         session['application'][section.data_section]['progress'] = ListStatus.IN_PROGRESS.name

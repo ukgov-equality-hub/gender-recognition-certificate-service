@@ -29,7 +29,7 @@ class AccessibilityChecks:
 
     async def check_accessibility_every_input_has_a_label(self, page: Page):
         print_now("|  Checking that every <input> element has exactly one matching <label> element")
-        input_elements = page.locator('input:not([type="hidden"])')
+        input_elements = page.locator('input:not([type="hidden"]):not([type="submit"])')
         number_of_input_elements = await input_elements.count()
         print_now(f"|  |  Found {number_of_input_elements} <input> elements")
 

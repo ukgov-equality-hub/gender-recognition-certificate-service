@@ -390,6 +390,13 @@ async def fill_in_application(page: Page, asserts: AssertHelpers, helpers: PageH
 
     # Upload a valid document
     await helpers.upload_file_valid(field='documents', file_name=DOCUMENT_ONE_NAME)
+    await helpers.click_button('Upload file')
+    await asserts.url('/upload/name-change')
+    await asserts.accessibility()
+    await asserts.h1('Upload name change documents')
+    await asserts.number_of_errors(0)
+    await asserts.documents_uploaded(1)
+
     await helpers.click_button('Save and continue')
 
     # ------------------------------------------------
@@ -416,6 +423,13 @@ async def fill_in_application(page: Page, asserts: AssertHelpers, helpers: PageH
 
     # Upload a valid document
     await helpers.upload_file_valid(field='documents', file_name=DOCUMENT_ONE_NAME)
+    await helpers.click_button('Upload file')
+    await asserts.url('/upload/marriage-documents')
+    await asserts.accessibility()
+    await asserts.h1('Upload marriage and civil partnership documents')
+    await asserts.number_of_errors(0)
+    await asserts.documents_uploaded(1)
+
     await helpers.click_button('Save and continue')
 
     # ------------------------------------------------
@@ -430,7 +444,7 @@ async def fill_in_application(page: Page, asserts: AssertHelpers, helpers: PageH
     await helpers.click_button('Overseas certificate documents')
 
     # ------------------------------------------------
-    # ---- Marriage Documents page
+    # ---- Overseas Certificate page
     # ------------------------------------------------
     await asserts.url('/upload/overseas-certificate')
     await asserts.accessibility()
@@ -442,6 +456,13 @@ async def fill_in_application(page: Page, asserts: AssertHelpers, helpers: PageH
 
     # Upload a valid document
     await helpers.upload_file_valid(field='documents', file_name=DOCUMENT_ONE_NAME)
+    await helpers.click_button('Upload file')
+    await asserts.url('/upload/overseas-certificate')
+    await asserts.accessibility()
+    await asserts.h1('Overseas gender recognition certificate documents')
+    await asserts.number_of_errors(0)
+    await asserts.documents_uploaded(1)
+
     await helpers.click_button('Save and continue')
 
     # ------------------------------------------------
@@ -456,7 +477,7 @@ async def fill_in_application(page: Page, asserts: AssertHelpers, helpers: PageH
     await helpers.click_button('Statutory declarations')
 
     # ------------------------------------------------
-    # ---- Marriage Documents page
+    # ---- Statutory Declarations page
     # ------------------------------------------------
     await asserts.url('/upload/statutory-declarations')
     await asserts.accessibility()
@@ -468,6 +489,13 @@ async def fill_in_application(page: Page, asserts: AssertHelpers, helpers: PageH
 
     # Upload a valid document
     await helpers.upload_file_valid(field='documents', file_name=DOCUMENT_ONE_NAME)
+    await helpers.click_button('Upload file')
+    await asserts.url('/upload/statutory-declarations')
+    await asserts.accessibility()
+    await asserts.h1('Statutory declarations documents')
+    await asserts.number_of_errors(0)
+    await asserts.documents_uploaded(1)
+
     await helpers.click_button('Save and continue')
 
     # ------------------------------------------------

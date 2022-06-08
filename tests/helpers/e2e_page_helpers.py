@@ -6,13 +6,17 @@ class PageHelpers:
         self.page: Page = page
 
     async def click_button(self, link_text):
-        links_and_buttons = self.page.locator('a, button')
+        links_and_buttons = self.page.locator('a, button, input[type="submit"]')
         number_of_links_and_buttons = await links_and_buttons.count()
         found_index = None
         for n in range(number_of_links_and_buttons):
             link_or_button = links_and_buttons.nth(n)
-            link_or_button_inner_text = await link_or_button.inner_text()
-            normalised_inner_text = clean_string(link_or_button_inner_text)
+            tag_name: str = await link_or_button.evaluate('e => e.tagName')
+            if tag_name.lower() == 'input':
+                link_or_button_text = await link_or_button.get_attribute('value')
+            else:
+                link_or_button_text = await link_or_button.inner_text()
+            normalised_inner_text = clean_string(link_or_button_text)
             if normalised_inner_text == link_text:
                 if found_index is None:
                     found_index = n
