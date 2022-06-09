@@ -64,3 +64,4 @@ cryptography==37.0.2
 stream-zip==0.0.47
 aiozipstream==0.4
 smart-open==6.0.0
+pyAesCrypt==6.0.0

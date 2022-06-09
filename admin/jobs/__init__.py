@@ -1,4 +1,5 @@
 import os
+import io
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from flask import Blueprint, request, current_app
@@ -175,6 +176,7 @@ def backup_files1():
 def backup_files2():
     import time
     from zipstream import ZipStream
+    import pyAesCrypt
     from grc.external_services.aws_s3_client import AwsS3Client
 
     tic = time.perf_counter()
@@ -189,8 +191,20 @@ def backup_files2():
             files.append({'stream': awsclient.stream_download_object(key), 'name': key})
 
         zip_buffer = ZipStream(files, chunksize=32768)
-        backup_file = f"{current_app.config['ENVIRONMENT'].lower()}/backups/{datetime.now().strftime('%Y%m%d%H%M')}.zip"
-        awsclient_external.stream_upload_object(zip_buffer.stream(), backup_file)
+
+        fin = io.BytesIO()
+        for data in zip_buffer.stream():
+            fin.write(data)
+        fin.seek(0)
+
+        buffer_size = 64 * 1024
+        secret_key = os.environ.get('SQLALCHEMY_KEY', '')
+        fout = io.BytesIO()
+        pyAesCrypt.encryptStream(fin, fout, secret_key, buffer_size)
+        fout.seek(0)
+
+        backup_file = f"{current_app.config['ENVIRONMENT'].lower()}/backups/{datetime.now().strftime('%Y%m%d%H%M')}.zip.encrypted"
+        awsclient_external.stream_upload_object(fout, backup_file)  # or zip_buffer.stream() if we want unencrypted data
 
     except Exception as e:
         print(e, flush=True)

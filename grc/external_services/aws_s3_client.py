@@ -139,8 +139,8 @@ class AwsS3Client:
     def stream_download_object(self, object_name):
         try:
             infile_object = self.s3.get_object(Bucket=self.bucket_name, Key=object_name)
-            data = str(infile_object.get('Body', '').read())
-            yield bytes(data, 'utf-8')
+            #data = str(infile_object.get('Body', '').read())
+            yield infile_object.get('Body', '').read() #bytes(data, 'utf-8')
 
         except ClientError as e:
             logging.error(e)
