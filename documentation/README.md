@@ -14,6 +14,7 @@ Environments and deployments:
 * [Our environments](Our_environments.md)
 * [Hosting and live databases](Hosting_and_live_databases.md)
 * [Deployments](Deployments.md)
+* [HTTP Basic Authentication](HTTP_Basic_Authentication.md)
 
 Database:
 * TODO Database migrations
