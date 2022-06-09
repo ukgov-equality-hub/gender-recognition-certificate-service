@@ -48,6 +48,3 @@ def main():
 
 if __name__ == '__main__':
    main()
-
-
-# python3 ./decrypt.py --filein /Users/alistairknight/Downloads/202206091042.zip.encrypted --fileout /Users/alistairknight/Downloads/202206091042.zip --password 7wq2kNJ4SlXuGyXyzPODMleKs8WtVxp9CvJv4sUBEf8=
