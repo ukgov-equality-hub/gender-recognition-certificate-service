@@ -6,6 +6,7 @@ from flask_uuid import FlaskUUID
 from grc.models import db
 from grc.utils import filters
 from admin.config import Config, DevConfig, TestConfig
+from grc.utils.http_basic_authentication import HttpBasicAuthentication
 
 migrate = Migrate()
 flask_uuid = FlaskUUID()
@@ -24,6 +25,10 @@ def create_app(test_config=None):
         config_object = TestConfig
 
     app.config.from_object(config_object)
+
+    # Require HTTP Basic Authentication if both the username and password are set
+    if app.config['BASIC_AUTH_USERNAME'] and app.config['BASIC_AUTH_PASSWORD']:
+        HttpBasicAuthentication(app)
 
     # database
     db.init_app(app)

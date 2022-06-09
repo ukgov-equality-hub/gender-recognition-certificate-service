@@ -44,6 +44,8 @@ class Config:
     BUCKET_NAME = os.environ.get("BUCKET_NAME")
     MAINTENANCE_MODE = os.environ.get("MAINTENANCE_MODE")
     AV_API = os.environ.get("AV_API")
+    BASIC_AUTH_USERNAME = os.environ.get("BASIC_AUTH_USERNAME")
+    BASIC_AUTH_PASSWORD = os.environ.get("BASIC_AUTH_PASSWORD")
 
 
 class DevConfig(Config):
