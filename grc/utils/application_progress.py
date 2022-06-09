@@ -5,8 +5,7 @@ from grc.models import db, Application, ListStatus, ApplicationStatus
 
 def save_progress():
     application_record = Application.query.filter_by(
-        reference_number=session['reference_number'],
-        email=session['email']
+        reference_number=session['reference_number']
     ).first()
 
     def update_application(application_record):
@@ -262,8 +261,7 @@ def calculate_progress_status_colour(value):
 
 def mark_complete():
     application_record = Application.query.filter_by(
-        reference_number=session['reference_number'],
-        email=session['email']
+        reference_number=session['reference_number']
     ).first()
 
     if application_record is not None:

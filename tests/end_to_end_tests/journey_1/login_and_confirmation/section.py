@@ -39,31 +39,31 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     # ------------------------------------------------
     # ---- Security Code page
     # ------------------------------------------------
-    await asserts.url('/email-confirmation')
+    await asserts.url('/security-code')
     await asserts.accessibility()
     await asserts.h1('Enter security code')
     await asserts.number_of_errors(0)
 
     # Don't enter a Security Code, click Continue button, see an error message
-    await helpers.fill_textbox(field='code', value='')
+    await helpers.fill_textbox(field='security_code', value='')
     await helpers.click_button('Continue')
-    await asserts.url('/email-confirmation')
+    await asserts.url('/security-code')
     await asserts.accessibility(page_description='No security code entered')
     await asserts.h1('Enter security code')
     await asserts.number_of_errors(1)
-    await asserts.error(field='code', message='Enter a security code')
+    await asserts.error(field='security_code', message='Enter a security code')
 
     # Enter an invalid Security Code, click Continue button, see an error message
-    await helpers.fill_textbox(field='code', value='4444')  # Note: Don't use a 5-digit code, otherwise this test will break once every 10,000 runs!
+    await helpers.fill_textbox(field='security_code', value='4444')  # Note: Don't use a 5-digit code, otherwise this test will break once every 10,000 runs!
     await helpers.click_button('Continue')
-    await asserts.url('/email-confirmation')
+    await asserts.url('/security-code')
     await asserts.accessibility(page_description='Invalid security code entered')
     await asserts.h1('Enter security code')
     await asserts.number_of_errors(1)
-    await asserts.error(field='code', message='Enter the security code that we emailed you')
+    await asserts.error(field='security_code', message='Enter the security code that we emailed you')
 
     # Enter a valid Security Code, click Continue button
-    await helpers.fill_textbox(field='code', value='11111')
+    await helpers.fill_textbox(field='security_code', value='11111')
     await helpers.click_button('Continue')
 
     # ------------------------------------------------
@@ -114,7 +114,38 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(0)
 
     # Copy reference number so we can use it later
+    initial_reference_number_on_reference_number_page = await page.inner_text('#reference-number')
+
+    # Clicking "Back" should take us to the Is First Visit page
+    await helpers.click_button('Back')
+
+    # ------------------------------------------------
+    # ---- Is First Visit page
+    # ------------------------------------------------
+    await asserts.url('/is-first-visit')
+    await asserts.accessibility()
+    await asserts.h1('Have you already started an application?')
+    await asserts.number_of_errors(0)
+
+    # Choose the "No" (this is my first visit) option
+    await helpers.check_radio(field='isFirstVisit', value='FIRST_VISIT')
+    await helpers.click_button('Continue')
+
+    # ------------------------------------------------
+    # ---- Reference Number page
+    # ------------------------------------------------
+    await asserts.url('/reference-number')
+    await asserts.accessibility()
+    await asserts.h1('Your reference number')
+    await asserts.number_of_errors(0)
+
+    # Copy reference number so we can use it later
     reference_number_on_reference_number_page = await page.inner_text('#reference-number')
+
+    # The reference number should be different to the one we saw earlier
+    assert reference_number_on_reference_number_page != initial_reference_number_on_reference_number_page
+
+    # CLick "Continue"
     await helpers.click_button('Continue')
 
     # ------------------------------------------------
@@ -321,13 +352,13 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     # ------------------------------------------------
     # ---- Security Code page
     # ------------------------------------------------
-    await asserts.url('/email-confirmation')
+    await asserts.url('/security-code')
     await asserts.accessibility()
     await asserts.h1('Enter security code')
     await asserts.number_of_errors(0)
 
     # Enter a valid Security Code, click Continue button
-    await helpers.fill_textbox(field='code', value='11111')
+    await helpers.fill_textbox(field='security_code', value='11111')
     await helpers.click_button('Continue')
 
     # ------------------------------------------------
@@ -368,13 +399,13 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     # ------------------------------------------------
     # ---- Security Code page
     # ------------------------------------------------
-    await asserts.url('/email-confirmation')
+    await asserts.url('/security-code')
     await asserts.accessibility()
     await asserts.h1('Enter security code')
     await asserts.number_of_errors(0)
 
     # Enter a valid Security Code, click Continue button
-    await helpers.fill_textbox(field='code', value='11111')
+    await helpers.fill_textbox(field='security_code', value='11111')
     await helpers.click_button('Continue')
 
     # ------------------------------------------------

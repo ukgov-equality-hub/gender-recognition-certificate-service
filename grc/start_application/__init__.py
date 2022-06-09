@@ -1,6 +1,6 @@
 from flask import Blueprint, flash, render_template, request, url_for, session
 from grc.models import ListStatus, Application, ApplicationStatus
-from grc.start_application.forms import SaveYourApplicationForm, ValidateEmailForm, OverseasCheckForm, \
+from grc.start_application.forms import EmailAddressForm, SecurityCodeForm, OverseasCheckForm, \
     OverseasApprovedCheckForm, DeclerationForm, IsFirstVisitForm
 from grc.utils.security_code import send_security_code
 from grc.utils.decorators import EmailRequired, LoginRequired, Unauthorized, ValidatedEmailRequired
@@ -14,14 +14,14 @@ startApplication = Blueprint('startApplication', __name__)
 @startApplication.route('/', methods=['GET', 'POST'])
 @Unauthorized
 def index():
-    form = SaveYourApplicationForm()
+    form = EmailAddressForm()
 
     if form.validate_on_submit():
         session.clear()
         session['email'] = form.email.data
         try:
             send_security_code(form.email.data)
-            return local_redirect(url_for('startApplication.emailConfirmation'))
+            return local_redirect(url_for('startApplication.securityCode'))
         except BaseException as err:
             error = err.args[0].json()
             flash(error['errors'][0]['message'], 'error')
@@ -32,15 +32,17 @@ def index():
     )
 
 
-@startApplication.route('/email-confirmation', methods=['GET', 'POST'])
+@startApplication.route('/security-code', methods=['GET', 'POST'])
 @EmailRequired
 @Unauthorized
-def emailConfirmation():
-    form = ValidateEmailForm()
+def securityCode():
+    form = SecurityCodeForm()
 
     if request.method == 'POST':
         if form.validate_on_submit():
-            session['validatedEmail'] = session['email']
+            email = session['email']
+            session.clear()  # Clear out session['email']
+            session['validatedEmail'] = email
             return local_redirect(url_for('startApplication.isFirstVisit'))
 
     elif request.args.get('resend') == 'true':
@@ -54,8 +56,6 @@ def emailConfirmation():
     return render_template(
         'security-code.html',
         form=form,
-        action=url_for('startApplication.emailConfirmation'),
-        back=url_for('startApplication.index'),
         email=session['email']
     )
 
@@ -69,8 +69,10 @@ def isFirstVisit():
     if request.method == 'POST':
         if form.validate_on_submit():
             if form.isFirstVisit.data == 'FIRST_VISIT' or form.isFirstVisit.data == 'LOST_REFERENCE':
-                session['reference_number'] = reference_number_generator(session['email'])
-                if session['reference_number'] != False:
+                reference_number = reference_number_generator(session['validatedEmail'])
+                if reference_number != False:
+                    session.clear()  # Clear out session['validatedEmail']
+                    session['reference_number'] = reference_number
                     session['application'] = save_progress()
                     return local_redirect(url_for('startApplication.reference'))
 
@@ -100,6 +102,7 @@ def isFirstVisit():
 
                     elif application.email == session['validatedEmail']:
                         # The reference number is associated with their email address - load the application
+                        session.clear()  # Clear out session['validatedEmail']
                         session['reference_number'] = application.reference_number
                         session['application'] = application.data()
                         save_progress()
@@ -123,6 +126,15 @@ def loadApplicationFromDatabaseByReferenceNumber(reference):
 def returnToIsFirstVisitPageWithInvalidReferenceError(form):
     form.reference.errors.append('Enter a valid reference number')
     return render_template('start-application/is-first-visit.html', form=form)
+
+
+@startApplication.route('/back-to-is-first-visit', methods=['GET', 'POST'])
+@LoginRequired
+def backToIsFirstVisit():
+    application = loadApplicationFromDatabaseByReferenceNumber(session['reference_number'])
+    session.clear()  # Clear out session['reference_number'] session['application']
+    session['validatedEmail'] = application.email
+    return local_redirect(url_for('startApplication.isFirstVisit'))
 
 
 @startApplication.route('/reference-number', methods=['GET'])
