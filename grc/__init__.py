@@ -1,6 +1,7 @@
+import json
 import os
 from datetime import timedelta
-from flask import Flask
+from flask import Flask, g
 from flask_migrate import Migrate
 from flask_uuid import FlaskUUID
 from grc.models import db
@@ -40,6 +41,12 @@ def create_app(test_config=None):
     if app.config['BASIC_AUTH_USERNAME'] and app.config['BASIC_AUTH_PASSWORD']:
         HttpBasicAuthentication(app)
 
+    # Load build info from JSON file
+    f = open('build-info.json')
+    build_info_string = f.read()
+    f.close()
+    build_info = json.loads(build_info_string)
+
     # Database
     db.init_app(app)
     migrate.init_app(app, db)
@@ -50,6 +57,7 @@ def create_app(test_config=None):
     @app.before_request
     def make_before_request():
         app.permanent_session_lifetime = timedelta(hours=24)
+        g.build_info = build_info
 
     @app.after_request
     def add_header(response):

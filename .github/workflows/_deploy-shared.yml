@@ -30,6 +30,10 @@ jobs:
       - name: 'Checkout Code'
         uses: actions/checkout@v3
 
+      - name: 'Save build run info to JSON file'
+        run: |
+          echo '{ "git_commit": "${{ github.sha }}", "git_branch": "${{ github.ref_name }}", "github_action_name": "${{ github.workflow }}", "github_action_run_url": "https://github.com/cabinetoffice/grc-app/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}" }' > build-info.json
+
       - name: 'Install the Cloud Foundry CLI'
         run: |
           wget -q -O - https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key | sudo apt-key add -
