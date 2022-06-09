@@ -10,19 +10,18 @@
 
                     <div class="govuk-summary-list__row">
                         <dd class="govuk-summary-list__value govuk-!-width-full" style="vertical-align: middle;">
-                            {{ item | replace(session['application']['reference_number'] + '__' + section + '__', '') }}
+                            {{ item | replace(session['application']['reference_number'] + '__' + section.data_section + '__', '') }}
                         </dd>
                         <dd class="govuk-summary-list__actions">
 
-                            <form method="POST" action="{{ url_for('upload.removeFile') }}#file-upload-section">
+                            <form method="POST" action="{{ url_for('upload.removeFile', section_url=section.url) }}#file-upload-section">
                                 <input type="hidden" name="csrf_token" value="{{ deleteform.get_csrf_token() }}">
 
-                                <input type="hidden" name="section" value="{{ section }}">
                                 <input type="hidden" name="file" value="{{ item }}">
                                 <button class="govuk-button govuk-button--warning govuk-!-margin-bottom-0" data-module="govuk-button">
                                     Remove
                                     <span class="govuk-visually-hidden">
-                                        {{ item | replace(session['application']['reference_number'] + '__' + section + '__', '') }} file
+                                        {{ item | replace(session['application']['reference_number'] + '__' + section.data_section + '__', '') }} file
                                     </span>
                                 </button>
                             </form>

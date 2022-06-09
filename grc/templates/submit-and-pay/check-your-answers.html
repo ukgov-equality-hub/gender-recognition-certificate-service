@@ -355,14 +355,14 @@
                     {{ summary_list_item.render(
                         title='Your medical reports',
                         changeLinkHiddenText='the documents you have uploaded for your medical reports',
-                        changeLinkUrl=url_for('upload.medicalReports'),
+                        changeLinkUrl=url_for('upload.uploadInfoPage', section_url='medical-reports'),
                         value=(uploadedDocumentsList('medicalReports'))
                     ) }}
 
                     {{ summary_list_item.render(
                         title='Evidence of living in your gender',
                         changeLinkHiddenText='the documents you have uploaded as evidence of living in your gender',
-                        changeLinkUrl=url_for('upload.genderEvidence'),
+                        changeLinkUrl=url_for('upload.uploadInfoPage', section_url='gender-evidence'),
                         value=(uploadedDocumentsList('genderEvidence'))
                     ) }}
 
@@ -370,7 +370,7 @@
                         {{ summary_list_item.render(
                             title='Name change documents',
                             changeLinkHiddenText='the documents you have uploaded as evidence of changing your name',
-                            changeLinkUrl=url_for('upload.nameChange'),
+                            changeLinkUrl=url_for('upload.uploadInfoPage', section_url='name-change'),
                             value=(uploadedDocumentsList('nameChange'))
                         ) }}
                     {% endif %}
@@ -379,7 +379,7 @@
                     {{ summary_list_item.render(
                         title='Name change documents',
                         changeLinkHiddenText='the documents you have uploaded as evidence of changing your name',
-                        changeLinkUrl=url_for('upload.nameChange'),
+                        changeLinkUrl=url_for('upload.uploadInfoPage', section_url='name-change'),
                         value=(uploadedDocumentsList('nameChange'))
                     ) }}
                 {% endif %}
@@ -388,7 +388,7 @@
                     {{ summary_list_item.render(
                         title='Marriage documents',
                         changeLinkHiddenText='the documents you have uploaded as evidence of your marriage or civil partnership',
-                        changeLinkUrl=url_for('upload.marriageDocuments'),
+                        changeLinkUrl=url_for('upload.uploadInfoPage', section_url='marriage-documents'),
                         value=(uploadedDocumentsList('marriageDocuments'))
                     ) }}
                 {% endif %}
@@ -397,7 +397,7 @@
                     {{ summary_list_item.render(
                         title='Overseas certificate documents',
                         changeLinkHiddenText='the documents you have uploaded as evidence of your overseas certificate',
-                        changeLinkUrl=url_for('upload.overseasCertificate'),
+                        changeLinkUrl=url_for('upload.uploadInfoPage', section_url='overseas-certificate'),
                         value=(uploadedDocumentsList('overseasCertificate'))
                     ) }}
                 {% endif %}
@@ -405,7 +405,7 @@
                 {{ summary_list_item.render(
                     title='Statutory declarations',
                     changeLinkHiddenText='the statutory declarations documents you have uploaded',
-                    changeLinkUrl=url_for('upload.statutoryDeclarations'),
+                    changeLinkUrl=url_for('upload.uploadInfoPage', section_url='statutory-declarations'),
                     value=(uploadedDocumentsList('statutoryDeclarations'))
                 ) }}
             </dl>

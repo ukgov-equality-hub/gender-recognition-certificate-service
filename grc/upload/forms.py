@@ -20,10 +20,6 @@ class UploadForm(FlaskForm):
 
 
 class DeleteForm(FlaskForm):
-    section = HiddenField(
-        validators=[DataRequired(message='Field is required')]
-    )
-
     file = HiddenField(
         validators=[DataRequired(message='Field is required')]
     )
