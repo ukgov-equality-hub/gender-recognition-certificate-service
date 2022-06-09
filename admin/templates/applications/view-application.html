@@ -145,6 +145,76 @@
 
 
             <table class="govuk-table">
+                {{ table_caption_and_head_rows(caption="Marriage or civil partnership details") }}
+
+                <tbody class="govuk-table__body">
+                    {{ summary_list_item(
+                        title='Currently married or in a civil partnership',
+                        value=(applicationData['partnershipDetails']['marriageCivilPartnership'])
+                    ) }}
+
+                    {% if applicationData['partnershipDetails']['marriageCivilPartnership'] == 'Neither' %}
+                        {{ summary_list_item(
+                            title='Spouse or partner has died',
+                            value=(applicationData['partnershipDetails']['partnerDied'])
+                        ) }}
+
+                        {{ summary_list_item(
+                            title='Marriage or civil partnership has ended',
+                            value=(applicationData['partnershipDetails']['endedCheck'])
+                        ) }}
+
+                    {% else %}
+                        {{ summary_list_item(
+                            title='Remain married',
+                            value=(applicationData['partnershipDetails']['stayTogether'])
+                        ) }}
+
+                        {% if applicationData['partnershipDetails']['stayTogether'] == 'Yes' %}
+                            {{ summary_list_item(
+                                title='Can provide a declaration of consent from your spouse',
+                                value=(applicationData['partnershipDetails']['partnerAgrees'])
+                            ) }}
+                        {% endif %}
+
+                        {% if applicationData['partnershipDetails']['stayTogether'] == 'No' or applicationData['partnershipDetails']['partnerAgrees'] == 'No' %}
+                            {{ summary_list_item(
+                                title='Interim GRC',
+                                value=(applicationData['partnershipDetails']['interimCheck'])
+                            ) }}
+                        {% endif %}
+                    {% endif %}
+                </tbody>
+            </table>
+
+
+            <table class="govuk-table">
+                {{ table_caption_and_head_rows(caption="Payment details") }}
+
+                <tbody class="govuk-table__body">
+                    {{ summary_list_item(
+                        title='Payment method',
+                        value=(applicationData['submitAndPay']['method'])
+                    ) }}
+
+                    {% if applicationData['submitAndPay']['method'] == 'Help' %}
+                        {{ summary_list_item(
+                            title='Help type',
+                            value=(applicationData['submitAndPay']['helpType'])
+                        ) }}
+
+                        {% if applicationData['submitAndPay']['helpType'] == 'Using the online service' %}
+                            {{ summary_list_item(
+                                title='Help with Fees reference number',
+                                value=(applicationData['submitAndPay']['referenceNumber'])
+                            ) }}
+                        {% endif %}
+                    {% endif %}
+                </tbody>
+            </table>
+
+
+            <table class="govuk-table">
                 {{ table_caption_and_head_rows(caption="Confirmation") }}
                 
                 <tbody class="govuk-table__body">
@@ -189,6 +259,11 @@
                     ) }}
 
                     {{ summary_list_item(
+                            title="Ever changed name",
+                            value=(applicationData.personalDetails.previousNamesCheck)
+                    ) }}
+
+                    {{ summary_list_item(
                         title="Affirmed gender",
                         value=('Male' if applicationData.personalDetails.affirmed_gender == 'MALE' else 'Female')
                     ) }}
@@ -197,9 +272,13 @@
                             applicationData.personalDetails.transition_date_year,
                             applicationData.personalDetails.transition_date_month),
                          '%Y-%m-%d') %}
+                    {% macro transitionDateValue() %}
+                        {{ transitionDate.strftime('%B %Y') }}<br>
+                        ({{ transitionDate.strftime('%d/%m/%Y') }})
+                    {% endmacro %}
                     {{ summary_list_item(
                         title="When you transitioned",
-                        value=(transitionDate.strftime('%B %Y')),
+                        value=(transitionDateValue()),
                         alternativeCopyValue=(transitionDate.strftime('%d/%m/%Y'))
                     ) }}
 
@@ -208,26 +287,14 @@
                             applicationData.personalDetails.statutory_declaration_date_month,
                             applicationData.personalDetails.statutory_declaration_date_day),
                          '%Y-%m-%d') %}
-                    {{ summary_list_item(
-                        title="When you signed your statutory declaration",
-                        value=(statutoryDeclarationDate.strftime('%d %B %Y')),
-                        alternativeCopyValue=(statutoryDeclarationDate.strftime('%d/%m/%Y'))
-                    ) }}
-
-                    {{ summary_list_item(
-                            title="Ever changed name",
-                            value=(applicationData.personalDetails.previousNamesCheck)
-                    ) }}
-
-                    {% macro addressValue() %}
-                        {{ applicationData.personalDetails.address.address_line_one }}<br>
-                        {{ applicationData.personalDetails.address.address_line_two }}<br>
-                        {{ applicationData.personalDetails.address.town }}<br>
-                        {{ applicationData.personalDetails.address.postcode }}
+                    {% macro statutoryDeclarationDateValue() %}
+                        {{ statutoryDeclarationDate.strftime('%d %B %Y') }}<br>
+                        ({{ statutoryDeclarationDate.strftime('%d/%m/%Y') }})
                     {% endmacro %}
                     {{ summary_list_item(
-                        title="Address",
-                        value=(addressValue())
+                        title="When you signed your statutory declaration",
+                        value=(statutoryDeclarationDateValue()),
+                        alternativeCopyValue=(statutoryDeclarationDate.strftime('%d/%m/%Y'))
                     ) }}
 
                     {% set contactPreferencesLines = (
@@ -285,6 +352,17 @@
                             ) }}
                         {% endif %}
                     {% endif %}
+
+                    {% macro addressValue() %}
+                        {{ applicationData.personalDetails.address.address_line_one }}<br>
+                        {{ applicationData.personalDetails.address.address_line_two }}<br>
+                        {{ applicationData.personalDetails.address.town }}<br>
+                        {{ applicationData.personalDetails.address.postcode }}
+                    {% endmacro %}
+                    {{ summary_list_item(
+                        title="Address",
+                        value=(addressValue())
+                    ) }}
 
                     {{ summary_list_item(
                         title="Unavailable over the next 6 months",
@@ -357,11 +435,6 @@
 
                     {% if applicationData['birthRegistration']['ukCheck'] == 'Yes' %}
                         {{ summary_list_item(
-                            title='Town or city of birth',
-                            value=(applicationData['birthRegistration']['place_of_birth'])
-                        ) }}
-
-                        {{ summary_list_item(
                             title="Mother's name",
                             subtitle="First name",
                             value=(applicationData['birthRegistration']['mothers_first_name']),
@@ -395,6 +468,11 @@
                         {% endif %}
 
                         {{ summary_list_item(
+                            title='Town or city of birth',
+                            value=(applicationData['birthRegistration']['place_of_birth'])
+                        ) }}
+
+                        {{ summary_list_item(
                             title="Adopted",
                             value=(applicationData['birthRegistration']['adopted'])
                         ) }}
@@ -417,50 +495,6 @@
                             title="Registered birth country",
                             value=(applicationData['birthRegistration']['country'])
                         ) }}
-                    {% endif %}
-                </tbody>
-            </table>
-
-
-            <table class="govuk-table">
-                {{ table_caption_and_head_rows(caption="Marriage or civil partnership details") }}
-                
-                <tbody class="govuk-table__body">
-                    {{ summary_list_item(
-                        title='Currently married or in a civil partnership',
-                        value=(applicationData['partnershipDetails']['marriageCivilPartnership'])
-                    ) }}
-    
-                    {% if applicationData['partnershipDetails']['marriageCivilPartnership'] == 'Neither' %}
-                        {{ summary_list_item(
-                            title='Spouse or partner has died',
-                            value=(applicationData['partnershipDetails']['partnerDied'])
-                        ) }}
-    
-                        {{ summary_list_item(
-                            title='Marriage or civil partnership has ended',
-                            value=(applicationData['partnershipDetails']['endedCheck'])
-                        ) }}
-    
-                    {% else %}
-                        {{ summary_list_item(
-                            title='Remain married',
-                            value=(applicationData['partnershipDetails']['stayTogether'])
-                        ) }}
-    
-                        {% if applicationData['partnershipDetails']['stayTogether'] == 'Yes' %}
-                            {{ summary_list_item(
-                                title='Can provide a declaration of consent from your spouse',
-                                value=(applicationData['partnershipDetails']['partnerAgrees'])
-                            ) }}
-                        {% endif %}
-    
-                        {% if applicationData['partnershipDetails']['stayTogether'] == 'No' or applicationData['partnershipDetails']['partnerAgrees'] == 'No' %}
-                            {{ summary_list_item(
-                                title='Interim GRC',
-                                value=(applicationData['partnershipDetails']['interimCheck'])
-                            ) }}
-                        {% endif %}
                     {% endif %}
                 </tbody>
             </table>
@@ -540,32 +574,6 @@
                         value=(uploadedDocumentsList('statutoryDeclarations')),
                         noCopyButton=True
                     ) }}
-                </tbody>
-            </table>
-
-
-            <table class="govuk-table">
-                {{ table_caption_and_head_rows(caption="Payment details") }}
-                
-                <tbody class="govuk-table__body">
-                    {{ summary_list_item(
-                        title='Payment method',
-                        value=(applicationData['submitAndPay']['method'])
-                    ) }}
-    
-                    {% if applicationData['submitAndPay']['method'] == 'Help' %}
-                        {{ summary_list_item(
-                            title='Help type',
-                            value=(applicationData['submitAndPay']['helpType'])
-                        ) }}
-    
-                        {% if applicationData['submitAndPay']['helpType'] == 'Using the online service' %}
-                            {{ summary_list_item(
-                                title='Help with Fees reference number',
-                                value=(applicationData['submitAndPay']['referenceNumber'])
-                            ) }}
-                        {% endif %}
-                    {% endif %}
                 </tbody>
             </table>
 

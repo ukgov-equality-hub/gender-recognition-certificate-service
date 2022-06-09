@@ -1,253 +1,256 @@
 {% macro userapplication(application) %}
-<h1>
-    {% if (application.partnershipDetails.marriageCivilPartnership == 'Married' or application.partnershipDetails.marriageCivilPartnership == 'Civil partnership') and (application.partnershipDetails.stayTogether == 'No' or application.partnershipDetails.partnerAgrees == 'No') %}
-    INTERIM CERTIFICATE APPLICATION
-    {% else %}
-    FULL CERTIFICATE APPLICATION
-    {% endif %}
-</h1>
-
-<h4 class="govuk-heading-m">Marriage or civil partnership details</h4>
-<ul class="govuk-list govuk-list--bullet">
-    <li>Currently married or in a civil partnership: <strong>{{ application.partnershipDetails.marriageCivilPartnership }}</strong></li>
-    {% if application.partnershipDetails.marriageCivilPartnership == 'Neither' %}
-    <li>Spouse or partner has died: <strong>{{ application.partnershipDetails.partnerDied }}</strong></li>
-    <li>Married or in a civil partnership has ended: <strong>{{ application.partnershipDetails.endedCheck }}</strong></li>
-    {% else %}
-    <li>Remain married: <strong>{{ application.partnershipDetails.stayTogether }}</strong></li>
-    {% if application.partnershipDetails.stayTogether == 'Yes' %}
-    <li>Can provide a declaration of consent from your spouse: <strong>{{ application.partnershipDetails.partnerAgrees }}</strong></li>
-    {% endif %}
-    {% if application.partnershipDetails.stayTogether == 'No' or application.partnershipDetails.partnerAgrees == 'No' %}
-    <li>Interim GRC: <strong>{{ application.partnershipDetails.interimCheck }}</strong></li>
-    {% endif %}
-    {% endif %}
-</ul>
-
-<h4 class="govuk-heading-m">Payment details</h4>
-<ul class="govuk-list govuk-list--bullet">
-    <li>Payment method: <strong>{{ application.submitAndPay.method }}</strong></li>
-    {% if application.submitAndPay.method == 'Help' %}
-    <li>Help type: <strong>
-        {% if application.submitAndPay.helpType == 'Using the online service' %}
-        Using the online service - Reference: {{ application.submitAndPay.referenceNumber }}
+    <h1>
+        {% if (application.partnershipDetails.marriageCivilPartnership == 'Married' or application.partnershipDetails.marriageCivilPartnership == 'Civil partnership') and (application.partnershipDetails.stayTogether == 'No' or application.partnershipDetails.partnerAgrees == 'No') %}
+            INTERIM CERTIFICATE APPLICATION
         {% else %}
-        {{ application.submitAndPay.helpType }}
+            FULL CERTIFICATE APPLICATION
         {% endif %}
-        </strong>
-    </li>
-    {% endif %}
-</ul>
+    </h1>
 
-<h4 class="govuk-heading-m">Confirmation</h4>
-<ul class="govuk-list govuk-list--bullet">
-    <li>Have you ever been issued a Gender Recognition Certificate (or it's equivalent) in another country? <strong>{{ application.confirmation.overseasCheck }}</strong></li>
-    <li>Do you have official documentation that shows your affirmed gender has been recognised in one of these countries or territories? <strong>{{ application.confirmation.overseasApprovedCheck }}</strong></li>
-    <li>I confirm that I meet the requirements for applying for a Gender Recognition Certificate and I consent to the General Register Office contacting me about my application: <strong>{{ application.confirmation.declaration }}</strong></li>
-</ul>
-
-<h4 class="govuk-heading-m">Personal details</h4>
-<ul class="govuk-list govuk-list--bullet">
-    <li>Name on certificate
-        <ul class="govuk-list govuk-list--bullet">
-            <li>Title: <strong>{{ application.personalDetails.title }}</strong></li>
-            <li>First name: <strong>{{ application.personalDetails.first_name }}</strong></li>
-            <li>Last name: <strong>{{ application.personalDetails.last_name }}</strong></li>
-        </ul>
-    </li>
-    <li>Changed name: <strong>{{ application.personalDetails.previousNamesCheck }}</strong></li>
-    <li>Transition date: <strong>{{ application.personalDetails.transition_date_month }}/{{ application.personalDetails.transition_date_year }}</strong></li>
-    <li>Statutory Declaration date: <strong>{{ application.personalDetails.statutory_declaration_date_day }}/{{ application.personalDetails.statutory_declaration_date_month }}/{{ application.personalDetails.statutory_declaration_date_year }}</strong></li>
-    {% if 'contactPreferences' in application.personalDetails %}
-    <li>Contact preferences
-        <ul class="govuk-list govuk-list--bullet">
-            {% if application.personalDetails.contactPreferences.email != '' %}
-            <li>Email: <strong>{{ application.personalDetails.contactPreferences.email }}</strong></li>
+    <h4 class="govuk-heading-m">Marriage or civil partnership details</h4>
+    <ul class="govuk-list govuk-list--bullet">
+        <li>Currently married or in a civil partnership: <strong>{{ application.partnershipDetails.marriageCivilPartnership }}</strong></li>
+        {% if application.partnershipDetails.marriageCivilPartnership == 'Neither' %}
+            <li>Spouse or partner has died: <strong>{{ application.partnershipDetails.partnerDied }}</strong></li>
+            <li>Married or in a civil partnership has ended: <strong>{{ application.partnershipDetails.endedCheck }}</strong></li>
+        {% else %}
+            <li>Remain married: <strong>{{ application.partnershipDetails.stayTogether }}</strong></li>
+            {% if application.partnershipDetails.stayTogether == 'Yes' %}
+                <li>Can provide a declaration of consent from your spouse: <strong>{{ application.partnershipDetails.partnerAgrees }}</strong></li>
             {% endif %}
-            {% if application.personalDetails.contactPreferences.post != '' %}
-            <li>Post: <strong>{{ application.personalDetails.contactPreferences.post }}</strong></li>
+            {% if application.partnershipDetails.stayTogether == 'No' or application.partnershipDetails.partnerAgrees == 'No' %}
+                <li>Interim GRC: <strong>{{ application.partnershipDetails.interimCheck }}</strong></li>
             {% endif %}
-            {% if application.personalDetails.contactPreferences.phone != '' %}
-            <li>Phone: <strong>{{ application.personalDetails.contactPreferences.phone }}</strong></li>
+        {% endif %}
+    </ul>
+
+    <h4 class="govuk-heading-m">Payment details</h4>
+    <ul class="govuk-list govuk-list--bullet">
+        <li>Payment method: <strong>{{ application.submitAndPay.method }}</strong></li>
+        {% if application.submitAndPay.method == 'Help' %}
+            <li>Help type: <strong>
+                {% if application.submitAndPay.helpType == 'Using the online service' %}
+                    Using the online service - Reference: {{ application.submitAndPay.referenceNumber }}
+                {% else %}
+                    {{ application.submitAndPay.helpType }}
+                {% endif %}
+            </strong>
+            </li>
+        {% endif %}
+    </ul>
+
+    <h4 class="govuk-heading-m">Confirmation</h4>
+    <ul class="govuk-list govuk-list--bullet">
+        <li>Have you ever been issued a Gender Recognition Certificate (or it's equivalent) in another country? <strong>{{ application.confirmation.overseasCheck }}</strong></li>
+        <li>Do you have official documentation that shows your affirmed gender has been recognised in one of these countries or territories? <strong>{{ application.confirmation.overseasApprovedCheck }}</strong></li>
+        <li>I confirm that I meet the requirements for applying for a Gender Recognition Certificate and I consent to the General Register Office contacting me about my application: <strong>{{ application.confirmation.declaration }}</strong></li>
+    </ul>
+
+    <h4 class="govuk-heading-m">Personal details</h4>
+    <ul class="govuk-list govuk-list--bullet">
+        <li>Name on certificate
+            <ul class="govuk-list govuk-list--bullet">
+                <li>Title: <strong>{{ application.personalDetails.title }}</strong></li>
+                <li>First name: <strong>{{ application.personalDetails.first_name }}</strong></li>
+                <li>Last name: <strong>{{ application.personalDetails.last_name }}</strong></li>
+            </ul>
+        </li>
+        <li>Changed name: <strong>{{ application.personalDetails.previousNamesCheck }}</strong></li>
+        <li>
+            Affirmed gender:
+            <strong>
+                {{ ('Male' if applicationData.personalDetails.affirmed_gender == 'MALE' else 'Female') }}
+            </strong>
+        </li>
+        <li>Transition date: <strong>{{ application.personalDetails.transition_date_month }}/{{ application.personalDetails.transition_date_year }}</strong></li>
+        <li>Statutory Declaration date: <strong>{{ application.personalDetails.statutory_declaration_date_day }}/{{ application.personalDetails.statutory_declaration_date_month }}/{{ application.personalDetails.statutory_declaration_date_year }}</strong></li>
+        {% if 'contactPreferences' in application.personalDetails %}
+            <li>Contact preferences
+                <ul class="govuk-list govuk-list--bullet">
+                    {% if application.personalDetails.contactPreferences.email != '' %}
+                        <li>Email: <strong>{{ application.personalDetails.contactPreferences.email }}</strong></li>
+                    {% endif %}
+                    {% if application.personalDetails.contactPreferences.post != '' %}
+                        <li>Post: <strong>{{ application.personalDetails.contactPreferences.post }}</strong></li>
+                    {% endif %}
+                    {% if application.personalDetails.contactPreferences.phone != '' %}
+                        <li>Phone: <strong>{{ application.personalDetails.contactPreferences.phone }}</strong></li>
+                    {% endif %}
+                </ul>
+            </li>
+        {% endif %}
+        {% if 'address' in application.personalDetails %}
+            <li>Address
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>Building and street: <strong>{{ application.personalDetails.address.address_line_one }}</strong></li>
+                    <li><strong>{{ application.personalDetails.address.address_line_two }}</strong></li>
+                    <li>Town or city: <strong>{{ application.personalDetails.address.town }}</strong></li>
+                    <li>Postcode: <strong>{{ application.personalDetails.address.postcode }}</strong></li>
+                </ul>
+            </li>
+        {% endif %}
+        {% if 'contactDates' in application.personalDetails %}
+            <li>Unavailable over the next 6 months: <strong>{{ application.personalDetails.contactDates.answer }}</strong>
+                {% if application.personalDetails.contactDates.answer == 'Yes' %}
+                    <ul class="govuk-list govuk-list--bullet">
+                        <li>Dates you're unavailable: <strong>{{ application.personalDetails.contactDates.dates }}</strong></li>
+                    </ul>
+                {% endif %}
+            </li>
+        {% endif %}
+        {% if 'hmrc' in application.personalDetails %}
+            <li>Notify HMRC: <strong>{{ application.personalDetails.hmrc.answer }}</strong>
+                {% if application.personalDetails.hmrc.answer == 'Yes' %}
+                    <ul class="govuk-list govuk-list--bullet">
+                        <li>National Insurance number: <strong>{{ application.personalDetails.hmrc.national_insurance_number }}</strong></li>
+                    </ul>
+                {% endif %}
+            </li>
+        {% endif %}
+    </ul>
+
+    <h4 class="govuk-heading-m">Birth registration information</h4>
+    <ul class="govuk-list govuk-list--bullet">
+        <li>Birth name
+            <ul class="govuk-list govuk-list--bullet">
+                <li>First name: <strong>{{ application.birthRegistration.first_name }}</strong></li>
+                <li>Middle name(s): <strong>{{ application.birthRegistration.middle_names }}</strong></li>
+                <li>Last name: <strong>{{ application.birthRegistration.last_name }}</strong></li>
+            </ul>
+        </li>
+        {% if 'dob' in application.birthRegistration %}
+            <li>Date of birth: <strong>{{ application.birthRegistration.dob.day }}/{{ application.birthRegistration.dob.month }}/{{ application.birthRegistration.dob.year }}</strong></li>
+        {% endif %}
+        {% if 'ukCheck' in application.birthRegistration %}
+            <li>Birth registered in UK: <strong>{{ application.birthRegistration.ukCheck }}</strong></li>
+        {% endif %}
+        {% if application.birthRegistration.ukCheck == 'Yes' %}
+            <li>Mother's name
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>First name: <strong>{{ application.birthRegistration.mothers_first_name }}</strong></li>
+                    <li>Last name: <strong>{{ application.birthRegistration.mothers_last_name }}</strong></li>
+                    <li>Maiden name: <strong>{{ application.birthRegistration.mothers_maiden_name }}</strong></li>
+                </ul>
+            </li>
+            {% if application.birthRegistration.fathersNameCheck == 'Yes' %}
+                <li>Father's name listed: <strong>{{ application.birthRegistration.fathersNameCheck }}</strong></li>
+                <li>Father's name
+                    <ul class="govuk-list govuk-list--bullet">
+                        <li>First name: <strong>{{ application.birthRegistration.fathers_first_name }}</strong></li>
+                        <li>Last name: <strong>{{ application.birthRegistration.fathers_last_name }}</strong></li>
+                    </ul>
+                </li>
             {% endif %}
-        </ul>
-    </li>
-    {% endif %}
-    {% if 'address' in application.personalDetails %}
-    <li>Address
+            {% if 'place_of_birth' in application.birthRegistration %}
+                <li>Place of birth: <strong>{{ application.birthRegistration.place_of_birth }}</strong></li>
+            {% endif %}
+            {% if 'adopted' in application.birthRegistration %}
+                <li>Adopted: <strong>{{ application.birthRegistration.adopted }}</strong></li>
+            {% endif %}
+            {% if application.birthRegistration.adopted == 'Yes' %}
+                <li>Adopted in the UK: <strong>{{ application.birthRegistration.adopted_uk }}</strong></li>
+            {% endif %}
+            <li>Forces registering service, British Consul or High Commission, or under Merchant Shipping or Civil Aviation provisions: <strong>{{ application.birthRegistration.forces }}</strong></li>
+        {% else %}
+            {% if 'country' in application.birthRegistration %}
+                <li>Registered birth country: <strong>{{ application.birthRegistration.country }}</strong></li>
+            {% endif %}
+        {% endif %}
+    </ul>
+
+
+    <h2 class="govuk-heading-m">Your documents</h2>
+    {% if 'files' in application.statutoryDeclarations %}
+        <h4>Statutory documents</h4>
         <ul class="govuk-list govuk-list--bullet">
-            <li>Building and street: <strong>{{ application.personalDetails.address.address_line_one }}</strong></li>
-            <li><strong>{{ application.personalDetails.address.address_line_two }}</strong></li>
-            <li>Town or city: <strong>{{ application.personalDetails.address.town }}</strong></li>
-            <li>Postcode: <strong>{{ application.personalDetails.address.postcode }}</strong></li>
+            {% for item in application.statutoryDeclarations.files %}
+                <li>
+                    {{ item | replace(application.reference_number + '__statutoryDeclarations__', '') }}
+                    {% if '.pdf' not in item | lower %}
+                        <img src="{{ item | image_data }}" width="{{ item | image_width }}" height="{{ item | image_height }}" style="max-width: 90%;">
+                    {% endif %}
+                </li>
+            {% endfor %}
         </ul>
-    </li>
     {% endif %}
-    {% if 'contactDates' in application.personalDetails %}
-    <li>Unavailable over the next 6 months: <strong>{{ application.personalDetails.contactDates.answer }}</strong>
-        {% if application.personalDetails.contactDates.answer == 'Yes' %}
+
+    {% if 'files' in application.marriageDocuments %}
+        <h4>Marriage documents</h4>
         <ul class="govuk-list govuk-list--bullet">
-            <li>Dates you're unavailable: <strong>{{ application.personalDetails.contactDates.dates }}</strong></li>
+            {% for item in application.marriageDocuments.files %}
+                <li>
+                    {{ item | replace(application.reference_number + '__marriageDocuments__', '') }}
+                    {% if '.pdf' not in item | lower %}
+                        <img src="{{ item | image_data }}" width="{{ item | image_width }}" height="{{ item | image_height }}" style="max-width: 90%;">
+                    {% endif %}
+                </li>
+            {% endfor %}
         </ul>
-        {% endif %}
-    </li>
     {% endif %}
-    {% if 'hmrc' in application.personalDetails %}
-    <li>Notify HMRC: <strong>{{ application.personalDetails.hmrc.answer }}</strong>
-        {% if application.personalDetails.hmrc.answer == 'Yes' %}
+
+    {% if 'files' in application.medicalReports %}
+        <h4>Your medical reports</h4>
         <ul class="govuk-list govuk-list--bullet">
-            <li>National Insurance number: <strong>{{ application.personalDetails.hmrc.national_insurance_number }}</strong></li>
+            {% for item in application.medicalReports.files %}
+                <li>
+                    {{ item | replace(application.reference_number + '__medicalReports__', '') }}
+                    {% if '.pdf' not in item | lower %}
+                        <img src="{{ item | image_data }}" width="{{ item | image_width }}" height="{{ item | image_height }}" style="max-width: 90%;">
+                    {% endif %}
+                </li>
+            {% endfor %}
         </ul>
-        {% endif %}
-    </li>
     {% endif %}
-</ul>
 
-<h4 class="govuk-heading-m">Birth registration information</h4>
-<ul class="govuk-list govuk-list--bullet">
-    <li>Birth name
+    {% if 'files' in application.genderEvidence %}
+        <h4>Evidence of living in your gender</h4>
         <ul class="govuk-list govuk-list--bullet">
-            <li>First name: <strong>{{ application.birthRegistration.first_name }}</strong></li>
-            <li>Middle name(s): <strong>{{ application.birthRegistration.middle_names }}</strong></li>
-            <li>Last name: <strong>{{ application.birthRegistration.last_name }}</strong></li>
+            {% for item in application.genderEvidence.files %}
+                <li>
+                    {{ item | replace(application.reference_number + '__genderEvidence__', '') }}
+                    {% if '.pdf' not in item | lower %}
+                        <img src="{{ item | image_data }}" width="{{ item | image_width }}" height="{{ item | image_height }}" style="max-width: 90%;">
+                    {% endif %}
+                </li>
+            {% endfor %}
         </ul>
-    </li>
-    {% if 'sex' in application.birthRegistration %}
-    <li>Sex registered at birth: <strong>{{ application.birthRegistration.sex }}</strong></li>
     {% endif %}
-    {% if 'dob' in application.birthRegistration %}
-    <li>Date of birth: <strong>{{ application.birthRegistration.dob.day }}/{{ application.birthRegistration.dob.month }}/{{ application.birthRegistration.dob.year }}</strong></li>
-    {% endif %}
-    {% if 'ukCheck' in application.birthRegistration %}
-    <li>Birth registered in UK: <strong>{{ application.birthRegistration.ukCheck }}</strong></li>
-    {% endif %}
-    {% if application.birthRegistration.ukCheck == 'Yes' %}
-    <li>Mother's name
+
+    {% if 'files' in application.nameChange %}
+        <h4>Name change</h4>
         <ul class="govuk-list govuk-list--bullet">
-            <li>First name: <strong>{{ application.birthRegistration.mothers_first_name }}</strong></li>
-            <li>Last name: <strong>{{ application.birthRegistration.mothers_last_name }}</strong></li>
-            <li>Maiden name: <strong>{{ application.birthRegistration.mothers_maiden_name }}</strong></li>
+            {% for item in application.nameChange.files %}
+                <li>
+                    {{ item | replace(application.reference_number + '__nameChange__', '') }}
+                    {% if '.pdf' not in item | lower %}
+                        <img src="{{ item | image_data }}" width="{{ item | image_width }}" height="{{ item | image_height }}" style="max-width: 90%;">
+                    {% endif %}
+                </li>
+            {% endfor %}
         </ul>
-    </li>
-    {% if application.birthRegistration.fathersNameCheck == 'Yes' %}
-    <li>Father's name listed: <strong>{{ application.birthRegistration.fathersNameCheck }}</strong></li>
-    <li>Father's name
+    {% endif %}
+
+    {% if 'files' in application.overseasCertificate %}
+        <h4>Marriage documents</h4>
         <ul class="govuk-list govuk-list--bullet">
-            <li>First name: <strong>{{ application.birthRegistration.fathers_first_name }}</strong></li>
-            <li>Last name: <strong>{{ application.birthRegistration.fathers_last_name }}</strong></li>
+            {% for item in application.overseasCertificate.files %}
+                <li>
+                    {{ item | replace(application.reference_number + '__overseasCertificate__', '') }}
+                    {% if '.pdf' not in item | lower %}
+                        <img src="{{ item | image_data }}" width="{{ item | image_width }}" height="{{ item | image_height }}" style="max-width: 90%;">
+                    {% endif %}
+                </li>
+            {% endfor %}
         </ul>
-    </li>
     {% endif %}
-    {% if 'place_of_birth' in application.birthRegistration %}
-    <li>Place of birth: <strong>{{ application.birthRegistration.place_of_birth }}</strong></li>
-    {% endif %}
-    {% if 'adopted' in application.birthRegistration %}
-    <li>Adopted: <strong>{{ application.birthRegistration.adopted }}</strong></li>
-    {% endif %}
-    {% if application.birthRegistration.adopted == 'Yes' %}
-    <li>Adopted in the UK: <strong>{{ application.birthRegistration.adopted_uk }}</strong></li>
-    {% endif %}
-    <li>Forces registering service, British Consul or High Commission, or under Merchant Shipping or Civil Aviation provisions: <strong>{{ application.birthRegistration.forces }}</strong></li>
-    {% else %}
-    {% if 'country' in application.birthRegistration %}
-    <li>Registered birth country: <strong>{{ application.birthRegistration.country }}</strong></li>
-    {% endif %}
-    {% endif %}
-</ul>
 
-
-<h2 class="govuk-heading-m">Your documents</h2>
-{% if 'files' in application.statutoryDeclarations %}
-<h4>Statutory documents</h4>
-<ul class="govuk-list govuk-list--bullet">
-    {% for item in application.statutoryDeclarations.files %}
-    <li>
-        {{ item | replace(application.reference_number + '__statutoryDeclarations__', '') }}
-        {% if '.pdf' not in item | lower %}
-        <img src="{{ item | image_data }}" width="{{ item | image_width }}" height="{{ item | image_height }}" style="max-width: 90%;">
+    <h4 class="govuk-heading-m">Documents to post</h4>
+    <ul class="govuk-list govuk-list--bullet">
+        {% if application.birthRegistration.ukCheck == 'Yes' and application.birthRegistration.adopted != 'Yes' %}
+            <li>your original or a certified copy of your full birth certificate</li>
         {% endif %}
-    </li>
-    {% endfor %}
-</ul>
-{% endif %}
-
-{% if 'files' in application.marriageDocuments %}
-<h4>Marriage documents</h4>
-<ul class="govuk-list govuk-list--bullet">
-    {% for item in application.marriageDocuments.files %}
-    <li>
-        {{ item | replace(application.reference_number + '__marriageDocuments__', '') }}
-        {% if '.pdf' not in item | lower %}
-        <img src="{{ item | image_data }}" width="{{ item | image_width }}" height="{{ item | image_height }}" style="max-width: 90%;">
+        {% if application.submitAndPay.helpType == 'Using the EX160 form' %}
+            <li>an EX160 form</li>
         {% endif %}
-    </li>
-    {% endfor %}
-</ul>
-{% endif %}
-
-{% if 'files' in application.medicalReports %}
-<h4>Your medical reports</h4>
-<ul class="govuk-list govuk-list--bullet">
-    {% for item in application.medicalReports.files %}
-    <li>
-        {{ item | replace(application.reference_number + '__medicalReports__', '') }}
-        {% if '.pdf' not in item | lower %}
-        <img src="{{ item | image_data }}" width="{{ item | image_width }}" height="{{ item | image_height }}" style="max-width: 90%;">
-        {% endif %}
-    </li>
-    {% endfor %}
-</ul>
-{% endif %}
-
-{% if 'files' in application.genderEvidence %}
-<h4>Evidence of living in your gender</h4>
-<ul class="govuk-list govuk-list--bullet">
-    {% for item in application.genderEvidence.files %}
-    <li>
-        {{ item | replace(application.reference_number + '__genderEvidence__', '') }}
-        {% if '.pdf' not in item | lower %}
-        <img src="{{ item | image_data }}" width="{{ item | image_width }}" height="{{ item | image_height }}" style="max-width: 90%;">
-        {% endif %}
-    </li>
-    {% endfor %}
-</ul>
-{% endif %}
-
-{% if 'files' in application.nameChange %}
-<h4>Name change</h4>
-<ul class="govuk-list govuk-list--bullet">
-    {% for item in application.nameChange.files %}
-    <li>
-        {{ item | replace(application.reference_number + '__nameChange__', '') }}
-        {% if '.pdf' not in item | lower %}
-        <img src="{{ item | image_data }}" width="{{ item | image_width }}" height="{{ item | image_height }}" style="max-width: 90%;">
-        {% endif %}
-    </li>
-    {% endfor %}
-</ul>
-{% endif %}
-
-{% if 'files' in application.overseasCertificate %}
-<h4>Marriage documents</h4>
-<ul class="govuk-list govuk-list--bullet">
-    {% for item in application.overseasCertificate.files %}
-    <li>
-        {{ item | replace(application.reference_number + '__overseasCertificate__', '') }}
-        {% if '.pdf' not in item | lower %}
-        <img src="{{ item | image_data }}" width="{{ item | image_width }}" height="{{ item | image_height }}" style="max-width: 90%;">
-        {% endif %}
-    </li>
-    {% endfor %}
-</ul>
-{% endif %}
-
-<h4 class="govuk-heading-m">Documents to post</h4>
-<ul class="govuk-list govuk-list--bullet">
-    {% if application.birthRegistration.ukCheck == 'Yes' and application.birthRegistration.adopted != 'Yes' %}
-    <li>your original or a certified copy of your full birth certificate</li>
-    {% endif %}
-    {% if application.submitAndPay.helpType == 'Using the EX160 form' %}
-    <li>an EX160 form</li>
-    {% endif %}
-</ul>
+    </ul>
 {% endmacro %}
