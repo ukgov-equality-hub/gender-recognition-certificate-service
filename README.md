@@ -2,6 +2,8 @@
 # Gender Recognition Certificate service
 This is the code for the UK Government's Gender Recognition Certificate service.
 
+The service is owned by the Gender Equalities Office (GEO) who have developed a public-facing application form to allow citizens to apply for a legally recognised certificate that acknowledges their acquired gender.
+
 ## Architecture: 
 ![Gender Recognition Certificate - target arch v6 - 100622 - HLD revision](https://user-images.githubusercontent.com/4855328/173044363-9e698ffd-2a31-4841-8e8e-fb9a5a5e1723.png)
 
