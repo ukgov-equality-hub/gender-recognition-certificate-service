@@ -35,7 +35,7 @@ class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY")
     SESSION_COOKIE_SECURE = True
     SESSION_COOKIE_HTTPONLY = True
-    SESSION_COOKIE_SAMESITE = "Strict"
+    SESSION_COOKIE_SAMESITE = "Lax"
     WTF_CSRF_ENABLED = True
     WTF_CSRF_TIME_LIMIT = None  # Stops the CSRF token expiring (before the lifetime of the session). This was an accessibility problem
     AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
