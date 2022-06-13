@@ -7,6 +7,7 @@ from sqlalchemy.sql import extract
 from grc.utils.decorators import JobTokenRequired
 from grc.models import db, Application, ApplicationStatus, SecurityCode
 from grc.utils.application_files import ApplicationFiles
+from grc.utils.config_helper import ConfigHelper
 
 jobs = Blueprint('jobs', __name__)
 
@@ -62,7 +63,7 @@ def backup_db():
 
     try:
         data = []
-        secret_key = os.environ.get('SQLALCHEMY_KEY', '')
+        secret_key = os.environ.get('EXTERNAL_BACKUP_ENCRYPTION_KEY', '')
         f = Fernet(secret_key)
         columns = get_columns()
         #data.append(columns)
@@ -84,7 +85,11 @@ def backup_db():
         csv_buffer = io.StringIO()
         csv.writer(csv_buffer).writerows(data)
         csv_file = io.BytesIO(csv_buffer.getvalue().encode(encoding='utf-8'))
-        object_name = f"{current_app.config['ENVIRONMENT'].lower()}/database/{datetime.now().strftime('%d%m%Y')}.csv"
+
+        space_name = (ConfigHelper.get_vcap_application().space_name.lower()
+                      if ConfigHelper.get_vcap_application() is not None
+                      else 'local')
+        object_name = f"{space_name}/database/{datetime.now().strftime('%Y-%m-%d')}.csv"
 
         awsclient = AwsS3Client()
         awsclient.delete_object(object_name)
@@ -103,8 +108,11 @@ def restore_db(db_file):
     from grc.external_services.aws_s3_client import AwsS3Client
 
     try:
-        data = AwsS3Client().download_object(f"{current_app.config['ENVIRONMENT'].lower()}/database/{db_file}.csv")
-        secret_key = os.environ.get('SQLALCHEMY_KEY', '')
+        space_name = (ConfigHelper.get_vcap_application().space_name.lower()
+                      if ConfigHelper.get_vcap_application() is not None
+                      else 'local')
+        data = AwsS3Client().download_object(f"{space_name}/database/{db_file}.csv")
+        secret_key = os.environ.get('EXTERNAL_BACKUP_ENCRYPTION_KEY', '')
         f = Fernet(secret_key)
         columns = get_columns()
 
@@ -138,42 +146,9 @@ def restore_db(db_file):
     return ('', 200)
 
 
-@jobs.route('/jobs/backup-files1', methods=['GET'])
-#@JobTokenRequired
-def backup_files1():
-    import io
-    import time
-    import zipfile
-    from grc.external_services.aws_s3_client import AwsS3Client
-
-    tic = time.perf_counter()
-
-    try:
-        awsclient = AwsS3Client()
-        awsclient_external = AwsS3Client(external=True)
-        zip_buffer = io.BytesIO()
-        all_files = awsclient.list_objects()
-
-        with zipfile.ZipFile(zip_buffer, 'x', zipfile.ZIP_DEFLATED, False) as zipper:
-            for object_name in all_files:
-                data = awsclient.download_object(object_name)
-                zipper.writestr(object_name, data.getvalue())
-
-        backup_file = f"{current_app.config['ENVIRONMENT'].lower()}/backups/{datetime.now().strftime('%Y%m%d%H%M')}.zip"
-        awsclient_external.upload_fileobj(zip_buffer, backup_file)
-
-    except Exception as e:
-        print(e, flush=True)
-
-    toc = time.perf_counter()
-    print(f"Finished in {toc - tic:0.4f} seconds", flush=True)
-
-    return ('', 200)
-
-
-@jobs.route('/jobs/backup-files2', methods=['GET'])
-#@JobTokenRequired
-def backup_files2():
+@jobs.route('/jobs/backup-files', methods=['GET'])
+@JobTokenRequired
+def backup_files():
     import time
     from zipstream import ZipStream
     import pyAesCrypt
@@ -198,12 +173,15 @@ def backup_files2():
         fin.seek(0)
 
         buffer_size = 64 * 1024
-        secret_key = os.environ.get('SQLALCHEMY_KEY', '')
+        secret_key = os.environ.get('EXTERNAL_BACKUP_ENCRYPTION_KEY', '')
         fout = io.BytesIO()
         pyAesCrypt.encryptStream(fin, fout, secret_key, buffer_size)
         fout.seek(0)
 
-        backup_file = f"{current_app.config['ENVIRONMENT'].lower()}/backups/{datetime.now().strftime('%Y%m%d%H%M')}.zip.encrypted"
+        space_name = (ConfigHelper.get_vcap_application().space_name.lower()
+                      if ConfigHelper.get_vcap_application() is not None
+                      else 'local')
+        backup_file = f"{space_name}/files/{datetime.now().strftime('%Y-%m-%d--%H-%M-%s')}.zip.encrypted"
         awsclient_external.stream_upload_object(fout, backup_file)  # or zip_buffer.stream() if we want unencrypted data
 
     except Exception as e:
