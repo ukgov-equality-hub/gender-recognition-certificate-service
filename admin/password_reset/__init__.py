@@ -5,13 +5,16 @@ from werkzeug.security import generate_password_hash
 from admin.password_reset.forms import PasswordResetForm
 from grc.models import db, AdminUser
 from grc.utils.redirect import local_redirect
+from grc.utils.logger import LogLevel, Logger
 
 password_reset = Blueprint('password_reset', __name__)
+logger = Logger()
 
 
 @password_reset.route('/password_reset', methods=['GET', 'POST'])
 def index():
     if 'emailAddress' not in session:
+        logger.log(LogLevel.WARN, f"Forgotten password accessed for no user")
         return local_redirect(url_for('forgot_password.index'))
 
     form = PasswordResetForm()
@@ -24,6 +27,8 @@ def index():
             user.password = generate_password_hash(form.password.data)
             user.passwordResetRequired = False
             db.session.commit()
+
+            logger.log(LogLevel.INFO, f"{logger.mask_email_address(session['emailAddress'])} reset their password")
 
             return render_template('password_reset/password-has-been-reset.html')
 
@@ -45,21 +50,30 @@ def reset_password_with_token():
                 dt = datetime.strptime(login_token['expires'], '%d/%m/%Y %H:%M:%S')
                 if datetime.now() > dt:
                     message="Your reset password link has expired. Please try resetting your password again"
+                    logger.log(LogLevel.WARN, f"Password reset attempted for {login_token['email']} with expired token")
 
                 else:
                     user = AdminUser.query.filter_by(
-                        id=login_token['id'], email=login_token['email']
+                        id=login_token['id'],
+                        email=login_token['email']
                     ).first()
                     if user is None:
                         message="We could not find your user details for this password reset link. Please try resetting your password again"
+                        logger.log(LogLevel.WARN, f"Password reset requested for invalid user {login_token['email']}")
                     else:
                         session['emailAddress'] = login_token['email']
+                        logger.log(LogLevel.INFO, f"{logger.mask_email_address(login_token['email'])} requested a password reset")
+
                         return local_redirect(url_for('password_reset.index'))
+            else:
+                logger.log(LogLevel.WARN, f"Password reset attempted with invalid token")
+
         except Exception as e:
             print(e, flush=True)
 
     if message == "":
         message = "The password reset link was incorrect. If you pasted the web address, check you copied the entire address."
+        logger.log(LogLevel.WARN, f"Password reset attempted with no token")
 
     return render_template(
         'password_reset/password-reset-link-error.html',
