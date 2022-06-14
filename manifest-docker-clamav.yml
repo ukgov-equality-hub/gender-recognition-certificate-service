@@ -4,6 +4,6 @@ applications:
     memory: 1G
     disk_quota: 5G
     docker:
-      image: quay.io/ukhomeofficedigital/clamav:latest
+      image: ghcr.io/cabinetoffice/docker-clamav:master
     routes:
     - route: grc-production-clamav.apps.internal

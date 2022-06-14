@@ -5,7 +5,7 @@ Clam AV setup
 
 # Clam AV on PaaS
 
-We Clam AV to scan files as they are uploaded by users. This is implemented by creating a PaaS app that employs a ClamAV Docker image [built by the Home Office](https://github.com/cabinetoffice/docker-clamav). The image is hosted on [quay.io](quay.io/ukhomeofficedigital/clamav).
+We Clam AV to scan files as they are uploaded by users. This is implemented by creating a PaaS app that employs a ClamAV Docker image [built by the Home Office](https://github.com/cabinetoffice/docker-clamav). The image is hosted on [ghcr.io](ghcr.io/cabinetoffice/docker-clamav:master).
 
 ## Deployment
 
@@ -24,7 +24,7 @@ applications:
     memory: 1G
     disk_quota: 5G
     docker:
-      image: quay.io/ukhomeofficedigital/clamav:latest
+      image: ghcr.io/cabinetoffice/docker-clamav:master
     routes:
     - route: CLAMAV-PRIVATE-APP.apps.internal
 ```
