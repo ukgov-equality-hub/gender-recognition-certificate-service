@@ -220,7 +220,7 @@ def application_notifications():
     if updated:
         db.session.commit()
 
-    # Reminders 3 months, 1 month & 1 week before deletion
+    # Reminders 3 months, 1 month & 1 week before deletion
     for expiry in ['3 months', '1 month', '1 week']:
         dt = datetime.today() + relativedelta(days=-(int(expiry[: expiry.index(' ')]) * 30))
         if expiry[expiry.index(' ') + 1:] == 'week':
@@ -240,7 +240,7 @@ def application_notifications():
                 grc_return_link=request.host_url
             )
 
-    # Completed applications
+    # Completed applications
     updated = False
     dt = datetime.today() + relativedelta(days=-7)
     applications = Application.query.filter(
@@ -262,7 +262,7 @@ def application_notifications():
     if updated:
         db.session.commit()
 
-    # Delete security codes
+    # Delete security codes
     dt = datetime.today() + relativedelta(days=-1)
     security_codes = SecurityCode.query.filter(
         extract('day', SecurityCode.created) == dt.day,
