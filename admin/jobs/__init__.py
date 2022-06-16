@@ -46,8 +46,8 @@ def create_files():
     return ('', 200)
 
 
-@jobs.route('/jobs/backup-db', methods=['GET'])
-@JobTokenRequired
+#@jobs.route('/jobs/backup-db', methods=['GET'])
+#@JobTokenRequired
 def backup_db():
     import csv
     import io
@@ -101,8 +101,8 @@ def backup_db():
     return ('', 200)
 
 
-@jobs.route('/jobs/restore-db/<db_file>', methods=['GET'])
-@JobTokenRequired
+#@jobs.route('/jobs/restore-db/<db_file>', methods=['GET'])
+#@JobTokenRequired
 def restore_db(db_file):
     from cryptography.fernet import Fernet
     from grc.external_services.aws_s3_client import AwsS3Client
