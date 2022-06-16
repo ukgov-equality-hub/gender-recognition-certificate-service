@@ -223,6 +223,7 @@ def address():
 def contactPreferences():
     form = ContactPreferencesForm()
     address = session['application']['personalDetails']['address']['address_line_one'] + ', ' + session['application']['personalDetails']['address']['address_line_two'] + ', ' + session['application']['personalDetails']['address']['town'] + ', ' +  session['application']['personalDetails']['address']['postcode']
+    address = address.replace(', , ', ', ')
 
     if request.method == 'POST':
         if 'EMAIL' not in form.contact_options.data:
