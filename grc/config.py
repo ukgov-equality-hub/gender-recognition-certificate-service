@@ -18,7 +18,6 @@ class Config:
     SQLALCHEMY_DATABASE_URI = get_connection_string()
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_KEY = os.environ.get("SQLALCHEMY_KEY")
-    DEFAULT_ADMIN_USER = os.environ.get("DEFAULT_ADMIN_USER")
     LOG_LEVEL = (
         logging.getLevelName(os.environ.get("LOG_LEVEL"))
         if "LOG_LEVEL" in os.environ
