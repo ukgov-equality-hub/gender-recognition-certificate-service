@@ -108,11 +108,11 @@ def isFirstVisit():
 
                     elif application.email == session['validatedEmail']:
                         # The reference number is associated with their email address - load the application
+                        logger.log(LogLevel.INFO, f"{logger.mask_email_address(session['validatedEmail'])} accessed their application")
                         session.clear()  # Clear out session['validatedEmail']
                         session['reference_number'] = application.reference_number
                         session['application'] = application.data()
                         save_progress()
-                        logger.log(LogLevel.INFO, f"{logger.mask_email_address(session['validatedEmail'])} accessed their application")
                         return local_redirect(url_for('taskList.index'))
 
                     else:
