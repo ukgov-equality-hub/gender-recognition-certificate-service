@@ -60,3 +60,6 @@ Pillow==9.0.1
 PyPDF2==1.27.5
 pyClamd==0.4.0
 cryptography==37.0.2
+aiozipstream==0.4
+smart-open==6.0.0
+pyAesCrypt==6.0.0

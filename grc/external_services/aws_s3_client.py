@@ -9,21 +9,44 @@ from grc.utils.config_helper import ConfigHelper
 
 
 class AwsS3Client:
-    def __init__(self):
-        if ConfigHelper.get_vcap_services() is not None:
-            creds = ConfigHelper.get_vcap_services().aws_s3_bucket[0].credentials
+    def __init__(self, external=False):
+        self.external = external
+        aws_access_key_id, aws_secret_access_key, region_name, bucket_name = self.get_creds()
+
+        if aws_access_key_id:
             self.s3 = boto3.client(
                 's3',
-                aws_access_key_id=creds.aws_access_key_id,
-                aws_secret_access_key=creds.aws_secret_access_key,
-                region_name=creds.aws_region,
+                aws_access_key_id=aws_access_key_id,
+                aws_secret_access_key=aws_secret_access_key,
+                region_name=region_name,
                 config=Config(signature_version='s3v4')
             )
-            self.bucket_name = creds.bucket_name
+        else:
+            self.s3 = boto3.client(
+                's3',
+                region_name=region_name,
+                config=Config(signature_version='s3v4')
+            )
+
+        self.bucket_name = bucket_name
+
+
+    def get_creds(self):
+        if self.external:
+            return current_app.config['EXTERNAL_S3_AWS_ACCESS_KEY_ID'], \
+                current_app.config['EXTERNAL_S3_AWS_SECRET_ACCESS_KEY'], \
+                current_app.config['EXTERNAL_S3_AWS_REGION'], \
+                current_app.config['EXTERNAL_S3_AWS_BUCKET_NAME']
+
+        elif ConfigHelper.get_vcap_services() is not None:
+            creds = ConfigHelper.get_vcap_services().aws_s3_bucket[0].credentials
+            return creds.aws_access_key_id, \
+                creds.aws_secret_access_key, \
+                creds.aws_region, \
+                creds.bucket_name
 
         else:
-            self.s3 = boto3.client('s3', region_name=current_app.config['AWS_REGION'], config=Config(signature_version='s3v4'))
-            self.bucket_name = current_app.config['BUCKET_NAME']
+            return None, None, current_app.config['AWS_REGION'], current_app.config['BUCKET_NAME']
 
 
     def upload_fileobj(self, file, object_name):
@@ -86,7 +109,7 @@ class AwsS3Client:
         try:
             bytes_buffer = io.BytesIO()
             self.s3.download_fileobj(Bucket=self.bucket_name, Key=object_name, Fileobj=bytes_buffer)
-            data = bytes_buffer  #.getvalue()
+            data = bytes_buffer
 
         except ClientError as e:
             logging.error(e)
@@ -94,6 +117,37 @@ class AwsS3Client:
             return None
 
         return data
+
+
+    def stream_upload_object(self, file, object_name):
+        from smart_open import open
+
+        try:
+            url = f's3://{self.bucket_name}/{object_name}'
+            with open(url, 'wb', transport_params={'client': self.s3}) as fout:     # transport_params={'client': self.s3, 'multipart_upload_kwargs': {'ServerSideEncryption': 'aws:kms', 'SSEKMSKeyId': key}}
+                for data in file:
+                    fout.write(data)
+
+        except ClientError as e:
+            logging.error(e)
+            print(e, flush=True)
+            return False
+
+        return True
+
+
+    def stream_download_object(self, object_name):
+        try:
+            infile_object = self.s3.get_object(Bucket=self.bucket_name, Key=object_name)
+            #data = str(infile_object.get('Body', '').read())
+            yield infile_object.get('Body', '').read() #bytes(data, 'utf-8')
+
+        except ClientError as e:
+            logging.error(e)
+            print(e, flush=True)
+            return False
+
+        return True
 
 
     def delete_object(self, object_name):
@@ -106,3 +160,17 @@ class AwsS3Client:
             return False
 
         return True
+
+
+    def list_objects(self):
+        data = []
+        try:
+            for key in self.s3.list_objects(Bucket=self.bucket_name)['Contents']:
+                data.append(key['Key'])
+
+        except ClientError as e:
+            logging.error(e)
+            print(e, flush=True)
+            return None
+
+        return data
