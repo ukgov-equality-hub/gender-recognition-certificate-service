@@ -8,8 +8,10 @@ from admin.admin.forms import LoginForm
 from grc.external_services.gov_uk_notify import GovUkNotify
 from grc.models import db, AdminUser
 from grc.utils.redirect import local_redirect
+from grc.utils.logger import LogLevel, Logger
 
 admin = Blueprint('admin', __name__)
+logger = Logger()
 
 
 @admin.route('/', methods=['GET', 'POST'])
@@ -29,6 +31,8 @@ def index():
                 if password_ok:
                     if user.passwordResetRequired:
                         session['emailAddress'] = form.email_address.data
+                        logger.log(LogLevel.INFO, f"{logger.mask_email_address(form.email_address.data)} password reset required")
+
                         return local_redirect(url_for('password_reset.index'))
                     else:
                         # Email out 2FA link
@@ -41,18 +45,23 @@ def index():
                                 expires=expires,
                                 login_link=login_link
                             )
+                            logger.log(LogLevel.INFO, f"login link sent to {logger.mask_email_address(user.email)}")
+
                             return render_template('login/login-link-sent.html', email_address=user.email)
 
                         except Exception as e:
                             print(e, flush=True)
+
                 else:
                     form.password.errors.append("Your password was incorrect. Please try re-entering your password")
+                    logger.log(LogLevel.INFO, f"{logger.mask_email_address(form.email_address.data)} entered incorrect password")
 
             else:
                 form.email_address.errors.append("A user with this email address was not found")
                 session.pop('signedIn', None)
                 session.pop('emailAddress', None)
                 session.pop('userType', None)
+                logger.log(LogLevel.WARN, f"User {logger.mask_email_address(form.email_address.data)} not found")
 
     else:
         addDefaultAdminUserToDatabaseIfThereAreNoUsers()
@@ -79,6 +88,7 @@ def sign_in_with_token():
                     session.pop('signedIn', None)
                     session.pop('emailAddress', None)
                     session.pop('userType', None)
+                    logger.log(LogLevel.WARN, f"Expired login link used for {logger.mask_email_address(login_token['email'])}")
                 else:
                     user = AdminUser.query.filter_by(
                         id=login_token['id'], email=login_token['email']
@@ -88,6 +98,7 @@ def sign_in_with_token():
                         session.pop('signedIn', None)
                         session.pop('emailAddress', None)
                         session.pop('userType', None)
+                        logger.log(LogLevel.WARN, f"Login link user {logger.mask_email_address(login_token['email'])} not found in the database")
                     else:
                         signedIn = login_token['email']
                         local = datetime.now().replace(tzinfo=tz.gettz('UTC')).astimezone(tz.gettz('Europe/London'))
@@ -96,14 +107,15 @@ def sign_in_with_token():
 
                         session['signedIn'] = signedIn
                         session['userType'] = user.userType
+                        logger.log(LogLevel.INFO, f"User {logger.mask_email_address(signedIn)} logged in via link")
 
                         return local_redirect(url_for('applications.index'))
             else:
                 message = "The login link was incorrect. If you pasted the web address, check you copied the entire address."
+                logger.log(LogLevel.WARN, "Incorrect login link attempted")
 
         except Exception as e:
             print(e, flush=True)
-
 
     return render_template(
         'login/login-link-error.html',

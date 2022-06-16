@@ -5,8 +5,10 @@ from flask import Blueprint, render_template, request, current_app, url_for
 from admin.forgot_password.forms import ForgotPasswordForm
 from grc.external_services.gov_uk_notify import GovUkNotify
 from grc.models import AdminUser
+from grc.utils.logger import LogLevel, Logger
 
 forgot_password = Blueprint('forgot_password', __name__)
+logger = Logger()
 
 
 @forgot_password.route('/forgot_password', methods=['GET', 'POST'])
@@ -30,6 +32,9 @@ def index():
                         expires=expires,
                         reset_link=reset_link
                     )
+
+                    logger.log(LogLevel.INFO, f"Password reset link sent to {form.email_address.data}")
+
                 except Exception as e:
                     print(e, flush=True)
 
@@ -41,6 +46,7 @@ def index():
 
             else:
                 form.email_address.errors.append("A user with this email address was not found")
+                logger.log(LogLevel.WARN, f"Password reset requested for unknown user {form.email_address.data}")
 
     return render_template(
         'forgot-password/forgot_password.html',

@@ -1,12 +1,14 @@
 import random, string
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, session
 from werkzeug.security import generate_password_hash
 from grc.utils.decorators import AdminRequired
 from admin.users.forms import UsersForm
 from grc.external_services.gov_uk_notify import GovUkNotify
 from grc.models import db, AdminUser
+from grc.utils.logger import LogLevel, Logger
 
 users = Blueprint('users', __name__)
+logger = Logger()
 
 
 @users.route('/users', methods=['GET'])
@@ -34,6 +36,7 @@ def invite_new_admin_user():
 
             if user is not None:
                 form.email_address.errors.append("A user account with that email address already exists")
+                logger.log(LogLevel.WARN, f"{logger.mask_email_address(session['signedIn'])} attempted to create an account for {emailAddress} which already exists")
             else:
                 temporary_password = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(6))
                 userType = 'ADMIN' if form.is_admin_user.data else 'VIEWER'
@@ -49,6 +52,8 @@ def invite_new_admin_user():
                     )
                 except Exception as e:
                     print(e, flush=True)
+
+                logger.log(LogLevel.WARN, f"{logger.mask_email_address(session['signedIn'])} created an account for {emailAddress}")
 
                 return render_template(
                     'users/invite-sent.html',
@@ -72,18 +77,24 @@ def delete(emailAddress):
     ).count()
 
     if user is None:
+        logger.log(LogLevel.WARN, f"{logger.mask_email_address(session['signedIn'])} attempted to delete an account for {emailAddress} which does not exist")
+
         return render_template(
             'users/user-delete-failed-user-not-found.html',
             email_address=emailAddress
         )
 
     elif number_of_admin_users == 1 and user.userType == 'ADMIN':
+        logger.log(LogLevel.WARN, f"{logger.mask_email_address(session['signedIn'])} attempted to delete the last admin account for {emailAddress}")
+
         return render_template('users/user-delete-failed-cannot-delete-last-admin-user.html')
 
     else:
         if request.method == 'POST':
             db.session.delete(user)
             db.session.commit()
+            logger.log(LogLevel.WARN, f"{logger.mask_email_address(session['signedIn'])} deleted account for {emailAddress}")
+
             return render_template(
                 'users/user-deleted.html',
                 email_address=emailAddress
@@ -104,19 +115,26 @@ def resend(emailAddress):
     ).first()
 
     if user is None:
+        logger.log(LogLevel.WARN, f"{logger.mask_email_address(session['signedIn'])} attempted to resend an invite for {emailAddress} which does not exist")
+
         return render_template(
             'users/invite-resend-failed-user-not-found.html',
             email_address=emailAddress
         )
+
     elif user.dateLastLogin is not None:
+        logger.log(LogLevel.WARN, f"{logger.mask_email_address(session['signedIn'])} attempted to create an account for {emailAddress} which has already been created")
+
         return render_template(
             'users/invite-resend-failed-already-logged-in.html',
             email_address=emailAddress
         )
+
     else:
         temporary_password = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(6))
         user.password = generate_password_hash(temporary_password)
         db.session.commit()
+        logger.log(LogLevel.WARN, f"{logger.mask_email_address(session['signedIn'])} sent an invite to {emailAddress}")
 
         try:
             GovUkNotify().send_email_admin_new_user(

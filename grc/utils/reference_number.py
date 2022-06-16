@@ -30,7 +30,7 @@ def validate_reference_number(reference):
     record = Application.query.filter_by(reference_number=reference).first()
 
     if record is None:
-        print("An application with " + reference + " reference number does not exist")
+        print("An application with reference number " + reference + " does not exist")
         return False
     else:
         return record

@@ -5,8 +5,10 @@ from grc.models import db, Application, ApplicationStatus
 from grc.external_services.aws_s3_client import AwsS3Client
 from grc.birth_registration.forms import AdoptedUKForm
 from grc.utils.redirect import local_redirect
+from grc.utils.logger import LogLevel, Logger
 
 applications = Blueprint('applications', __name__)
+logger = Logger()
 
 
 def get_radio_pretty_value(formName, fieldName, value):
@@ -35,6 +37,7 @@ def index():
     completedApplications = Application.query.filter_by(
         status=ApplicationStatus.COMPLETED
     )
+    logger.log(LogLevel.INFO, f"{logger.mask_email_address(session['signedIn'])} accessed all applications")
 
     return render_template(
         'applications/applications.html',
@@ -51,6 +54,8 @@ def view(reference_number):
     application = Application.query.filter_by(
         reference_number=reference_number
     ).first()
+
+    logger.log(LogLevel.INFO, f"{logger.mask_email_address(session['signedIn'])} accessed application {reference_number}")
 
     return render_template(
         'applications/view-application.html',
@@ -75,6 +80,8 @@ def downloadfile(file_name):
         else:
             file_type = 'image/' + file_type
 
+    logger.log(LogLevel.INFO, f"{logger.mask_email_address(session['signedIn'])} downloaded file {file_name}")
+
     response = make_response(data.getvalue())
     response.headers.set('Content-Type', file_type)
     return response
@@ -91,6 +98,7 @@ def download(reference_number):
 
     if application is None:
         message = "An application with that reference number cannot be found"
+        logger.log(LogLevel.INFO, f"{logger.mask_email_address(session['signedIn'])} attempted to download application {reference_number} which cannot be found")
     else:
         application.status = ApplicationStatus.DOWNLOADED
         application.downloaded = datetime.now()
@@ -103,6 +111,8 @@ def download(reference_number):
             application.data(),
             download=True
         )
+
+        logger.log(LogLevel.INFO, f"{logger.mask_email_address(session['signedIn'])} downloaded application {reference_number}")
 
         response = make_response(bytes)
         response.headers.set('Content-Type', 'application/pdf')
@@ -124,12 +134,15 @@ def completed(reference_number):
 
     if application is None:
         message = "An application with that reference number cannot be found"
+        logger.log(LogLevel.INFO, f"{logger.mask_email_address(session['signedIn'])} attempted to complete application {reference_number} which cannot be found")
     else:
         application.status = ApplicationStatus.COMPLETED
         application.completed = datetime.now()
         application.completedBy = session['signedIn']
         db.session.commit()
         message = "application updated"
+
+        logger.log(LogLevel.INFO, f"{logger.mask_email_address(session['signedIn'])} completed application {reference_number}")
 
     session['message'] = message
     return local_redirect(url_for('applications.index', _anchor='completed'))
@@ -146,6 +159,7 @@ def attachments(reference_number):
 
     if application is None:
         message = "An application with that reference number cannot be found"
+        logger.log(LogLevel.INFO, f"{logger.mask_email_address(session['signedIn'])} attempted to download files for application {reference_number} which cannot be found")
     else:
         from grc.utils.application_files import ApplicationFiles
         bytes, file_name = ApplicationFiles().create_or_download_attachments(
@@ -153,6 +167,8 @@ def attachments(reference_number):
             application.data(),
             download=True
         )
+
+        logger.log(LogLevel.INFO, f"{logger.mask_email_address(session['signedIn'])} downloaded files for application {reference_number}")
 
         message = "attachments zipped"
         response = make_response(bytes)
@@ -175,10 +191,13 @@ def delete(reference_number):
 
     if application is None:
         message = "An application with that reference number cannot be found"
+        logger.log(LogLevel.INFO, f"{logger.mask_email_address(session['signedIn'])} attempted to delete application {reference_number} which cannot be found")
     else:
         db.session.delete(application)
         db.session.commit()
         message = "application deleted"
+
+        logger.log(LogLevel.INFO, f"{logger.mask_email_address(session['signedIn'])} deleted application {reference_number}")
 
     session['message'] = message
     return local_redirect(url_for('applications.index', _anchor='new'))

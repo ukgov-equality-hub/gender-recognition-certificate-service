@@ -7,7 +7,7 @@ from grc.external_services.aws_s3_client import AwsS3Client
 blueprint = flask.Blueprint('filters', __name__)
 
 
-@jinja2.contextfilter
+@jinja2.pass_context
 @blueprint.app_template_filter('format_date')
 def format_date_filter(context, dt):
     if dt:
@@ -15,7 +15,7 @@ def format_date_filter(context, dt):
         return datetime.strftime(dt, '%d/%m/%Y %H:%M')
     return ''
 
-@jinja2.contextfilter
+@jinja2.pass_context
 @blueprint.app_template_filter('image_data')
 def image_data_filter(context, image_name):
     print('image_data_filter', flush=True)
@@ -25,7 +25,7 @@ def image_data_filter(context, image_name):
         return data
     return ''
 
-@jinja2.contextfilter
+@jinja2.pass_context
 @blueprint.app_template_filter('image_width')
 def image_width_filter(context, image_name):
     if image_name:
@@ -35,7 +35,7 @@ def image_width_filter(context, image_name):
         return width
     return ''
 
-@jinja2.contextfilter
+@jinja2.pass_context
 @blueprint.app_template_filter('image_height')
 def image_height_filter(context, image_name):
     if image_name:

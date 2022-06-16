@@ -7,8 +7,10 @@ from grc.utils.decorators import EmailRequired, LoginRequired, Unauthorized, Val
 from grc.utils.reference_number import reference_number_generator, reference_number_string
 from grc.utils.application_progress import save_progress
 from grc.utils.redirect import local_redirect
+from grc.utils.logger import LogLevel, Logger
 
 startApplication = Blueprint('startApplication', __name__)
+logger = Logger()
 
 
 @startApplication.route('/', methods=['GET', 'POST'])
@@ -39,11 +41,13 @@ def securityCode():
     form = SecurityCodeForm()
 
     if request.method == 'POST':
+        email = session['email']
         if form.validate_on_submit():
-            email = session['email']
             session.clear()  # Clear out session['email']
             session['validatedEmail'] = email
             return local_redirect(url_for('startApplication.isFirstVisit'))
+        else:
+            logger.log(LogLevel.WARN, f"{logger.mask_email_address(email)} entered an incorrect security code")
 
     elif request.args.get('resend') == 'true':
         try:
@@ -90,6 +94,7 @@ def isFirstVisit():
                     if not application.email:
                         # This application has been anonymised (i.e. after it's been submitted and processed)
                         # Show the user a friendly page explaining this
+                        logger.log(LogLevel.WARN, f"{logger.mask_email_address(session['validatedEmail'])} attempted to access a completed application")
                         return render_template('start-application/application-already-submitted.html')
 
                     elif application.status == ApplicationStatus.COMPLETED or \
@@ -98,10 +103,12 @@ def isFirstVisit():
                             application.status == ApplicationStatus.DELETED:
                         # This application has already been submitted
                         # Show the user a friendly page explaining this
+                        logger.log(LogLevel.WARN, f"{logger.mask_email_address(session['validatedEmail'])} attempted to access a submitted application")
                         return render_template('start-application/application-already-submitted.html')
 
                     elif application.email == session['validatedEmail']:
                         # The reference number is associated with their email address - load the application
+                        logger.log(LogLevel.INFO, f"{logger.mask_email_address(session['validatedEmail'])} accessed their application")
                         session.clear()  # Clear out session['validatedEmail']
                         session['reference_number'] = application.reference_number
                         session['application'] = application.data()
@@ -110,6 +117,7 @@ def isFirstVisit():
 
                     else:
                         # This reference number is owned by another email address - pretend it doesn't exist
+                        logger.log(LogLevel.WARN, f"{logger.mask_email_address(session['validatedEmail'])} attempted to access someone elses application")
                         return returnToIsFirstVisitPageWithInvalidReferenceError(form)
 
     return render_template(
