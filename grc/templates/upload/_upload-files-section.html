@@ -10,19 +10,18 @@
 
                     <div class="govuk-summary-list__row">
                         <dd class="govuk-summary-list__value govuk-!-width-full" style="vertical-align: middle;">
-                            {{ item | replace(session['application']['reference_number'] + '__' + section + '__', '') }}
+                            {{ item | replace(session['application']['reference_number'] + '__' + section.data_section + '__', '') }}
                         </dd>
                         <dd class="govuk-summary-list__actions">
 
-                            <form method="POST" action="{{ url_for('upload.removeFile') }}#file-upload-section">
+                            <form method="POST" action="{{ url_for('upload.removeFile', section_url=section.url) }}#file-upload-section">
                                 <input type="hidden" name="csrf_token" value="{{ deleteform.get_csrf_token() }}">
 
-                                <input type="hidden" name="section" value="{{ section }}">
                                 <input type="hidden" name="file" value="{{ item }}">
                                 <button class="govuk-button govuk-button--warning govuk-!-margin-bottom-0" data-module="govuk-button">
                                     Remove
                                     <span class="govuk-visually-hidden">
-                                        {{ item | replace(session['application']['reference_number'] + '__' + section + '__', '') }} file
+                                        {{ item | replace(session['application']['reference_number'] + '__' + section.data_section + '__', '') }} file
                                     </span>
                                 </button>
                             </form>
@@ -38,7 +37,7 @@
               onsubmit="document.getElementById('documents').style.display = 'none'; document.getElementById('loading').style.display = 'inline-block';">
             <input type="hidden" name="csrf_token" value="{{ form.get_csrf_token() }}">
 
-            <div class="govuk-form-group {{ 'govuk-form-group--error' if form.errors }}">
+            <div class="govuk-form-group {{ 'govuk-form-group--error' if form.errors }} govuk-!-margin-bottom-2">
                 <label for="documents" class="govuk-label govuk-label--m">
                     Upload files
                 </label>
@@ -60,19 +59,15 @@
                 <input id="documents" type="file" name="documents" multiple
                        accept=".jpg,.jpeg,.bmp,.png,.tif,.tiff,.pdf,.txt"
                        class="govuk-file-upload govuk-!-margin-bottom-4 {{ 'govuk-input--error' if form.documents.errors }}">
-                <div class="govuk-checkboxes__item">
-                    <input id="more_files" type="checkbox" name="more_files" value="Yes"
-                           class="govuk-checkboxes__input">
-                    <label for="more_files" class="govuk-label govuk-checkboxes__label">
-                        I have more files to upload.
-                    </label>
-                </div>
             </div>
+            <input type="submit" name="button_clicked" value="Upload file" class="govuk-button" data-module="govuk-button">
+
+            <p class="govuk-body govuk-!-margin-top-5">
+                Once you have uploaded all your files, click the "Save and continue" button
+            </p>
 
             <div class="govuk-button-group">
-                <button class="govuk-button" data-module="govuk-button">
-                    Save and continue
-                </button>
+                <input type="submit" name="button_clicked" value="Save and continue" class="govuk-button" data-module="govuk-button">
                 <a href="{{ url_for('taskList.index') }}" class="govuk-link govuk-link--no-visited-state">
                     Return to task list
                 </a>

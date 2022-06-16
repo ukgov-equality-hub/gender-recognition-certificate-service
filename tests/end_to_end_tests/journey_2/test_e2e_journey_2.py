@@ -55,5 +55,5 @@ async def e2e_main():
             await run_script_for_browser(browser_type)
 
 
-def test_e2e():
+def test_e2e_journey_2():
     asyncio.run(e2e_main())

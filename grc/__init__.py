@@ -81,7 +81,6 @@ def create_app(test_config=None):
     # Homepage
     from grc.start_application import startApplication
     app.register_blueprint(startApplication)
-    app.add_url_rule('/', endpoint='index')
 
     # Save And Return
     from grc.save_and_return import saveAndReturn
@@ -90,32 +89,26 @@ def create_app(test_config=None):
     # Task List
     from grc.task_list import taskList
     app.register_blueprint(taskList)
-    app.add_url_rule('/task-list', endpoint='index')
 
     # Personal details
     from grc.personal_details import personalDetails
     app.register_blueprint(personalDetails)
-    app.add_url_rule('/personal-details', endpoint='index')
 
     # Birth registration
     from grc.birth_registration import birthRegistration
     app.register_blueprint(birthRegistration)
-    app.add_url_rule('/birth-registration', endpoint='index')
 
     # Partnership details
     from grc.partnership_details import partnershipDetails
     app.register_blueprint(partnershipDetails)
-    app.add_url_rule('/partnership-details', endpoint='index')
 
     # Upload
     from grc.upload import upload
     app.register_blueprint(upload)
-    app.add_url_rule('/upload/medical-reports', endpoint='medicalReports')
 
     # Submit and pay
     from grc.submit_and_pay import submitAndPay
     app.register_blueprint(submitAndPay)
-    app.add_url_rule('/submit-and-pay', endpoint='index')
 
     # Policies
     from grc.policies import policies
@@ -124,6 +117,5 @@ def create_app(test_config=None):
     # Document checker
     from grc.document_checker import documentChecker
     app.register_blueprint(documentChecker)
-    app.add_url_rule('/check-documents', endpoint='index')
 
     return app

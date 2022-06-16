@@ -105,13 +105,13 @@
                         {% if application.confirmation.overseasCheck == 'No' or application.confirmation.overseasApprovedCheck == 'No' %}
                             {{ taskListItem(
                                 "Your medical reports",
-                                url_for('upload.medicalReports'),
+                                url_for('upload.uploadInfoPage', section_url='medical-reports'),
                                 list_status['medicalReports'])
                             }}
 
                             {{ taskListItem(
                                 "Evidence of living in your gender",
-                                url_for('upload.genderEvidence'),
+                                url_for('upload.uploadInfoPage', section_url='gender-evidence'),
                                 list_status['genderEvidence'])
                             }}
                         {% endif %}
@@ -119,7 +119,7 @@
                         {% if application.personalDetails.previousNamesCheck is defined and application.personalDetails.previousNamesCheck == 'Yes' %}
                             {{ taskListItem(
                                 "Name change documents",
-                                url_for('upload.nameChange'),
+                                url_for('upload.uploadInfoPage', section_url='name-change'),
                                 list_status['nameChange'])
                             }}
                         {% endif %}
@@ -134,7 +134,7 @@
                               ) %}
                             {{ taskListItem(
                                 "Marriage and civil partnership documents",
-                                url_for('upload.marriageDocuments'),
+                                url_for('upload.uploadInfoPage', section_url='marriage-documents'),
                                 list_status['marriageDocuments'])
                             }}
                         {% endif %}
@@ -142,14 +142,14 @@
                         {% if application.confirmation.overseasCheck == 'Yes' and application.confirmation.overseasApprovedCheck == 'Yes' %}
                             {{ taskListItem(
                                 "Overseas certificate documents",
-                                url_for('upload.overseasCertificate'),
+                                url_for('upload.uploadInfoPage', section_url='overseas-certificate'),
                                 list_status['overseasCertificate'])
                             }}
                         {% endif %}
 
                         {{ taskListItem(
                             "Statutory declarations",
-                            url_for('upload.statutoryDeclarations'),
+                            url_for('upload.uploadInfoPage', section_url='statutory-declarations'),
                             list_status['statutoryDeclarations'])
                         }}
                     </ul>
