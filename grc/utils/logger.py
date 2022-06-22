@@ -1,5 +1,6 @@
 import enum
 from datetime import datetime
+from warnings import catch_warnings
 from flask import request
 
 
@@ -43,4 +44,10 @@ class Logger():
 
 
     def log(self, level, message):
-        print(f"{request.remote_addr} - [{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] {level.value}: {message}", flush=True)
+        session_id = ''
+        try:
+            session_id = f" {request.cookies['session']}"
+        except:
+            pass
+
+        print(f"{request.remote_addr} - [{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] {level.value}: {message}{session_id}", flush=True)
