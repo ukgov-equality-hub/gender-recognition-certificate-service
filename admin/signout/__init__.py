@@ -8,9 +8,9 @@ logger = Logger()
 
 @signout.route('/signout', methods=['GET'])
 def index():
+    logger.log(LogLevel.INFO, f"{logger.mask_email_address(session['signedIn'])} logged out")
     session.pop('signedIn', None)
     session.pop('emailAddress', None)
     session.pop('userType', None)
-    logger.log(LogLevel.INFO, f"{logger.mask_email_address(session['signedIn'])} logged out")
 
     return local_redirect(url_for('admin.index'))
