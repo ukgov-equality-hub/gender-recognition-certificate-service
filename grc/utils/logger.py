@@ -1,6 +1,5 @@
 import enum
 from datetime import datetime
-from warnings import catch_warnings
 from flask import request
 
 
