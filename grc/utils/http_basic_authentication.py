@@ -49,6 +49,6 @@ class HttpBasicAuthentication:
 
         response = Response('', 401)
         response.headers.add('WWW-Authenticate', 'Basic realm="Gender Recognition Certificate service"')
-        response.headers.add('X-Application-ID', ConfigHelper.get_vcap_application().application_id)
+        #response.headers.add('X-Application-ID', ConfigHelper.get_vcap_application().application_id)
 
         abort(response)
