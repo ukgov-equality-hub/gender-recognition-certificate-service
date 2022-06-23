@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% import "govuk-design-system-templates/error-summary.html" as error_summary %}
+{% import "govuk-design-system-templates/radios.html" as radios %}
+{% import "govuk-design-system-templates/textarea.html" as textarea %}
+{% import "govuk-design-system-templates/text-input.html" as textInput %}
+
+{% block title %}Share your feedback{% endblock %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            {{ error_summary.renderFor(form) }}
+
+            <h1 class="govuk-heading-l">
+                Share your feedback
+            </h1>
+            <p class="govuk-body">
+                Please tell us about your experience filling in your Gender Recognition Certificate application using this digital service.
+            </p>
+            <div class="govuk-warning-text">
+                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                <strong class="govuk-warning-text__text">
+                    <span class="govuk-warning-text__assistive">Warning</span>
+                    Please don’t include any information that could be used to identify you.
+                    If you have any questions about your application, please contact the admin team.
+                </strong>
+            </div>
+
+            <form method="POST">
+                {{ form.csrf_token }}
+
+                <div class="govuk-!-margin-bottom-8">
+                    {{ radios.renderFor(
+                        form,
+                        fieldName='how_easy_to_complete_application',
+                        question='How easy was it to complete your application?',
+                        radiosOptions={
+                            'questionClasses': 'govuk-fieldset__legend--m'
+                        }
+                    ) }}
+                </div>
+
+                <div class="govuk-!-margin-bottom-8">
+                    {{ radios.renderFor(
+                        form,
+                        fieldName='any_questions_difficult_to_answer',
+                        question='Did you find any of the questions difficult to answer?',
+                        radiosOptions={
+                            'questionClasses': 'govuk-fieldset__legend--m',
+                            'conditionalOptions': [
+                                ('YES',
+                                textarea.renderFor(
+                                    form,
+                                    fieldName='which_questions_difficult_to_answer',
+                                    textareaForOptions={
+                                        'labelOptions':{ 'htmlOrText': "Which questions did you find difficult, and why?" },
+                                        'rows': 5
+                                    }
+                                ))
+                            ]
+                        }
+                    ) }}
+                </div>
+
+                <div class="govuk-!-margin-bottom-8">
+                    {{ radios.renderFor(
+                        form,
+                        fieldName='needed_to_call_admin_team',
+                        question='Did you need to call the admin team for help with your application?',
+                        radiosOptions={
+                            'questionClasses': 'govuk-fieldset__legend--m',
+                            'conditionalOptions': [
+                                ('YES',
+                                textarea.renderFor(
+                                    form,
+                                    fieldName='what_did_you_need_help_with',
+                                    textareaForOptions={
+                                        'labelOptions':{ 'htmlOrText': "What did you need help with?" },
+                                        'rows': 5
+                                    }
+                                ))
+                            ]
+                        }
+                    ) }}
+                </div>
+
+                <div class="govuk-!-margin-bottom-8">
+                    {{ radios.renderFor(
+                        form,
+                        fieldName='used_doc_checker',
+                        question='Did you use the tool to check which documents you needed to submit with your application?',
+                        radiosOptions={
+                            'questionClasses': 'govuk-fieldset__legend--m',
+                            'conditionalOptions': [
+                                ('YES',
+                                textarea.renderFor(
+                                    form,
+                                    fieldName='experience_of_using_doc_checker',
+                                    textareaForOptions={
+                                        'labelOptions':{ 'htmlOrText': "How was your experience using the tool?" },
+                                        'rows': 5
+                                    }
+                                ))
+                            ]
+                        }
+                    ) }}
+                </div>
+
+                <div class="govuk-!-margin-bottom-8">
+                    {{ textarea.renderFor(
+                        form,
+                        fieldName='any_other_suggestions',
+                        textareaForOptions={
+                            'labelOptions':{
+                                'htmlOrText': "Do you have any other suggestions for improving the digital service?",
+                                'classes': 'govuk-label--m'
+                             },
+                            'rows': 5
+                        }
+                    ) }}
+                </div>
+
+                <div class="govuk-button-group">
+                    <button class="govuk-button" data-module="govuk-button">
+                        Send feedback
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+{% endblock %}
