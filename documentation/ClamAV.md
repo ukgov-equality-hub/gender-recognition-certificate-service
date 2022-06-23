@@ -1,11 +1,11 @@
 
 [Gender Recognition Certificate service](../README.md) >
 [Developer documentation](README.md) >
-Clam AV setup
+Clam AV virus scanning on Gov.UK PaaS
 
-# Clam AV on PaaS
+# Clam AV virus scanning on Gov.UK PaaS
 
-We Clam AV to scan files as they are uploaded by users. This is implemented by creating a PaaS app that employs a ClamAV Docker image [built by the Home Office](https://github.com/cabinetoffice/docker-clamav). The image is hosted on [quay.io](quay.io/ukhomeofficedigital/clamav).
+We use Clam AV to scan files as they are uploaded by users. This is implemented by creating a PaaS app that employs a ClamAV Docker image [built by the Home Office](https://github.com/cabinetoffice/docker-clamav). The image is hosted on [quay.io](quay.io/ukhomeofficedigital/clamav).
 
 ## Deployment
 

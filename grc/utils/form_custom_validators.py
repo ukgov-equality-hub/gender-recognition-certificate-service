@@ -295,6 +295,6 @@ def fileVirusScan(form, field):
     else:
         res_type, res_msg = results['stream']
         if res_type == 'FOUND':
-            raise ValidationError('Virus found: %s' % res_msg)
+            raise ValidationError('The selected file contains a virus')
         else:
             print('Error scanning uploaded file', flush=True)
