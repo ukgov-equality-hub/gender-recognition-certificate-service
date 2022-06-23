@@ -19,8 +19,9 @@ Environments and deployments:
 Database:
 * TODO Database migrations
 
-Backups:
+Other:
 * [Backing up the database and files externally to Gov.UK PaaS](External_backups.md)
+* [ClamAV virus scanning on Gov.UK PaaS](ClamAV.md)
 
 How-to:
 * [How to put the service into Maintenance Mode / "Service unavailable"](Maintenance_mode.md)
