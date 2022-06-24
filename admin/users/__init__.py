@@ -29,35 +29,35 @@ def invite_new_admin_user():
 
     if request.method == 'POST':
         if form.validate_on_submit():
-            emailAddress = form.email_address.data
+            email_address: str = form.email_address.data
             user = AdminUser.query.filter_by(
-                email=emailAddress
+                email=email_address
             ).first()
 
             if user is not None:
                 form.email_address.errors.append("A user account with that email address already exists")
-                logger.log(LogLevel.WARN, f"{logger.mask_email_address(session['signedIn'])} attempted to create an account for {emailAddress} which already exists")
+                logger.log(LogLevel.WARN, f"{logger.mask_email_address(session['signedIn'])} attempted to create an account for {email_address} which already exists")
             else:
                 temporary_password = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(6))
                 userType = 'ADMIN' if form.is_admin_user.data else 'VIEWER'
-                record = AdminUser(email=emailAddress, password=generate_password_hash(temporary_password), userType=userType)
+                record = AdminUser(email=email_address, password=generate_password_hash(temporary_password), userType=userType)
                 db.session.add(record)
                 db.session.commit()
 
                 try:
                     GovUkNotify().send_email_admin_new_user(
-                        email_address=emailAddress,
+                        email_address=email_address,
                         temporary_password=temporary_password,
                         application_link=request.host_url
                     )
                 except Exception as e:
                     print(e, flush=True)
 
-                logger.log(LogLevel.WARN, f"{logger.mask_email_address(session['signedIn'])} created an account for {emailAddress}")
+                logger.log(LogLevel.WARN, f"{logger.mask_email_address(session['signedIn'])} created an account for {email_address}")
 
                 return render_template(
                     'users/invite-sent.html',
-                    email_address=emailAddress,
+                    email_address=email_address,
                 )
 
     return render_template(
