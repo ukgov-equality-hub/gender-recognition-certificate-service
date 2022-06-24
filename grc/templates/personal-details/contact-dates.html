@@ -18,6 +18,11 @@
             <form method="POST" action="{{ url_for('personalDetails.contactDates') }}">
                 {{ form.csrf_token }}
 
+                {% macro insertDatesToAvoidHintText() %}
+                    Include the day, month and year. Write in any format, for example:<br>
+                    1-7 September 2022,<br>
+                    3rd Oct - 8th Nov 2022
+                {% endmacro %}
                 {{ radios.renderFor(
                     form,
                     fieldName='contactDatesCheck',
@@ -36,6 +41,7 @@
                                 fieldName='dates',
                                 textareaForOptions={
                                     'labelOptions':{ 'htmlOrText': "Insert dates to avoid" },
+                                    'hintOptions':{ 'htmlOrText': insertDatesToAvoidHintText() },
                                     'rows': 3
                                 }
                             ))
