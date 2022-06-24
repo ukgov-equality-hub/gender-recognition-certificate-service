@@ -18,7 +18,7 @@ class UploadForm(FlaskForm):
             StrictRequiredIf('button_clicked', 'Upload file',
                              message='Select a JPG, BMP, PNG, TIF or PDF file smaller than 10MB',
                              validators=[
-                                 MultiFileAllowed(['jpg', 'png', 'jpeg', 'tif', 'bmp', 'pdf', 'txt'],
+                                 MultiFileAllowed(['jpg', 'png', 'jpeg', 'tif', 'bmp', 'pdf'],
                                                   message='Select a JPG, BMP, PNG, TIF or PDF file smaller than 10MB'),
                                  fileSizeLimit(10),
                                  fileVirusScan

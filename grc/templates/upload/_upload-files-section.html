@@ -57,7 +57,7 @@
                 <img id="loading" src="{{ url_for('static', filename='assets/images/loading.gif') }}" width="41"
                      height="41" style="display: none; margin-bottom: 20px;" alt="">
                 <input id="documents" type="file" name="documents" multiple
-                       accept=".jpg,.jpeg,.bmp,.png,.tif,.tiff,.pdf,.txt"
+                       accept=".jpg,.jpeg,.bmp,.png,.tif,.tiff,.pdf"
                        class="govuk-file-upload govuk-!-margin-bottom-4 {{ 'govuk-input--error' if form.documents.errors }}">
             </div>
             <input type="submit" name="button_clicked" value="Upload file" class="govuk-button" data-module="govuk-button">
