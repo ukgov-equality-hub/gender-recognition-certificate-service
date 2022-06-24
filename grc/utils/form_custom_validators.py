@@ -121,6 +121,12 @@ def validateEmailAddress(form, field):
         raise ValidationError('Enter a valid email address')
 
 
+def validateGovUkEmailAddress(form, field):
+    email_address: str = field.data
+    if not email_address.endswith('.gov.uk'):
+        raise ValidationError('Enter a .gov.uk email address')
+
+
 def validatePasswordStrength(form, field):
     def password_check(password):
         length_error = len(password) < 8
