@@ -56,7 +56,7 @@ def create_app(test_config=None):
     # Update session timeout time
     @app.before_request
     def make_before_request():
-        app.permanent_session_lifetime = timedelta(hours=24)
+        app.permanent_session_lifetime = timedelta(hours=3)
         g.build_info = build_info
 
     @app.after_request
