@@ -8,6 +8,7 @@ from grc.models import db
 from grc.utils import filters
 from admin.config import Config, DevConfig, TestConfig
 from grc.utils.http_basic_authentication import HttpBasicAuthentication
+from grc.utils.http_ip_whitelist import HttpIPWhitelist
 
 migrate = Migrate()
 flask_uuid = FlaskUUID()
@@ -30,6 +31,9 @@ def create_app(test_config=None):
     # Require HTTP Basic Authentication if both the username and password are set
     if app.config['BASIC_AUTH_USERNAME'] and app.config['BASIC_AUTH_PASSWORD']:
         HttpBasicAuthentication(app)
+
+    if app.config['IP_WHITELIST']:
+        HttpIPWhitelist(app)
 
     # Load build info from JSON file
     f = open('build-info.json')

@@ -51,6 +51,7 @@ class Config:
     JOB_TOKEN = os.environ.get("JOB_TOKEN")
     BASIC_AUTH_USERNAME = os.environ.get("BASIC_AUTH_USERNAME")
     BASIC_AUTH_PASSWORD = os.environ.get("BASIC_AUTH_PASSWORD")
+    IP_WHITELIST = os.environ.get("IP_WHITELIST")
 
 
 class DevConfig(Config):
