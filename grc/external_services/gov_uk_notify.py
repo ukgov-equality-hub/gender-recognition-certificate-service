@@ -97,6 +97,33 @@ class GovUkNotify:
             personalisation=personalisation
         )
 
+    def send_email_feedback(
+            self,
+            how_easy_to_complete_application: str,
+            any_questions_difficult_to_answer: str,
+            which_questions_difficult_to_answer: str,
+            needed_to_call_admin_team: str,
+            what_did_you_need_help_with: str,
+            used_doc_checker: str,
+            experience_of_using_doc_checker: str,
+            any_other_suggestions: str,
+    ):
+        personalisation = {
+            'how_easy_to_complete_application': how_easy_to_complete_application,
+            'any_questions_difficult_to_answer': any_questions_difficult_to_answer,
+            'which_questions_difficult_to_answer': which_questions_difficult_to_answer,
+            'needed_to_call_admin_team': needed_to_call_admin_team,
+            'what_did_you_need_help_with': what_did_you_need_help_with,
+            'used_doc_checker': used_doc_checker,
+            'experience_of_using_doc_checker': experience_of_using_doc_checker,
+            'any_other_suggestions': any_other_suggestions,
+        }
+        return self.send_email(
+            email_address='grc-service-feedback@cabinetoffice.gov.uk',
+            template_id='d83e561e-3620-47f5-983a-4b50bf3fc33c',
+            personalisation=personalisation
+        )
+
     def send_email_admin_login_link(
             self,
             email_address: str,

@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% import "govuk-design-system-templates/error-summary.html" as error_summary %}
+{% import "govuk-design-system-templates/text-input.html" as textInput %}
+
+{% block title %}Feedback received{% endblock %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <h1 class="govuk-heading-l">
+                Thank you for your feedback
+            </h1>
+
+            {% if 'application' in session %}
+                <p class="govuk-body">
+                    <a href="{{ url_for('taskList.index') }}">Return to your application</a>
+                </p>
+            {% else %}
+                <p class="govuk-body">
+                    <a href="{{ url_for('startApplication.index') }}">Return to the Gender Recognition Certificate service</a>
+                </p>
+            {% endif %}
+
+            {% if 'documentCheckerState' in session %}
+                <p class="govuk-body">
+                    <a href="{{ url_for('documentChecker.your_documents') }}">Return to your list of documents needed to apply for a Gender Recognition Certificate</a>
+                </p>
+            {% else %}
+                <p class="govuk-body">
+                    <a href="{{ url_for('documentChecker.index') }}">Return to check documents needed to apply for a Gender Recognition Certificate</a>
+                </p>
+            {% endif %}
+
+        </div>
+    </div>
+{% endblock %}

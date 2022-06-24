@@ -114,6 +114,10 @@ def create_app(test_config=None):
     from grc.policies import policies
     app.register_blueprint(policies)
 
+    # Feedback
+    from grc.feedback import feedback
+    app.register_blueprint(feedback)
+
     # Document checker
     from grc.document_checker import documentChecker
     app.register_blueprint(documentChecker)

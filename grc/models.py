@@ -104,3 +104,16 @@ class AdminUser(db.Model):
     userType = db.Column(db.String, default="VIEWER")
     dateLastLogin = db.Column(db.String(20), nullable=True)
     code = db.Column(db.String(100), nullable=True)
+
+
+class Feedback(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    created = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    how_easy_to_complete_application = db.Column(db.String(20), nullable=True)
+    any_questions_difficult_to_answer = db.Column(db.String(3), nullable=True)
+    which_questions_difficult_to_answer = db.Column(db.String(5000), nullable=True)
+    needed_to_call_admin_team = db.Column(db.String(3), nullable=True)
+    what_did_you_need_help_with = db.Column(db.String(5000), nullable=True)
+    used_doc_checker = db.Column(db.String(11), nullable=True)
+    experience_of_using_doc_checker = db.Column(db.String(5000), nullable=True)
+    any_other_suggestions = db.Column(db.String(5000), nullable=True)
