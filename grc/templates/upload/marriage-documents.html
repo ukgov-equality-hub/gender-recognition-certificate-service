@@ -17,6 +17,11 @@
             <h1 class="govuk-heading-l">
                 Upload marriage and civil partnership documents
             </h1>
+            <div class="govuk-inset-text">
+                We process and protect all documents you upload in accordance with our
+                <a href="{{ url_for('policies.privacy_policy') }}" class="govuk-link">
+                    privacy policy</a>.
+            </div>
             <p class="govuk-body">
                 This is where you can upload copies of all required marriage documents.
             </p>
@@ -37,15 +42,17 @@
             <ul class="govuk-list govuk-list--bullet">
                 <li>
                     a
-                    <a href="https://www.gov.uk/copy-decree-absolute-final-order" class="govuk-link">
-                        decree absolute or final order
+                    <a href="https://www.gov.uk/copy-decree-absolute-final-order"
+                       target="_blank" class="govuk-link">
+                        decree absolute or final order (opens in a new tab)
                     </a>
                     to show the marriage or civil partnership has ended
                 </li>
                 <li>
                     a death certificate for your partner if their death ended the marriage or civil partnership – you can
-                    <a href="https://www.gov.uk/order-copy-birth-death-marriage-certificate" class="govuk-link">
-                        order a certificate
+                    <a href="https://www.gov.uk/order-copy-birth-death-marriage-certificate"
+                       target="_blank" class="govuk-link">
+                        order a certificate (opens in a new tab)
                     </a>
                     if their death was registered in the UK
                 </li>

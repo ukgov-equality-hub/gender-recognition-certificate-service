@@ -319,8 +319,8 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.h1('Your application')
     await asserts.number_of_errors(0)
 
-    # Click "Exit and return later"
-    await helpers.click_button('Exit and return later')
+    # Click "save and exit"
+    await helpers.click_button('save and exit')
 
     # ------------------------------------------------
     # ---- Application Saved page
