@@ -103,4 +103,8 @@ def create_app(test_config=None):
     app.register_blueprint(jobs)
     app.add_url_rule('/jobs', endpoint='index')
 
+    # Health Check
+    from admin.health_check import health_check
+    app.register_blueprint(health_check)
+
     return app

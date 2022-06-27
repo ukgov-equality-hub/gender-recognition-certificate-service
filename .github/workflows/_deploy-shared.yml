@@ -12,6 +12,9 @@ on:
       app_name_admin:
         required: true
         type: string
+      app_name_iprestrict_admin:
+        required: false
+        type: string
       manifest_name:
         required: true
         type: string
@@ -20,6 +23,8 @@ on:
         required: true
       cf_password:
         required: true
+      allowed_ips_admin:
+        required: false
 
 jobs:
   deploy:
@@ -52,3 +57,22 @@ jobs:
       - name: 'Deploy Admin app to Gov.UK PaaS'
         run: |
           cf push "${{ inputs.app_name_admin }}" --manifest manifest-${{ inputs.manifest_name }}-admin.yml --strategy rolling
+
+      - name: 'Deploy IP Restrictions (admin) app to Gov.UK PaaS'
+        if: ${{ inputs.app_name_iprestrict_admin != '' }} && ${{ inputs.allowed_ips_admin != '' }}
+        run: |
+          AWS_CLOUDFRONT_IP_RANGES=$(curl https://ip-ranges.amazonaws.com/ip-ranges.json)
+          readarray -t AWS_IP4_RANGES < <(echo "${AWS_CLOUDFRONT_IP_RANGES}" | jq -r '.prefixes' | jq -rc '.[] | select( .service=="CLOUDFRONT") | .ip_prefix')
+          readarray -t AWS_IP6_RANGES < <(echo "${AWS_CLOUDFRONT_IP_RANGES}" | jq -r '.ipv6_prefixes' | jq -rc '.[] | select( .service=="CLOUDFRONT") | .ipv6_prefix')
+          AWS_ALL_IP_RANGES=("${AWS_IP4_RANGES[@]}" "${AWS_IP6_RANGES[@]}")
+          AWS_CLOUDFRONT_IP_RANGES_TRUST=""
+          for addr in "${AWS_ALL_IP_RANGES[@]}";
+            do AWS_CLOUDFRONT_IP_RANGES_TRUST="$AWS_CLOUDFRONT_IP_RANGES_TRUST set_real_ip_from ${addr//[$'\r']};"; true;
+          done;
+          
+          cf set-env "${{ inputs.app_name_iprestrict_admin }}" AWS_CLOUDFRONT_TRUSTED "$(printf "%s" "${AWS_CLOUDFRONT_IP_RANGES_TRUST}")"
+          
+          cf set-env "${{ inputs.app_name_iprestrict_admin }}" ALLOWED_IPS "${{ secrets.allowed_ips_admin }}"
+          
+          cf push "${{ inputs.app_name_iprestrict_admin }}" --manifest manifest.yml --strategy rolling
+        working-directory: ./hosting/grc-iprestrict-admin
