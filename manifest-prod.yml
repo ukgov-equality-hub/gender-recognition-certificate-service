@@ -1,6 +1,7 @@
 ---
 applications:
   - memory: 1G
+    instances: 4
     buildpacks:
     - python_buildpack
     env:
