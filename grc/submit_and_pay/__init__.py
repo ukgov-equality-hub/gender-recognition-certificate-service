@@ -100,7 +100,7 @@ def checkYourAnswers():
                 'amount': 500,
                 'reference':  session['application']['reference_number'],
                 'description': 'Pay for Gender Recognition Certificate',
-                'return_url': request.url_root + 'submit-and-pay/payment-confirmation/' + random_uuid,
+                'return_url': str(request.url_root).replace('http://', 'https://') + 'submit-and-pay/payment-confirmation/' + random_uuid,
                 'delayed_capture': False,
                 'language': 'en'
             }
