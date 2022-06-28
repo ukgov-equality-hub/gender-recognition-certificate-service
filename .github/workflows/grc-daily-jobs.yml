@@ -12,8 +12,8 @@ jobs:
     steps:
       - name: Create Files
         run: |
-          curl https://grc-production-admin.london.cloudapps.digital/jobs/create-files?token=${{ secrets.JOB_TOKEN }}
+          curl https://grc-production-admin.london.cloudapps.digital/jobs/create-files?token=${{ secrets.JOB_TOKEN }} --fail
 
       - name: Send notifications
         run: |
-          curl https://grc-production-admin.london.cloudapps.digital/jobs/application-notifications?token=${{ secrets.JOB_TOKEN }}
+          curl https://grc-production-admin.london.cloudapps.digital/jobs/application-notifications?token=${{ secrets.JOB_TOKEN }} --fail

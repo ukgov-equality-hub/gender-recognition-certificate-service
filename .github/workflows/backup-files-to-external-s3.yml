@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: Start backup job on server
         run: |
-          curl https://geo-gender-recognition-certificate-admin.london.cloudapps.digital/jobs/backup-files?token=${{ secrets.JOB_TOKEN }}
+          curl https://geo-gender-recognition-certificate-admin.london.cloudapps.digital/jobs/backup-files?token=${{ secrets.JOB_TOKEN }} --fail
 
   backup_staging:
     name: Backup files (staging)
@@ -21,7 +21,7 @@ jobs:
     steps:
       - name: Start backup job on server
         run: |
-          curl https://grc-staging-admin.london.cloudapps.digital/jobs/backup-files?token=${{ secrets.JOB_TOKEN }}
+          curl https://grc-staging-admin.london.cloudapps.digital/jobs/backup-files?token=${{ secrets.JOB_TOKEN }} --fail
 
   backup_production:
     name: Backup files (production)
@@ -30,4 +30,4 @@ jobs:
     steps:
       - name: Start backup job on server
         run: |
-          curl https://admin.apply-gender-recognition-certificate.service.gov.uk/jobs/backup-files?token=${{ secrets.JOB_TOKEN }}
+          curl https://admin.apply-gender-recognition-certificate.service.gov.uk/jobs/backup-files?token=${{ secrets.JOB_TOKEN }} --fail
