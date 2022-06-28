@@ -181,7 +181,7 @@ def backup_files():
         space_name = (ConfigHelper.get_vcap_application().space_name.lower()
                       if ConfigHelper.get_vcap_application() is not None
                       else 'local')
-        backup_file = f"{space_name}/files/{datetime.now().strftime('%Y-%m-%d--%H-%M-%s')}.zip.encrypted"
+        backup_file = f"{space_name}/files/{datetime.now().strftime('%Y-%m-%d--%H-%M-%S')}.zip.encrypted"
         awsclient_external.stream_upload_object(fout, backup_file)  # or zip_buffer.stream() if we want unencrypted data
 
     except Exception as e:
