@@ -14,7 +14,9 @@ jobs:
       cf_space: 'production'
       app_name_public: 'grc-production'
       app_name_admin: 'grc-production-admin'
+      app_name_iprestrict_admin: 'grc-production-iprestrict-admin'
       manifest_name: 'prod'
     secrets:
       cf_username: ${{ secrets.CF_USERNAME }}
       cf_password: ${{ secrets.CF_PASSWORD }}
+      allowed_ips_admin: ${{ secrets.ALLOWED_IPS_ADMIN_PRODUCTION }}
