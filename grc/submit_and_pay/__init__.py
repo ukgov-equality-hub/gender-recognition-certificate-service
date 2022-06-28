@@ -1,3 +1,4 @@
+import os
 import threading
 from datetime import datetime
 from flask import Blueprint, flash, render_template, request, current_app, url_for, session, copy_current_request_context
@@ -96,11 +97,12 @@ def checkYourAnswers():
             return local_redirect(url_for('submitAndPay.confirmation'))
         else:
             random_uuid = str(uuid.uuid4())
+            return_link = request.url_root if os.getenv('TEST_URL', '') != '' or os.getenv('FLASK_ENV', '') == 'development' else str(request.url_root).replace('http://', 'https://')
             data = {
                 'amount': 500,
                 'reference':  session['application']['reference_number'],
                 'description': 'Pay for Gender Recognition Certificate',
-                'return_url': str(request.url_root).replace('http://', 'https://') + 'submit-and-pay/payment-confirmation/' + random_uuid,
+                'return_url': return_link + 'submit-and-pay/payment-confirmation/' + random_uuid,
                 'delayed_capture': False,
                 'language': 'en'
             }
