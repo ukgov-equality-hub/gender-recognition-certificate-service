@@ -23,6 +23,7 @@ Database:
 Other:
 * [Backing up the database and files externally to Gov.UK PaaS](External_backups.md)
 * [ClamAV virus scanning on Gov.UK PaaS](ClamAV.md)
+* [Rotating encryption keys](Rotating_encryption_keys.md)
 
 How-to:
 * [How to put the service into Maintenance Mode / "Service unavailable"](Maintenance_mode.md)
@@ -45,9 +46,6 @@ pip list --format=freeze
 
 pip3 freeze requirements.txt
 
-
-### How to generate good secret keys
-python -c 'import secrets; print(secrets.token_hex())'
 
 https://docs.cloud.service.gov.uk/deploying_services/s3/#connect-to-an-s3-bucket-from-outside-of-the-gov-uk-paas
 `cf service-key grc-s3-dev grc-s3-dev-key`
