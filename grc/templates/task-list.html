@@ -30,6 +30,10 @@
             <h1 class="govuk-heading-l">
                 Your application
             </h1>
+
+        </div>
+        <div class="govuk-grid-column-two-thirds">
+
             <p class="govuk-body">
                 This is where you can provide your personal details and upload your documents.
             </p>
@@ -184,6 +188,25 @@
                 </li>
                 <!-- /.Apply -->
             </ol>
+
+        </div>
+        <div class="govuk-grid-column-one-third">
+
+            <div class="gem-c-contextual-sidebar">
+                <div class="gem-c-related-navigation">
+                    <h2 id="related-nav-related_items-298b5325" class="gem-c-related-navigation__main-heading">
+                        Returning to your application
+                    </h2>
+                    <p class="govuk-body-s">
+                        Your application is saved automatically as you progress.
+                    </p>
+                    <p class="govuk-body-s">
+                        <a href="{{ url_for('saveAndReturn.exitApplication') }}" class="govuk-link govuk-link--no-visited-state">
+                            Exit and return later
+                        </a>
+                    </p>
+                </div>
+            </div>
 
         </div>
     </div>

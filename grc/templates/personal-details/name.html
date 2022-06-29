@@ -26,8 +26,8 @@
                         </legend>
 
                         <div class="govuk-hint" id="fieldset-hint">
-                            This will appear on your Gender Recognition Certificate. It must be the same as the name
-                            on either your latest change of name document or your birth certificate.
+                            Your first name(s) and last name will appear on your Gender Recognition Certificate.
+                            They must be the same as on either your latest change of name document or your birth certificate.
                         </div>
 
                         {{ textInput.renderFor(
@@ -35,6 +35,7 @@
                             fieldName='title',
                             textInputForOptions={
                                 'labelOptions':{ 'htmlOrText': 'Title' },
+                                'hintOptions':{ 'htmlOrText': 'For internal use only. This will not appear on your Gender Recognition Certificate.' },
                                 'classes': 'govuk-input--width-5',
                                 'autocomplete': 'honorific-prefix'
                             }
