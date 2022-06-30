@@ -22,16 +22,18 @@ def index():
 
     if request.method == 'POST':
         if form.validate_on_submit():
+            email_address: str = form.email_address.data
+            email_address = email_address.lower()
             user = AdminUser.query.filter_by(
-                email=form.email_address.data
+                email=email_address
             ).first()
 
             if user is not None:
                 password_ok = check_password_hash(user.password, form.password.data)
                 if password_ok:
                     if user.passwordResetRequired:
-                        session['emailAddress'] = form.email_address.data
-                        logger.log(LogLevel.INFO, f"{logger.mask_email_address(form.email_address.data)} password reset required")
+                        session['emailAddress'] = email_address
+                        logger.log(LogLevel.INFO, f"{logger.mask_email_address(email_address)} password reset required")
 
                         return local_redirect(url_for('password_reset.index'))
                     else:
@@ -54,14 +56,14 @@ def index():
 
                 else:
                     form.password.errors.append("Your password was incorrect. Please try re-entering your password")
-                    logger.log(LogLevel.INFO, f"{logger.mask_email_address(form.email_address.data)} entered incorrect password")
+                    logger.log(LogLevel.INFO, f"{logger.mask_email_address(email_address)} entered incorrect password")
 
             else:
                 form.email_address.errors.append("A user with this email address was not found")
                 session.pop('signedIn', None)
                 session.pop('emailAddress', None)
                 session.pop('userType', None)
-                logger.log(LogLevel.WARN, f"User {logger.mask_email_address(form.email_address.data)} not found")
+                logger.log(LogLevel.WARN, f"User {logger.mask_email_address(email_address)} not found")
 
     else:
         addDefaultAdminUserToDatabaseIfThereAreNoUsers()
@@ -126,7 +128,8 @@ def sign_in_with_token():
 def addDefaultAdminUserToDatabaseIfThereAreNoUsers():
     users = db.session.query(AdminUser).count()
     if users == 0:
-        defaultEmailAddress = current_app.config['DEFAULT_ADMIN_USER']
+        defaultEmailAddress: str = current_app.config['DEFAULT_ADMIN_USER']
+        defaultEmailAddress = defaultEmailAddress.lower()
         temporary_password = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(6))
         record = AdminUser(email=defaultEmailAddress, password=generate_password_hash(temporary_password), userType='ADMIN')
         db.session.add(record)
