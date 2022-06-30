@@ -30,6 +30,7 @@ def invite_new_admin_user():
     if request.method == 'POST':
         if form.validate_on_submit():
             email_address: str = form.email_address.data
+            email_address = email_address.lower()
             user = AdminUser.query.filter_by(
                 email=email_address
             ).first()

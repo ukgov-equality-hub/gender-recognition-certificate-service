@@ -17,8 +17,10 @@ def index():
 
     if request.method == 'POST':
         if form.validate_on_submit():
+            email_address: str = form.email_address.data
+            email_address = email_address.lower()
             user = AdminUser.query.filter_by(
-                email=form.email_address.data
+                email=email_address
             ).first()
 
             # Email out 2FA link
@@ -33,7 +35,7 @@ def index():
                         reset_link=reset_link
                     )
 
-                    logger.log(LogLevel.INFO, f"Password reset link sent to {form.email_address.data}")
+                    logger.log(LogLevel.INFO, f"Password reset link sent to {email_address}")
 
                 except Exception as e:
                     print(e, flush=True)
@@ -41,12 +43,12 @@ def index():
                 return render_template(
                     'forgot-password/forgot_password_sent_link.html',
                     form=form,
-                    email_address=form.email_address.data
+                    email_address=email_address
                 )
 
             else:
                 form.email_address.errors.append("A user with this email address was not found")
-                logger.log(LogLevel.WARN, f"Password reset requested for unknown user {form.email_address.data}")
+                logger.log(LogLevel.WARN, f"Password reset requested for unknown user {email_address}")
 
     return render_template(
         'forgot-password/forgot_password.html',
