@@ -20,15 +20,8 @@ See the [Deployments](Deployments.md) page for details.
 Follow these instructions to connect to Gov.UK PaaS:
 * First, ask a team member for access to the [GRC organisation on Gov.Uk PaaS](https://admin.london.cloud.service.gov.uk/organisations/7f161279-648d-4cf4-99c6-0e8af0454f65).
 
-* In the `hosting` folder, create the file `LoginToGovPaas.sh` (by copying `LoginToGovPaasTemplate.sh`)  
-  (this file is git ignored, so it shouldn't get committed - **check this!**)
-  * Change `email@example.com` to be your email address
-  * Change `my-govpass-password` to be your Gov.UK PaaS password
-
-* Open a Bash terminal in the `hosting` folder
-
 * Run `./LoginToGovPaas.sh`  
-  This should log you in to Gov.UK PaaS. You will be targetting the GRC organisation and the *sandbox* space:  
+  This should log you in to Gov.UK PaaS. You will be targeting the GRC organisation and the *sandbox* space:  
   ```
   $ ./LoginToGovPaas.sh
   API endpoint: api.london.cloud.service.gov.uk

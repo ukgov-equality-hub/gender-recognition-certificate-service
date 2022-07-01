@@ -26,6 +26,5 @@ instance/config.py
 *.py.txt
 .vscode/settings.json
 .unotes/*
-hosting/LoginToGovPaas.sh
 Notes/*
 notes/*
