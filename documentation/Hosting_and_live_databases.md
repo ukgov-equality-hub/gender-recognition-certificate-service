@@ -114,5 +114,18 @@ cf target -s "production"
     **Note:** it's very rare we'd want to connect to production, given the sensitivity of the information.  
     This will mainly be used when setting up the production database, before the service goes live.
 
+## Running SQL commands using the command line
 
+Conduit can also be used to run commands directly on the database. To run commands, connect to the PaaS database service using cloud foundry/conduit/postgresql cli:
 
+`cf conduit SERVICE_NAME -- psql`
+
+To find the name of the datadase service name, you can run:
+
+`cf services`
+
+Once logged in, you will have a command line where SQL commands can be run, for example:
+
+`SELECT * FROM application;`
+
+Ensure that all SQL commands are terminated with a semi-colon.

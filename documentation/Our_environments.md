@@ -20,6 +20,8 @@ The Gender Recognition Certificate service currently has 3 environments:
 
 * **Production**  
   The real / live website
-  * Public-facing website: https://grc-production.london.cloudapps.digital  
+  * Public-facing website: https://apply-gender-recognition-certificate.service.gov.uk  
+    or https://grc-production.london.cloudapps.digital  
     or https://grc-prod-alpha.service.cabinetoffice.gov.uk
-  * Admin website: https://grc-prod-alpha.service.cabinetoffice.gov.uk
+  * Admin website: https://admin.apply-gender-recognition-certificate.service.gov.uk  
+    or https://grc-prod-alpha.service.cabinetoffice.gov.uk
