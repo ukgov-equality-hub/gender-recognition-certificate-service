@@ -49,7 +49,7 @@ This pipeline:
 
 ## Creating the external S3 backups
 We use [GitHub Actions](https://docs.github.com/en/actions) to initiate a scheduled backup of S3 files.  
-This in turn calls an endpoint on the admin site that creates the backup.  
+This in turn calls an endpoint on the admin site `/jobs/backup-files` that creates the backup.  
 We have chosen to use this method as GitHub Actions do not have access to PaaS S3 buckets.  
 Here is the [GitHub Actions pipeline that initiates the S3 backup](https://github.com/cabinetoffice/grc-app/actions/workflows/grc-daily-jobs.yml).  
 The backups run daily.
@@ -67,7 +67,9 @@ This pipeline:
 ## Preventing backups from being deleted
 The external S3 bucket uses the following settings to help with security / object lifecycle management:
 * Restrictive IAM users
+
 * S3 Object Lock
+
 * S3 Lifecycle Policies
 
 The IAM user gives the app the minimum possible access to the S3 bucket.  

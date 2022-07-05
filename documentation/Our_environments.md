@@ -14,12 +14,12 @@ The Gender Recognition Certificate service currently has 3 environments:
 
 * **Staging**  
   This is where we do testing
-  * Public-facing website: https://grc-staging.london.cloudapps.digital  
-    or https://grc-staging-alpha.service.cabinetoffice.gov.uk
+  * Public-facing website: https://grc-staging.london.cloudapps.digital
   * Admin website: https://grc-staging-admin.london.cloudapps.digital
 
 * **Production**  
   The real / live website
-  * Public-facing website: https://grc-production.london.cloudapps.digital  
-    or https://grc-prod-alpha.service.cabinetoffice.gov.uk
-  * Admin website: https://grc-prod-alpha.service.cabinetoffice.gov.uk
+  * Public-facing website: https://apply-gender-recognition-certificate.service.gov.uk  
+    or https://grc-production.london.cloudapps.digital
+  * Admin website: https://admin.apply-gender-recognition-certificate.service.gov.uk  
+    or https://grc-production-admin.london.cloudapps.digital

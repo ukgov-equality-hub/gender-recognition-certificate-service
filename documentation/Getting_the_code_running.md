@@ -27,6 +27,8 @@ Get and edit the config files:
   You need to be a team member of the service in order to receive emails in test environments.
 
 Fetch the project dependencies:
+* Ensure that Docker is installed
+
 * Open a Bash terminal in the root folder of the project
 
 * Run `pip install -r requirements.txt`  
