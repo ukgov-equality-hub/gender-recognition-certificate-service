@@ -47,9 +47,11 @@ class ApplicationFiles():
         file_name = ''
 
         try:
-            file_name = reference_number + '.pdf'
+            file_name = reference_number + '.pdf' if is_admin else 'grc_' + str(application['email']).replace('@', '_').replace('.', '_') + '.pdf'
 
-            data = AwsS3Client().download_object(file_name)
+            data = None
+            if is_admin:
+                data = AwsS3Client().download_object(file_name)
             if data:
                 if download:
                     bytes = data.getvalue()
@@ -130,7 +132,8 @@ class ApplicationFiles():
                     data = merge_pdfs(pdfs)
 
                 bytes = data.read()
-                AwsS3Client().upload_fileobj(data, file_name)
+                if is_admin:
+                    AwsS3Client().upload_fileobj(data, file_name)
                 if not download:
                     bytes = None
 
