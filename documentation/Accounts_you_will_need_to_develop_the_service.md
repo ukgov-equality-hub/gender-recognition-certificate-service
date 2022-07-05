@@ -25,8 +25,10 @@ Services that the Gender Recognition Certificate service depends on:
   Here's a link to the [Gender Recognition Certificate service on Gov.UK Pay](https://selfservice.payments.service.gov.uk/service/4a23aa76474848b1b003ebe58321ffac/organisation-details)  
   And here's a link to the [Test account](https://selfservice.payments.service.gov.uk/account/9ce8b0f823524e32b74be275880b13db/dashboard) where you can see transactions in the test environments
 
-* Amazon AWS S3
-  Whilst the system stores user uploaded files on a PaaS S3 bucket, we also use an external S3 bucket to store encrypted files off-site
+* [AWS Console access](https://grc-production.signin.aws.amazon.com/console)  
+  The Account ID is `grc-production`  
+  Whilst the system stores user uploaded files on a PaaS S3 bucket, we also use an external S3 bucket to store encrypted files off-site.  
+  When you're logged in, here's a [direct link to the S3 bucket](https://s3.console.aws.amazon.com/s3/buckets/uk-gov-gender-recognition-certificate-service-backups)
 
 * Emails send in the testing environments are sent to [this Google Group](https://groups.google.com/a/cabinetoffice.gov.uk/d/forum/grc-service-account)  
   Ask a team member to add you.  
@@ -49,9 +51,11 @@ Project tools:
 
 * This [Google Drive folder](https://drive.google.com/drive/u/3/folders/14BJ-tgEuGbdf1Ak0A1G8nUZxP7LdJDa0)
 
-* Pingdom reports on whether the service is up or down - this is sent to the `#support` Slack channel
+* [Pingdom](https://www.pingdom.com/)  
+  This reports on whether the service is up or down - this is sent to the `#support` Slack channel
 
-* Splunk captures console outputs for management reporting
+* [Splunk](https://www.splunk.com/)  
+  This captures console outputs for management reporting
 
 Access to the service itself.  
 Ask a team member to set you up with:

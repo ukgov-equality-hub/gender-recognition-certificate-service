@@ -24,6 +24,7 @@ Other:
 * [Backing up the database and files externally to Gov.UK PaaS](External_backups.md)
 * [ClamAV virus scanning on Gov.UK PaaS](ClamAV.md)
 * [Rotating encryption keys](Rotating_encryption_keys.md)
+* [Useful commands](Useful_comands.md)
 
 How-to:
 * [How to put the service into Maintenance Mode / "Service unavailable"](Maintenance_mode.md)
