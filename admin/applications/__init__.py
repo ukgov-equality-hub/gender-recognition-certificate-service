@@ -109,6 +109,7 @@ def download(reference_number):
         bytes, file_name = ApplicationFiles().create_or_download_pdf(
             application.reference_number,
             application.data(),
+            is_admin=True,
             download=True
         )
 

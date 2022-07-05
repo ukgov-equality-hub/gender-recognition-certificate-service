@@ -37,6 +37,7 @@ def create_files():
         ApplicationFiles().create_or_download_pdf(
             application.reference_number,
             application.data(),
+            is_admin=True,
             download=False
         )
 

@@ -1,7 +1,7 @@
 import os
 import threading
 from datetime import datetime
-from flask import Blueprint, flash, render_template, request, current_app, url_for, session, copy_current_request_context
+from flask import Blueprint, flash, render_template, request, current_app, url_for, session, copy_current_request_context, make_response
 import requests
 from requests.structures import CaseInsensitiveDict
 import json
@@ -139,6 +139,23 @@ def checkYourAnswers():
     )
 
 
+@submitAndPay.route('/submit-and-pay/download', methods=['GET'])
+@LoginRequired
+def download():
+    from grc.utils.application_files import ApplicationFiles
+    bytes, file_name = ApplicationFiles().create_or_download_pdf(
+        session['application']['reference_number'],
+        session['application'],
+        is_admin=False,
+        download=True
+    )
+
+    response = make_response(bytes)
+    response.headers.set('Content-Type', 'application/pdf')
+    response.headers.set('Content-Disposition', 'attachment', filename=file_name)
+    return response
+
+
 @submitAndPay.route('/submit-and-pay/payment-confirmation/<uuid:id>', methods=['GET', 'POST'])
 @LoginRequired
 def paymentConfirmation(id):
@@ -184,6 +201,7 @@ def confirmation():
         ApplicationFiles().create_or_download_pdf(
             reference_number,
             application,
+            is_admin=True,
             download=False
         )
 
