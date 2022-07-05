@@ -1,13 +1,14 @@
 from flask import Blueprint, flash, render_template, request, url_for, session
-from grc.models import ListStatus, Application, ApplicationStatus
+from grc.business_logic.data_store import DataStore
+from grc.models import Application, ApplicationStatus
 from grc.start_application.forms import EmailAddressForm, SecurityCodeForm, OverseasCheckForm, \
     OverseasApprovedCheckForm, DeclerationForm, IsFirstVisitForm
 from grc.utils.security_code import send_security_code
 from grc.utils.decorators import EmailRequired, LoginRequired, Unauthorized, ValidatedEmailRequired
-from grc.utils.reference_number import reference_number_generator, reference_number_string
-from grc.utils.application_progress import save_progress
+from grc.utils.reference_number import reference_number_string
 from grc.utils.redirect import local_redirect
 from grc.utils.logger import LogLevel, Logger
+from grc.utils.strtobool import strtobool
 
 startApplication = Blueprint('startApplication', __name__)
 logger = Logger()
@@ -73,14 +74,13 @@ def isFirstVisit():
     if request.method == 'POST':
         if form.validate_on_submit():
             if form.isFirstVisit.data == 'FIRST_VISIT' or form.isFirstVisit.data == 'LOST_REFERENCE':
-                reference_number = reference_number_generator(session['validatedEmail'])
-                if reference_number != False:
+                try:
+                    application_data = DataStore.create_new_application(email_address=session['validatedEmail'])
                     session.clear()  # Clear out session['validatedEmail']
-                    session['reference_number'] = reference_number
-                    session['application'] = save_progress()
+                    session['reference_number'] = application_data.reference_number
                     return local_redirect(url_for('startApplication.reference'))
 
-                else:
+                except BaseException as err:
                     flash('There is a problem creating a new application', 'error')
                     return render_template('start-application/is-first-visit.html', form=form)
 
@@ -112,7 +112,6 @@ def isFirstVisit():
                         session.clear()  # Clear out session['validatedEmail']
                         session['reference_number'] = application.reference_number
                         session['application'] = application.data()
-                        save_progress()
                         return local_redirect(url_for('taskList.index'))
 
                     else:
@@ -126,7 +125,7 @@ def isFirstVisit():
     )
 
 
-def loadApplicationFromDatabaseByReferenceNumber(reference):
+def loadApplicationFromDatabaseByReferenceNumber(reference) -> Application:
     trimmed_reference = reference.replace('-', '').replace(' ', '').upper()
     return Application.query.filter_by(reference_number=trimmed_reference).first()
 
@@ -158,18 +157,19 @@ def reference():
 @LoginRequired
 def overseas_check():
     form = OverseasCheckForm()
+    application_data = DataStore.load_application_by_session_reference_number()
 
     if form.validate_on_submit():
-        session['application']['confirmation']['overseasCheck'] = form.overseasCheck.data
-        session['application'] = save_progress()
+        application_data.confirmation_data.gender_recognition_outside_uk = strtobool(form.overseasCheck.data)
+        DataStore.save_application(application_data)
 
-        if form.overseasCheck.data == 'Yes':
+        if application_data.confirmation_data.gender_recognition_outside_uk:
             return local_redirect(url_for('startApplication.overseas_approved_check'))
         else:
             return local_redirect(url_for('startApplication.declaration'))
 
     else:
-        form.overseasCheck.data = session['application']['confirmation']['overseasCheck']
+        form.overseasCheck.data = application_data.confirmation_data.gender_recognition_outside_uk
         return render_template(
             'start-application/overseas-check.html',
             form=form
@@ -180,15 +180,16 @@ def overseas_check():
 @LoginRequired
 def overseas_approved_check():
     form = OverseasApprovedCheckForm()
+    application_data = DataStore.load_application_by_session_reference_number()
 
     if form.validate_on_submit():
-        session['application']['confirmation']['overseasApprovedCheck'] = form.overseasApprovedCheck.data
-        session['application'] = save_progress()
+        application_data.confirmation_data.gender_recognition_from_approved_country = strtobool(form.overseasApprovedCheck.data)
+        DataStore.save_application(application_data)
 
         return local_redirect(url_for('startApplication.declaration'))
 
     else:
-        form.overseasApprovedCheck.data = session['application']['confirmation']['overseasApprovedCheck']
+        form.overseasApprovedCheck.data = application_data.confirmation_data.gender_recognition_from_approved_country
         return render_template(
             'start-application/overseas-approved-check.html',
             form=form
@@ -199,20 +200,17 @@ def overseas_approved_check():
 @LoginRequired
 def declaration():
     form = DeclerationForm()
+    application_data = DataStore.load_application_by_session_reference_number()
     back = (url_for('startApplication.overseas_approved_check')
-            if session['application']['confirmation']['overseasCheck'] == 'Yes'
+            if application_data.confirmation_data.gender_recognition_outside_uk
             else url_for('startApplication.overseas_check'))
 
     if request.method == 'POST':
         if form.validate_on_submit():
-            session['application']['confirmation']['declaration'] = form.consent.data
-            session['application']['confirmation']['progress'] = ListStatus.COMPLETED.name
-            session['application'] = save_progress()
+            application_data.confirmation_data.consent_to_GRO_contact = form.consent.data
+            DataStore.save_application(application_data)
 
             return local_redirect(url_for('taskList.index'))
-
-        session['application']['confirmation']['progress'] = ListStatus.IN_REVIEW.name
-        session['application'] = save_progress()
 
         return render_template(
             'start-application/declaration.html',
@@ -221,9 +219,7 @@ def declaration():
         )
 
     else:
-        session['application']['confirmation']['progress'] = ListStatus.IN_REVIEW.name
-        session['application'] = save_progress()
-        form.consent.data = session['application']['confirmation']['declaration'] == True
+        form.consent.data = application_data.confirmation_data.consent_to_GRO_contact
 
         return render_template(
             'start-application/declaration.html',
