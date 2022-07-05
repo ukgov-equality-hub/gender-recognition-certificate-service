@@ -1,4 +1,4 @@
-{% macro adminapplication(application) %}
+{% macro userapplication(application) %}
 <h1>
     {% if (application.partnershipDetails.marriageCivilPartnership == 'Married' or application.partnershipDetails.marriageCivilPartnership == 'Civil partnership') and (application.partnershipDetails.stayTogether == 'No' or application.partnershipDetails.partnerAgrees == 'No') %}
     INTERIM CERTIFICATE APPLICATION
@@ -6,38 +6,6 @@
     FULL CERTIFICATE APPLICATION
     {% endif %}
 </h1>
-
-<h4 class="govuk-heading-m">Marriage or civil partnership details</h4>
-<ul class="govuk-list govuk-list--bullet">
-    <li>Currently married or in a civil partnership: <strong>{{ application.partnershipDetails.marriageCivilPartnership }}</strong></li>
-    {% if application.partnershipDetails.marriageCivilPartnership == 'Neither' %}
-    <li>Spouse or partner has died: <strong>{{ application.partnershipDetails.partnerDied }}</strong></li>
-    <li>Married or in a civil partnership has ended: <strong>{{ application.partnershipDetails.endedCheck }}</strong></li>
-    {% else %}
-    <li>Remain married: <strong>{{ application.partnershipDetails.stayTogether }}</strong></li>
-    {% if application.partnershipDetails.stayTogether == 'Yes' %}
-    <li>Can provide a declaration of consent from your spouse: <strong>{{ application.partnershipDetails.partnerAgrees }}</strong></li>
-    {% endif %}
-    {% if application.partnershipDetails.stayTogether == 'No' or application.partnershipDetails.partnerAgrees == 'No' %}
-    <li>Interim GRC: <strong>{{ application.partnershipDetails.interimCheck }}</strong></li>
-    {% endif %}
-    {% endif %}
-</ul>
-
-<h4 class="govuk-heading-m">Payment details</h4>
-<ul class="govuk-list govuk-list--bullet">
-    <li>Payment method: <strong>{{ application.submitAndPay.method }}</strong></li>
-    {% if application.submitAndPay.method == 'Help' %}
-    <li>Help type: <strong>
-        {% if application.submitAndPay.helpType == 'Using the online service' %}
-        Using the online service - Reference: {{ application.submitAndPay.referenceNumber }}
-        {% else %}
-        {{ application.submitAndPay.helpType }}
-        {% endif %}
-        </strong>
-    </li>
-    {% endif %}
-</ul>
 
 <h4 class="govuk-heading-m">Confirmation</h4>
 <ul class="govuk-list govuk-list--bullet">
@@ -157,93 +125,22 @@
     {% endif %}
 </ul>
 
-
-<h2 class="govuk-heading-m">Your documents</h2>
-{#
-{% if 'files' in application.statutoryDeclarations %}
-<h4>Statutory documents</h4>
+<h4 class="govuk-heading-m">Marriage or civil partnership details</h4>
 <ul class="govuk-list govuk-list--bullet">
-    {% for item in application.statutoryDeclarations.files %}
-    <li>
-        {{ item | replace(application.reference_number + '__statutoryDeclarations__', '') }}
-        {% if '.pdf' not in item | lower %}
-        <img src="{{ item | image_data }}" width="{{ item | image_width }}" height="{{ item | image_height }}" style="max-width: 90%;">
-        {% endif %}
-    </li>
-    {% endfor %}
+    <li>Currently married or in a civil partnership: <strong>{{ application.partnershipDetails.marriageCivilPartnership }}</strong></li>
+    {% if application.partnershipDetails.marriageCivilPartnership == 'Neither' %}
+    <li>Spouse or partner has died: <strong>{{ application.partnershipDetails.partnerDied }}</strong></li>
+    <li>Married or in a civil partnership has ended: <strong>{{ application.partnershipDetails.endedCheck }}</strong></li>
+    {% else %}
+    <li>Remain married: <strong>{{ application.partnershipDetails.stayTogether }}</strong></li>
+    {% if application.partnershipDetails.stayTogether == 'Yes' %}
+    <li>Can provide a declaration of consent from your spouse: <strong>{{ application.partnershipDetails.partnerAgrees }}</strong></li>
+    {% endif %}
+    {% if application.partnershipDetails.stayTogether == 'No' or application.partnershipDetails.partnerAgrees == 'No' %}
+    <li>Interim GRC: <strong>{{ application.partnershipDetails.interimCheck }}</strong></li>
+    {% endif %}
+    {% endif %}
 </ul>
-{% endif %}
-
-{% if 'files' in application.marriageDocuments %}
-<h4>Marriage documents</h4>
-<ul class="govuk-list govuk-list--bullet">
-    {% for item in application.marriageDocuments.files %}
-    <li>
-        {{ item | replace(application.reference_number + '__marriageDocuments__', '') }}
-        {% if '.pdf' not in item | lower %}
-        <img src="{{ item | image_data }}" width="{{ item | image_width }}" height="{{ item | image_height }}" style="max-width: 90%;">
-        {% endif %}
-    </li>
-    {% endfor %}
-</ul>
-{% endif %}
-
-{% if 'files' in application.medicalReports %}
-<h4>Your medical reports</h4>
-<ul class="govuk-list govuk-list--bullet">
-    {% for item in application.medicalReports.files %}
-    <li>
-        {{ item | replace(application.reference_number + '__medicalReports__', '') }}
-        {% if '.pdf' not in item | lower %}
-        <img src="{{ item | image_data }}" width="{{ item | image_width }}" height="{{ item | image_height }}" style="max-width: 90%;">
-        {% endif %}
-    </li>
-    {% endfor %}
-</ul>
-{% endif %}
-
-{% if 'files' in application.genderEvidence %}
-<h4>Evidence of living in your gender</h4>
-<ul class="govuk-list govuk-list--bullet">
-    {% for item in application.genderEvidence.files %}
-    <li>
-        {{ item | replace(application.reference_number + '__genderEvidence__', '') }}
-        {% if '.pdf' not in item | lower %}
-        <img src="{{ item | image_data }}" width="{{ item | image_width }}" height="{{ item | image_height }}" style="max-width: 90%;">
-        {% endif %}
-    </li>
-    {% endfor %}
-</ul>
-{% endif %}
-
-{% if 'files' in application.nameChange %}
-<h4>Name change</h4>
-<ul class="govuk-list govuk-list--bullet">
-    {% for item in application.nameChange.files %}
-    <li>
-        {{ item | replace(application.reference_number + '__nameChange__', '') }}
-        {% if '.pdf' not in item | lower %}
-        <img src="{{ item | image_data }}" width="{{ item | image_width }}" height="{{ item | image_height }}" style="max-width: 90%;">
-        {% endif %}
-    </li>
-    {% endfor %}
-</ul>
-{% endif %}
-
-{% if 'files' in application.overseasCertificate %}
-<h4>Marriage documents</h4>
-<ul class="govuk-list govuk-list--bullet">
-    {% for item in application.overseasCertificate.files %}
-    <li>
-        {{ item | replace(application.reference_number + '__overseasCertificate__', '') }}
-        {% if '.pdf' not in item | lower %}
-        <img src="{{ item | image_data }}" width="{{ item | image_width }}" height="{{ item | image_height }}" style="max-width: 90%;">
-        {% endif %}
-    </li>
-    {% endfor %}
-</ul>
-{% endif %}
-#}
 
 <h4 class="govuk-heading-m">Documents to post</h4>
 <ul class="govuk-list govuk-list--bullet">
@@ -254,4 +151,6 @@
     <li>an EX160 form</li>
     {% endif %}
 </ul>
+
+<h2 class="govuk-heading-m">Your documents</h2>
 {% endmacro %}

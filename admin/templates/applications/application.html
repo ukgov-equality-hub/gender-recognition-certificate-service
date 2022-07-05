@@ -1,4 +1,4 @@
-{% macro userapplication(application) %}
+{% macro adminapplication(application) %}
     <h1>
         {% if (application.partnershipDetails.marriageCivilPartnership == 'Married' or application.partnershipDetails.marriageCivilPartnership == 'Civil partnership') and (application.partnershipDetails.stayTogether == 'No' or application.partnershipDetails.partnerAgrees == 'No') %}
             INTERIM CERTIFICATE APPLICATION
