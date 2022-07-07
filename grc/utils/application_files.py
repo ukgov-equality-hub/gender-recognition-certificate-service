@@ -57,7 +57,12 @@ class ApplicationFiles():
                     bytes = data.getvalue()
             else:
                 from flask import render_template
-                html_template = 'applications/download.html' if is_admin else 'applications/download_user.html'
+                html_template = 'applications/download_user.html'
+                all_sections = self.sections
+                if is_admin:
+                    html_template = 'applications/download.html'
+                    all_sections = ['statutoryDeclarations', 'marriageDocuments', 'nameChange', 'medicalReports', 'genderEvidence', 'overseasCertificate']
+
                 html = render_template(html_template, application=application)
 
                 import io
@@ -122,7 +127,7 @@ class ApplicationFiles():
 
                 pdfs = []
 
-                for section in self.sections:
+                for section in all_sections:
                     if section in application and 'files' in application[section]:
                         for idx, object_name in enumerate(application[section]['files']):
                             add_object(section, object_name, idx + 1, len(application[section]['files']))
