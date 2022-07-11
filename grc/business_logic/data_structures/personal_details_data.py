@@ -1,6 +1,7 @@
 import datetime
 from enum import auto
 from grc.business_logic.data_structures.grc_enum import GrcEnum
+from grc.list_status import ListStatus
 
 
 class AffirmedGender(GrcEnum):
@@ -34,3 +35,42 @@ class PersonalDetailsData:
 
     tell_hmrc: bool = None
     national_insurance_number: str = None
+
+    @property
+    def section_status(self) -> ListStatus:
+        if self.title is None or self.first_names is None or self.last_name is None:
+            return ListStatus.NOT_STARTED
+
+        if self.affirmed_gender is None:
+            return ListStatus.IN_PROGRESS
+
+        if self.transition_date is None:
+            return ListStatus.IN_PROGRESS
+
+        if self.statutory_declaration_date is None:
+            return ListStatus.IN_PROGRESS
+
+        if self.changed_name_to_reflect_gender is None:
+            return ListStatus.IN_PROGRESS
+
+        if self.address_line_one is None or self.address_town_city is None or self.address_postcode is None:
+            return ListStatus.IN_PROGRESS
+
+        if self.contact_email_address is None and self.contact_phone_number is None and self.contact_by_post is None:
+            return ListStatus.IN_PROGRESS
+
+        if self.contact_dates_should_avoid is None:
+            return ListStatus.IN_PROGRESS
+
+        if self.contact_dates_should_avoid:
+            if self.contact_dates_to_avoid is None:
+                return ListStatus.IN_PROGRESS
+
+        if self.tell_hmrc is None:
+            return ListStatus.IN_PROGRESS
+
+        if self.tell_hmrc:
+            if self.national_insurance_number is None:
+                return ListStatus.IN_PROGRESS
+
+        return ListStatus.COMPLETED

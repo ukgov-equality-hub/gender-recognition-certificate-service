@@ -1,5 +1,6 @@
 from enum import auto
 from grc.business_logic.data_structures.grc_enum import GrcEnum
+from grc.list_status import ListStatus
 
 
 class CurrentlyInAPartnershipEnum(GrcEnum):
@@ -17,3 +18,38 @@ class PartnershipDetailsData:
 
     previous_partnership_partner_died: bool = None
     previous_partnership_ended: bool = None
+
+    @property
+    def is_married(self) -> bool: return self.currently_in_a_partnership == CurrentlyInAPartnershipEnum.MARRIED
+    @property
+    def is_in_civil_partnership(self) -> bool: return self.currently_in_a_partnership == CurrentlyInAPartnershipEnum.CIVIL_PARTNERSHIP
+    @property
+    def is_currently_in_partnership(self) -> bool: return self.is_married or self.is_in_civil_partnership
+    @property
+    def is_not_in_partnership(self) -> bool: return not self.is_currently_in_partnership
+
+    @property
+    def section_status(self) -> ListStatus:
+        if self.currently_in_a_partnership is None:
+            return ListStatus.NOT_STARTED
+
+        if self.is_currently_in_partnership:
+            if self.plan_to_remain_in_a_partnership is None:
+                return ListStatus.IN_PROGRESS
+
+            if self.plan_to_remain_in_a_partnership:
+                if self.partner_agrees is None:
+                    return ListStatus.IN_PROGRESS
+
+            if self.plan_to_remain_in_a_partnership == False or self.partner_agrees == False:
+                if self.confirm_understood_interim_certificate is None:
+                    return ListStatus.IN_PROGRESS
+
+        elif self.is_not_in_partnership:
+            if self.previous_partnership_partner_died is None:
+                return ListStatus.IN_PROGRESS
+
+            if self.previous_partnership_ended is None:
+                return ListStatus.IN_PROGRESS
+
+        return ListStatus.COMPLETED
