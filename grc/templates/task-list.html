@@ -66,7 +66,7 @@
                         {{ taskListItem(
                             "Confirmation",
                             url_for('startApplication.overseas_check'),
-                            list_status['confirmation'])
+                            application_data.confirmation_data.section_status)
                         }}
                     </ul>
                 </li>
@@ -81,25 +81,25 @@
                         {{ taskListItem(
                             "Your personal details",
                             (url_for('personalDetails.checkYourAnswers')
-                             if ListStatus[session['application']['personalDetails']['progress']] in [ListStatus.IN_REVIEW, ListStatus.COMPLETED]
+                             if application_data.personal_details_data.section_status == ListStatus.COMPLETED
                              else url_for('personalDetails.index')),
-                            list_status['personalDetails'])
+                            application_data.personal_details_data.section_status)
                         }}
 
                         {{ taskListItem(
                             "Your birth registration information",
                             (url_for('birthRegistration.checkYourAnswers')
-                             if ListStatus[session['application']['birthRegistration']['progress']] in [ListStatus.IN_REVIEW, ListStatus.COMPLETED]
+                             if application_data.birth_registration_data.section_status == ListStatus.COMPLETED
                              else url_for('birthRegistration.index')),
-                            list_status['birthRegistration'])
+                            application_data.birth_registration_data.section_status)
                         }}
 
                         {{ taskListItem(
                             "Marriage or civil partnership details",
                             (url_for('partnershipDetails.checkYourAnswers')
-                             if ListStatus[session['application']['partnershipDetails']['progress']] in [ListStatus.IN_REVIEW, ListStatus.COMPLETED]
+                             if application_data.partnership_details_data.section_status == ListStatus.COMPLETED
                              else url_for('partnershipDetails.index')),
-                            list_status['partnershipDetails'])
+                            application_data.partnership_details_data.section_status)
                         }}
                     </ul>
                 </li>
@@ -112,55 +112,50 @@
                     </h2>
 
                     <ul class="app-task-list__items">
-                        {% if application.confirmation.overseasCheck == 'No' or application.confirmation.overseasApprovedCheck == 'No' %}
+                        {% if application_data.need_medical_reports %}
                             {{ taskListItem(
                                 "Your medical reports",
                                 url_for('upload.uploadInfoPage', section_url='medical-reports'),
-                                list_status['medicalReports'])
+                                application_data.section_status_medical_reports)
                             }}
+                        {% endif %}
 
+                        {% if application_data.need_evidence_of_living_in_gender %}
                             {{ taskListItem(
                                 "Evidence of living in your gender",
                                 url_for('upload.uploadInfoPage', section_url='gender-evidence'),
-                                list_status['genderEvidence'])
+                                application_data.section_status_evidence_of_living_in_gender)
                             }}
                         {% endif %}
 
-                        {% if application.personalDetails.previousNamesCheck is defined and application.personalDetails.previousNamesCheck == 'Yes' %}
+                        {% if application_data.need_name_change_documents %}
                             {{ taskListItem(
                                 "Name change documents",
                                 url_for('upload.uploadInfoPage', section_url='name-change'),
-                                list_status['nameChange'])
+                                application_data.section_status_name_change_documents)
                             }}
                         {% endif %}
 
-                        {% if application.partnershipDetails.marriageCivilPartnership is defined and (
-                               application.partnershipDetails.marriageCivilPartnership == 'Married' or
-                               application.partnershipDetails.marriageCivilPartnership == 'Civil partnership' or
-                               (application.partnershipDetails.marriageCivilPartnership == 'Neither' and
-                                (application.partnershipDetails.partnerDied == 'Yes' or
-                                 application.partnershipDetails.endedCheck == 'Yes')
-                               )
-                              ) %}
+                        {% if application_data.need_partnership_documents %}
                             {{ taskListItem(
                                 "Marriage and civil partnership documents",
                                 url_for('upload.uploadInfoPage', section_url='marriage-documents'),
-                                list_status['marriageDocuments'])
+                                application_data.section_status_partnership_documents)
                             }}
                         {% endif %}
 
-                        {% if application.confirmation.overseasCheck == 'Yes' and application.confirmation.overseasApprovedCheck == 'Yes' %}
+                        {% if application_data.need_overseas_documents %}
                             {{ taskListItem(
                                 "Overseas certificate documents",
                                 url_for('upload.uploadInfoPage', section_url='overseas-certificate'),
-                                list_status['overseasCertificate'])
+                                application_data.section_status_overseas_documents)
                             }}
                         {% endif %}
 
                         {{ taskListItem(
                             "Statutory declarations",
                             url_for('upload.uploadInfoPage', section_url='statutory-declarations'),
-                            list_status['statutoryDeclarations'])
+                            application_data.section_status_statutory_declarations)
                         }}
                     </ul>
                 </li>
@@ -181,7 +176,7 @@
                         {{ taskListItem(
                             "Submit and pay",
                             url_for('submitAndPay.index'),
-                            list_status['submitAndPay'],
+                            application_data.section_status_submit_and_pay_data,
                             submitAndPaySuffix())
                         }}
                     </ul>
