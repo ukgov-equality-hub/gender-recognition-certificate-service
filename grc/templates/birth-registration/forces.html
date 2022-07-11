@@ -6,7 +6,7 @@
 
 {% block backLink %}
     {% set backLink = (url_for('birthRegistration.adoptedUK')
-                       if session['application']['birthRegistration']['adopted'] == 'Yes'
+                       if application_data.birth_registration_data.adopted
                        else url_for('birthRegistration.adopted')) %}
     <a href="{{ backLink }}" class="govuk-back-link">Back</a>
 {% endblock %}

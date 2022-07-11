@@ -1,9 +1,9 @@
 from datetime import datetime
 from flask import Blueprint, render_template, url_for, session, make_response
+from grc.business_logic.data_structures.birth_registration_data import AdoptedInTheUkEnum
 from grc.utils.decorators import AdminViewerRequired, AdminRequired
 from grc.models import db, Application, ApplicationStatus
 from grc.external_services.aws_s3_client import AwsS3Client
-from grc.birth_registration.forms import AdoptedUKForm
 from grc.utils.redirect import local_redirect
 from grc.utils.logger import LogLevel, Logger
 
@@ -13,14 +13,14 @@ logger = Logger()
 
 def get_radio_pretty_value(formName, fieldName, value):
     if formName == 'AdoptedUKForm':
-        form = AdoptedUKForm()
+        if value in ['Yes', AdoptedInTheUkEnum.ADOPTED_IN_THE_UK_YES]:
+            return 'Yes'
+        if value in ['No', AdoptedInTheUkEnum.ADOPTED_IN_THE_UK_NO]:
+            return 'No'
+        if value in ["DO_NOT_KNOW", AdoptedInTheUkEnum.ADOPTED_IN_THE_UK_DO_NOT_KNOW]:
+            return "I don't know"
     else:
         return None
-
-    for choiceId, choiceLabel in form[fieldName].choices:
-        if choiceId == value:
-            return choiceLabel
-    return None
 
 
 @applications.route('/applications', methods=['GET'])
