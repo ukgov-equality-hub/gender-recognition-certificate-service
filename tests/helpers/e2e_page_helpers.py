@@ -57,6 +57,14 @@ class PageHelpers:
         }]
         await self.page.set_input_files(f"input[type=\"file\"][name=\"{field}\"]", files)
 
+    async def upload_file_invalid_zero_bytes(self, field):
+        files = [{
+            'name': 'zero_bytes.pdf',
+            'mimeType': 'application/pdf',
+            'buffer': (bytes())
+        }]
+        await self.page.set_input_files(f"input[type=\"file\"][name=\"{field}\"]", files)
+
     async def upload_file_invalid_too_large(self, field):
         file_size_in_bytes = 11 * 1024 * 1024
         file_content = ''.ljust(file_size_in_bytes, 'A')  # 11 MB of the letter 'A'
@@ -75,8 +83,6 @@ class PageHelpers:
             'buffer': (bytes(valid_bmp_file_content, 'utf-8'))
         }]
         await self.page.set_input_files(f"input[type=\"file\"][name=\"{field}\"]", files)
-
-
 
 
 # Removes multiple sequential whitespace characters from the string

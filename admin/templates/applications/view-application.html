@@ -89,7 +89,7 @@
         function copyToClipboard(id) {
             var valueElement = document.getElementById('value-' + id);
             var buttonTextElement = document.getElementById('button-text-' + id);
-            var valueToCopy = valueElement.innerText;
+            var valueToCopy = valueElement.innerText.trim();
             navigator.clipboard
                 .writeText(valueToCopy)
                 .then(function () {
