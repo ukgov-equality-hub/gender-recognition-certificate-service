@@ -61,7 +61,7 @@ class PageHelpers:
         files = [{
             'name': 'zero_bytes.pdf',
             'mimeType': 'application/pdf',
-            'buffer': None
+            'buffer': (bytes())
         }]
         await self.page.set_input_files(f"input[type=\"file\"][name=\"{field}\"]", files)
 
