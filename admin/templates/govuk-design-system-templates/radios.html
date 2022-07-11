@@ -51,7 +51,7 @@
 
                     <div class="govuk-radios__item">
                         <input id="{{ fieldName }}{{ indexSuffix }}" type="radio" name="{{ fieldName }}"
-                               value="{{ choiceId }}" class="govuk-radios__input" {{ 'checked' if form[fieldName].data == choiceId }}
+                               value="{{ choiceId }}" class="govuk-radios__input" {{ 'checked' if str(form[fieldName].data) == str(choiceId) }}
                                data-aria-controls="conditional-{{ fieldName }}{{ indexSuffix }}">
                         <label for="{{ fieldName }}{{ indexSuffix }}" class="govuk-label govuk-radios__label">
                             {{ choiceLabel }}

@@ -54,7 +54,7 @@ class StrictRequiredIf(DataRequired):
         if other_field is None:
             raise Exception('no field named "%s" in form' % self.other_field_name)
 
-        if (other_field.data == self.other_field_value or
+        if (str(other_field.data) == str(self.other_field_value) or
            (isinstance(other_field.data, list) and self.other_field_value in other_field.data)):
             super(StrictRequiredIf, self).__call__(form, field)
             if self.validators:

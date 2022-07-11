@@ -411,7 +411,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.error(field='previousNameCheck', message='Select if you have ever changed your name to reflect your gender')
 
     # Choose an option, click Save and continue
-    await helpers.check_radio(field='previousNameCheck', value='Yes')
+    await helpers.check_radio(field='previousNameCheck', value='True')
     await helpers.click_button('Save and continue')
 
     # ------------------------------------------------
@@ -434,8 +434,8 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(0)
 
     # The fields should be pre-populated with the values we just entered
-    await asserts.is_checked(field='previousNameCheck', value='Yes')
-    await asserts.not_checked(field='previousNameCheck', value='No')
+    await asserts.is_checked(field='previousNameCheck', value='True')
+    await asserts.not_checked(field='previousNameCheck', value='False')
 
     # Click Save and continue to return to Address page
     await helpers.click_button('Save and continue')
@@ -514,7 +514,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.error(field='contactDatesCheck', message="Select if you don't want us to contact you at any point in the next 6 months")
 
     # Choose "Yes", but don't enter any dates
-    await helpers.check_radio(field='contactDatesCheck', value='Yes')
+    await helpers.check_radio(field='contactDatesCheck', value='True')
     await helpers.click_button('Save and continue')
     await asserts.url('/personal-details/contact-dates')
     await asserts.accessibility()
@@ -523,7 +523,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.error(field='dates', message="Enter the dates you don't want us to contact you by post")
 
     # Enter some valid dates
-    await helpers.check_radio(field='contactDatesCheck', value='Yes')
+    await helpers.check_radio(field='contactDatesCheck', value='True')
     await helpers.fill_textbox(field='dates', value=data.DATES_TO_AVOID)
     await helpers.click_button('Save and continue')
 
@@ -547,8 +547,8 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(0)
 
     # The fields should be pre-populated with the values we just entered
-    await asserts.is_checked(field='contactDatesCheck', value='Yes')
-    await asserts.not_checked(field='contactDatesCheck', value='No')
+    await asserts.is_checked(field='contactDatesCheck', value='True')
+    await asserts.not_checked(field='contactDatesCheck', value='False')
     await asserts.field_value(field='dates', expected_value=data.DATES_TO_AVOID)
 
     # Click Save and continue to return to Contact Preferences page
@@ -646,7 +646,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.error(field='tell_hmrc', message='Select if you would like us to tell HMRC after you receive a Gender Recognition Certificate')
 
     # Choose "Yes" option, but don't enter a National Insurance number
-    await helpers.check_radio(field='tell_hmrc', value='Yes')
+    await helpers.check_radio(field='tell_hmrc', value='True')
     await helpers.click_button('Save and continue')
     await asserts.url('/personal-details/hmrc')
     await asserts.accessibility()
@@ -655,7 +655,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.error(field='national_insurance_number', message='Enter your National Insurance number')
 
     # Enter an invalid National Insurance number
-    await helpers.check_radio(field='tell_hmrc', value='Yes')
+    await helpers.check_radio(field='tell_hmrc', value='True')
     await helpers.fill_textbox(field='national_insurance_number', value='INVALID-NI')
     await helpers.click_button('Save and continue')
     await asserts.url('/personal-details/hmrc')
@@ -665,7 +665,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.error(field='national_insurance_number', message='Enter a valid National Insurance number')
 
     # Enter a valid National Insurance number
-    await helpers.check_radio(field='tell_hmrc', value='Yes')
+    await helpers.check_radio(field='tell_hmrc', value='True')
     await helpers.fill_textbox(field='national_insurance_number', value=data.NATIONAL_INSURANCE_NUMBER)
     await helpers.click_button('Save and continue')
 
@@ -689,8 +689,8 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(0)
 
     # The fields should be pre-populated with the values we just entered
-    await asserts.is_checked(field='tell_hmrc', value='Yes')
-    await asserts.not_checked(field='tell_hmrc', value='No')
+    await asserts.is_checked(field='tell_hmrc', value='True')
+    await asserts.not_checked(field='tell_hmrc', value='False')
     await asserts.field_value(field='national_insurance_number', expected_value=data.NATIONAL_INSURANCE_NUMBER)
 
     # Click Save and continue to return to Check Your Answers page
@@ -741,7 +741,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.h1('Notifying HMRC')
     await asserts.number_of_errors(0)
 
-    await helpers.check_radio(field='tell_hmrc', value='No')
+    await helpers.check_radio(field='tell_hmrc', value='False')
     await helpers.click_button('Save and continue')
 
     # ------------------------------------------------

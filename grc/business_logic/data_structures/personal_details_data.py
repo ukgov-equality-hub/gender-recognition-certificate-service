@@ -37,6 +37,28 @@ class PersonalDetailsData:
     national_insurance_number: str = None
 
     @property
+    def address_comma_separated(self) -> str:
+        return (
+            self.address_line_one + ', ' +
+            ((self.address_line_two + ', ') if self.address_line_two else '') +
+            self.address_town_city + ', ' +
+            self.address_postcode
+        )
+
+    @property
+    def affirmed_gender_formatted(self) -> str: return 'Male' if self.affirmed_gender == AffirmedGender.MALE else 'Female'
+    @property
+    def transition_date_formatted_MMMM_YYYY(self) -> str: return self.transition_date.strftime('%B %Y')
+    @property
+    def statutory_declaration_date_formatted_DD_MMMM_YYYY(self) -> str: return self.statutory_declaration_date.strftime('%d %B %Y')
+    @property
+    def changed_name_to_reflect_gender_formatted(self) -> str: return 'Yes' if self.changed_name_to_reflect_gender else 'No'
+    @property
+    def contact_dates_should_avoid_formatted(self) -> str: return 'Yes' if self.contact_dates_should_avoid else 'No'
+    @property
+    def tell_hmrc_formatted(self) -> str: return 'Yes' if self.tell_hmrc else 'No'
+
+    @property
     def section_status(self) -> ListStatus:
         if self.title is None or self.first_names is None or self.last_name is None:
             return ListStatus.NOT_STARTED

@@ -21,53 +21,44 @@
                     title='Name',
                     changeLinkHiddenText='name',
                     changeLinkUrl=url_for('personalDetails.index'),
-                    value=(session['application']['personalDetails']['title'] + ' ' + session['application']['personalDetails']['first_name'] + ' ' + session['application']['personalDetails']['last_name'])
+                    value=(application_data.personal_details_data.title + ' ' + application_data.personal_details_data.first_names + ' ' + application_data.personal_details_data.last_name)
                 ) }}
 
                 {{ summary_list_item.render(
                     title='Affirmed gender',
                     changeLinkHiddenText='affirmed gender',
                     changeLinkUrl=url_for('personalDetails.affirmedGender'),
-                    value=('Male' if session['application']['personalDetails']['affirmed_gender'] == 'MALE' else 'Female')
+                    value=(application_data.personal_details_data.affirmed_gender_formatted)
                 ) }}
 
                 {{ summary_list_item.render(
                     title='When you transitioned',
                     changeLinkHiddenText='when you transitioned',
                     changeLinkUrl=url_for('personalDetails.transitionDate'),
-                    value=(strptime('{}-{}-1'.format(session['application']['personalDetails']['transition_date_year'],
-                                 session['application']['personalDetails']['transition_date_month']),
-                                 '%Y-%m-%d')
-                                 .strftime('%B %Y')
-                    )
+                    value=(application_data.personal_details_data.transition_date_formatted_MMMM_YYYY)
                 ) }}
 
                 {{ summary_list_item.render(
                     title='When you signed your statutory declaration',
                     changeLinkHiddenText='when you signed your statutory declaration',
                     changeLinkUrl=url_for('personalDetails.statutoryDeclarationDate'),
-                    value=(strptime('{}-{}-{}'.format(session['application']['personalDetails']['statutory_declaration_date_year'],
-                                 session['application']['personalDetails']['statutory_declaration_date_month'],
-                                 session['application']['personalDetails']['statutory_declaration_date_day']),
-                                 '%Y-%m-%d')
-                                 .strftime('%d %B %Y')
-                    )
+                    value=(application_data.personal_details_data.statutory_declaration_date_formatted_DD_MMMM_YYYY)
                 ) }}
 
                 {{ summary_list_item.render(
                     title='Ever changed name',
                     changeLinkHiddenText='whether you have changed your name to reflect your gender',
                     changeLinkUrl=url_for('personalDetails.previousNamesCheck'),
-                    value=(session['application']['personalDetails']['previousNamesCheck'])
+                    value=(application_data.personal_details_data.changed_name_to_reflect_gender_formatted)
                 ) }}
 
                 {% macro addressValue() %}
-                    {{ session['application']['personalDetails']['address']['address_line_one'] }}<br>
-                    {% if session['application']['personalDetails']['address']['address_line_two'] %}
-                        {{ session['application']['personalDetails']['address']['address_line_two'] }}<br>
+                    {{ application_data.personal_details_data.address_line_one }}<br>
+                    {% if application_data.personal_details_data.address_line_two %}
+                        {{ application_data.personal_details_data.address_line_two }}<br>
                     {% endif %}
-                    {{ session['application']['personalDetails']['address']['town'] }}<br>
-                    {{ session['application']['personalDetails']['address']['postcode'] }}
+                    {{ application_data.personal_details_data.address_town_city }}<br>
+                    {{ application_data.personal_details_data.address_postcode }}
                 {% endmacro %}
                 {{ summary_list_item.render(
                     title='Address',
@@ -78,19 +69,19 @@
 
                 {% macro contactPreferencesValue() %}
                     <ul class="govuk-list">
-                        {% if session['application']['personalDetails']['contactPreferences']['email'] != '' %}
+                        {% if application_data.personal_details_data.contact_email_address %}
                             <li>
-                                Email: {{ session['application']['personalDetails']['contactPreferences']['email'] }}
+                                Email: {{ application_data.personal_details_data.contact_email_address }}
                             </li>
                         {% endif %}
-                        {% if session['application']['personalDetails']['contactPreferences']['phone'] != '' %}
+                        {% if application_data.personal_details_data.contact_phone_number %}
                             <li>
-                                Phone: {{ session['application']['personalDetails']['contactPreferences']['phone'] }}
+                                Phone: {{ application_data.personal_details_data.contact_phone_number }}
                             </li>
                         {% endif %}
-                        {% if session['application']['personalDetails']['contactPreferences']['post'] != '' %}
+                        {% if application_data.personal_details_data.contact_by_post %}
                             <li>
-                                Post: {{ session['application']['personalDetails']['contactPreferences']['post'] }}
+                                Post: {{ application_data.personal_details_data.address_comma_separated }}
                             </li>
                         {% endif %}
                     </ul>
@@ -103,10 +94,10 @@
                 ) }}
 
                 {% macro unavailabilityValue() %}
-                    {{ session['application']['personalDetails']['contactDates']['answer'] }}<br>
-                    {% if session['application']['personalDetails']['contactDates']['answer'] == 'Yes' %}
+                    {{ application_data.personal_details_data.contact_dates_should_avoid_formatted }}<br>
+                    {% if application_data.personal_details_data.contact_dates_should_avoid %}
                         {# Note: The following <span> should all be on one line, to allow the line breaks to work correctly #}
-                        <span style="white-space: pre-line;">{{ session['application']['personalDetails']['contactDates']['dates'] }}</span>
+                        <span style="white-space: pre-line;">{{ application_data.personal_details_data.contact_dates_to_avoid }}</span>
                     {% endif %}
                 {% endmacro %}
                 {{ summary_list_item.render(
@@ -120,15 +111,15 @@
                     title='Notify HMRC',
                     changeLinkHiddenText="whether you want us to notify HMRC after you receive a Gender Recognition Certificate",
                     changeLinkUrl=url_for('personalDetails.hmrc'),
-                    value=(session['application']['personalDetails']['hmrc']['answer'])
+                    value=(application_data.personal_details_data.tell_hmrc_formatted)
                 ) }}
 
-                {% if session['application']['personalDetails']['hmrc']['answer'] == 'Yes' %}
+                {% if application_data.personal_details_data.tell_hmrc %}
                     {{ summary_list_item.render(
                         title='National insurance number',
                         changeLinkHiddenText="your National Insurance number",
                         changeLinkUrl=url_for('personalDetails.hmrc'),
-                        value=(session['application']['personalDetails']['hmrc']['national_insurance_number'])
+                        value=(application_data.personal_details_data.national_insurance_number)
                     ) }}
                 {% endif %}
             </dl>
