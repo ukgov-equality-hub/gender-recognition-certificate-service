@@ -57,7 +57,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
 
     # Select "Neither" option and proceed down this route until the "Check you answers" page
     # Then, re-trace our steps back here and choose the "Married" and then "Civil partnership" options
-    await helpers.check_radio(field='currently_married', value='Neither')
+    await helpers.check_radio(field='currently_married', value='NEITHER')
     await helpers.click_button('Save and continue')
 
     # ------------------------------------------------
@@ -80,9 +80,9 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(0)
 
     # Check the values we entered have been remembered
-    await asserts.is_checked(field='currently_married', value='Neither')
-    await asserts.not_checked(field='currently_married', value='Married')
-    await asserts.not_checked(field='currently_married', value='Civil partnership')
+    await asserts.is_checked(field='currently_married', value='NEITHER')
+    await asserts.not_checked(field='currently_married', value='MARRIED')
+    await asserts.not_checked(field='currently_married', value='CIVIL_PARTNERSHIP')
 
     # Continue to Partner Died page
     await helpers.click_button('Save and continue')
@@ -104,7 +104,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.error(field='partner_died', message='Select if you were previously married or in a civil partnership, and your spouse or partner died')
 
     # Select a valid option, click "Save and continue"
-    await helpers.check_radio(field='partner_died', value='Yes')
+    await helpers.check_radio(field='partner_died', value='True')
     await helpers.click_button('Save and continue')
 
     # ------------------------------------------------
@@ -127,8 +127,8 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(0)
 
     # Check the values we entered have been remembered
-    await asserts.is_checked(field='partner_died', value='Yes')
-    await asserts.not_checked(field='partner_died', value='No')
+    await asserts.is_checked(field='partner_died', value='True')
+    await asserts.not_checked(field='partner_died', value='False')
 
     # Continue to Partnership Ended page
     await helpers.click_button('Save and continue')
@@ -150,7 +150,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.error(field='previous_partnership_ended', message='Select if you have ever been married or in a civil partnership that has ended')
 
     # Select a valid option, click "Save and continue"
-    await helpers.check_radio(field='previous_partnership_ended', value='Yes')
+    await helpers.check_radio(field='previous_partnership_ended', value='True')
     await helpers.click_button('Save and continue')
 
     # ------------------------------------------------
@@ -173,8 +173,8 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(0)
 
     # Check the values we entered have been remembered
-    await asserts.is_checked(field='previous_partnership_ended', value='Yes')
-    await asserts.not_checked(field='previous_partnership_ended', value='No')
+    await asserts.is_checked(field='previous_partnership_ended', value='True')
+    await asserts.not_checked(field='previous_partnership_ended', value='False')
 
     # Continue to Marriage details: Check Your Answers page
     await helpers.click_button('Save and continue')
@@ -232,7 +232,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(0)
 
     # Choose the "Married" option and go down that path
-    await helpers.check_radio(field='currently_married', value='Married')
+    await helpers.check_radio(field='currently_married', value='MARRIED')
     await helpers.click_button('Save and continue')
 
     # ------------------------------------------------
@@ -256,9 +256,9 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(0)
 
     # Check the values we entered have been remembered
-    await asserts.is_checked(field='currently_married', value='Married')
-    await asserts.not_checked(field='currently_married', value='Civil partnership')
-    await asserts.not_checked(field='currently_married', value='Neither')
+    await asserts.is_checked(field='currently_married', value='MARRIED')
+    await asserts.not_checked(field='currently_married', value='CIVIL_PARTNERSHIP')
+    await asserts.not_checked(field='currently_married', value='NEITHER')
 
     # Continue to the Stay Together page
     await helpers.click_button('Save and continue')
@@ -282,7 +282,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
 
     # Select the "No" option, go down that route
     # Then backtrack and choose "Yes
-    await helpers.check_radio(field='stay_together', value='No')
+    await helpers.check_radio(field='stay_together', value='False')
     await helpers.click_button('Save and continue')
 
     # ------------------------------------------------
@@ -307,8 +307,8 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(0)
 
     # Check the values we entered have been remembered
-    await asserts.is_checked(field='stay_together', value='No')
-    await asserts.not_checked(field='stay_together', value='Yes')
+    await asserts.is_checked(field='stay_together', value='False')
+    await asserts.not_checked(field='stay_together', value='True')
 
     # Continue to the Interim GRC page
     await helpers.click_button('Save and continue')
@@ -392,7 +392,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(0)
 
     # Now choose the "Yes" option
-    await helpers.check_radio(field='stay_together', value='Yes')
+    await helpers.check_radio(field='stay_together', value='True')
     await helpers.click_button('Save and continue')
 
     # ------------------------------------------------
@@ -418,8 +418,8 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(0)
 
     # Check the values we entered have been remembered
-    await asserts.is_checked(field='stay_together', value='Yes')
-    await asserts.not_checked(field='stay_together', value='No')
+    await asserts.is_checked(field='stay_together', value='True')
+    await asserts.not_checked(field='stay_together', value='False')
 
     # Continue to the Partner Agrees page
     await helpers.click_button('Save and continue')
@@ -445,7 +445,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
 
     # Select the "No" option, go down that route
     # Then backtrack and choose "Yes
-    await helpers.check_radio(field='partner_agrees', value='No')
+    await helpers.check_radio(field='partner_agrees', value='False')
     await helpers.click_button('Save and continue')
 
     # ------------------------------------------------
@@ -471,8 +471,8 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(0)
 
     # Check the values we entered have been remembered
-    await asserts.is_checked(field='partner_agrees', value='No')
-    await asserts.not_checked(field='partner_agrees', value='Yes')
+    await asserts.is_checked(field='partner_agrees', value='False')
+    await asserts.not_checked(field='partner_agrees', value='True')
 
     # Continue to the Interim GRC page
     await helpers.click_button('Save and continue')
@@ -559,7 +559,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(0)
 
     # This time, select the "Yes" option
-    await helpers.check_radio(field='partner_agrees', value='Yes')
+    await helpers.check_radio(field='partner_agrees', value='True')
     await helpers.click_button('Save and continue')
 
     # ------------------------------------------------
@@ -584,8 +584,8 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(0)
 
     # Check the values we entered have been remembered
-    await asserts.is_checked(field='partner_agrees', value='Yes')
-    await asserts.not_checked(field='partner_agrees', value='No')
+    await asserts.is_checked(field='partner_agrees', value='True')
+    await asserts.not_checked(field='partner_agrees', value='False')
 
     # Continue to the Marriage details: Check Your Answers page
     await helpers.click_button('Save and continue')
@@ -640,7 +640,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
 
     # Select the "Civil partnership" option
     # Go through all the same journeys, checking the text has changed from "married" to "in a civil partnership"
-    await helpers.check_radio(field='currently_married', value='Civil partnership')
+    await helpers.check_radio(field='currently_married', value='CIVIL_PARTNERSHIP')
     await helpers.click_button('Save and continue')
 
     # ------------------------------------------------
@@ -664,9 +664,9 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(0)
 
     # Check the values we entered have been remembered
-    await asserts.is_checked(field='currently_married', value='Civil partnership')
-    await asserts.not_checked(field='currently_married', value='Married')
-    await asserts.not_checked(field='currently_married', value='Neither')
+    await asserts.is_checked(field='currently_married', value='CIVIL_PARTNERSHIP')
+    await asserts.not_checked(field='currently_married', value='MARRIED')
+    await asserts.not_checked(field='currently_married', value='NEITHER')
 
     # Continue to the Stay Together page
     await helpers.click_button('Save and continue')
@@ -682,7 +682,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
 
     # Select the "No" option, go down that route
     # Then backtrack and choose "Yes
-    await helpers.check_radio(field='stay_together', value='No')
+    await helpers.check_radio(field='stay_together', value='False')
     await helpers.click_button('Save and continue')
 
     # ------------------------------------------------
@@ -707,8 +707,8 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(0)
 
     # Check the values we entered have been remembered
-    await asserts.is_checked(field='stay_together', value='No')
-    await asserts.not_checked(field='stay_together', value='Yes')
+    await asserts.is_checked(field='stay_together', value='False')
+    await asserts.not_checked(field='stay_together', value='True')
 
     # Continue to the Interim GRC page
     await helpers.click_button('Save and continue')
@@ -792,7 +792,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(0)
 
     # Now choose the "Yes" option
-    await helpers.check_radio(field='stay_together', value='Yes')
+    await helpers.check_radio(field='stay_together', value='True')
     await helpers.click_button('Save and continue')
 
     # ------------------------------------------------
@@ -818,8 +818,8 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(0)
 
     # Check the values we entered have been remembered
-    await asserts.is_checked(field='stay_together', value='Yes')
-    await asserts.not_checked(field='stay_together', value='No')
+    await asserts.is_checked(field='stay_together', value='True')
+    await asserts.not_checked(field='stay_together', value='False')
 
     # Continue to the Partner Agrees page
     await helpers.click_button('Save and continue')
@@ -836,7 +836,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
 
     # Select the "No" option, go down that route
     # Then backtrack and choose "Yes
-    await helpers.check_radio(field='partner_agrees', value='No')
+    await helpers.check_radio(field='partner_agrees', value='False')
     await helpers.click_button('Save and continue')
 
     # ------------------------------------------------
@@ -862,8 +862,8 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(0)
 
     # Check the values we entered have been remembered
-    await asserts.is_checked(field='partner_agrees', value='No')
-    await asserts.not_checked(field='partner_agrees', value='Yes')
+    await asserts.is_checked(field='partner_agrees', value='False')
+    await asserts.not_checked(field='partner_agrees', value='True')
 
     # Continue to the Interim GRC page
     await helpers.click_button('Save and continue')
@@ -950,7 +950,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(0)
 
     # This time, select the "Yes" option
-    await helpers.check_radio(field='partner_agrees', value='Yes')
+    await helpers.check_radio(field='partner_agrees', value='True')
     await helpers.click_button('Save and continue')
 
     # ------------------------------------------------
@@ -975,8 +975,8 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(0)
 
     # Check the values we entered have been remembered
-    await asserts.is_checked(field='partner_agrees', value='Yes')
-    await asserts.not_checked(field='partner_agrees', value='No')
+    await asserts.is_checked(field='partner_agrees', value='True')
+    await asserts.not_checked(field='partner_agrees', value='False')
 
     # Continue to the Marriage details: Check Your Answers page
     await helpers.click_button('Save and continue')

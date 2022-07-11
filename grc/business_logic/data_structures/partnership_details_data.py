@@ -29,6 +29,22 @@ class PartnershipDetailsData:
     def is_not_in_partnership(self) -> bool: return not self.is_currently_in_partnership
 
     @property
+    def currently_in_a_partnership_formatted(self) -> str:
+        if self.currently_in_a_partnership == CurrentlyInAPartnershipEnum.MARRIED: return 'Married'
+        if self.currently_in_a_partnership == CurrentlyInAPartnershipEnum.CIVIL_PARTNERSHIP: return 'Civil partnership'
+        if self.currently_in_a_partnership == CurrentlyInAPartnershipEnum.NEITHER: return 'Neither'
+    @property
+    def plan_to_remain_in_a_partnership_formatted(self) -> str: return 'Yes' if self.plan_to_remain_in_a_partnership else 'No'
+    @property
+    def partner_agrees_formatted(self) -> str: return 'Yes' if self.partner_agrees else 'No'
+    @property
+    def previous_partnership_partner_died_formatted(self) -> str: return 'Yes' if self.previous_partnership_partner_died else 'No'
+    @property
+    def confirm_understood_interim_certificate_formatted(self) -> str: return 'Yes' if self.confirm_understood_interim_certificate else 'No'
+    @property
+    def previous_partnership_ended_formatted(self) -> str: return 'Yes' if self.previous_partnership_ended else 'No'
+
+    @property
     def section_status(self) -> ListStatus:
         if self.currently_in_a_partnership is None:
             return ListStatus.NOT_STARTED
