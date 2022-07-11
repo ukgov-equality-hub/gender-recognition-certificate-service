@@ -19,7 +19,7 @@ class UploadForm(FlaskForm):
                              message='Select a JPG, BMP, PNG, TIF or PDF file smaller than 10MB',
                              validators=[
                                  MultiFileAllowed(['jpg', 'png', 'jpeg', 'tif', 'bmp', 'pdf'],
-                                                  message='Select a JPG, BMP, PNG, TIF or PDF file greater than 0B and smaller than 10MB'),
+                                                  message='Select a JPG, BMP, PNG, TIF or PDF file smaller than 10MB'),
                                  fileSizeLimit(10),
                                  fileVirusScan
                              ]),
