@@ -7,7 +7,8 @@ from requests.structures import CaseInsensitiveDict
 import json
 import uuid
 from grc.external_services.gov_uk_notify import GovUkNotify
-from grc.models import db, Application, ListStatus
+from grc.models import db, Application
+from grc.list_status import ListStatus
 from grc.submit_and_pay.forms import MethodCheckForm, HelpTypeForm, CheckYourAnswers
 from grc.utils.decorators import LoginRequired
 from grc.utils.application_progress import save_progress, mark_complete

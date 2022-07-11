@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, session
 from grc.utils.decorators import LoginRequired
 from grc.utils.application_progress import calculate_progress_status, calculate_progress_status_colour
-from grc.models import ListStatus
+from grc.list_status import ListStatus
 
 taskList = Blueprint('taskList', __name__)
 

@@ -1,6 +1,6 @@
 from datetime import datetime
 from flask import Blueprint, render_template, request, url_for, session
-from grc.models import ListStatus
+from grc.list_status import ListStatus
 from grc.personal_details.forms import NameForm, AffirmedGenderForm, TransitionDateForm, StatutoryDeclarationDateForm, PreviousNamesCheck, AddressForm, ContactPreferencesForm, ContactDatesForm, HmrcForm, CheckYourAnswers
 from grc.utils.decorators import LoginRequired
 from grc.utils.application_progress import save_progress
