@@ -81,6 +81,16 @@ async def run_checks_on_page(page: Page, asserts: AssertHelpers, helpers: PageHe
     await asserts.error(field='documents', message='Select a JPG, BMP, PNG, TIF or PDF file smaller than 10MB')
     await asserts.documents_uploaded(0)
 
+    # Try to upload an empty file
+    await helpers.upload_file_invalid_zero_bytes(field='documents')
+    await helpers.click_button('Upload file')
+    await asserts.url(PAGE_URL)
+    await asserts.accessibility()
+    await asserts.h1(PAGE_H1)
+    await asserts.number_of_errors(1)
+    await asserts.error(field='documents', message='The selected file is empty. Check that the file you are uploading has the content you expect')
+    await asserts.documents_uploaded(0)
+
     # Try to upload a document that is too large
     page.set_default_timeout(data.TIMEOUT_FOR_SLOW_OPERATIONS)  # This is a slow operation, so increase the maximum wait time
     await helpers.upload_file_invalid_too_large(field='documents')
