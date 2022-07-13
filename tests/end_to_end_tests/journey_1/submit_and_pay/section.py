@@ -56,7 +56,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.error(field='applying_for_help_with_fee', message='Select if you are applying for help paying the fee')
 
     # Choose "No, I will pay now" option, click Save and continue
-    await helpers.check_radio(field='applying_for_help_with_fee', value='Online')
+    await helpers.check_radio(field='applying_for_help_with_fee', value='False')
     await helpers.click_button('Save and continue')
 
     # ------------------------------------------------
@@ -81,11 +81,11 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(0)
 
     # The fields should be pre-populated with the values we just entered
-    await asserts.is_checked(field='applying_for_help_with_fee', value='Online')
-    await asserts.not_checked(field='applying_for_help_with_fee', value='Help')
+    await asserts.is_checked(field='applying_for_help_with_fee', value='False')
+    await asserts.not_checked(field='applying_for_help_with_fee', value='True')
 
     # Choose the "Help" option and continue down that route
-    await helpers.check_radio(field='applying_for_help_with_fee', value='Help')
+    await helpers.check_radio(field='applying_for_help_with_fee', value='True')
     await helpers.click_button('Save and continue')
 
     # ------------------------------------------------
@@ -108,8 +108,8 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(0)
 
     # The fields should be pre-populated with the values we just entered
-    await asserts.is_checked(field='applying_for_help_with_fee', value='Help')
-    await asserts.not_checked(field='applying_for_help_with_fee', value='Online')
+    await asserts.is_checked(field='applying_for_help_with_fee', value='True')
+    await asserts.not_checked(field='applying_for_help_with_fee', value='False')
 
     # Continue to the "Applying For Help" page
     await helpers.click_button('Save and continue')
@@ -131,7 +131,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.error(field='how_applying_for_fees', message='Select how are you applying for help paying the fee')
 
     # Choose "Using the online service" option, but don't enter a Help with Fees reference number
-    await helpers.check_radio(field='how_applying_for_fees', value='Using the online service')
+    await helpers.check_radio(field='how_applying_for_fees', value='USING_ONLINE_SERVICE')
     await helpers.click_button('Save and continue')
     await asserts.url('/submit-and-pay/help-type')
     await asserts.accessibility()
@@ -140,7 +140,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.error(field='help_with_fees_reference_number', message='Enter your Help with Fees reference number')
 
     # Enter a valid Help with Fees reference number
-    await helpers.check_radio(field='how_applying_for_fees', value='Using the online service')
+    await helpers.check_radio(field='how_applying_for_fees', value='USING_ONLINE_SERVICE')
     await helpers.fill_textbox(field='help_with_fees_reference_number', value=data.HELP_WITH_FEES_REFERENCE_NUMBER)
     await helpers.click_button('Save and continue')
 
@@ -164,8 +164,8 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(0)
 
     # The fields should be pre-populated with the values we just entered
-    await asserts.is_checked(field='how_applying_for_fees', value='Using the online service')
-    await asserts.not_checked(field='how_applying_for_fees', value='Using the EX160 form')
+    await asserts.is_checked(field='how_applying_for_fees', value='USING_ONLINE_SERVICE')
+    await asserts.not_checked(field='how_applying_for_fees', value='USING_EX160_FORM')
     await asserts.field_value(field='help_with_fees_reference_number', expected_value=data.HELP_WITH_FEES_REFERENCE_NUMBER)
 
     # Continue to the Check Your Answers page

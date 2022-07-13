@@ -36,7 +36,7 @@
                     of your full birth or adoption certificate (this will be posted back to you)
                 </li>
 
-                {% if session['application']['submitAndPay']['helpType'] == 'Using the EX160 form' %}
+                {% if application_data.submit_and_pay_data.is_using_ex160_form %}
                     <li>
                         an
                         <a href="https://www.gov.uk/government/publications/apply-for-help-with-court-and-tribunal-fees"

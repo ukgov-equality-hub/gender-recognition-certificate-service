@@ -258,22 +258,3 @@ def calculate_progress_status_colour(value):
         return 'govuk-tag--blue'
     else:
         return 'govuk-tag--grey'
-
-
-def mark_complete():
-    application_record = Application.query.filter_by(
-        reference_number=session['reference_number']
-    ).first()
-
-    if application_record is not None:
-        try:
-            if 'application' in session:
-                application_record.user_input = session['application']
-                application_record.updated = datetime.now()
-                application_record.status = ApplicationStatus.SUBMITTED
-                db.session.commit()
-                session['application'] = application_record.data()
-        except ValueError:
-            print('Oops!  Something went wrong.', flush=True)
-    else:
-        print('Application does not exist', flush=True)

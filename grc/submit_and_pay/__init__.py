@@ -6,14 +6,15 @@ import requests
 from requests.structures import CaseInsensitiveDict
 import json
 import uuid
+from grc.business_logic.data_store import DataStore
+from grc.business_logic.data_structures.submit_and_pay_data import HelpWithFeesType
 from grc.external_services.gov_uk_notify import GovUkNotify
-from grc.models import db, Application
+from grc.models import db, Application, ApplicationStatus
 from grc.list_status import ListStatus
 from grc.submit_and_pay.forms import MethodCheckForm, HelpTypeForm, CheckYourAnswers
 from grc.utils.decorators import LoginRequired
-from grc.utils.application_progress import save_progress, mark_complete
-from grc.utils.radio_values_helper import get_radio_pretty_value
 from grc.utils.redirect import local_redirect
+from grc.utils.strtobool import strtobool
 
 submitAndPay = Blueprint('submitAndPay', __name__)
 
@@ -22,25 +23,19 @@ submitAndPay = Blueprint('submitAndPay', __name__)
 @LoginRequired
 def index():
     form = MethodCheckForm()
+    application_data = DataStore.load_application_by_session_reference_number()
 
     if form.validate_on_submit():
-        session['application']['submitAndPay']['method'] = form.applying_for_help_with_fee.data
-        session['application'] = save_progress()
+        application_data.submit_and_pay_data.applying_for_help_with_fee = strtobool(form.applying_for_help_with_fee.data)
+        DataStore.save_application(application_data)
 
-        if form.applying_for_help_with_fee.data == 'Help':
-            session['application']['submitAndPay']['progress'] = ListStatus.IN_PROGRESS.name
+        if application_data.submit_and_pay_data.applying_for_help_with_fee:
             return local_redirect(url_for('submitAndPay.helpType'))
         else:
-            session['application']['submitAndPay'].pop('helpType', None)
-            session['application']['submitAndPay']['progress'] = ListStatus.IN_REVIEW.name
             return local_redirect(url_for('submitAndPay.checkYourAnswers'))
 
     if request.method == 'GET':
-        form.applying_for_help_with_fee.data = (
-            session['application']['submitAndPay']['method']
-            if 'method' in session['application']['submitAndPay']
-            else None
-        )
+        form.applying_for_help_with_fee.data = application_data.submit_and_pay_data.applying_for_help_with_fee
 
     return render_template(
         'submit-and-pay/method.html',
@@ -52,27 +47,25 @@ def index():
 @LoginRequired
 def helpType():
     form = HelpTypeForm()
+    application_data = DataStore.load_application_by_session_reference_number()
 
     if request.method == 'POST':
-        if 'Using the EX160 form' == form.how_applying_for_fees.data:
-            form.help_with_fees_reference_number.data = None
-
         if form.validate_on_submit():
-            session['application']['submitAndPay']['helpType'] = form.how_applying_for_fees.data
+            application_data.submit_and_pay_data.how_applying_for_help_with_fees = \
+                HelpWithFeesType[form.how_applying_for_fees.data]
 
-            if 'Using the online service' == form.how_applying_for_fees.data:
-                session['application']['submitAndPay']['referenceNumber'] = form.help_with_fees_reference_number.data
+            if application_data.submit_and_pay_data.how_applying_for_help_with_fees == HelpWithFeesType.USING_ONLINE_SERVICE:
+                application_data.submit_and_pay_data.help_with_fees_reference_number = form.help_with_fees_reference_number.data
             else:
-                session['application']['submitAndPay']['referenceNumber'] = None
+                application_data.submit_and_pay_data.help_with_fees_reference_number = None
 
-            session['application']['submitAndPay']['progress'] = ListStatus.IN_REVIEW.name
-            session['application'] = save_progress()
+            DataStore.save_application(application_data)
 
             return local_redirect(url_for('submitAndPay.checkYourAnswers'))
 
-    if request.method == 'GET' and 'helpType' in session['application']['submitAndPay']:
-        form.how_applying_for_fees.data = session['application']['submitAndPay']['helpType']
-        form.help_with_fees_reference_number.data = session['application']['submitAndPay']['referenceNumber']
+    if request.method == 'GET' and application_data.submit_and_pay_data.how_applying_for_help_with_fees is not None:
+        form.how_applying_for_fees.data = application_data.submit_and_pay_data.how_applying_for_help_with_fees.name
+        form.help_with_fees_reference_number.data = application_data.submit_and_pay_data.help_with_fees_reference_number
 
     return render_template(
         'submit-and-pay/help-type.html',
@@ -84,16 +77,17 @@ def helpType():
 @LoginRequired
 def checkYourAnswers():
     form = CheckYourAnswers()
+    application_data = DataStore.load_application_by_session_reference_number()
 
-    if 'submitAndPay' not in session['application'] or (session['application']['submitAndPay']['progress'] != ListStatus.IN_REVIEW.name and session['application']['submitAndPay']['progress'] != ListStatus.COMPLETED.name):
+    if application_data.section_status_submit_and_pay_data != ListStatus.IN_REVIEW:
         return local_redirect(url_for('taskList.index'))
 
     if request.method == 'POST' and form.validate_on_submit():
-        session['application']['submitAndPay']['declaration'] = form.certify.data
+        application_data.submit_and_pay_data.declaration = form.certify.data
 
-        if session['application']['submitAndPay']['method'] == 'Help':
-            session['application']['submitAndPay']['progress'] = ListStatus.COMPLETED.name
-            session['application'] = save_progress()
+        if application_data.submit_and_pay_data.applying_for_help_with_fee:
+            application_data.submit_and_pay_data.is_submitted = True
+            DataStore.save_application(application_data)
 
             return local_redirect(url_for('submitAndPay.confirmation'))
         else:
@@ -101,7 +95,7 @@ def checkYourAnswers():
             return_link = request.url_root if os.getenv('TEST_URL', '') != '' or os.getenv('FLASK_ENV', '') == 'development' else str(request.url_root).replace('http://', 'https://')
             data = {
                 'amount': 500,
-                'reference':  session['application']['reference_number'],
+                'reference': application_data.reference_number,
                 'description': 'Pay for Gender Recognition Certificate',
                 'return_url': return_link + 'submit-and-pay/payment-confirmation/' + random_uuid,
                 'delayed_capture': False,
@@ -120,23 +114,18 @@ def checkYourAnswers():
                 )
                 res = json.loads(r.text)
 
-                session['application']['submitAndPay']['payment_id'] = res['payment_id']
-                session['application']['submitAndPay']['uuid'] = random_uuid
-                session['application'] = save_progress()
+                application_data.submit_and_pay_data.gov_pay_payment_id = res['payment_id']
+                application_data.submit_and_pay_data.gov_pay_uuid = random_uuid
+                DataStore.save_application(application_data)
 
                 return local_redirect(res['_links']['next_url']['href'])
             except BaseException as err:
                 flash(err, 'error')
 
-    session['application']['submitAndPay']['progress'] = ListStatus.IN_REVIEW.name
-    session['application'] = save_progress()
-
     return render_template(
         'submit-and-pay/check-your-answers.html',
         form=form,
-        strptime=datetime.strptime,
-        get_radio_pretty_value=get_radio_pretty_value,
-        application=session['application']
+        application_data=application_data
     )
 
 
@@ -144,8 +133,11 @@ def checkYourAnswers():
 @LoginRequired
 def download():
     from grc.utils.application_files import ApplicationFiles
+
+    application_data = DataStore.load_application_by_session_reference_number()
+
     bytes, file_name = ApplicationFiles().create_or_download_pdf(
-        session['application']['reference_number'],
+        application_data.reference_number,
         session['application'],
         is_admin=False,
         download=True
@@ -160,21 +152,23 @@ def download():
 @submitAndPay.route('/submit-and-pay/payment-confirmation/<uuid:id>', methods=['GET', 'POST'])
 @LoginRequired
 def paymentConfirmation(id):
-    if 'uuid' in session['application']['submitAndPay'] and session['application']['submitAndPay']['uuid'] == str(id):
+    application_data = DataStore.load_application_by_session_reference_number()
+
+    if application_data.submit_and_pay_data.gov_pay_uuid == str(id):
         headers = CaseInsensitiveDict()
         headers['Accept'] = 'application/json'
         headers['Authorization'] = 'Bearer ' + current_app.config['GOVUK_PAY_API_KEY']
 
         try:
             r = requests.get(
-                current_app.config['GOVUK_PAY_API'] + 'v1/payments/' + session['application']['submitAndPay']['payment_id'],
+                current_app.config['GOVUK_PAY_API'] + 'v1/payments/' + application_data.submit_and_pay_data.gov_pay_payment_id,
                 headers=headers
             )
             res = json.loads(r.text)
             if res['state']['status'] == 'success' and res['state']['finished'] == True:
-                session['application']['submitAndPay']['progress'] = ListStatus.COMPLETED.name
-                session['application']['submitAndPay']['paymentDetails'] = r.text
-                session['application'] = save_progress()
+                application_data.submit_and_pay_data.is_submitted = True
+                application_data.submit_and_pay_data.gov_pay_payment_details = r.text
+                DataStore.save_application(application_data)
                 return local_redirect(url_for('submitAndPay.confirmation'))
             elif res['state']['status'] == 'failed':
                 flash(res['state']['message'], 'error')
@@ -189,7 +183,8 @@ def paymentConfirmation(id):
 @submitAndPay.route('/submit-and-pay/confirmation', methods=['GET'])
 @LoginRequired
 def confirmation():
-    mark_complete()
+    application_data = DataStore.load_application_by_session_reference_number()
+    mark_complete(application_data.reference_number)
 
     @copy_current_request_context
     def create_files(reference_number, application):
@@ -206,21 +201,44 @@ def confirmation():
             download=False
         )
 
-        application = Application.query.filter_by(
-            reference_number=reference_number
-        ).first()
+        mark_files_created(reference_number)
 
-        if application is not None:
-            application.filesCreated = True
-            db.session.commit()
-
-    threading.Thread(target=create_files, args=[session['reference_number'], session['application']]).start()
+    threading.Thread(target=create_files, args=[application_data.reference_number, session['application']]).start()
 
     GovUkNotify().send_email_completed_application(
-        email_address=session['application']['email'],
+        email_address=application_data.email_address,
         documents_to_be_posted=render_template('documents.html')
     )
 
-    html = render_template('submit-and-pay/confirmation.html')
+    html = render_template(
+        'submit-and-pay/confirmation.html',
+        application_data=application_data
+    )
     session.clear()
     return html
+
+
+def mark_complete(reference_number: str):
+    application_record = Application.query.filter_by(
+        reference_number=reference_number
+    ).first()
+
+    if application_record is not None:
+        try:
+            application_record.updated = datetime.now()
+            application_record.status = ApplicationStatus.SUBMITTED
+            db.session.commit()
+        except ValueError:
+            print('Oops!  Something went wrong.', flush=True)
+    else:
+        print('Application does not exist', flush=True)
+
+
+def mark_files_created(reference_number: str):
+    application = Application.query.filter_by(
+        reference_number=reference_number
+    ).first()
+
+    if application is not None:
+        application.filesCreated = True
+        db.session.commit()
