@@ -5,6 +5,8 @@ import ast
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy_utils import StringEncryptedType
 from sqlalchemy_utils.types.encrypted.encrypted_type import AesEngine
+from grc.business_logic.data_store_converter import convert_weakly_typed_to_strongly_typed
+from grc.business_logic.data_structures.application_data import ApplicationData
 from grc.list_status import ListStatus
 
 db = SQLAlchemy()
@@ -80,6 +82,9 @@ class Application(db.Model):
                     "progress": ListStatus.CANNOT_START_YET.name
                 },
             }
+
+    def application_data(self) -> ApplicationData:
+        return convert_weakly_typed_to_strongly_typed(self.data())
 
 
 class SecurityCode(db.Model):
