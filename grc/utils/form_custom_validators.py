@@ -2,12 +2,12 @@ import os
 import re
 from dateutil.relativedelta import relativedelta
 from flask import request, session, current_app
-from wtforms.validators import DataRequired, InputRequired, ValidationError, StopValidation, Optional
+from wtforms.validators import DataRequired, ValidationError, StopValidation
 from werkzeug.datastructures import FileStorage
 from collections.abc import Iterable
 from datetime import datetime, date
 from grc.utils.security_code import validate_security_code
-from grc.utils.reference_number import reference_number_string, validate_reference_number
+from grc.utils.reference_number import validate_reference_number
 
 
 class RequiredIf(DataRequired):
@@ -116,12 +116,6 @@ def validateReferenceNumber(form, field):
         raise ValidationError('Enter a valid reference number')
 
 
-def validateEmailAddress(form, field):
-    from email.utils import parseaddr
-    if not '@' in parseaddr(field.data)[1]:
-        raise ValidationError('Enter a valid email address')
-
-
 def validateGovUkEmailAddress(form, field):
     email_address: str = field.data
     if not email_address.endswith('.gov.uk'):
@@ -139,14 +133,6 @@ def validatePasswordStrength(form, field):
 
     if password_check(field.data) is False:
         raise ValidationError('Your password needs to contain 8 or more characters, a lower case letter, an upper case letter, a number and a special character')
-
-
-def validateAdopted(form, field):
-
-    # Custom validator for the "Are you adopted", StrictRequiredIf doesn't play nice with this question
-    if form['check'].data == 'Yes':
-        if field.data is None or field.data == '':
-            raise ValidationError('Select if your were you adopted in the United Kingdom')
 
 
 def validatePostcode(form, field):
