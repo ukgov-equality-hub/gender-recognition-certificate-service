@@ -1,10 +1,10 @@
 import random
 import string
 import datetime
+import jsonpickle
 from flask import session
 from grc.models import Application, db
 from grc.business_logic.data_structures.application_data import ApplicationData
-from grc.business_logic.data_store_converter import convert_strongly_typed_to_weakly_typed, convert_weakly_typed_to_strongly_typed
 
 
 class DataStore:
@@ -52,7 +52,7 @@ class DataStore:
             reference_number=application_data.reference_number
         ).first()
 
-        user_input = convert_strongly_typed_to_weakly_typed(application_data)
+        user_input: str = jsonpickle.encode(application_data)
 
         application_record.user_input = user_input
         application_record.updated = datetime.datetime.now()
