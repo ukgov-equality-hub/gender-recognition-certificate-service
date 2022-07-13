@@ -7,7 +7,6 @@ from sqlalchemy_utils import StringEncryptedType
 from sqlalchemy_utils.types.encrypted.encrypted_type import AesEngine
 from grc.business_logic.data_store_converter import convert_weakly_typed_to_strongly_typed
 from grc.business_logic.data_structures.application_data import ApplicationData
-from grc.list_status import ListStatus
 
 db = SQLAlchemy()
 secret_key = os.environ.get('SQLALCHEMY_KEY', '')
@@ -38,53 +37,8 @@ class Application(db.Model):
     completedBy = db.Column(db.String(180))
     filesCreated = db.Column(db.Boolean, default=False)
 
-    def data(self):
-        if self.user_input:
-            return ast.literal_eval(self.user_input)
-        else:
-            return {
-                "reference_number": self.reference_number,
-                "email": self.email,
-                "confirmation": {
-                    "overseasCheck": "None",
-                    "overseasApprovedCheck": "None",
-                    "declaration": "None",
-                    "progress": ListStatus.IN_PROGRESS.name
-                },
-                "personalDetails": {
-                    "progress": ListStatus.NOT_STARTED.name
-                },
-                "birthRegistration": {
-                    "progress": ListStatus.NOT_STARTED.name
-                },
-                "partnershipDetails": {
-                    "progress": ListStatus.NOT_STARTED.name
-                },
-                "medicalReports": {
-                    "progress": ListStatus.CANNOT_START_YET.name
-                },
-                "genderEvidence": {
-                    "progress": ListStatus.CANNOT_START_YET.name
-                },
-                "nameChange": {
-                    "progress": ListStatus.CANNOT_START_YET.name
-                },
-                "marriageDocuments": {
-                    "progress": ListStatus.CANNOT_START_YET.name
-                },
-                "overseasCertificate": {
-                    "progress": ListStatus.CANNOT_START_YET.name
-                },
-                "statutoryDeclarations": {
-                    "progress": ListStatus.NOT_STARTED.name
-                },
-                "submitAndPay": {
-                    "progress": ListStatus.CANNOT_START_YET.name
-                },
-            }
-
     def application_data(self) -> ApplicationData:
-        return convert_weakly_typed_to_strongly_typed(self.data())
+        return convert_weakly_typed_to_strongly_typed(ast.literal_eval(self.user_input))
 
 
 class SecurityCode(db.Model):

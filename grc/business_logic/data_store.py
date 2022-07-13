@@ -57,7 +57,6 @@ class DataStore:
         application_record.user_input = user_input
         application_record.updated = datetime.datetime.now()
         db.session.commit()
-        session['application'] = user_input
 
     @staticmethod
     def compact_reference(reference_number: str) -> str:
