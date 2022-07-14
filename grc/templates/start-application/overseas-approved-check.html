@@ -5,7 +5,7 @@
 {% block title %}Gender recognition in approved countries and territories{% endblock %}
 
 {% block backLink %}
-    <a href="{{ url_for('startApplication.overseas_check') }}" class="govuk-back-link">Back</a>
+    <a href="{{ back }}" class="govuk-back-link">Back</a>
 {% endblock %}
 
 {% block content %}
@@ -86,7 +86,7 @@
                 <li>Uruguay</li>
             </ul>
 
-            <form method="POST" action="{{ url_for('startApplication.overseas_approved_check') }}">
+            <form method="POST" action="#">
                 {{ form.csrf_token }}
 
                 {{ radios.renderFor(

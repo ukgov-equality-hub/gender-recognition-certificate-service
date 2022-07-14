@@ -3,6 +3,10 @@
 {% import "govuk-design-system-templates/checkbox-single.html" as checkbox_single %}
 {% import "govuk-design-system-templates/error-summary.html" as error_summary %}
 
+{% macro check_your_answers_row(title, changeLinkHiddenText, changeLinkUrlFor, value) %}
+    {{ summary_list_item.render(title, changeLinkHiddenText, url_for(changeLinkUrlFor, check_source='submit_and_pay', pages_from_check=1), value) }}
+{% endmacro %}
+
 {% block title %}Check your answers before sending your application{% endblock %}
 
 {%  set partnerName = 'civil partner'
@@ -13,12 +17,7 @@
     else 'married' %}
 
 {% block backLink %}
-    {% set backLink = (
-        url_for('submitAndPay.helpType')
-        if application_data.submit_and_pay_data.applying_for_help_with_fee
-        else url_for('submitAndPay.index')
-    ) %}
-    <a href="{{ backLink }}" class="govuk-back-link">Back</a>
+    <a href="{{ back }}" class="govuk-back-link">Back</a>
 {% endblock %}
 
 {% block content %}
@@ -36,26 +35,26 @@
             </h2>
 
             <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-                {{ summary_list_item.render(
+                {{ check_your_answers_row(
                     title='Have you ever been issued a Gender Recognition Certificate (or its equivalent) in another country?',
                     changeLinkHiddenText='if you have ever been issued a Gender Recognition Certificate (or its equivalent) in another country',
-                    changeLinkUrl=url_for('startApplication.overseas_check'),
+                    changeLinkUrlFor='startApplication.overseas_check',
                     value=(application_data.confirmation_data.gender_recognition_outside_uk_formatted)
                 ) }}
 
                 {% if application_data.confirmation_data.gender_recognition_outside_uk %}
-                    {{ summary_list_item.render(
+                    {{ check_your_answers_row(
                         title='Do you have official documentation that shows you have ever been issued a Gender Recognition Certificate (or its equivalent) in one of the allowed countries or territories?',
                         changeLinkHiddenText='if you have official documentation that shows you have ever been issued a Gender Recognition Certificate (or its equivalent) in one of the allowed countries or territories',
-                        changeLinkUrl=url_for('startApplication.overseas_approved_check'),
+                        changeLinkUrlFor='startApplication.overseas_approved_check',
                         value=(application_data.confirmation_data.gender_recognition_from_approved_country_formatted)
                     ) }}
                 {% endif %}
 
-                {{ summary_list_item.render(
+                {{ check_your_answers_row(
                     title='Do you consent to the General Register Office contacting you about your application?',
                     changeLinkHiddenText='if you consent to the General Register Office contacting you about your application',
-                    changeLinkUrl=url_for('startApplication.declaration'),
+                    changeLinkUrlFor='startApplication.declaration',
                     value=(application_data.confirmation_data.consent_to_GRO_contact_formatted)
                 ) }}
             </dl>
@@ -65,38 +64,38 @@
             </h2>
 
             <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-                {{ summary_list_item.render(
+                {{ check_your_answers_row(
                     title='Name (as you would like it to appear on your Gender Recognition Certificate)',
                     changeLinkHiddenText='name (as you would like it to appear on your Gender Recognition Certificate)',
-                    changeLinkUrl=url_for('personalDetails.index'),
+                    changeLinkUrlFor='personalDetails.index',
                     value=(application_data.personal_details_data.title + ' ' + application_data.personal_details_data.first_names + ' ' + application_data.personal_details_data.last_name)
                 ) }}
 
-                {{ summary_list_item.render(
+                {{ check_your_answers_row(
                     title='Affirmed gender',
                     changeLinkHiddenText='affirmed gender',
-                    changeLinkUrl=url_for('personalDetails.affirmedGender'),
+                    changeLinkUrlFor='personalDetails.affirmedGender',
                     value=(application_data.personal_details_data.affirmed_gender_formatted)
                 ) }}
 
-                {{ summary_list_item.render(
+                {{ check_your_answers_row(
                     title='When you transitioned',
                     changeLinkHiddenText='when you transitioned',
-                    changeLinkUrl=url_for('personalDetails.transitionDate'),
+                    changeLinkUrlFor='personalDetails.transitionDate',
                     value=(application_data.personal_details_data.transition_date_formatted_MMMM_YYYY)
                 ) }}
 
-                {{ summary_list_item.render(
+                {{ check_your_answers_row(
                     title='When you signed your statutory declaration',
                     changeLinkHiddenText='when you signed your statutory declaration',
-                    changeLinkUrl=url_for('personalDetails.statutoryDeclarationDate'),
+                    changeLinkUrlFor='personalDetails.statutoryDeclarationDate',
                     value=(application_data.personal_details_data.statutory_declaration_date_formatted_DD_MMMM_YYYY)
                 ) }}
 
-                {{ summary_list_item.render(
+                {{ check_your_answers_row(
                     title='Ever changed name',
                     changeLinkHiddenText='whether you have changed your name to reflect your gender',
-                    changeLinkUrl=url_for('personalDetails.previousNamesCheck'),
+                    changeLinkUrlFor='personalDetails.previousNamesCheck',
                     value=(application_data.personal_details_data.changed_name_to_reflect_gender_formatted)
                 ) }}
 
@@ -111,10 +110,10 @@
                     {% endif %}
                     {{ application_data.personal_details_data.address_postcode }}
                 {% endmacro %}
-                {{ summary_list_item.render(
+                {{ check_your_answers_row(
                     title='Address',
                     changeLinkHiddenText='address',
-                    changeLinkUrl=url_for('personalDetails.address'),
+                    changeLinkUrlFor='personalDetails.address',
                     value=(addressValue())
                 ) }}
 
@@ -137,10 +136,10 @@
                         {% endif %}
                     </ul>
                 {% endmacro %}
-                {{ summary_list_item.render(
+                {{ check_your_answers_row(
                     title='Contact preferences',
                     changeLinkHiddenText='contact preferences',
-                    changeLinkUrl=url_for('personalDetails.contactPreferences'),
+                    changeLinkUrlFor='personalDetails.contactPreferences',
                     value=(contactPreferencesValue())
                 ) }}
 
@@ -151,25 +150,25 @@
                         <span style="white-space: pre-line;">{{ application_data.personal_details_data.contact_dates_to_avoid }}</span>
                     {% endif %}
                 {% endmacro %}
-                {{ summary_list_item.render(
+                {{ check_your_answers_row(
                     title='Unavailable over the next 6 months',
                     changeLinkHiddenText="whether there are any dates you don't want us to contact you by post over the next 6 months",
-                    changeLinkUrl=url_for('personalDetails.contactDates'),
+                    changeLinkUrlFor='personalDetails.contactDates',
                     value=(unavailabilityValue())
                 ) }}
 
-                {{ summary_list_item.render(
+                {{ check_your_answers_row(
                     title='Notify HMRC',
                     changeLinkHiddenText="whether you want us to notify HMRC after you receive a Gender Recognition Certificate",
-                    changeLinkUrl=url_for('personalDetails.hmrc'),
+                    changeLinkUrlFor='personalDetails.hmrc',
                     value=(application_data.personal_details_data.tell_hmrc_formatted)
                 ) }}
 
                 {% if application_data.personal_details_data.tell_hmrc %}
-                    {{ summary_list_item.render(
+                    {{ check_your_answers_row(
                         title='National insurance number',
                         changeLinkHiddenText="your National Insurance number",
-                        changeLinkUrl=url_for('personalDetails.hmrc'),
+                        changeLinkUrlFor='personalDetails.hmrc',
                         value=(application_data.personal_details_data.national_insurance_number)
                     ) }}
                 {% endif %}
@@ -180,32 +179,32 @@
             </h2>
 
             <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-                {{ summary_list_item.render(
+                {{ check_your_answers_row(
                     title='Birth name',
                     changeLinkHiddenText='birth name',
-                    changeLinkUrl=url_for('birthRegistration.index'),
+                    changeLinkUrlFor='birthRegistration.index',
                     value=(application_data.birth_registration_data.first_name + ' ' + application_data.birth_registration_data.middle_names + ' ' + application_data.birth_registration_data.last_name)
                 ) }}
 
-                {{ summary_list_item.render(
+                {{ check_your_answers_row(
                     title='Date of birth',
                     changeLinkHiddenText='date of birth',
-                    changeLinkUrl=url_for('birthRegistration.dob'),
+                    changeLinkUrlFor='birthRegistration.dob',
                     value=(application_data.birth_registration_data.date_of_birth_formatted_DD_MMMM_YYYY)
                 ) }}
 
-                {{ summary_list_item.render(
+                {{ check_your_answers_row(
                     title='Birth registered in UK',
                     changeLinkHiddenText='whether your birth was regstered in the UK',
-                    changeLinkUrl=url_for('birthRegistration.ukCheck'),
+                    changeLinkUrlFor='birthRegistration.ukCheck',
                     value=(application_data.birth_registration_data.birth_registered_in_uk_formatted)
                 ) }}
 
                 {% if application_data.birth_registration_data.birth_registered_in_uk %}
-                    {{ summary_list_item.render(
+                    {{ check_your_answers_row(
                         title='Town or city of birth',
                         changeLinkHiddenText='your town or city of birth',
-                        changeLinkUrl=url_for('birthRegistration.placeOfBirth'),
+                        changeLinkUrlFor='birthRegistration.placeOfBirth',
                         value=(application_data.birth_registration_data.town_city_of_birth)
                     ) }}
 
@@ -214,59 +213,59 @@
                         {{ application_data.birth_registration_data.mothers_last_name }}<br>
                         (Maiden name: {{ application_data.birth_registration_data.mothers_maiden_name }})
                     {% endmacro %}
-                    {{ summary_list_item.render(
+                    {{ check_your_answers_row(
                         title="Mother's name",
                         changeLinkHiddenText="your mother's name",
-                        changeLinkUrl=url_for('birthRegistration.mothersName'),
+                        changeLinkUrlFor='birthRegistration.mothersName',
                         value=mothersNameValue()
                     ) }}
 
-                    {{ summary_list_item.render(
+                    {{ check_your_answers_row(
                         title="Father's name listed",
                         changeLinkHiddenText="whether your father's name is listed on your birth or adoption certificate",
-                        changeLinkUrl=url_for('birthRegistration.fathersNameCheck'),
+                        changeLinkUrlFor='birthRegistration.fathersNameCheck',
                         value=(application_data.birth_registration_data.fathers_name_on_birth_certificate_formatted)
                     ) }}
 
                     {% if application_data.birth_registration_data.fathers_name_on_birth_certificate %}
-                        {{ summary_list_item.render(
+                        {{ check_your_answers_row(
                             title="Father's name",
                             changeLinkHiddenText="your father's name",
-                            changeLinkUrl=url_for('birthRegistration.fathersName'),
+                            changeLinkUrlFor='birthRegistration.fathersName',
                             value=(application_data.birth_registration_data.fathers_first_name + ' ' + application_data.birth_registration_data.fathers_last_name)
                         ) }}
                     {% endif %}
 
-                    {{ summary_list_item.render(
+                    {{ check_your_answers_row(
                         title="Adopted",
                         changeLinkHiddenText="whether you were adopted",
-                        changeLinkUrl=url_for('birthRegistration.adopted'),
+                        changeLinkUrlFor='birthRegistration.adopted',
                         value=(application_data.birth_registration_data.adopted_formatted)
                     ) }}
 
                     {% if application_data.birth_registration_data.adopted %}
-                        {{ summary_list_item.render(
+                        {{ check_your_answers_row(
                             title="Adopted in UK",
                             changeLinkHiddenText="whether you were adopted in the UK",
-                            changeLinkUrl=url_for('birthRegistration.adoptedUK'),
+                            changeLinkUrlFor='birthRegistration.adoptedUK',
                             value=(application_data.birth_registration_data.adopted_in_the_uk_formatted)
                         ) }}
                     {% endif %}
 
-                    {{ summary_list_item.render(
+                    {{ check_your_answers_row(
                         title="Forces registering service, British Consul or High Commission, or under
                                Merchant Shipping or Civil Aviation provisions",
                         changeLinkHiddenText="whether your birth was registered under the Forces registering service,
                                               British Consul or High Commission, or under Merchant Shipping or Civil Aviation provisions",
-                        changeLinkUrl=url_for('birthRegistration.forces'),
+                        changeLinkUrlFor='birthRegistration.forces',
                         value=(application_data.birth_registration_data.forces_registration_formatted)
                     ) }}
 
                 {% else %}
-                    {{ summary_list_item.render(
+                    {{ check_your_answers_row(
                         title="Registered birth country",
                         changeLinkHiddenText="the country you were born in",
-                        changeLinkUrl=url_for('birthRegistration.country'),
+                        changeLinkUrlFor='birthRegistration.country',
                         value=(application_data.birth_registration_data.country_of_birth)
                     ) }}
                 {% endif %}
@@ -277,50 +276,50 @@
             </h2>
 
             <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-                {{ summary_list_item.render(
+                {{ check_your_answers_row(
                     title='Currently married or in a civil partnership',
                     changeLinkHiddenText='if you are currently married or in a civil partnership',
-                    changeLinkUrl=url_for('partnershipDetails.index'),
+                    changeLinkUrlFor='partnershipDetails.index',
                     value=(application_data.partnership_details_data.currently_in_a_partnership_formatted)
                 ) }}
 
                 {% if application_data.partnership_details_data.is_not_in_partnership %}
-                    {{ summary_list_item.render(
+                    {{ check_your_answers_row(
                         title='Spouse or partner has died',
                         changeLinkHiddenText='if your spouse or partner has died',
-                        changeLinkUrl=url_for('partnershipDetails.partnerDied'),
+                        changeLinkUrlFor='partnershipDetails.partnerDied',
                         value=(application_data.partnership_details_data.previous_partnership_partner_died_formatted)
                     ) }}
 
-                    {{ summary_list_item.render(
+                    {{ check_your_answers_row(
                         title='Marriage or civil partnership has ended',
                         changeLinkHiddenText='if your marriage or civil partnership has ended',
-                        changeLinkUrl=url_for('partnershipDetails.endedCheck'),
+                        changeLinkUrlFor='partnershipDetails.endedCheck',
                         value=(application_data.partnership_details_data.previous_partnership_ended_formatted)
                     ) }}
 
                 {% else %}
-                    {{ summary_list_item.render(
+                    {{ check_your_answers_row(
                         title='Remain ' + inYourPartnershipName,
                         changeLinkHiddenText='if you plan to remain ' + inYourPartnershipName + ' after receiving your Gender Recognition Certificate',
-                        changeLinkUrl=url_for('partnershipDetails.stayTogether'),
+                        changeLinkUrlFor='partnershipDetails.stayTogether',
                         value=(application_data.partnership_details_data.plan_to_remain_in_a_partnership_formatted)
                     ) }}
 
                     {% if application_data.partnership_details_data.plan_to_remain_in_a_partnership %}
-                        {{ summary_list_item.render(
+                        {{ check_your_answers_row(
                             title='Can provide a declaration of consent from your ' + partnerName,
                             changeLinkHiddenText='if you can provide a declaration of consent from your ' + partnerName,
-                            changeLinkUrl=url_for('partnershipDetails.partnerAgrees'),
+                            changeLinkUrlFor='partnershipDetails.partnerAgrees',
                             value=(application_data.partnership_details_data.partner_agrees_formatted)
                         ) }}
                     {% endif %}
 
                     {% if not application_data.partnership_details_data.plan_to_remain_in_a_partnership or not application_data.partnership_details_data.partner_agrees %}
-                        {{ summary_list_item.render(
+                        {{ check_your_answers_row(
                             title='Interim GRC',
                             changeLinkHiddenText='if you understand that you will receive an Interim GRC',
-                            changeLinkUrl=url_for('partnershipDetails.interimCheck'),
+                            changeLinkUrlFor='partnershipDetails.interimCheck',
                             value=(application_data.partnership_details_data.confirm_understood_interim_certificate_formatted)
                         ) }}
                     {% endif %}
@@ -399,26 +398,26 @@
             </h2>
 
             <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-                {{ summary_list_item.render(
+                {{ check_your_answers_row(
                     title='Payment method',
                     changeLinkHiddenText='payment method',
-                    changeLinkUrl=url_for('submitAndPay.index'),
+                    changeLinkUrlFor='submitAndPay.index',
                     value=(application_data.submit_and_pay_data.applying_for_help_with_fee_formatted)
                 ) }}
 
                 {% if application_data.submit_and_pay_data.applying_for_help_with_fee %}
-                    {{ summary_list_item.render(
+                    {{ check_your_answers_row(
                         title='Help type',
                         changeLinkHiddenText='the way your are applying for help with paying the fees',
-                        changeLinkUrl=url_for('submitAndPay.helpType'),
+                        changeLinkUrlFor='submitAndPay.helpType',
                         value=(application_data.submit_and_pay_data.how_applying_for_help_with_fees_formatted)
                     ) }}
 
                     {% if application_data.submit_and_pay_data.is_using_online_service %}
-                        {{ summary_list_item.render(
+                        {{ check_your_answers_row(
                             title='Help with Fees reference number',
                             changeLinkHiddenText='your Help with Fees reference number',
-                            changeLinkUrl=url_for('submitAndPay.helpType'),
+                            changeLinkUrlFor='submitAndPay.helpType',
                             value=(application_data.submit_and_pay_data.help_with_fees_reference_number)
                         ) }}
                     {% endif %}
@@ -465,7 +464,7 @@
                 Now send your application
             </h2>
 
-            <form method="POST" action="{{ url_for('submitAndPay.checkYourAnswers') }}">
+            <form method="POST" action="#">
                 {{ form.csrf_token }}
 
                 <div class="checkboxes-long-text">
