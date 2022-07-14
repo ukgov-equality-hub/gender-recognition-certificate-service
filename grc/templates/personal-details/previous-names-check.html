@@ -5,7 +5,7 @@
 {% block title %}If you have ever changed your name to reflect your gender{% endblock %}
 
 {% block backLink %}
-    <a href="{{ url_for('personalDetails.statutoryDeclarationDate') }}" class="govuk-back-link">Back</a>
+    <a href="{{ back }}" class="govuk-back-link">Back</a>
 {% endblock %}
 
 {% block content %}
@@ -33,7 +33,7 @@
                 <li>statutory declarations</li>
             </ul>
 
-            <form method="POST" action="{{ url_for('personalDetails.previousNamesCheck') }}">
+            <form method="POST" action="#">
                 {{ form.csrf_token }}
 
                 {{ radios.renderFor(

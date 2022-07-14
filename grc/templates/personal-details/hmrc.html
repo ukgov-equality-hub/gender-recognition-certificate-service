@@ -6,7 +6,7 @@
 {% block title %}Notifying HMRC{% endblock %}
 
 {% block backLink %}
-    <a href="{{ url_for('personalDetails.contactPreferences') }}" class="govuk-back-link">Back</a>
+    <a href="{{ back }}" class="govuk-back-link">Back</a>
 {% endblock %}
 
 {% block content %}
@@ -37,7 +37,7 @@
                 If you pay tax in the Isle of Man or Channel Islands, please select ‘No’ and tell HMRC yourself.
             </p>
 
-            <form method="POST" action="{{ url_for('personalDetails.hmrc') }}">
+            <form method="POST" action="#">
                 {{ form.csrf_token }}
 
                 {{ radios.renderFor(

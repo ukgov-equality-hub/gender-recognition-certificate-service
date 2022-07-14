@@ -5,7 +5,7 @@
 {% block title %}When did you transition?{% endblock %}
 
 {% block backLink %}
-    <a href="{{ url_for('personalDetails.affirmedGender') }}" class="govuk-back-link">Back</a>
+    <a href="{{ back }}" class="govuk-back-link">Back</a>
 {% endblock %}
 
 {% block content %}
@@ -14,7 +14,7 @@
 
             {{ error_summary.renderFor(form) }}
 
-            <form method="POST"
+            <form method="POST" action="#"
                   novalidate {# We add "novalidate" to prevent the HTML5 error messages (because they are inaccessible) #}>
                 {{ form.csrf_token }}
 
