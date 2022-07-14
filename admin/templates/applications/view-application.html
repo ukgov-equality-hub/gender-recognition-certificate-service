@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% import "helper-macros/random-id.html" as random_id %}
+{% set applicationData = application.data() %}
 
 {% block title %}
     Application for
@@ -7,8 +8,6 @@
     {{ applicationData.personalDetails.first_name }}
     {{ applicationData.personalDetails.last_name }}
 {% endblock %}
-
-{% set applicationData = application.data() %}
 
 {% block backLink %}
     <div class="govuk-breadcrumbs">
@@ -22,7 +21,7 @@
                 Application for
                 {{ applicationData.personalDetails.title }}
                 {{ applicationData.personalDetails.first_name }}
-                {{ applicationData.personalDetails.last_name }}
+                <span style="text-decoration: underline;">{{ applicationData.personalDetails.last_name }}</span>
             </li>
         </ol>
     </div>
@@ -105,7 +104,26 @@
     </script>
     <style>
         .copyToClipboardButton {
-            //display: none;
+            /* display: none; */
+        }
+
+        table.govuk-table {
+            width: 100%;
+            table-layout: fixed;
+            display: table;
+        }
+
+        table.govuk-table tbody.govuk-table__body tr.govuk-table__row th:nth-child(1) {
+            width: calc(65% - 45px);
+        }
+
+        table.govuk-table tbody.govuk-table__body tr.govuk-table__row td:nth-child(2) {
+            width: calc(35% - 45px);
+        }
+
+        table.govuk-table tbody.govuk-table__body tr.govuk-table__row td:last-child {
+            width: 90px;
+            text-align: right;
         }
     </style>
     <div class="govuk-grid-row">
@@ -115,16 +133,16 @@
                 Application for
                 {{ applicationData.personalDetails.title }}
                 {{ applicationData.personalDetails.first_name }}
-                {{ applicationData.personalDetails.last_name }}
+                <span style="text-decoration: underline;">{{ applicationData.personalDetails.last_name }}</span>
 
-                <span class="govuk-caption-l">
+                <span class="govuk-caption-l" style="margin-top: 15px;">
                     {% if (applicationData.partnershipDetails.marriageCivilPartnership == 'Married' or
                            applicationData.partnershipDetails.marriageCivilPartnership == 'Civil partnership') and
                           (applicationData.partnershipDetails.stayTogether == 'No' or
                            applicationData.partnershipDetails.partnerAgrees == 'No') %}
-                        INTERIM CERTIFICATE APPLICATION
+                        INTERIM CERTIFICATE APPLICATION: {{ reference_number }}
                     {% else %}
-                        FULL CERTIFICATE APPLICATION
+                        FULL CERTIFICATE APPLICATION: {{ reference_number }}
                     {% endif %}
                 </span>
             </h1>
@@ -196,6 +214,13 @@
                         title='Payment method',
                         value=(applicationData['submitAndPay']['method'])
                     ) }}
+
+                    {% if applicationData['submitAndPay']['method'] == 'Online' %}
+                        {{ summary_list_item(
+                            title='Payment reference',
+                            value=(payment_details['reference'])
+                        ) }}
+                    {% endif %}
 
                     {% if applicationData['submitAndPay']['method'] == 'Help' %}
                         {{ summary_list_item(
@@ -424,7 +449,7 @@
                                  applicationData['birthRegistration']['dob']['month'],
                                  applicationData['birthRegistration']['dob']['day']),
                                  '%Y-%m-%d')
-                                 .strftime('%d %B %Y')
+                                 .strftime('%d.%m.%Y')
                         ),
                         noWrap=True
                     ) }}
@@ -432,6 +457,11 @@
                     {{ summary_list_item(
                         title="Birth registered in UK",
                         value=(applicationData['birthRegistration']['ukCheck'])
+                    ) }}
+
+                    {{ summary_list_item(
+                        title="Affirmed gender",
+                        value=('Male' if applicationData.personalDetails.affirmed_gender == 'MALE' else 'Female')
                     ) }}
 
                     {% if applicationData['birthRegistration']['ukCheck'] == 'Yes' %}

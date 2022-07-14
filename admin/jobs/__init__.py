@@ -38,6 +38,7 @@ def create_files():
             application.reference_number,
             application.data(),
             is_admin=True,
+            attach_files=True,
             download=False
         )
 

@@ -1,3 +1,4 @@
+import os
 from grc.external_services.aws_s3_client import AwsS3Client
 
 
@@ -14,7 +15,7 @@ class ApplicationFiles():
         try:
             file_name = reference_number + '.zip'
 
-            data = AwsS3Client().download_object(file_name)
+            data = None if os.getenv('FLASK_ENV', '') == 'development' else AwsS3Client().download_object(file_name)
             if data:
                 if download:
                     bytes = data.getvalue()
@@ -31,6 +32,9 @@ class ApplicationFiles():
                                 data = AwsS3Client().download_object(object_name)
                                 zipper.writestr(object_name, data.getvalue())
 
+                    data, _ = self.create_or_download_pdf(reference_number, application, attach_files=False, download=True)
+                    zipper.writestr('application.pdf', data)
+
                 bytes = zip_buffer.getvalue()
                 AwsS3Client().upload_fileobj(zip_buffer, file_name)
                 if not download:
@@ -42,7 +46,7 @@ class ApplicationFiles():
         return bytes, file_name
 
 
-    def create_or_download_pdf(self, reference_number, application, is_admin=True, download=False):
+    def create_or_download_pdf(self, reference_number, application, is_admin=True, attach_files=True, download=False):
         bytes = None
         file_name = ''
 
@@ -50,20 +54,29 @@ class ApplicationFiles():
             file_name = reference_number + '.pdf' if is_admin else 'grc_' + str(application['email']).replace('@', '_').replace('.', '_') + '.pdf'
 
             data = None
-            if is_admin:
-                data = AwsS3Client().download_object(file_name)
+            if is_admin and not attach_files:
+                data = None if os.getenv('FLASK_ENV', '') == 'development' else AwsS3Client().download_object(file_name)
             if data:
                 if download:
                     bytes = data.getvalue()
             else:
+                import json
                 from flask import render_template
+
                 html_template = 'applications/download_user.html'
                 all_sections = self.sections
+                payment_details = None
                 if is_admin:
                     html_template = 'applications/download.html'
                     all_sections = ['statutoryDeclarations', 'marriageDocuments', 'nameChange', 'medicalReports', 'genderEvidence', 'overseasCertificate']
+                    payment_details = json.loads(application['submitAndPay']['paymentDetails'])
 
-                html = render_template(html_template, application=application)
+                html = render_template(
+                    html_template,
+                    application=application,
+                    reference_number=reference_number,
+                    payment_details=payment_details
+                )
 
                 import io
                 import PyPDF2
@@ -126,18 +139,34 @@ class ApplicationFiles():
                             print('Adding image ' + object_name)
 
                 pdfs = []
+                attachments_html = ''
 
                 for section in all_sections:
                     if section in application and 'files' in application[section]:
+                        title = False
+                        num_attachments = len(application[section]['files'])
                         for idx, object_name in enumerate(application[section]['files']):
-                            add_object(section, object_name, idx + 1, len(application[section]['files']))
+                            if attach_files:
+                                add_object(section, object_name, idx + 1, num_attachments)
+                            else:
+                                if not title:
+                                    attachments_html += f'<h3 style="font-size: 14px;">{self.section_names[self.sections.index(section)]}</h3>'
+                                    title = True
+                                attachments_html += f'<p style="font-size: 12px;">Attachment {idx + 1} of {num_attachments}: {object_name}</p>'
+
+                if attachments_html != '':
+                    pdf = io.BytesIO()
+                    pisa.CreatePDF(attachments_html, dest=pdf)
+                    pdf.seek(0)
+                    pdfs.append(pdf)
+                    print('Adding attachments pdf')
 
                 if len(pdfs) > 0:
                     pdfs.insert(0, data)
                     data = merge_pdfs(pdfs)
 
                 bytes = data.read()
-                if is_admin:
+                if is_admin and not attach_files:
                     AwsS3Client().upload_fileobj(data, file_name)
                 if not download:
                     bytes = None

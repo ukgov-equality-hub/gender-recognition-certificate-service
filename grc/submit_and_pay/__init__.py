@@ -155,6 +155,7 @@ def download():
         application_data.reference_number,
         session['application'],
         is_admin=False,
+        attach_files=True,
         download=True
     )
 
@@ -213,6 +214,7 @@ def confirmation():
             reference_number,
             application,
             is_admin=True,
+            attach_files=True,
             download=False
         )
 

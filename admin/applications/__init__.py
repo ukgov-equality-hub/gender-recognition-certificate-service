@@ -30,13 +30,16 @@ def index():
 
     newApplications = Application.query.filter_by(
         status=ApplicationStatus.SUBMITTED
-    )
+    ).order_by(Application.updated.desc())
+
     downloadedApplications = Application.query.filter_by(
         status=ApplicationStatus.DOWNLOADED
-    )
+    ).order_by(Application.updated.desc())
+
     completedApplications = Application.query.filter_by(
         status=ApplicationStatus.COMPLETED
-    )
+    ).order_by(Application.updated.desc())
+
     logger.log(LogLevel.INFO, f"{logger.mask_email_address(session['signedIn'])} accessed all applications")
 
     return render_template(
@@ -51,15 +54,20 @@ def index():
 @applications.route('/applications/<reference_number>', methods=['GET'])
 @AdminViewerRequired
 def view(reference_number):
+    import json
+
     application = Application.query.filter_by(
         reference_number=reference_number
     ).first()
 
     logger.log(LogLevel.INFO, f"{logger.mask_email_address(session['signedIn'])} accessed application {reference_number}")
+    payment_details = json.loads(application.data()['submitAndPay']['paymentDetails']) if application.data()['submitAndPay']['method'] == 'Online' else None
 
     return render_template(
         'applications/view-application.html',
         application=application,
+        reference_number=reference_number,
+        payment_details=payment_details,
         strptime=datetime.strptime,
         get_radio_pretty_value=get_radio_pretty_value
     )
@@ -110,6 +118,7 @@ def download(reference_number):
             application.reference_number,
             application.data(),
             is_admin=True,
+            attach_files=True,
             download=True
         )
 

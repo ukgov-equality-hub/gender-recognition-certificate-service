@@ -55,7 +55,7 @@
                                         <th scope="row" class="govuk-table__header">
                                             {{ application.data().personalDetails.title }}
                                             {{ application.data().personalDetails.first_name }}
-                                            {{ application.data().personalDetails.last_name }}
+                                            <span style="text-decoration: underline;">{{ application.data().personalDetails.last_name }}</span>
                                         </th>
                                         <td class="govuk-table__cell">
                                             {{ application.updated | format_date }}
@@ -105,7 +105,7 @@
                                         <th scope="row" class="govuk-table__header">
                                             {{ application.data().personalDetails.title }}
                                             {{ application.data().personalDetails.first_name }}
-                                            {{ application.data().personalDetails.last_name }}
+                                            <span style="text-decoration: underline;">{{ application.data().personalDetails.last_name }}</span>
                                         </th>
                                         <td class="govuk-table__cell">
                                             {{ application.updated | format_date }}
@@ -174,7 +174,7 @@
                                         <th scope="row" class="govuk-table__header">
                                             {{ application.data().personalDetails.title }}
                                             {{ application.data().personalDetails.first_name }}
-                                            {{ application.data().personalDetails.last_name }}
+                                            <span style="text-decoration: underline;">{{ application.data().personalDetails.last_name }}</span>
                                         </th>
                                         <td class="govuk-table__cell">
                                             {{ application.updated | format_date }}
