@@ -281,7 +281,7 @@ async def fill_in_application(page: Page, asserts: AssertHelpers, helpers: PageH
 
     # Select "No" to go down the "abroad" route first
     # Later, we will re-trace our steps, and select "Yes" to go down the "UK" route
-    await helpers.check_radio(field='birth_registered_in_uk', value='No')
+    await helpers.check_radio(field='birth_registered_in_uk', value='False')
     await helpers.click_button('Save and continue')
 
     # ------------------------------------------------

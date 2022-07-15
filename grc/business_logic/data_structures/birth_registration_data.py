@@ -35,6 +35,22 @@ class BirthRegistrationData:
     forces_registration: bool = None
 
     @property
+    def date_of_birth_formatted_DD_MMMM_YYYY(self) -> str: return self.date_of_birth.strftime('%d %B %Y')
+    @property
+    def birth_registered_in_uk_formatted(self) -> str: return 'Yes' if self.birth_registered_in_uk else 'No'
+    @property
+    def fathers_name_on_birth_certificate_formatted(self) -> str: return 'Yes' if self.fathers_name_on_birth_certificate else 'No'
+    @property
+    def adopted_formatted(self) -> str: return 'Yes' if self.adopted else 'No'
+    @property
+    def adopted_in_the_uk_formatted(self) -> str:
+        if self.adopted_in_the_uk == AdoptedInTheUkEnum.ADOPTED_IN_THE_UK_YES: return 'Yes'
+        if self.adopted_in_the_uk == AdoptedInTheUkEnum.ADOPTED_IN_THE_UK_NO: return 'No'
+        if self.adopted_in_the_uk == AdoptedInTheUkEnum.ADOPTED_IN_THE_UK_DO_NOT_KNOW: return "I don't know"
+    @property
+    def forces_registration_formatted(self) -> str: return 'Yes' if self.forces_registration else 'No'
+
+    @property
     def section_status(self) -> ListStatus:
         if self.first_name is None or self.last_name is None:
             return ListStatus.NOT_STARTED

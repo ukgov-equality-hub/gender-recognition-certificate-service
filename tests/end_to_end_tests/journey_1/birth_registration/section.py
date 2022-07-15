@@ -221,7 +221,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
 
     # Select "No" to go down the "abroad" route first
     # Later, we will re-trace our steps, and select "Yes" to go down the "UK" route
-    await helpers.check_radio(field='birth_registered_in_uk', value='No')
+    await helpers.check_radio(field='birth_registered_in_uk', value='False')
     await helpers.click_button('Save and continue')
 
     # ------------------------------------------------
@@ -244,8 +244,8 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(0)
 
     # Check the values we entered have been remembered
-    await asserts.is_checked(field='birth_registered_in_uk', value='No')
-    await asserts.not_checked(field='birth_registered_in_uk', value='Yes')
+    await asserts.is_checked(field='birth_registered_in_uk', value='False')
+    await asserts.not_checked(field='birth_registered_in_uk', value='True')
 
     # Continue to What Country page
     await helpers.click_button('Save and continue')
@@ -342,7 +342,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(0)
 
     # Choose the "UK" option and proceed down that branch
-    await helpers.check_radio(field='birth_registered_in_uk', value='Yes')
+    await helpers.check_radio(field='birth_registered_in_uk', value='True')
     await helpers.click_button('Save and continue')
 
     # ------------------------------------------------
@@ -463,7 +463,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
 
     # Select the "No" option, click "Save and continue"
     # This should take us to the "Adopted" question
-    await helpers.check_radio(field='fathers_name_on_certificate', value='No')
+    await helpers.check_radio(field='fathers_name_on_certificate', value='False')
     await helpers.click_button('Save and continue')
 
     # ------------------------------------------------
@@ -486,12 +486,12 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(0)
 
     # Check the values we entered have been remembered
-    await asserts.is_checked(field='fathers_name_on_certificate', value='No')
-    await asserts.not_checked(field='fathers_name_on_certificate', value='Yes')
+    await asserts.is_checked(field='fathers_name_on_certificate', value='False')
+    await asserts.not_checked(field='fathers_name_on_certificate', value='True')
 
     # Select the "Yes" option, click "Save and continue"
     # This should take us to the "Father's Name" question
-    await helpers.check_radio(field='fathers_name_on_certificate', value='Yes')
+    await helpers.check_radio(field='fathers_name_on_certificate', value='True')
     await helpers.click_button('Save and continue')
 
     # ------------------------------------------------
@@ -514,8 +514,8 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(0)
 
     # Check the values we entered have been remembered
-    await asserts.is_checked(field='fathers_name_on_certificate', value='Yes')
-    await asserts.not_checked(field='fathers_name_on_certificate', value='No')
+    await asserts.is_checked(field='fathers_name_on_certificate', value='True')
+    await asserts.not_checked(field='fathers_name_on_certificate', value='False')
 
     # Continue to Father's Name page
     await helpers.click_button('Save and continue')
@@ -589,7 +589,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     # Select the "No" option, click "Save and continue"
     # This should take us to the "Forces" question
     # i.e. we will skip the "Adopted in the UK" page
-    await helpers.check_radio(field='adopted', value='No')
+    await helpers.check_radio(field='adopted', value='False')
     await helpers.click_button('Save and continue')
 
     # ------------------------------------------------
@@ -612,12 +612,12 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(0)
 
     # Check the values we entered have been remembered
-    await asserts.is_checked(field='adopted', value='No')
-    await asserts.not_checked(field='adopted', value='Yes')
+    await asserts.is_checked(field='adopted', value='False')
+    await asserts.not_checked(field='adopted', value='True')
 
     # Now choose "Yes" and click "Save and continue"
     # This should take us to the "Adopted in the UK" page (which we previously skipped)
-    await helpers.check_radio(field='adopted', value='Yes')
+    await helpers.check_radio(field='adopted', value='True')
     await helpers.click_button('Save and continue')
 
     # ------------------------------------------------
@@ -640,8 +640,8 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(0)
 
     # Check the values we entered have been remembered
-    await asserts.is_checked(field='adopted', value='Yes')
-    await asserts.not_checked(field='adopted', value='No')
+    await asserts.is_checked(field='adopted', value='True')
+    await asserts.not_checked(field='adopted', value='False')
 
     # Continue to the "Adopted In The UK" page
     await helpers.click_button('Save and continue')
@@ -663,7 +663,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.error(field='adopted_uk', message='Select if you were adopted in the United Kingdom')
 
     # Select a valid option, click "Save and continue"
-    await helpers.check_radio(field='adopted_uk', value='DO_NOT_KNOW')
+    await helpers.check_radio(field='adopted_uk', value='ADOPTED_IN_THE_UK_DO_NOT_KNOW')
     await helpers.click_button('Save and continue')
 
     # ------------------------------------------------
@@ -686,9 +686,9 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(0)
 
     # Check the values we entered have been remembered
-    await asserts.is_checked(field='adopted_uk', value='DO_NOT_KNOW')
-    await asserts.not_checked(field='adopted_uk', value='Yes')
-    await asserts.not_checked(field='adopted_uk', value='No')
+    await asserts.is_checked(field='adopted_uk', value='ADOPTED_IN_THE_UK_DO_NOT_KNOW')
+    await asserts.not_checked(field='adopted_uk', value='ADOPTED_IN_THE_UK_YES')
+    await asserts.not_checked(field='adopted_uk', value='ADOPTED_IN_THE_UK_NO')
 
     # Continue to the "Adopted In The UK" page
     await helpers.click_button('Save and continue')
@@ -710,7 +710,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.error(field='forces', message='Select if your birth was registered by a Forces registering service, or with a British Consul or High Commission, or under Merchant Shipping or Civil Aviation provisions')
 
     # Select a valid option, click "Save and continue"
-    await helpers.check_radio(field='forces', value='No')
+    await helpers.check_radio(field='forces', value='False')
     await helpers.click_button('Save and continue')
 
     # ------------------------------------------------
@@ -733,8 +733,8 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(0)
 
     # Check the values we entered have been remembered
-    await asserts.is_checked(field='forces', value='No')
-    await asserts.not_checked(field='forces', value='Yes')
+    await asserts.is_checked(field='forces', value='False')
+    await asserts.not_checked(field='forces', value='True')
 
     # Continue to Birth Registration: Check Your Answers page
     await helpers.click_button('Save and continue')

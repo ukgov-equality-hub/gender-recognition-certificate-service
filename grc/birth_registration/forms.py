@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, RadioField
 from wtforms.validators import DataRequired
+from grc.business_logic.data_structures.birth_registration_data import AdoptedInTheUkEnum
 from grc.utils.form_custom_validators import validateDOB, Integer
 
 
@@ -43,8 +44,8 @@ class DobForm(FlaskForm):
 class UkCheckForm(FlaskForm):
     birth_registered_in_uk = RadioField(
         choices=[
-            ('Yes', 'Yes'),
-            ('No', 'No')
+            (True, 'Yes'),
+            (False, 'No')
         ],
         validators=[DataRequired(message='Select if your birth was registered in the UK')]
     )
@@ -79,8 +80,8 @@ class MothersNameForm(FlaskForm):
 class FatherNameCheckForm(FlaskForm):
     fathers_name_on_certificate = RadioField(
         choices=[
-            ('Yes', 'Yes'),
-            ('No', 'No')
+            (True, 'Yes'),
+            (False, 'No')
         ],
         validators=[DataRequired(message="Select if your father's name is listed on the certificate")]
     )
@@ -99,8 +100,8 @@ class FathersNameForm(FlaskForm):
 class AdoptedForm(FlaskForm):
     adopted = RadioField(
         choices=[
-            ('Yes', 'Yes'),
-            ('No', 'No')
+            (True, 'Yes'),
+            (False, 'No')
         ],
         validators=[DataRequired(message='Select if you were you adopted')]
     )
@@ -109,9 +110,9 @@ class AdoptedForm(FlaskForm):
 class AdoptedUKForm(FlaskForm):
     adopted_uk = RadioField(
         choices=[
-            ('Yes', 'Yes'),
-            ('No', 'No'),
-            ('DO_NOT_KNOW', "I don't know")
+            (AdoptedInTheUkEnum.ADOPTED_IN_THE_UK_YES.name, 'Yes'),
+            (AdoptedInTheUkEnum.ADOPTED_IN_THE_UK_NO.name, 'No'),
+            (AdoptedInTheUkEnum.ADOPTED_IN_THE_UK_DO_NOT_KNOW.name, "I don't know")
         ],
         validators=[DataRequired(message='Select if you were adopted in the United Kingdom')]
     )
@@ -120,8 +121,8 @@ class AdoptedUKForm(FlaskForm):
 class ForcesForm(FlaskForm):
     forces = RadioField(
         choices=[
-            ('Yes', 'Yes'),
-            ('No', 'No')
+            (True, 'Yes'),
+            (False, 'No')
         ],
         validators=[DataRequired(message='Select if your birth was registered by a Forces registering service, or with a British Consul or High Commission, or under Merchant Shipping or Civil Aviation provisions')]
     )

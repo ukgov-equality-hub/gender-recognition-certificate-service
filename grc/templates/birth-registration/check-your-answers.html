@@ -5,7 +5,7 @@
 
 {% block backLink %}
     {% set backLink = (url_for('birthRegistration.forces')
-                       if session['application']['birthRegistration']['ukCheck'] == 'Yes'
+                       if application_data.birth_registration_data.birth_registered_in_uk
                        else url_for('birthRegistration.country')) %}
     <a href="{{ backLink }}" class="govuk-back-link">Back</a>
 {% endblock %}
@@ -22,41 +22,35 @@
                     title='Birth name',
                     changeLinkHiddenText='birth name',
                     changeLinkUrl=url_for('birthRegistration.index'),
-                    value=(session['application']['birthRegistration']['first_name'] + ' ' + session['application']['birthRegistration']['middle_names'] + ' ' + session['application']['birthRegistration']['last_name'])
+                    value=(application_data.birth_registration_data.first_name + ' ' + application_data.birth_registration_data.middle_names + ' ' + application_data.birth_registration_data.last_name)
                 ) }}
 
                 {{ summary_list_item.render(
                     title='Date of birth',
                     changeLinkHiddenText='date of birth',
                     changeLinkUrl=url_for('birthRegistration.dob'),
-                    value=(
-                        strptime('{}-{}-{}'.format(session['application']['birthRegistration']['dob']['year'],
-                                 session['application']['birthRegistration']['dob']['month'],
-                                 session['application']['birthRegistration']['dob']['day']),
-                                 '%Y-%m-%d')
-                                 .strftime('%d %B %Y')
-                    )
+                    value=(application_data.birth_registration_data.date_of_birth_formatted_DD_MMMM_YYYY)
                 ) }}
 
                 {{ summary_list_item.render(
                     title='Birth registered in UK',
                     changeLinkHiddenText='whether your birth was regstered in the UK',
                     changeLinkUrl=url_for('birthRegistration.ukCheck'),
-                    value=(session['application']['birthRegistration']['ukCheck'])
+                    value=(application_data.birth_registration_data.birth_registered_in_uk_formatted)
                 ) }}
 
-                {% if session['application']['birthRegistration']['ukCheck'] == 'Yes' %}
+                {% if application_data.birth_registration_data.birth_registered_in_uk %}
                     {{ summary_list_item.render(
                         title='Town or city of birth',
                         changeLinkHiddenText='your town or city of birth',
                         changeLinkUrl=url_for('birthRegistration.placeOfBirth'),
-                        value=(session['application']['birthRegistration']['place_of_birth'])
+                        value=(application_data.birth_registration_data.town_city_of_birth)
                     ) }}
 
                     {% macro mothersNameValue() %}
-                        {{ session['application']['birthRegistration']['mothers_first_name'] }}
-                        {{ session['application']['birthRegistration']['mothers_last_name'] }}<br>
-                        (Maiden name: {{ session['application']['birthRegistration']['mothers_maiden_name'] }})
+                        {{ application_data.birth_registration_data.mothers_first_name }}
+                        {{ application_data.birth_registration_data.mothers_last_name }}<br>
+                        (Maiden name: {{ application_data.birth_registration_data.mothers_maiden_name }})
                     {% endmacro %}
                     {{ summary_list_item.render(
                         title="Mother's name",
@@ -69,15 +63,15 @@
                         title="Father's name listed",
                         changeLinkHiddenText="whether your father's name is listed on your birth or adoption certificate",
                         changeLinkUrl=url_for('birthRegistration.fathersNameCheck'),
-                        value=(session['application']['birthRegistration']['fathersNameCheck'])
+                        value=(application_data.birth_registration_data.fathers_name_on_birth_certificate_formatted)
                     ) }}
 
-                    {% if session['application']['birthRegistration']['fathersNameCheck'] == 'Yes' %}
+                    {% if application_data.birth_registration_data.fathers_name_on_birth_certificate %}
                         {{ summary_list_item.render(
                             title="Father's name",
                             changeLinkHiddenText="your father's name",
                             changeLinkUrl=url_for('birthRegistration.fathersName'),
-                            value=(session['application']['birthRegistration']['fathers_first_name'] + ' ' + session['application']['birthRegistration']['fathers_last_name'])
+                            value=(application_data.birth_registration_data.fathers_first_name + ' ' + application_data.birth_registration_data.fathers_last_name)
                         ) }}
                     {% endif %}
 
@@ -85,15 +79,15 @@
                         title="Adopted",
                         changeLinkHiddenText="whether you were adopted",
                         changeLinkUrl=url_for('birthRegistration.adopted'),
-                        value=(session['application']['birthRegistration']['adopted'])
+                        value=(application_data.birth_registration_data.adopted_formatted)
                     ) }}
 
-                    {% if session['application']['birthRegistration']['adopted'] == 'Yes' %}
+                    {% if application_data.birth_registration_data.adopted %}
                         {{ summary_list_item.render(
                             title="Adopted in UK",
                             changeLinkHiddenText="whether you were adopted in the UK",
                             changeLinkUrl=url_for('birthRegistration.adoptedUK'),
-                            value=(get_radio_pretty_value('AdoptedUKForm', 'adopted_uk', session['application']['birthRegistration']['adopted_uk']))
+                            value=(application_data.birth_registration_data.adopted_in_the_uk_formatted)
                         ) }}
                     {% endif %}
 
@@ -103,7 +97,7 @@
                         changeLinkHiddenText="whether your birth was registered under the Forces registering service,
                                               British Consul or High Commission, or under Merchant Shipping or Civil Aviation provisions",
                         changeLinkUrl=url_for('birthRegistration.forces'),
-                        value=(session['application']['birthRegistration']['forces'])
+                        value=(application_data.birth_registration_data.forces_registration_formatted)
                     ) }}
 
                 {% else %}
@@ -111,7 +105,7 @@
                         title="Registered birth country",
                         changeLinkHiddenText="the country you were born in",
                         changeLinkUrl=url_for('birthRegistration.country'),
-                        value=(session['application']['birthRegistration']['country'])
+                        value=(application_data.birth_registration_data.country_of_birth)
                     ) }}
                 {% endif %}
             </dl>
