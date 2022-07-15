@@ -161,7 +161,7 @@ async def fill_in_application(page: Page, asserts: AssertHelpers, helpers: PageH
     await asserts.number_of_errors(0)
 
     # Choose an option, click Save and continue
-    await helpers.check_radio(field='previousNameCheck', value='Yes')
+    await helpers.check_radio(field='previousNameCheck', value='True')
     await helpers.click_button('Save and continue')
 
     # ------------------------------------------------
@@ -188,7 +188,7 @@ async def fill_in_application(page: Page, asserts: AssertHelpers, helpers: PageH
     await asserts.number_of_errors(0)
 
     # Enter some valid dates
-    await helpers.check_radio(field='contactDatesCheck', value='Yes')
+    await helpers.check_radio(field='contactDatesCheck', value='True')
     await helpers.fill_textbox(field='dates', value=data.DATES_TO_AVOID)
     await helpers.click_button('Save and continue')
 
@@ -217,7 +217,7 @@ async def fill_in_application(page: Page, asserts: AssertHelpers, helpers: PageH
     await asserts.number_of_errors(0)
 
     # Enter a valid National Insurance number
-    await helpers.check_radio(field='tell_hmrc', value='Yes')
+    await helpers.check_radio(field='tell_hmrc', value='True')
     await helpers.fill_textbox(field='national_insurance_number', value=data.NATIONAL_INSURANCE_NUMBER)
     await helpers.click_button('Save and continue')
 

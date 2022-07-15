@@ -2,6 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import EmailField, StringField, RadioField, TelField, SelectMultipleField
 from wtforms.validators import DataRequired, Email
 from grc.utils.form_custom_validators import StrictRequiredIf, validateNationalInsuranceNumber, validatePostcode, validateDateOfTransiton, validateStatutoryDeclarationDate, Integer
+from grc.business_logic.data_structures.personal_details_data import AffirmedGender
 
 
 class NameForm(FlaskForm):
@@ -21,8 +22,8 @@ class NameForm(FlaskForm):
 class AffirmedGenderForm(FlaskForm):
     affirmedGender = RadioField(
         choices=[
-            ('MALE', 'Male'),
-            ('FEMALE', 'Female')
+            (AffirmedGender.MALE.name, 'Male'),
+            (AffirmedGender.FEMALE.name, 'Female')
         ],
         validators=[DataRequired(message='Select your affirmed gender')]
     )
@@ -71,8 +72,8 @@ class StatutoryDeclarationDateForm(FlaskForm):
 class PreviousNamesCheck(FlaskForm):
     previousNameCheck = RadioField(
         choices=[
-            ('Yes', 'Yes'),
-            ('No', 'No')
+            (True, 'Yes'),
+            (False, 'No')
         ],
         validators=[DataRequired(message='Select if you have ever changed your name to reflect your gender')]
     )
@@ -117,28 +118,28 @@ class ContactPreferencesForm(FlaskForm):
 class ContactDatesForm(FlaskForm):
     contactDatesCheck = RadioField(
         choices=[
-            ('Yes', 'Yes'),
-            ('No', 'No')
+            (True, 'Yes'),
+            (False, 'No')
         ],
         validators=[DataRequired(message="Select if you don't want us to contact you at any point in the next 6 months")]
     )
 
     dates = StringField(
-        validators=[StrictRequiredIf('contactDatesCheck', 'Yes', message="Enter the dates you don't want us to contact you by post")]
+        validators=[StrictRequiredIf('contactDatesCheck', True, message="Enter the dates you don't want us to contact you by post")]
     )
 
 
 class HmrcForm(FlaskForm):
     tell_hmrc = RadioField(
         choices=[
-            ('Yes', 'Yes'),
-            ('No', 'No')
+            (True, 'Yes'),
+            (False, 'No')
         ],
         validators=[DataRequired(message='Select if you would like us to tell HMRC after you receive a Gender Recognition Certificate')]
     )
 
     national_insurance_number = StringField(
-        validators=[StrictRequiredIf('tell_hmrc', 'Yes', message='Enter your National Insurance number'), validateNationalInsuranceNumber]
+        validators=[StrictRequiredIf('tell_hmrc', True, message='Enter your National Insurance number'), validateNationalInsuranceNumber]
     )
 
 
