@@ -3,7 +3,7 @@
 {% block title %}Interim Gender Recognition Certificate{% endblock %}
 
 {% block backLink %}
-    <a href="{{ url_for(back) }}" class="govuk-back-link">Back</a>
+    <a href="{{ back }}" class="govuk-back-link">Back</a>
 {% endblock %}
 
 {% block content %}
@@ -44,7 +44,7 @@
                     You will get a full certificate once you’re no longer {{ inPartnershipName }}.
                 </p>
 
-                <form method="POST" action="{{ url_for('partnershipDetails.interimCheck') }}">
+                <form method="POST" action="#">
                     {{ form.csrf_token }}
 
                     <button class="govuk-button govuk-!-margin-bottom-0" data-module="govuk-button">

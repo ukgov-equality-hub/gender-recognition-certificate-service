@@ -43,6 +43,10 @@ class PartnershipDetailsData:
     def confirm_understood_interim_certificate_formatted(self) -> str: return 'Yes' if self.confirm_understood_interim_certificate else 'No'
     @property
     def previous_partnership_ended_formatted(self) -> str: return 'Yes' if self.previous_partnership_ended else 'No'
+    @property
+    def is_interim_certificate(self) -> bool:
+        return self.is_currently_in_partnership and \
+               (self.plan_to_remain_in_a_partnership == False or self.partner_agrees == False)
 
     @property
     def section_status(self) -> ListStatus:

@@ -5,7 +5,7 @@
 {% block title %}Are you currently married or in a civil partnership?{% endblock %}
 
 {% block backLink %}
-    <a href="{{ url_for('taskList.index') }}" class="govuk-back-link">Back</a>
+    <a href="{{ back }}" class="govuk-back-link">Back</a>
 {% endblock %}
 
 {% block content %}
@@ -26,7 +26,7 @@
                 of any of your marriage or civil partnership certificates.
             </p>
 
-            <form method="POST" action="{{ url_for('partnershipDetails.index') }}">
+            <form method="POST" action="#">
                 {{ form.csrf_token }}
 
                 {{ radios.renderFor(
