@@ -1,27 +1,28 @@
 
-{% macro render(form, deleteform, currently_uploaded_files, section) %}
+{% macro render(form, deleteform, currently_uploaded_files, section_url) %}
     <div id="file-upload-section" class="govuk-!-margin-top-8">
         {% if currently_uploaded_files %}
             <h2 class="govuk-heading-m">
                 Uploaded files
             </h2>
+
             <dl class="govuk-summary-list govuk-!-margin-bottom-8">
-                {% for item in currently_uploaded_files %}
+                {% for evidence_file in currently_uploaded_files %}
 
                     <div class="govuk-summary-list__row">
                         <dd class="govuk-summary-list__value govuk-!-width-full" style="vertical-align: middle;">
-                            {{ item | replace(session['application']['reference_number'] + '__' + section.data_section + '__', '') }}
+                            {{ evidence_file.original_file_name }}
                         </dd>
                         <dd class="govuk-summary-list__actions">
 
-                            <form method="POST" action="{{ url_for('upload.removeFile', section_url=section.url) }}#file-upload-section">
+                            <form method="POST" action="{{ url_for('upload.removeFile', section_url=section_url) }}#file-upload-section">
                                 <input type="hidden" name="csrf_token" value="{{ deleteform.get_csrf_token() }}">
 
-                                <input type="hidden" name="file" value="{{ item }}">
+                                <input type="hidden" name="file" value="{{ evidence_file.aws_file_name }}">
                                 <button class="govuk-button govuk-button--warning govuk-!-margin-bottom-0" data-module="govuk-button">
                                     Remove
                                     <span class="govuk-visually-hidden">
-                                        {{ item | replace(session['application']['reference_number'] + '__' + section.data_section + '__', '') }} file
+                                        {{ evidence_file.original_file_name }} file
                                     </span>
                                 </button>
                             </form>

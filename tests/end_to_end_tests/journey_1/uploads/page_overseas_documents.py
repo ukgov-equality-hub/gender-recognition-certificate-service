@@ -124,7 +124,7 @@ async def run_checks_on_page(page: Page, asserts: AssertHelpers, helpers: PageHe
     await asserts.documents_uploaded(0)
 
     # Return to Task List page
-    # "Overseas certificate documents" section should be marked as "IN PROGRESS"
+    # "Overseas certificate documents" section should be marked as "NOT STARTED"
     await helpers.click_button('Return to task list')
 
     # ------------------------------------------------
@@ -135,7 +135,7 @@ async def run_checks_on_page(page: Page, asserts: AssertHelpers, helpers: PageHe
     await asserts.h1('Your application')
     await asserts.number_of_errors(0)
 
-    # Status of "Overseas certificate documents" section should be "IN PROGRESS"
+    # Status of "Overseas certificate documents" section should be "NOT STARTED"
     await asserts.task_list_sections(9)
     await asserts.task_list_section(section='Confirmation', expected_status='COMPLETED')
     await asserts.task_list_section(section='Your personal details', expected_status='COMPLETED')
@@ -143,7 +143,7 @@ async def run_checks_on_page(page: Page, asserts: AssertHelpers, helpers: PageHe
     await asserts.task_list_section(section='Marriage or civil partnership details', expected_status='COMPLETED')
     await asserts.task_list_section(section='Name change documents', expected_status='COMPLETED')
     await asserts.task_list_section(section='Marriage and civil partnership documents', expected_status='COMPLETED')
-    await asserts.task_list_section(section='Overseas certificate documents', expected_status='IN PROGRESS')
+    await asserts.task_list_section(section='Overseas certificate documents', expected_status='NOT STARTED')
     await asserts.task_list_section(section='Statutory declarations', expected_status='NOT STARTED')
     await asserts.task_list_section(section='Submit and pay', expected_status='CANNOT START YET')
 

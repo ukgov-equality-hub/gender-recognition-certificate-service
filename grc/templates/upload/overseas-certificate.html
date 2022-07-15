@@ -43,8 +43,8 @@
             {{ upload_files_section.render(
                 form,
                 deleteform,
-                currently_uploaded_files=session['application']['overseasCertificate']['files'],
-                section=section)
+                currently_uploaded_files=currently_uploaded_files,
+                section_url=section_url)
             }}
 
         </div>
