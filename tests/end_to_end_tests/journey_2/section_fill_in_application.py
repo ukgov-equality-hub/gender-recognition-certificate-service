@@ -61,7 +61,7 @@ async def fill_in_application(page: Page, asserts: AssertHelpers, helpers: PageH
 
     # Choose the "Yes" radio option
     # This should take us to the Overseas Approved Check page
-    await helpers.check_radio(field='overseasCheck', value='Yes')
+    await helpers.check_radio(field='overseasCheck', value='True')
     await helpers.click_button('Continue')
 
     # ------------------------------------------------
@@ -73,7 +73,7 @@ async def fill_in_application(page: Page, asserts: AssertHelpers, helpers: PageH
     await asserts.number_of_errors(0)
 
     # Choose the "Yes" radio option
-    await helpers.check_radio(field='overseasApprovedCheck', value='Yes')
+    await helpers.check_radio(field='overseasApprovedCheck', value='True')
     await helpers.click_button('Continue')
 
     # ------------------------------------------------

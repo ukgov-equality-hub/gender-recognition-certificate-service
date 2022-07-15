@@ -188,7 +188,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
 
     # Choose the "No" option - this should take you straight to the Declaration page
     # i.e. you should skip the Overseas Approved Check page
-    await helpers.check_radio(field='overseasCheck', value='No')
+    await helpers.check_radio(field='overseasCheck', value='False')
     await helpers.click_button('Continue')
 
     # ------------------------------------------------
@@ -211,12 +211,12 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(0)
 
     # Selection of "No" should be remembered
-    await asserts.is_checked(field='overseasCheck', value='No')
-    await asserts.not_checked(field='overseasCheck', value='Yes')
+    await asserts.is_checked(field='overseasCheck', value='False')
+    await asserts.not_checked(field='overseasCheck', value='True')
 
     # Choose the "Yes" radio option
     # This should take us to the Overseas Approved Check page
-    await helpers.check_radio(field='overseasCheck', value='Yes')
+    await helpers.check_radio(field='overseasCheck', value='True')
     await helpers.click_button('Continue')
 
     # ------------------------------------------------
@@ -239,8 +239,8 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(0)
 
     # Selection of "Yes" should be remembered
-    await asserts.is_checked(field='overseasCheck', value='Yes')
-    await asserts.not_checked(field='overseasCheck', value='No')
+    await asserts.is_checked(field='overseasCheck', value='True')
+    await asserts.not_checked(field='overseasCheck', value='False')
 
     # Go forward to the Overseas Approved Check page
     await helpers.click_button('Continue')
@@ -262,7 +262,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.error(field='overseasApprovedCheck', message='Select if you have official documentation')
 
     # Choose the "Yes" radio option
-    await helpers.check_radio(field='overseasApprovedCheck', value='Yes')
+    await helpers.check_radio(field='overseasApprovedCheck', value='True')
     await helpers.click_button('Continue')
 
     # ------------------------------------------------
@@ -285,8 +285,8 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(0)
 
     # Selection of "Yes" should be remembered
-    await asserts.is_checked(field='overseasApprovedCheck', value='Yes')
-    await asserts.not_checked(field='overseasApprovedCheck', value='No')
+    await asserts.is_checked(field='overseasApprovedCheck', value='True')
+    await asserts.not_checked(field='overseasApprovedCheck', value='False')
 
     # Go forward to the Declaration page
     await helpers.click_button('Continue')
