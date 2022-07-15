@@ -19,13 +19,13 @@
             </h1>
 
             {%  set partnerName = 'civil partner'
-                if session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Civil partnership'
+                if application_data.partnership_details_data.is_in_civil_partnership
                 else 'spouse' %}
             {%  set partnerNamePlural = 'civil partners'
-                if session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Civil partnership'
+                if application_data.partnership_details_data.is_in_civil_partnership
                 else 'spouses' %}
             {%  set inPartnershipName = 'in a civil partnership'
-                if session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Civil partnership'
+                if application_data.partnership_details_data.is_in_civil_partnership
                 else 'married' %}
 
             <p class="govuk-body">

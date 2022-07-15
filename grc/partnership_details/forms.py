@@ -1,14 +1,15 @@
 from flask_wtf import FlaskForm
 from wtforms import RadioField
 from wtforms.validators import DataRequired
+from grc.business_logic.data_structures.partnership_details_data import CurrentlyInAPartnershipEnum
 
 
 class MarriageCivilPartnershipForm(FlaskForm):
     currently_married = RadioField(
         choices=[
-            ('Married', 'Married'),
-            ('Civil partnership', 'Civil partnership'),
-            ('Neither', 'Neither')
+            (CurrentlyInAPartnershipEnum.MARRIED.name, 'Married'),
+            (CurrentlyInAPartnershipEnum.CIVIL_PARTNERSHIP.name, 'Civil partnership'),
+            (CurrentlyInAPartnershipEnum.NEITHER.name, 'Neither')
         ],
         validators=[DataRequired(message='Select if you are currently married or in a civil partnership')]
     )
@@ -17,8 +18,8 @@ class MarriageCivilPartnershipForm(FlaskForm):
 class StayTogetherForm(FlaskForm):
     stay_together = RadioField(
         choices=[
-            ('Yes', 'Yes'),
-            ('No', 'No')
+            (True, 'Yes'),
+            (False, 'No')
         ],
         validators=[DataRequired(message='Select if you plan to remain married or in your civil partnership after receiving your Gender Recognition Certificate')]
     )
@@ -27,8 +28,8 @@ class StayTogetherForm(FlaskForm):
 class PartnerAgreesForm(FlaskForm):
     partner_agrees = RadioField(
         choices=[
-            ('Yes', 'Yes'),
-            ('No', 'No')
+            (True, 'Yes'),
+            (False, 'No')
         ],
         validators=[DataRequired(message='Select if you can provide a declaration of consent from your spouse or civil partner')]
     )
@@ -37,8 +38,8 @@ class PartnerAgreesForm(FlaskForm):
 class PartnerDiedForm(FlaskForm):
     partner_died = RadioField(
         choices=[
-            ('Yes', 'Yes'),
-            ('No', 'No')
+            (True, 'Yes'),
+            (False, 'No')
         ],
         validators=[DataRequired(message='Select if you were previously married or in a civil partnership, and your spouse or partner died')]
     )
@@ -47,8 +48,8 @@ class PartnerDiedForm(FlaskForm):
 class PreviousPartnershipEndedForm(FlaskForm):
     previous_partnership_ended = RadioField(
         choices=[
-            ('Yes', 'Yes'),
-            ('No', 'No')
+            (True, 'Yes'),
+            (False, 'No')
         ],
         validators=[DataRequired(message='Select if you have ever been married or in a civil partnership that has ended')]
     )

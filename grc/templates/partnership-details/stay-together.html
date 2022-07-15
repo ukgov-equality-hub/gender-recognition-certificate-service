@@ -3,7 +3,7 @@
 {% import "govuk-design-system-templates/radios.html" as radios %}
 
 {% set inYourPartnershipName = 'married'
-       if session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Married'
+       if application_data.partnership_details_data.is_married
        else 'in your civil partnership' %}
 {% block title %}Do you plan to remain {{ inYourPartnershipName }} after you receive your Gender Recognition Certificate?{% endblock %}
 

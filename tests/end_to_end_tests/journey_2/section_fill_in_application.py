@@ -328,7 +328,7 @@ async def fill_in_application(page: Page, asserts: AssertHelpers, helpers: PageH
 
     # Select "Neither" option and proceed down this route until the "Check you answers" page
     # Then, re-trace our steps back here and choose the "Married" and then "Civil partnership" options
-    await helpers.check_radio(field='currently_married', value='Neither')
+    await helpers.check_radio(field='currently_married', value='NEITHER')
     await helpers.click_button('Save and continue')
 
     # ------------------------------------------------
@@ -340,7 +340,7 @@ async def fill_in_application(page: Page, asserts: AssertHelpers, helpers: PageH
     await asserts.number_of_errors(0)
 
     # Select a valid option, click "Save and continue"
-    await helpers.check_radio(field='partner_died', value='Yes')
+    await helpers.check_radio(field='partner_died', value='True')
     await helpers.click_button('Save and continue')
 
     # ------------------------------------------------
@@ -352,7 +352,7 @@ async def fill_in_application(page: Page, asserts: AssertHelpers, helpers: PageH
     await asserts.number_of_errors(0)
 
     # Select a valid option, click "Save and continue"
-    await helpers.check_radio(field='previous_partnership_ended', value='Yes')
+    await helpers.check_radio(field='previous_partnership_ended', value='True')
     await helpers.click_button('Save and continue')
 
     # ------------------------------------------------
