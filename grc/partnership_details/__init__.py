@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, url_for, session
-from grc.models import ListStatus
+from grc.list_status import ListStatus
 from grc.partnership_details.forms import MarriageCivilPartnershipForm, StayTogetherForm, PartnerAgreesForm, PartnerDiedForm, PreviousPartnershipEndedForm, InterimCheckForm, CheckYourAnswers
 from grc.utils.decorators import LoginRequired
 from grc.utils.application_progress import save_progress

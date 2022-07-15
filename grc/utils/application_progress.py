@@ -1,6 +1,7 @@
 from datetime import datetime
 from flask import session
-from grc.models import db, Application, ListStatus, ApplicationStatus
+from grc.models import db, Application, ApplicationStatus
+from grc.list_status import ListStatus
 
 
 def save_progress():

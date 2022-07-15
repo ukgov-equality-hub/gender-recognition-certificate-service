@@ -5,6 +5,7 @@ import ast
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy_utils import StringEncryptedType
 from sqlalchemy_utils.types.encrypted.encrypted_type import AesEngine
+from grc.list_status import ListStatus
 
 db = SQLAlchemy()
 secret_key = os.environ.get('SQLALCHEMY_KEY', '')
@@ -16,14 +17,6 @@ class ApplicationStatus(enum.Enum):
     STARTED = "STARTED"
     SUBMITTED = "SUBMITTED"
     DOWNLOADED = "DOWNLOADED"
-
-
-class ListStatus(enum.Enum):
-    COMPLETED = "COMPLETED"
-    IN_PROGRESS = "IN PROGRESS"
-    NOT_STARTED = "NOT STARTED"
-    CANNOT_START_YET = "CANNOT START YET"
-    IN_REVIEW = "IN REVIEW"  # Value 'in progress' is used only at task list
 
 
 class Application(db.Model):
