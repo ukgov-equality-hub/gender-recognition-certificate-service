@@ -3,7 +3,7 @@
 {% block title %}What is the town or city of birth on your birth or adoption certificate?{% endblock %}
 
 {% block backLink %}
-    <a href="{{ url_for('birthRegistration.ukCheck') }}" class="govuk-back-link">Back</a>
+    <a href="{{ back }}" class="govuk-back-link">Back</a>
 {% endblock %}
 
 {% block content %}
@@ -15,7 +15,7 @@
 
             {{ error_summary.renderFor(form) }}
 
-            <form method="POST" action="{{ url_for('birthRegistration.placeOfBirth') }}">
+            <form method="POST" action="#">
                 {{ form.csrf_token }}
 
                 {{ textInput.renderFor(

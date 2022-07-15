@@ -5,7 +5,7 @@
 {% block title %}What is your mother’s name?{% endblock %}
 
 {% block backLink %}
-    <a href="{{ url_for('birthRegistration.placeOfBirth') }}" class="govuk-back-link">Back</a>
+    <a href="{{ back }}" class="govuk-back-link">Back</a>
 {% endblock %}
 
 {% block content %}
@@ -14,7 +14,7 @@
 
             {{ error_summary.renderFor(form) }}
 
-            <form method="POST" action="{{ url_for('birthRegistration.mothersName') }}">
+            <form method="POST" action="#">
                 {{ form.csrf_token }}
 
                 <div class="govuk-form-group {{ 'govuk-form-group--error' if form.errors }}">

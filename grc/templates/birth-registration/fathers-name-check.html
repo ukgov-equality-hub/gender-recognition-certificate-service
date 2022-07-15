@@ -5,7 +5,7 @@
 {% block title %}Is your father's name listed on the certificate?{% endblock %}
 
 {% block backLink %}
-    <a href="{{ url_for('birthRegistration.mothersName') }}" class="govuk-back-link">Back</a>
+    <a href="{{ back }}" class="govuk-back-link">Back</a>
 {% endblock %}
 
 {% block content %}
@@ -14,7 +14,7 @@
 
             {{ error_summary.renderFor(form) }}
 
-            <form method="POST" action="{{ url_for('birthRegistration.fathersNameCheck') }}">
+            <form method="POST" action="#">
                 {{ form.csrf_token }}
 
                 {{ radios.renderFor(
