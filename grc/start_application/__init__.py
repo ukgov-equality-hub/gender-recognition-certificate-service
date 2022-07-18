@@ -161,6 +161,10 @@ def overseas_check():
 
     if form.validate_on_submit():
         application_data.confirmation_data.gender_recognition_outside_uk = strtobool(form.overseasCheck.data)
+
+        if not application_data.confirmation_data.gender_recognition_outside_uk:
+            application_data.confirmation_data.gender_recognition_from_approved_country = None
+
         DataStore.save_application(application_data)
 
         if application_data.confirmation_data.gender_recognition_outside_uk:

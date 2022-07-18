@@ -27,6 +27,11 @@ def index():
 
     if form.validate_on_submit():
         application_data.submit_and_pay_data.applying_for_help_with_fee = strtobool(form.applying_for_help_with_fee.data)
+
+        if not application_data.submit_and_pay_data.applying_for_help_with_fee:
+            application_data.submit_and_pay_data.how_applying_for_help_with_fees = None
+            application_data.submit_and_pay_data.help_with_fees_reference_number = None
+
         DataStore.save_application(application_data)
 
         if application_data.submit_and_pay_data.applying_for_help_with_fee:

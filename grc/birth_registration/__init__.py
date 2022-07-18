@@ -79,6 +79,21 @@ def ukCheck():
 
     if form.validate_on_submit():
         application_data.birth_registration_data.birth_registered_in_uk = strtobool(form.birth_registered_in_uk.data)
+
+        if application_data.birth_registration_data.birth_registered_in_uk:
+            application_data.birth_registration_data.country_of_birth = None
+        else:
+            application_data.birth_registration_data.town_city_of_birth = None
+            application_data.birth_registration_data.mothers_first_name = None
+            application_data.birth_registration_data.mothers_last_name = None
+            application_data.birth_registration_data.mothers_maiden_name = None
+            application_data.birth_registration_data.fathers_name_on_birth_certificate = None
+            application_data.birth_registration_data.fathers_first_name = None
+            application_data.birth_registration_data.fathers_last_name = None
+            application_data.birth_registration_data.adopted = None
+            application_data.birth_registration_data.adopted_in_the_uk = None
+            application_data.birth_registration_data.forces_registration = None
+
         DataStore.save_application(application_data)
 
         if application_data.birth_registration_data.birth_registered_in_uk:
@@ -187,6 +202,11 @@ def fathersNameCheck():
     if form.validate_on_submit():
         application_data.birth_registration_data.fathers_name_on_birth_certificate = \
             strtobool(form.fathers_name_on_certificate.data)
+
+        if not application_data.birth_registration_data.fathers_name_on_birth_certificate:
+            application_data.birth_registration_data.fathers_first_name = None
+            application_data.birth_registration_data.fathers_last_name = None
+
         DataStore.save_application(application_data)
 
         if application_data.birth_registration_data.fathers_name_on_birth_certificate and \
@@ -252,6 +272,7 @@ def adopted():
 
     if form.validate_on_submit():
         application_data.birth_registration_data.adopted = strtobool(form.adopted.data)
+
         if not application_data.birth_registration_data.adopted:
             application_data.birth_registration_data.adopted_in_the_uk = None
 

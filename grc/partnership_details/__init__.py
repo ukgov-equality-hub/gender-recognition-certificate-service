@@ -19,6 +19,15 @@ def index():
     if form.validate_on_submit():
         application_data.partnership_details_data.currently_in_a_partnership = \
             CurrentlyInAPartnershipEnum[form.currently_married.data]
+
+        if application_data.partnership_details_data.is_currently_in_partnership:
+            application_data.partnership_details_data.previous_partnership_partner_died = None
+            application_data.partnership_details_data.previous_partnership_ended = None
+        else:
+            application_data.partnership_details_data.plan_to_remain_in_a_partnership = None
+            application_data.partnership_details_data.partner_agrees = None
+            application_data.partnership_details_data.confirm_understood_interim_certificate = None
+
         DataStore.save_application(application_data)
 
         if application_data.partnership_details_data.currently_in_a_partnership == CurrentlyInAPartnershipEnum.NEITHER:
@@ -45,6 +54,10 @@ def stayTogether():
 
     if form.validate_on_submit():
         application_data.partnership_details_data.plan_to_remain_in_a_partnership = strtobool(form.stay_together.data)
+
+        if not application_data.partnership_details_data.plan_to_remain_in_a_partnership:
+            application_data.partnership_details_data.partner_agrees = None
+
         DataStore.save_application(application_data)
 
         if application_data.partnership_details_data.plan_to_remain_in_a_partnership:
@@ -70,6 +83,10 @@ def partnerAgrees():
 
     if form.validate_on_submit():
         application_data.partnership_details_data.partner_agrees = strtobool(form.partner_agrees.data)
+
+        if application_data.partnership_details_data.partner_agrees:
+            application_data.partnership_details_data.confirm_understood_interim_certificate = None
+
         DataStore.save_application(application_data)
 
         if application_data.partnership_details_data.partner_agrees:
