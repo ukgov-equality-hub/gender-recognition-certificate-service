@@ -220,9 +220,9 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.check_your_answers_row(row_name='Help with Fees reference number', expected_value=data.HELP_WITH_FEES_REFERENCE_NUMBER)
 
     # Click each "Change" link to check it takes us to the correct page
-    await asserts.change_links_to_url(link_text='Change if you have ever been issued a Gender Recognition Certificate (or its equivalent) in another country', expected_url='/overseas-check')
-    await asserts.change_links_to_url(link_text='Change if you have official documentation that shows you have ever been issued a Gender Recognition Certificate (or its equivalent) in one of the allowed countries or territories', expected_url='/overseas-approved-check')
-    await asserts.change_links_to_url(link_text='Change if you consent to the General Register Office contacting you about your application', expected_url='/declaration')
+    await asserts.change_links_to_url(link_text='Change if you have ever been issued a Gender Recognition Certificate (or its equivalent) in another country', expected_url='/overseas-check', save_and_continue_button_text='Continue')
+    await asserts.change_links_to_url(link_text='Change if you have official documentation that shows you have ever been issued a Gender Recognition Certificate (or its equivalent) in one of the allowed countries or territories', expected_url='/overseas-approved-check', save_and_continue_button_text='Continue')
+    await asserts.change_links_to_url(link_text='Change if you consent to the General Register Office contacting you about your application', expected_url='/declaration', save_and_continue_button_text='Continue')
 
     await asserts.change_links_to_url(link_text='Change name (as you would like it to appear on your Gender Recognition Certificate)', expected_url='/personal-details')
     await asserts.change_links_to_url(link_text='Change affirmed gender', expected_url='/personal-details/affirmed-gender')
@@ -249,10 +249,10 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.change_links_to_url(link_text='Change if you plan to remain in your civil partnership after receiving your Gender Recognition Certificate', expected_url='/partnership-details/stay-together')
     await asserts.change_links_to_url(link_text='Change if you can provide a declaration of consent from your civil partner', expected_url='/partnership-details/partner-agrees')
 
-    await asserts.change_links_to_url(link_text='Change the documents you have uploaded as evidence of changing your name', expected_url='/upload/name-change')
-    await asserts.change_links_to_url(link_text='Change the documents you have uploaded as evidence of your marriage or civil partnership', expected_url='/upload/marriage-documents')
-    await asserts.change_links_to_url(link_text='Change the documents you have uploaded as evidence of your overseas certificate', expected_url='/upload/overseas-certificate')
-    await asserts.change_links_to_url(link_text='Change the statutory declarations documents you have uploaded', expected_url='/upload/statutory-declarations')
+    await asserts.change_links_to_url(link_text='Change the documents you have uploaded as evidence of changing your name', expected_url='/upload/name-change', back_link_should_return_to_check_page=False, save_button_should_return_to_check_page=False)
+    await asserts.change_links_to_url(link_text='Change the documents you have uploaded as evidence of your marriage or civil partnership', expected_url='/upload/marriage-documents', back_link_should_return_to_check_page=False, save_button_should_return_to_check_page=False)
+    await asserts.change_links_to_url(link_text='Change the documents you have uploaded as evidence of your overseas certificate', expected_url='/upload/overseas-certificate', back_link_should_return_to_check_page=False, save_button_should_return_to_check_page=False)
+    await asserts.change_links_to_url(link_text='Change the statutory declarations documents you have uploaded', expected_url='/upload/statutory-declarations', back_link_should_return_to_check_page=False, save_button_should_return_to_check_page=False)
 
     await asserts.change_links_to_url(link_text='Change payment method', expected_url='/submit-and-pay')
     await asserts.change_links_to_url(link_text='Change the way your are applying for help with paying the fees', expected_url='/submit-and-pay/help-type')

@@ -118,16 +118,52 @@ class AssertHelpers:
         number_of_matching_rows = await self.page.locator(selector).count()
         assert_equal(number_of_matching_rows, 0)
 
-    async def change_links_to_url(self, link_text: str, expected_url: str):
+    async def change_links_to_url(self,
+                                  link_text: str,
+                                  expected_url: str,
+                                  back_link_should_return_to_check_page: bool = True,
+                                  save_button_should_return_to_check_page: bool = True,
+                                  save_and_continue_button_text: str = 'Save and continue'):
         url_before = self.page.url
-        await self.helpers.click_button(link_text)
-        await self.url(expected_url)
 
-        # TODO: Really, we should be clicking on the "Back" link,
-        #  rather than going back in the browser's history
-        #  But, "Back" doesn't currently always take the user to where they'd expect :-(
-        # await self.helpers.click_button('Back')  # <-- What we'd like to use
-        await self.page.go_back()  # <-- What we use instead
+        if back_link_should_return_to_check_page:
+            print_now(f"Clicking 'Change' then 'Back' expecting url:{expected_url}")
+            # Click on the "Change" link
+            await self.helpers.click_button(link_text)
+            await self.url(expected_url)
+
+            # Then click on the "Back" link
+            await self.helpers.click_button('Back')
+            await self.page.wait_for_load_state()
+            url_after = self.page.url
+            assert_equal(url_after, url_before)
+
+        if save_button_should_return_to_check_page:
+            print_now(f"Clicking 'Change' then '{save_and_continue_button_text}' expecting url:{expected_url}")
+            # Click on the "Change" link
+            await self.helpers.click_button(link_text)
+            await self.url(expected_url)
+
+            # Then click on the "Save and continue" button
+            await self.helpers.click_button(save_and_continue_button_text)
+            await self.page.wait_for_load_state()
+            url_after = self.page.url
+            assert_equal(url_after, url_before)
+
+        if not back_link_should_return_to_check_page and not save_button_should_return_to_check_page:
+            print_now(f"Clicking 'Change' then browser back button expecting url:{expected_url}")
+            # Click on the "Change" link
+            await self.helpers.click_button(link_text)
+            await self.url(expected_url)
+
+            # Really, we want to click on the "Back" link and/or the "Save and continue" button
+            #  But, a few pages don't have the these actions wired up to return to the "Check your answers" page :-(
+            #  So, instead, we use the browser's back button
+            await self.page.go_back()  # <-- What we use instead
+
+            await self.page.wait_for_load_state()
+            url_after = self.page.url
+            assert_equal(url_after, url_before)
 
         await self.page.wait_for_load_state()
         url_after = self.page.url
@@ -179,3 +215,7 @@ def assert_matches_regex(actual_value, expected_regex):
               f"- actual value: ({actual_value})\n"
               f"- expected regex: ({expected_regex})", flush=True)
     assert matches is not None
+
+
+def print_now(message):
+    print(message, flush=True)
