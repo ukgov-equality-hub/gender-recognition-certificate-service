@@ -6,16 +6,16 @@
 {% block title %}Check your answers before sending your application{% endblock %}
 
 {%  set partnerName = 'civil partner'
-    if session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Civil partnership'
+    if application_data.partnership_details_data.is_in_civil_partnership
     else 'spouse' %}
 {%  set inYourPartnershipName = 'in your civil partnership'
-    if session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Civil partnership'
+    if application_data.partnership_details_data.is_in_civil_partnership
     else 'married' %}
 
 {% block backLink %}
     {% set backLink = (
         url_for('submitAndPay.helpType')
-        if session['application']['submitAndPay']['method'] == 'Help'
+        if application_data.submit_and_pay_data.applying_for_help_with_fee
         else url_for('submitAndPay.index')
     ) %}
     <a href="{{ backLink }}" class="govuk-back-link">Back</a>
@@ -40,15 +40,15 @@
                     title='Have you ever been issued a Gender Recognition Certificate (or its equivalent) in another country?',
                     changeLinkHiddenText='if you have ever been issued a Gender Recognition Certificate (or its equivalent) in another country',
                     changeLinkUrl=url_for('startApplication.overseas_check'),
-                    value=(session['application']['confirmation']['overseasCheck'])
+                    value=(application_data.confirmation_data.gender_recognition_outside_uk_formatted)
                 ) }}
 
-                {% if session['application']['confirmation']['overseasCheck'] == 'Yes' %}
+                {% if application_data.confirmation_data.gender_recognition_outside_uk %}
                     {{ summary_list_item.render(
                         title='Do you have official documentation that shows you have ever been issued a Gender Recognition Certificate (or its equivalent) in one of the allowed countries or territories?',
                         changeLinkHiddenText='if you have official documentation that shows you have ever been issued a Gender Recognition Certificate (or its equivalent) in one of the allowed countries or territories',
                         changeLinkUrl=url_for('startApplication.overseas_approved_check'),
-                        value=(session['application']['confirmation']['overseasApprovedCheck'])
+                        value=(application_data.confirmation_data.gender_recognition_from_approved_country_formatted)
                     ) }}
                 {% endif %}
 
@@ -56,7 +56,7 @@
                     title='Do you consent to the General Register Office contacting you about your application?',
                     changeLinkHiddenText='if you consent to the General Register Office contacting you about your application',
                     changeLinkUrl=url_for('startApplication.declaration'),
-                    value=('Yes' if session['application']['confirmation']['declaration'] else 'No')
+                    value=(application_data.confirmation_data.consent_to_GRO_contact_formatted)
                 ) }}
             </dl>
 
@@ -69,53 +69,44 @@
                     title='Name (as you would like it to appear on your Gender Recognition Certificate)',
                     changeLinkHiddenText='name (as you would like it to appear on your Gender Recognition Certificate)',
                     changeLinkUrl=url_for('personalDetails.index'),
-                    value=(session['application']['personalDetails']['title'] + ' ' + session['application']['personalDetails']['first_name'] + ' ' + session['application']['personalDetails']['last_name'])
+                    value=(application_data.personal_details_data.title + ' ' + application_data.personal_details_data.first_names + ' ' + application_data.personal_details_data.last_name)
                 ) }}
 
                 {{ summary_list_item.render(
                     title='Affirmed gender',
                     changeLinkHiddenText='affirmed gender',
                     changeLinkUrl=url_for('personalDetails.affirmedGender'),
-                    value=('Male' if session['application']['personalDetails']['affirmed_gender'] == 'MALE' else 'Female')
+                    value=(application_data.personal_details_data.affirmed_gender_formatted)
                 ) }}
 
                 {{ summary_list_item.render(
                     title='When you transitioned',
                     changeLinkHiddenText='when you transitioned',
                     changeLinkUrl=url_for('personalDetails.transitionDate'),
-                    value=(strptime('{}-{}-1'.format(session['application']['personalDetails']['transition_date_year'],
-                                 session['application']['personalDetails']['transition_date_month']),
-                                 '%Y-%m-%d')
-                                 .strftime('%B %Y')
-                    )
+                    value=(application_data.personal_details_data.transition_date_formatted_MMMM_YYYY)
                 ) }}
 
                 {{ summary_list_item.render(
                     title='When you signed your statutory declaration',
                     changeLinkHiddenText='when you signed your statutory declaration',
                     changeLinkUrl=url_for('personalDetails.statutoryDeclarationDate'),
-                    value=(strptime('{}-{}-{}'.format(session['application']['personalDetails']['statutory_declaration_date_year'],
-                                 session['application']['personalDetails']['statutory_declaration_date_month'],
-                                 session['application']['personalDetails']['statutory_declaration_date_day']),
-                                 '%Y-%m-%d')
-                                 .strftime('%d %B %Y')
-                    )
+                    value=(application_data.personal_details_data.statutory_declaration_date_formatted_DD_MMMM_YYYY)
                 ) }}
 
                 {{ summary_list_item.render(
                     title='Ever changed name',
                     changeLinkHiddenText='whether you have changed your name to reflect your gender',
                     changeLinkUrl=url_for('personalDetails.previousNamesCheck'),
-                    value=(session['application']['personalDetails']['previousNamesCheck'])
+                    value=(application_data.personal_details_data.changed_name_to_reflect_gender_formatted)
                 ) }}
 
                 {% macro addressValue() %}
-                    {{ session['application']['personalDetails']['address']['address_line_one'] }}<br>
-                    {% if session['application']['personalDetails']['address']['address_line_two'] %}
-                        {{ session['application']['personalDetails']['address']['address_line_two'] }}<br>
+                    {{ application_data.personal_details_data.address_line_one }}<br>
+                    {% if application_data.personal_details_data.address_line_two %}
+                        {{ application_data.personal_details_data.address_line_two }}<br>
                     {% endif %}
-                    {{ session['application']['personalDetails']['address']['town'] }}<br>
-                    {{ session['application']['personalDetails']['address']['postcode'] }}
+                    {{ application_data.personal_details_data.address_town_city }}<br>
+                    {{ application_data.personal_details_data.address_postcode }}
                 {% endmacro %}
                 {{ summary_list_item.render(
                     title='Address',
@@ -126,19 +117,19 @@
 
                 {% macro contactPreferencesValue() %}
                     <ul class="govuk-list">
-                        {% if session['application']['personalDetails']['contactPreferences']['email'] != '' %}
+                        {% if application_data.personal_details_data.contact_email_address %}
                             <li>
-                                Email: {{ session['application']['personalDetails']['contactPreferences']['email'] }}
+                                Email: {{ application_data.personal_details_data.contact_email_address }}
                             </li>
                         {% endif %}
-                        {% if session['application']['personalDetails']['contactPreferences']['phone'] != '' %}
+                        {% if application_data.personal_details_data.contact_phone_number %}
                             <li>
-                                Phone: {{ session['application']['personalDetails']['contactPreferences']['phone'] }}
+                                Phone: {{ application_data.personal_details_data.contact_phone_number }}
                             </li>
                         {% endif %}
-                        {% if session['application']['personalDetails']['contactPreferences']['post'] != '' %}
+                        {% if application_data.personal_details_data.contact_by_post %}
                             <li>
-                                Post: {{ session['application']['personalDetails']['contactPreferences']['post'] }}
+                                Post: {{ application_data.personal_details_data.address_comma_separated }}
                             </li>
                         {% endif %}
                     </ul>
@@ -151,10 +142,10 @@
                 ) }}
 
                 {% macro unavailabilityValue() %}
-                    {{ session['application']['personalDetails']['contactDates']['answer'] }}<br>
-                    {% if session['application']['personalDetails']['contactDates']['answer'] == 'Yes' %}
+                    {{ application_data.personal_details_data.contact_dates_should_avoid_formatted }}<br>
+                    {% if application_data.personal_details_data.contact_dates_should_avoid %}
                         {# Note: The following <span> should all be on one line, to allow the line breaks to work correctly #}
-                        <span style="white-space: pre-line;">{{ session['application']['personalDetails']['contactDates']['dates'] }}</span>
+                        <span style="white-space: pre-line;">{{ application_data.personal_details_data.contact_dates_to_avoid }}</span>
                     {% endif %}
                 {% endmacro %}
                 {{ summary_list_item.render(
@@ -168,15 +159,15 @@
                     title='Notify HMRC',
                     changeLinkHiddenText="whether you want us to notify HMRC after you receive a Gender Recognition Certificate",
                     changeLinkUrl=url_for('personalDetails.hmrc'),
-                    value=(session['application']['personalDetails']['hmrc']['answer'])
+                    value=(application_data.personal_details_data.tell_hmrc_formatted)
                 ) }}
 
-                {% if session['application']['personalDetails']['hmrc']['answer'] == 'Yes' %}
+                {% if application_data.personal_details_data.tell_hmrc %}
                     {{ summary_list_item.render(
                         title='National insurance number',
                         changeLinkHiddenText="your National Insurance number",
                         changeLinkUrl=url_for('personalDetails.hmrc'),
-                        value=(session['application']['personalDetails']['hmrc']['national_insurance_number'])
+                        value=(application_data.personal_details_data.national_insurance_number)
                     ) }}
                 {% endif %}
             </dl>
@@ -190,41 +181,35 @@
                     title='Birth name',
                     changeLinkHiddenText='birth name',
                     changeLinkUrl=url_for('birthRegistration.index'),
-                    value=(session['application']['birthRegistration']['first_name'] + ' ' + session['application']['birthRegistration']['middle_names'] + ' ' + session['application']['birthRegistration']['last_name'])
+                    value=(application_data.birth_registration_data.first_name + ' ' + application_data.birth_registration_data.middle_names + ' ' + application_data.birth_registration_data.last_name)
                 ) }}
 
                 {{ summary_list_item.render(
                     title='Date of birth',
                     changeLinkHiddenText='date of birth',
                     changeLinkUrl=url_for('birthRegistration.dob'),
-                    value=(
-                        strptime('{}-{}-{}'.format(session['application']['birthRegistration']['dob']['year'],
-                                 session['application']['birthRegistration']['dob']['month'],
-                                 session['application']['birthRegistration']['dob']['day']),
-                                 '%Y-%m-%d')
-                                 .strftime('%d %B %Y')
-                    )
+                    value=(application_data.birth_registration_data.date_of_birth_formatted_DD_MMMM_YYYY)
                 ) }}
 
                 {{ summary_list_item.render(
                     title='Birth registered in UK',
                     changeLinkHiddenText='whether your birth was regstered in the UK',
                     changeLinkUrl=url_for('birthRegistration.ukCheck'),
-                    value=(session['application']['birthRegistration']['ukCheck'])
+                    value=(application_data.birth_registration_data.birth_registered_in_uk_formatted)
                 ) }}
 
-                {% if session['application']['birthRegistration']['ukCheck'] == 'Yes' %}
+                {% if application_data.birth_registration_data.birth_registered_in_uk %}
                     {{ summary_list_item.render(
                         title='Town or city of birth',
                         changeLinkHiddenText='your town or city of birth',
                         changeLinkUrl=url_for('birthRegistration.placeOfBirth'),
-                        value=(session['application']['birthRegistration']['place_of_birth'])
+                        value=(application_data.birth_registration_data.town_city_of_birth)
                     ) }}
 
                     {% macro mothersNameValue() %}
-                        {{ session['application']['birthRegistration']['mothers_first_name'] }}
-                        {{ session['application']['birthRegistration']['mothers_last_name'] }}<br>
-                        (Maiden name: {{ session['application']['birthRegistration']['mothers_maiden_name'] }})
+                        {{ application_data.birth_registration_data.mothers_first_name }}
+                        {{ application_data.birth_registration_data.mothers_last_name }}<br>
+                        (Maiden name: {{ application_data.birth_registration_data.mothers_maiden_name }})
                     {% endmacro %}
                     {{ summary_list_item.render(
                         title="Mother's name",
@@ -237,15 +222,15 @@
                         title="Father's name listed",
                         changeLinkHiddenText="whether your father's name is listed on your birth or adoption certificate",
                         changeLinkUrl=url_for('birthRegistration.fathersNameCheck'),
-                        value=(session['application']['birthRegistration']['fathersNameCheck'])
+                        value=(application_data.birth_registration_data.fathers_name_on_birth_certificate_formatted)
                     ) }}
 
-                    {% if session['application']['birthRegistration']['fathersNameCheck'] == 'Yes' %}
+                    {% if application_data.birth_registration_data.fathers_name_on_birth_certificate %}
                         {{ summary_list_item.render(
                             title="Father's name",
                             changeLinkHiddenText="your father's name",
                             changeLinkUrl=url_for('birthRegistration.fathersName'),
-                            value=(session['application']['birthRegistration']['fathers_first_name'] + ' ' + session['application']['birthRegistration']['fathers_last_name'])
+                            value=(application_data.birth_registration_data.fathers_first_name + ' ' + application_data.birth_registration_data.fathers_last_name)
                         ) }}
                     {% endif %}
 
@@ -253,15 +238,15 @@
                         title="Adopted",
                         changeLinkHiddenText="whether you were adopted",
                         changeLinkUrl=url_for('birthRegistration.adopted'),
-                        value=(session['application']['birthRegistration']['adopted'])
+                        value=(application_data.birth_registration_data.adopted_formatted)
                     ) }}
 
-                    {% if session['application']['birthRegistration']['adopted'] == 'Yes' %}
+                    {% if application_data.birth_registration_data.adopted %}
                         {{ summary_list_item.render(
                             title="Adopted in UK",
                             changeLinkHiddenText="whether you were adopted in the UK",
                             changeLinkUrl=url_for('birthRegistration.adoptedUK'),
-                            value=(get_radio_pretty_value('AdoptedUKForm', 'adopted_uk', session['application']['birthRegistration']['adopted_uk']))
+                            value=(application_data.birth_registration_data.adopted_in_the_uk_formatted)
                         ) }}
                     {% endif %}
 
@@ -271,7 +256,7 @@
                         changeLinkHiddenText="whether your birth was registered under the Forces registering service,
                                               British Consul or High Commission, or under Merchant Shipping or Civil Aviation provisions",
                         changeLinkUrl=url_for('birthRegistration.forces'),
-                        value=(session['application']['birthRegistration']['forces'])
+                        value=(application_data.birth_registration_data.forces_registration_formatted)
                     ) }}
 
                 {% else %}
@@ -279,7 +264,7 @@
                         title="Registered birth country",
                         changeLinkHiddenText="the country you were born in",
                         changeLinkUrl=url_for('birthRegistration.country'),
-                        value=(session['application']['birthRegistration']['country'])
+                        value=(application_data.birth_registration_data.country_of_birth)
                     ) }}
                 {% endif %}
             </dl>
@@ -293,22 +278,22 @@
                     title='Currently married or in a civil partnership',
                     changeLinkHiddenText='if you are currently married or in a civil partnership',
                     changeLinkUrl=url_for('partnershipDetails.index'),
-                    value=(session['application']['partnershipDetails']['marriageCivilPartnership'])
+                    value=(application_data.partnership_details_data.currently_in_a_partnership_formatted)
                 ) }}
 
-                {% if session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Neither' %}
+                {% if application_data.partnership_details_data.is_not_in_partnership %}
                     {{ summary_list_item.render(
                         title='Spouse or partner has died',
                         changeLinkHiddenText='if your spouse or partner has died',
                         changeLinkUrl=url_for('partnershipDetails.partnerDied'),
-                        value=(session['application']['partnershipDetails']['partnerDied'])
+                        value=(application_data.partnership_details_data.previous_partnership_partner_died_formatted)
                     ) }}
 
                     {{ summary_list_item.render(
                         title='Marriage or civil partnership has ended',
                         changeLinkHiddenText='if your marriage or civil partnership has ended',
                         changeLinkUrl=url_for('partnershipDetails.endedCheck'),
-                        value=(session['application']['partnershipDetails']['endedCheck'])
+                        value=(application_data.partnership_details_data.previous_partnership_ended_formatted)
                     ) }}
 
                 {% else %}
@@ -316,24 +301,24 @@
                         title='Remain ' + inYourPartnershipName,
                         changeLinkHiddenText='if you plan to remain ' + inYourPartnershipName + ' after receiving your Gender Recognition Certificate',
                         changeLinkUrl=url_for('partnershipDetails.stayTogether'),
-                        value=(session['application']['partnershipDetails']['stayTogether'])
+                        value=(application_data.partnership_details_data.plan_to_remain_in_a_partnership_formatted)
                     ) }}
 
-                    {% if session['application']['partnershipDetails']['stayTogether'] == 'Yes' %}
+                    {% if application_data.partnership_details_data.plan_to_remain_in_a_partnership %}
                         {{ summary_list_item.render(
                             title='Can provide a declaration of consent from your ' + partnerName,
                             changeLinkHiddenText='if you can provide a declaration of consent from your ' + partnerName,
                             changeLinkUrl=url_for('partnershipDetails.partnerAgrees'),
-                            value=(session['application']['partnershipDetails']['partnerAgrees'])
+                            value=(application_data.partnership_details_data.partner_agrees_formatted)
                         ) }}
                     {% endif %}
 
-                    {% if session['application']['partnershipDetails']['stayTogether'] == 'No' or session['application']['partnershipDetails']['partnerAgrees'] == 'No' %}
+                    {% if not application_data.partnership_details_data.plan_to_remain_in_a_partnership or not application_data.partnership_details_data.partner_agrees %}
                         {{ summary_list_item.render(
                             title='Interim GRC',
                             changeLinkHiddenText='if you understand that you will receive an Interim GRC',
                             changeLinkUrl=url_for('partnershipDetails.interimCheck'),
-                            value=(session['application']['partnershipDetails']['interimCheck'])
+                            value=(application_data.partnership_details_data.confirm_understood_interim_certificate_formatted)
                         ) }}
                     {% endif %}
                 {% endif %}
@@ -344,63 +329,57 @@
                 Your uploaded documents
             </h2>
 
-            {% macro uploadedDocumentsList(section) %}
+            {% macro uploadedDocumentsList(files, sectionName) %}
                 <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0">
-                    {% for item in session['application'][section]['files'] %}
-                        <li>{{ item | replace(session['application']['reference_number'] + '__' + section + '__', '') }}</li>
+                    {% for file in files %}
+                        <li>{{ file.original_file_name }}</li>
                     {% endfor %}
                 </ul>
             {% endmacro %}
 
             <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-                {% if application.confirmation.overseasCheck == 'No' %}
+                {% if application_data.need_medical_reports %}
                     {{ summary_list_item.render(
                         title='Your medical reports',
                         changeLinkHiddenText='the documents you have uploaded for your medical reports',
                         changeLinkUrl=url_for('upload.uploadInfoPage', section_url='medical-reports'),
-                        value=(uploadedDocumentsList('medicalReports'))
+                        value=(uploadedDocumentsList(application_data.uploads_data.medical_reports, 'medicalReports'))
                     ) }}
+                {% endif %}
 
+                {% if application_data.need_evidence_of_living_in_gender %}
                     {{ summary_list_item.render(
                         title='Evidence of living in your gender',
                         changeLinkHiddenText='the documents you have uploaded as evidence of living in your gender',
                         changeLinkUrl=url_for('upload.uploadInfoPage', section_url='gender-evidence'),
-                        value=(uploadedDocumentsList('genderEvidence'))
+                        value=(uploadedDocumentsList(application_data.uploads_data.evidence_of_living_in_gender, 'genderEvidence'))
                     ) }}
+                {% endif %}
 
-                    {% if application.personalDetails.previousNamesCheck is defined and application.personalDetails.previousNamesCheck == 'Yes' %}
-                        {{ summary_list_item.render(
-                            title='Name change documents',
-                            changeLinkHiddenText='the documents you have uploaded as evidence of changing your name',
-                            changeLinkUrl=url_for('upload.uploadInfoPage', section_url='name-change'),
-                            value=(uploadedDocumentsList('nameChange'))
-                        ) }}
-                    {% endif %}
-
-                {% elif application.confirmation.overseasCheck == 'Yes' and application.personalDetails.previousNamesCheck is defined and application.personalDetails.previousNamesCheck == 'Yes' %}
+                {% if application_data.need_name_change_documents %}
                     {{ summary_list_item.render(
                         title='Name change documents',
                         changeLinkHiddenText='the documents you have uploaded as evidence of changing your name',
                         changeLinkUrl=url_for('upload.uploadInfoPage', section_url='name-change'),
-                        value=(uploadedDocumentsList('nameChange'))
+                        value=(uploadedDocumentsList(application_data.uploads_data.name_change_documents, 'nameChange'))
                     ) }}
                 {% endif %}
 
-                {% if application.partnershipDetails.marriageCivilPartnership is defined and (application.partnershipDetails.marriageCivilPartnership == 'Married' or application.partnershipDetails.marriageCivilPartnership == 'Civil partnership' or (application.partnershipDetails.marriageCivilPartnership == 'Neither' and (application.partnershipDetails.partnerDied == 'Yes' or application.partnershipDetails.endedCheck == 'Yes'))) %}
+                {% if application_data.need_partnership_documents %}
                     {{ summary_list_item.render(
                         title='Marriage documents',
                         changeLinkHiddenText='the documents you have uploaded as evidence of your marriage or civil partnership',
                         changeLinkUrl=url_for('upload.uploadInfoPage', section_url='marriage-documents'),
-                        value=(uploadedDocumentsList('marriageDocuments'))
+                        value=(uploadedDocumentsList(application_data.uploads_data.partnership_documents, 'marriageDocuments'))
                     ) }}
                 {% endif %}
 
-                {% if application.confirmation.overseasApprovedCheck == 'Yes' %}
+                {% if application_data.need_overseas_documents %}
                     {{ summary_list_item.render(
                         title='Overseas certificate documents',
                         changeLinkHiddenText='the documents you have uploaded as evidence of your overseas certificate',
                         changeLinkUrl=url_for('upload.uploadInfoPage', section_url='overseas-certificate'),
-                        value=(uploadedDocumentsList('overseasCertificate'))
+                        value=(uploadedDocumentsList(application_data.uploads_data.overseas_documents, 'overseasCertificate'))
                     ) }}
                 {% endif %}
 
@@ -408,7 +387,7 @@
                     title='Statutory declarations',
                     changeLinkHiddenText='the statutory declarations documents you have uploaded',
                     changeLinkUrl=url_for('upload.uploadInfoPage', section_url='statutory-declarations'),
-                    value=(uploadedDocumentsList('statutoryDeclarations'))
+                    value=(uploadedDocumentsList(application_data.uploads_data.statutory_declarations, 'statutoryDeclarations'))
                 ) }}
             </dl>
 
@@ -421,23 +400,23 @@
                     title='Payment method',
                     changeLinkHiddenText='payment method',
                     changeLinkUrl=url_for('submitAndPay.index'),
-                    value=(session['application']['submitAndPay']['method'])
+                    value=(application_data.submit_and_pay_data.applying_for_help_with_fee_formatted)
                 ) }}
 
-                {% if session['application']['submitAndPay']['method'] == 'Help' %}
+                {% if application_data.submit_and_pay_data.applying_for_help_with_fee %}
                     {{ summary_list_item.render(
                         title='Help type',
                         changeLinkHiddenText='the way your are applying for help with paying the fees',
                         changeLinkUrl=url_for('submitAndPay.helpType'),
-                        value=(session['application']['submitAndPay']['helpType'])
+                        value=(application_data.submit_and_pay_data.how_applying_for_help_with_fees_formatted)
                     ) }}
 
-                    {% if session['application']['submitAndPay']['helpType'] == 'Using the online service' %}
+                    {% if application_data.submit_and_pay_data.is_using_online_service %}
                         {{ summary_list_item.render(
                             title='Help with Fees reference number',
                             changeLinkHiddenText='your Help with Fees reference number',
                             changeLinkUrl=url_for('submitAndPay.helpType'),
-                            value=(session['application']['submitAndPay']['referenceNumber'])
+                            value=(application_data.submit_and_pay_data.help_with_fees_reference_number)
                         ) }}
                     {% endif %}
                 {% endif %}
@@ -460,7 +439,7 @@
                     of your full birth or adoption certificate
                 </li>
 
-                {% if session['application']['submitAndPay']['helpType'] == 'Using the EX160 form' %}
+                {% if application_data.submit_and_pay_data.is_using_ex160_form %}
                     <li>
                         an
                         <a href="https://www.gov.uk/government/publications/apply-for-help-with-court-and-tribunal-fees"
@@ -500,7 +479,7 @@
 
                 <div class="govuk-button-group">
                     <button class="govuk-button" data-module="govuk-button">
-                        {% if session['application']['submitAndPay']['method'] == 'Help' %}
+                        {% if application_data.submit_and_pay_data.applying_for_help_with_fee %}
                             Submit application
                         {% else %}
                             Submit application and pay online

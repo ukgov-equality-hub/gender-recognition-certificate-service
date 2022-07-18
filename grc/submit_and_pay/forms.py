@@ -1,14 +1,15 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, RadioField, BooleanField
 from wtforms.validators import DataRequired
+from grc.business_logic.data_structures.submit_and_pay_data import HelpWithFeesType
 from grc.utils.form_custom_validators import StrictRequiredIf
 
 
 class MethodCheckForm(FlaskForm):
     applying_for_help_with_fee = RadioField(
         choices=[
-            ('Help', 'Yes'),
-            ('Online', 'No, I will pay now')
+            (True, 'Yes'),
+            (False, 'No, I will pay now')
         ],
         validators=[DataRequired(message='Select if you are applying for help paying the fee')]
     )
@@ -17,14 +18,14 @@ class MethodCheckForm(FlaskForm):
 class HelpTypeForm(FlaskForm):
     how_applying_for_fees = RadioField(
         choices=[
-            ('Using the online service', 'Using the online service'),
-            ('Using the EX160 form', 'Using the EX160 form')
+            (HelpWithFeesType.USING_ONLINE_SERVICE.name, 'Using the online service'),
+            (HelpWithFeesType.USING_EX160_FORM.name, 'Using the EX160 form')
         ],
         validators=[DataRequired(message='Select how are you applying for help paying the fee')]
     )
 
     help_with_fees_reference_number = StringField(
-        validators=[StrictRequiredIf('how_applying_for_fees', 'Using the online service', message='Enter your Help with Fees reference number')]
+        validators=[StrictRequiredIf('how_applying_for_fees', HelpWithFeesType.USING_ONLINE_SERVICE.name, message='Enter your Help with Fees reference number')]
     )
 
 

@@ -518,7 +518,7 @@ async def fill_in_application(page: Page, asserts: AssertHelpers, helpers: PageH
     await asserts.number_of_errors(0)
 
     # Choose "No, I will pay now" option, click Save and continue
-    await helpers.check_radio(field='applying_for_help_with_fee', value='Online')
+    await helpers.check_radio(field='applying_for_help_with_fee', value='False')
     await helpers.click_button('Save and continue')
 
     # ------------------------------------------------
