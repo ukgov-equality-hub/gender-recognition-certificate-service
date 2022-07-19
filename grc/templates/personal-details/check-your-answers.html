@@ -1,10 +1,14 @@
 {% extends 'base.html' %}
 {% import "govuk-design-system-templates/_summary-list-item.html" as summary_list_item %}
 
+{% macro check_your_answers_row(title, changeLinkHiddenText, changeLinkUrlFor, value) %}
+    {{ summary_list_item.render(title, changeLinkHiddenText, url_for(changeLinkUrlFor, check_source='section', pages_from_check=1), value) }}
+{% endmacro %}
+
 {% block title %}Check your answers: Your personal details{% endblock %}
 
 {% block backLink %}
-    <a href="{{ url_for('personalDetails.hmrc') }}" class="govuk-back-link">Back</a>
+    <a href="{{ back }}" class="govuk-back-link">Back</a>
 {% endblock %}
 
 {% block content %}
@@ -17,38 +21,38 @@
             </h1>
 
             <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-                {{ summary_list_item.render(
+                {{ check_your_answers_row(
                     title='Name',
                     changeLinkHiddenText='name',
-                    changeLinkUrl=url_for('personalDetails.index'),
+                    changeLinkUrlFor='personalDetails.index',
                     value=(application_data.personal_details_data.title + ' ' + application_data.personal_details_data.first_names + ' ' + application_data.personal_details_data.last_name)
                 ) }}
 
-                {{ summary_list_item.render(
+                {{ check_your_answers_row(
                     title='Affirmed gender',
                     changeLinkHiddenText='affirmed gender',
-                    changeLinkUrl=url_for('personalDetails.affirmedGender'),
+                    changeLinkUrlFor='personalDetails.affirmedGender',
                     value=(application_data.personal_details_data.affirmed_gender_formatted)
                 ) }}
 
-                {{ summary_list_item.render(
+                {{ check_your_answers_row(
                     title='When you transitioned',
                     changeLinkHiddenText='when you transitioned',
-                    changeLinkUrl=url_for('personalDetails.transitionDate'),
+                    changeLinkUrlFor='personalDetails.transitionDate',
                     value=(application_data.personal_details_data.transition_date_formatted_MMMM_YYYY)
                 ) }}
 
-                {{ summary_list_item.render(
+                {{ check_your_answers_row(
                     title='When you signed your statutory declaration',
                     changeLinkHiddenText='when you signed your statutory declaration',
-                    changeLinkUrl=url_for('personalDetails.statutoryDeclarationDate'),
+                    changeLinkUrlFor='personalDetails.statutoryDeclarationDate',
                     value=(application_data.personal_details_data.statutory_declaration_date_formatted_DD_MMMM_YYYY)
                 ) }}
 
-                {{ summary_list_item.render(
+                {{ check_your_answers_row(
                     title='Ever changed name',
                     changeLinkHiddenText='whether you have changed your name to reflect your gender',
-                    changeLinkUrl=url_for('personalDetails.previousNamesCheck'),
+                    changeLinkUrlFor='personalDetails.previousNamesCheck',
                     value=(application_data.personal_details_data.changed_name_to_reflect_gender_formatted)
                 ) }}
 
@@ -60,10 +64,10 @@
                     {{ application_data.personal_details_data.address_town_city }}<br>
                     {{ application_data.personal_details_data.address_postcode }}
                 {% endmacro %}
-                {{ summary_list_item.render(
+                {{ check_your_answers_row(
                     title='Address',
                     changeLinkHiddenText='address',
-                    changeLinkUrl=url_for('personalDetails.address'),
+                    changeLinkUrlFor='personalDetails.address',
                     value=(addressValue())
                 ) }}
 
@@ -86,10 +90,10 @@
                         {% endif %}
                     </ul>
                 {% endmacro %}
-                {{ summary_list_item.render(
+                {{ check_your_answers_row(
                     title='Contact preferences',
                     changeLinkHiddenText='contact preferences',
-                    changeLinkUrl=url_for('personalDetails.contactPreferences'),
+                    changeLinkUrlFor='personalDetails.contactPreferences',
                     value=(contactPreferencesValue())
                 ) }}
 
@@ -100,31 +104,31 @@
                         <span style="white-space: pre-line;">{{ application_data.personal_details_data.contact_dates_to_avoid }}</span>
                     {% endif %}
                 {% endmacro %}
-                {{ summary_list_item.render(
+                {{ check_your_answers_row(
                     title='Unavailable over the next 6 months',
                     changeLinkHiddenText="whether there are any dates you don't want us to contact you by post over the next 6 months",
-                    changeLinkUrl=url_for('personalDetails.contactDates'),
+                    changeLinkUrlFor='personalDetails.contactDates',
                     value=(unavailabilityValue())
                 ) }}
 
-                {{ summary_list_item.render(
+                {{ check_your_answers_row(
                     title='Notify HMRC',
                     changeLinkHiddenText="whether you want us to notify HMRC after you receive a Gender Recognition Certificate",
-                    changeLinkUrl=url_for('personalDetails.hmrc'),
+                    changeLinkUrlFor='personalDetails.hmrc',
                     value=(application_data.personal_details_data.tell_hmrc_formatted)
                 ) }}
 
                 {% if application_data.personal_details_data.tell_hmrc %}
-                    {{ summary_list_item.render(
+                    {{ check_your_answers_row(
                         title='National insurance number',
                         changeLinkHiddenText="your National Insurance number",
-                        changeLinkUrl=url_for('personalDetails.hmrc'),
+                        changeLinkUrlFor='personalDetails.hmrc',
                         value=(application_data.personal_details_data.national_insurance_number)
                     ) }}
                 {% endif %}
             </dl>
 
-            <form method="POST" action="{{ url_for('personalDetails.checkYourAnswers') }}">
+            <form method="POST" action="#">
                 {{ form.csrf_token }}
 
                 <div class="govuk-button-group">

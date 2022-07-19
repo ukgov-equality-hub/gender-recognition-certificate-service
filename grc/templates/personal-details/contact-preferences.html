@@ -6,7 +6,7 @@
 {% block title %}How would you like to be contacted if we have any questions about your application?{% endblock %}
 
 {% block backLink %}
-    <a href="{{ url_for('personalDetails.contactDates') }}" class="govuk-back-link">Back</a>
+    <a href="{{ back }}" class="govuk-back-link">Back</a>
 {% endblock %}
 
 {% block content %}
@@ -15,7 +15,7 @@
 
             {{ error_summary.renderFor(form) }}
 
-            <form method="POST" action="{{ url_for('personalDetails.contactPreferences') }}">
+            <form method="POST" action="#">
                 {{ form.csrf_token }}
 
                 {% macro postHtmlBlock() %}

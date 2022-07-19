@@ -6,7 +6,7 @@
 {% block title %}If we need to contact you by post in the next 6 months, are there any dates we should avoid?{% endblock %}
 
 {% block backLink %}
-    <a href="{{ url_for('personalDetails.address') }}" class="govuk-back-link">Back</a>
+    <a href="{{ back }}" class="govuk-back-link">Back</a>
 {% endblock %}
 
 {% block content %}
@@ -15,7 +15,7 @@
 
             {{ error_summary.renderFor(form) }}
 
-            <form method="POST" action="{{ url_for('personalDetails.contactDates') }}">
+            <form method="POST" action="#">
                 {{ form.csrf_token }}
 
                 {% macro insertDatesToAvoidHintText() %}

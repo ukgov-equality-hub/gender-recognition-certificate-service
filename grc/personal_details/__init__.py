@@ -1,10 +1,12 @@
 import datetime
 from flask import Blueprint, render_template, request, url_for
 from grc.business_logic.data_store import DataStore
+from grc.business_logic.data_structures.application_data import ApplicationData
 from grc.business_logic.data_structures.personal_details_data import AffirmedGender
 from grc.list_status import ListStatus
 from grc.personal_details.forms import NameForm, AffirmedGenderForm, TransitionDateForm, StatutoryDeclarationDateForm, PreviousNamesCheck, AddressForm, ContactPreferencesForm, ContactDatesForm, HmrcForm, CheckYourAnswers
 from grc.utils.decorators import LoginRequired
+from grc.utils.get_next_page import get_next_page_global, get_previous_page_global
 from grc.utils.redirect import local_redirect
 from grc.utils.strtobool import strtobool
 
@@ -23,11 +25,7 @@ def index():
         application_data.personal_details_data.last_name = form.last_name.data
         DataStore.save_application(application_data)
 
-        next_page = ('personalDetails.checkYourAnswers'
-                     if application_data.personal_details_data.section_status == ListStatus.COMPLETED
-                     else 'personalDetails.affirmedGender')
-
-        return local_redirect(url_for(next_page))
+        return get_next_page(application_data, 'personalDetails.affirmedGender')
 
     if request.method == 'GET':
         form.title.data = application_data.personal_details_data.title
@@ -36,7 +34,8 @@ def index():
 
     return render_template(
         'personal-details/name.html',
-        form=form
+        form=form,
+        back=get_previous_page(application_data, 'taskList.index')
     )
 
 
@@ -50,11 +49,7 @@ def affirmedGender():
         application_data.personal_details_data.affirmed_gender = AffirmedGender[form.affirmedGender.data]
         DataStore.save_application(application_data)
 
-        next_page = ('personalDetails.checkYourAnswers'
-                     if application_data.personal_details_data.section_status == ListStatus.COMPLETED
-                     else 'personalDetails.transitionDate')
-
-        return local_redirect(url_for(next_page))
+        return get_next_page(application_data, 'personalDetails.transitionDate')
 
     if request.method == 'GET':
         form.affirmedGender.data = (
@@ -63,7 +58,8 @@ def affirmedGender():
 
     return render_template(
         'personal-details/affirmed-gender.html',
-        form=form
+        form=form,
+        back=get_previous_page(application_data, 'personalDetails.index')
     )
 
 
@@ -80,11 +76,7 @@ def transitionDate():
             1)
         DataStore.save_application(application_data)
 
-        next_page = ('personalDetails.checkYourAnswers'
-                     if application_data.personal_details_data.section_status == ListStatus.COMPLETED
-                     else 'personalDetails.statutoryDeclarationDate')
-
-        return local_redirect(url_for(next_page))
+        return get_next_page(application_data, 'personalDetails.statutoryDeclarationDate')
 
     if request.method == 'GET':
         if application_data.personal_details_data.transition_date is not None:
@@ -93,7 +85,8 @@ def transitionDate():
 
     return render_template(
         'personal-details/transition-date.html',
-        form=form
+        form=form,
+        back=get_previous_page(application_data, 'personalDetails.affirmedGender')
     )
 
 
@@ -110,11 +103,7 @@ def statutoryDeclarationDate():
             int(form.statutory_declaration_date_day.data))
         DataStore.save_application(application_data)
 
-        next_page = ('personalDetails.checkYourAnswers'
-                     if application_data.personal_details_data.section_status == ListStatus.COMPLETED
-                     else 'personalDetails.previousNamesCheck')
-
-        return local_redirect(url_for(next_page))
+        return get_next_page(application_data, 'personalDetails.previousNamesCheck')
 
     if request.method == 'GET':
         if application_data.personal_details_data.statutory_declaration_date is not None:
@@ -124,7 +113,8 @@ def statutoryDeclarationDate():
 
     return render_template(
         'personal-details/statutory-declaration-date.html',
-        form=form
+        form=form,
+        back=get_previous_page(application_data, 'personalDetails.transitionDate')
     )
 
 
@@ -138,18 +128,15 @@ def previousNamesCheck():
         application_data.personal_details_data.changed_name_to_reflect_gender = strtobool(form.previousNameCheck.data)
         DataStore.save_application(application_data)
 
-        next_page = ('personalDetails.checkYourAnswers'
-                     if application_data.personal_details_data.section_status == ListStatus.COMPLETED
-                     else 'personalDetails.address')
-
-        return local_redirect(url_for(next_page))
+        return get_next_page(application_data, 'personalDetails.address')
 
     if request.method == 'GET':
         form.previousNameCheck.data = application_data.personal_details_data.changed_name_to_reflect_gender
 
     return render_template(
         'personal-details/previous-names-check.html',
-        form=form
+        form=form,
+        back=get_previous_page(application_data, 'personalDetails.statutoryDeclarationDate')
     )
 
 
@@ -166,11 +153,7 @@ def address():
         application_data.personal_details_data.address_postcode = form.postcode.data
         DataStore.save_application(application_data)
 
-        next_page = ('personalDetails.checkYourAnswers'
-                     if application_data.personal_details_data.section_status == ListStatus.COMPLETED
-                     else 'personalDetails.contactDates')
-
-        return local_redirect(url_for(next_page))
+        return get_next_page(application_data, 'personalDetails.contactDates')
 
     if request.method == 'GET':
         form.address_line_one.data = application_data.personal_details_data.address_line_one
@@ -180,7 +163,8 @@ def address():
 
     return render_template(
         'personal-details/address.html',
-        form=form
+        form=form,
+        back=get_previous_page(application_data, 'personalDetails.previousNamesCheck')
     )
 
 
@@ -204,11 +188,7 @@ def contactPreferences():
             application_data.personal_details_data.contact_by_post = ('POST' in form.contact_options.data)
             DataStore.save_application(application_data)
 
-            next_page = ('personalDetails.checkYourAnswers'
-                         if application_data.personal_details_data.section_status == ListStatus.COMPLETED
-                         else 'personalDetails.hmrc')
-
-            return local_redirect(url_for(next_page))
+            return get_next_page(application_data, 'personalDetails.hmrc')
 
     if request.method == 'GET':
         form.contact_options.data = []
@@ -225,7 +205,8 @@ def contactPreferences():
     return render_template(
         'personal-details/contact-preferences.html',
         form=form,
-        address=application_data.personal_details_data.address_comma_separated
+        address=application_data.personal_details_data.address_comma_separated,
+        back=get_previous_page(application_data, 'personalDetails.contactDates')
     )
 
 
@@ -241,11 +222,7 @@ def contactDates():
             form.dates.data if application_data.personal_details_data.contact_dates_should_avoid else None
         DataStore.save_application(application_data)
 
-        next_page = ('personalDetails.checkYourAnswers'
-                     if application_data.personal_details_data.section_status == ListStatus.COMPLETED
-                     else 'personalDetails.contactPreferences')
-
-        return local_redirect(url_for(next_page))
+        return get_next_page(application_data, 'personalDetails.contactPreferences')
 
     if request.method == 'GET':
         form.contactDatesCheck.data = application_data.personal_details_data.contact_dates_should_avoid
@@ -253,7 +230,8 @@ def contactDates():
 
     return render_template(
         'personal-details/contact-dates.html',
-        form=form
+        form=form,
+        back=get_previous_page(application_data, 'personalDetails.address')
     )
 
 
@@ -269,7 +247,7 @@ def hmrc():
             form.national_insurance_number.data if application_data.personal_details_data.tell_hmrc else None
         DataStore.save_application(application_data)
 
-        return local_redirect(url_for('personalDetails.checkYourAnswers'))
+        return get_next_page(application_data, 'personalDetails.checkYourAnswers')
 
     if request.method == 'GET':
         form.tell_hmrc.data = application_data.personal_details_data.tell_hmrc
@@ -277,7 +255,8 @@ def hmrc():
 
     return render_template(
         'personal-details/hmrc.html',
-        form=form
+        form=form,
+        back=get_previous_page(application_data, 'personalDetails.contactPreferences')
     )
 
 
@@ -296,5 +275,22 @@ def checkYourAnswers():
     return render_template(
         'personal-details/check-your-answers.html',
         form=form,
-        application_data=application_data
+        application_data=application_data,
+        back=get_previous_page(application_data, 'personalDetails.hmrc')
     )
+
+
+def get_next_page(application_data: ApplicationData, next_page_in_journey: str):
+    return get_next_page_global(
+        next_page_in_journey=next_page_in_journey,
+        section_check_your_answers_page='personalDetails.checkYourAnswers',
+        section_status=application_data.personal_details_data.section_status,
+        application_data=application_data)
+
+
+def get_previous_page(application_data: ApplicationData, previous_page_in_journey: str):
+    return get_previous_page_global(
+        previous_page_in_journey=previous_page_in_journey,
+        section_check_your_answers_page='personalDetails.checkYourAnswers',
+        section_status=application_data.personal_details_data.section_status,
+        application_data=application_data)
