@@ -190,7 +190,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.check_your_answers_row(row_name='When you transitioned', expected_value='March 2000')
     await asserts.check_your_answers_row(row_name='When you signed your statutory declaration', expected_value=data.STATUTORY_DECLARATION_DATE_FORMATTED)
     await asserts.check_your_answers_row(row_name='Ever changed name', expected_value='Yes')
-    await asserts.check_your_answers_row(row_name='Address', expected_value=f"{data.ADDRESS_LINE_ONE}\n{data.ADDRESS_LINE_TWO}\n{data.TOWN}\n{data.COUNTRY}\n{data.POSTCODE}")
+    await asserts.check_your_answers_row(row_name='Address', expected_value=f"{data.ADDRESS_LINE_ONE}\n{data.ADDRESS_LINE_TWO}\n{data.TOWN}\n{data.POSTCODE}")
     await asserts.check_your_answers_row(row_name='Contact preferences', expected_value=f"Email: {data.EMAIL_ADDRESS}\nPhone: {data.PHONE_NUMBER}\nPost: {data.ADDRESS_LINE_ONE}, {data.ADDRESS_LINE_TWO}, {data.TOWN}, {data.POSTCODE}")
     await asserts.check_your_answers_row(row_name='Unavailable over the next 6 months', expected_value=f"Yes\n{data.DATES_TO_AVOID}")
     await asserts.check_your_answers_row(row_name='Notify HMRC', expected_value='No')
