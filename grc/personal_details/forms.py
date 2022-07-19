@@ -293,7 +293,8 @@ class AddressForm(FlaskForm):
     )
 
     postcode = StringField(
-        validators=[DataRequired(message='Enter your postcode'), validatePostcode]
+        validators=[StrictRequiredIf('country', ['', 'United Kingdom'], message='Enter your postcode',
+                                     validators=[validatePostcode])]
     )
 
 
