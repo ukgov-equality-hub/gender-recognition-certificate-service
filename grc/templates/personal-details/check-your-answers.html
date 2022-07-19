@@ -62,6 +62,9 @@
                         {{ application_data.personal_details_data.address_line_two }}<br>
                     {% endif %}
                     {{ application_data.personal_details_data.address_town_city }}<br>
+                    {% if application_data.personal_details_data.address_country %}
+                        {{ application_data.personal_details_data.address_country }}<br>
+                    {% endif %}
                     {{ application_data.personal_details_data.address_postcode }}
                 {% endmacro %}
                 {{ check_your_answers_row(

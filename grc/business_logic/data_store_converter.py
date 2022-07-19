@@ -67,6 +67,9 @@ def convert_weakly_typed_to_strongly_typed(user_input) -> ApplicationData:
         if 'town' in user_input['personalDetails']['address']:
             application_data.personal_details_data.address_town_city = \
                 user_input['personalDetails']['address']['town']
+        if 'country' in user_input['personalDetails']['address']:
+            application_data.personal_details_data.address_country = \
+                user_input['personalDetails']['address']['country']
         if 'postcode' in user_input['personalDetails']['address']:
             application_data.personal_details_data.address_postcode = \
                 user_input['personalDetails']['address']['postcode']
@@ -343,6 +346,7 @@ def convert_strongly_typed_to_weakly_typed(application_data: ApplicationData):
     if (application_data.personal_details_data.address_line_one is not None or
         application_data.personal_details_data.address_line_two is not None or
         application_data.personal_details_data.address_town_city is not None or
+        application_data.personal_details_data.address_country is not None or
         application_data.personal_details_data.address_postcode is not None):
         user_input['personalDetails']['address'] = {}
         user_input['personalDetails']['address']['address_line_one'] = \
@@ -351,6 +355,8 @@ def convert_strongly_typed_to_weakly_typed(application_data: ApplicationData):
             application_data.personal_details_data.address_line_two
         user_input['personalDetails']['address']['town'] = \
             application_data.personal_details_data.address_town_city
+        user_input['personalDetails']['address']['country'] = \
+            application_data.personal_details_data.address_country
         user_input['personalDetails']['address']['postcode'] = \
             application_data.personal_details_data.address_postcode
 
@@ -364,10 +370,11 @@ def convert_strongly_typed_to_weakly_typed(application_data: ApplicationData):
             application_data.personal_details_data.contact_phone_number
         if application_data.personal_details_data.contact_by_post:
             user_input['personalDetails']['contactPreferences']['post'] = (
-                    user_input['personalDetails']['address']['address_line_one'] + ', ' +
-                    user_input['personalDetails']['address']['address_line_two'] + ', ' +
-                    user_input['personalDetails']['address']['town'] + ', ' +
-                    user_input['personalDetails']['address']['postcode']
+                    application_data.personal_details_data.address_line_one + ', ' +
+                    (application_data.personal_details_data.address_line_two + ', ' if application_data.personal_details_data.address_line_two else '') +
+                    application_data.personal_details_data.address_town_city + ', ' +
+                    (application_data.personal_details_data.address_country + ', ' if application_data.personal_details_data.address_country else '') +
+                    application_data.personal_details_data.address_postcode
                 ).replace(', , ', ', ')
 
     if application_data.personal_details_data.contact_dates_should_avoid is not None:

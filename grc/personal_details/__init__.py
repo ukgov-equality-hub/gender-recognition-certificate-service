@@ -150,6 +150,7 @@ def address():
         application_data.personal_details_data.address_line_one = form.address_line_one.data
         application_data.personal_details_data.address_line_two = form.address_line_two.data
         application_data.personal_details_data.address_town_city = form.town.data
+        application_data.personal_details_data.address_country = form.country.data
         application_data.personal_details_data.address_postcode = form.postcode.data
         DataStore.save_application(application_data)
 
@@ -159,12 +160,14 @@ def address():
         form.address_line_one.data = application_data.personal_details_data.address_line_one
         form.address_line_two.data = application_data.personal_details_data.address_line_two
         form.town.data = application_data.personal_details_data.address_town_city
+        form.country.data = application_data.personal_details_data.address_country
         form.postcode.data = application_data.personal_details_data.address_postcode
 
     return render_template(
         'personal-details/address.html',
         form=form,
-        back=get_previous_page(application_data, 'personalDetails.previousNamesCheck')
+        back=get_previous_page(application_data, 'personalDetails.previousNamesCheck'),
+        countries=[{ 'Value': Value, 'Option': Option } for Value, Option in form.country.choices]
     )
 
 
