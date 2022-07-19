@@ -24,6 +24,7 @@ class PersonalDetailsData:
     address_line_one: str = None
     address_line_two: str = None
     address_town_city: str = None
+    address_country: str = None
     address_postcode: str = None
 
     contact_email_address: str = None
@@ -42,6 +43,7 @@ class PersonalDetailsData:
             self.address_line_one + ', ' +
             ((self.address_line_two + ', ') if self.address_line_two else '') +
             self.address_town_city + ', ' +
+            ((self.address_country + ', ') if self.address_country else '') +
             self.address_postcode
         )
 
@@ -75,7 +77,7 @@ class PersonalDetailsData:
         if self.changed_name_to_reflect_gender is None:
             return ListStatus.IN_PROGRESS
 
-        if self.address_line_one is None or self.address_town_city is None or self.address_postcode is None:
+        if self.address_line_one is None or self.address_town_city is None or self.address_country is None or self.address_postcode is None:
             return ListStatus.IN_PROGRESS
 
         if self.contact_email_address is None and self.contact_phone_number is None and self.contact_by_post is None:

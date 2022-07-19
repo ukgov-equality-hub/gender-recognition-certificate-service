@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% import "govuk-design-system-templates/error-summary.html" as error_summary %}
 {% import "govuk-design-system-templates/text-input.html" as textInput %}
+{% import "govuk-design-system-templates/select-input.html" as selectInput %}
 
 {% block title %}What is your address?{% endblock %}
 
@@ -32,7 +33,7 @@
                             form,
                             fieldName='address_line_one',
                             textInputForOptions={
-                                'labelOptions':{ 'htmlOrText': 'Address line 1' },
+                                'labelOptions': { 'htmlOrText': 'Address line 1' },
                                 'autocomplete': 'address-line1'
                             }
                         ) }}
@@ -41,7 +42,7 @@
                             form,
                             fieldName='address_line_two',
                             textInputForOptions={
-                                'labelOptions':{ 'htmlOrText': 'Address line 2 (optional)' },
+                                'labelOptions': { 'htmlOrText': 'Address line 2 (optional)' },
                                 'autocomplete': 'address-line2'
                             }
                         ) }}
@@ -50,9 +51,18 @@
                             form,
                             fieldName='town',
                             textInputForOptions={
-                                'labelOptions':{ 'htmlOrText': 'Town or city' },
+                                'labelOptions': { 'htmlOrText': 'Town or city' },
                                 'autocomplete': 'address-level1',
                                 'classes': 'govuk-input--width-20'
+                            }
+                        ) }}
+
+                        {{ selectInput.renderFor(
+                            form,
+                            fieldName='country',
+                            selectInputForOptions={
+                                'labelOptions': { 'htmlOrText': 'Country (optional)' },
+                                'options': countries
                             }
                         ) }}
 
@@ -60,7 +70,7 @@
                             form,
                             fieldName='postcode',
                             textInputForOptions={
-                                'labelOptions':{ 'htmlOrText': 'Postcode' },
+                                'labelOptions': { 'htmlOrText': 'Postcode or zipcode' },
                                 'autocomplete': 'postal-code',
                                 'classes': 'govuk-input--width-10'
                             }
