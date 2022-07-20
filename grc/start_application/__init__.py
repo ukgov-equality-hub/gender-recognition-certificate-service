@@ -1,8 +1,10 @@
 from flask import Blueprint, flash, render_template, request, url_for, session
 from grc.business_logic.data_store import DataStore
+from grc.business_logic.data_structures.application_data import ApplicationData
 from grc.models import Application, ApplicationStatus
 from grc.start_application.forms import EmailAddressForm, SecurityCodeForm, OverseasCheckForm, \
     OverseasApprovedCheckForm, DeclerationForm, IsFirstVisitForm
+from grc.utils.get_next_page import get_next_page_global, get_previous_page_global
 from grc.utils.security_code import send_security_code
 from grc.utils.decorators import EmailRequired, LoginRequired, Unauthorized, ValidatedEmailRequired
 from grc.utils.reference_number import reference_number_string
@@ -168,16 +170,18 @@ def overseas_check():
         DataStore.save_application(application_data)
 
         if application_data.confirmation_data.gender_recognition_outside_uk:
-            return local_redirect(url_for('startApplication.overseas_approved_check'))
+            return get_next_page(application_data, 'startApplication.overseas_approved_check')
         else:
-            return local_redirect(url_for('startApplication.declaration'))
+            return get_next_page(application_data, 'startApplication.declaration')
 
-    else:
+    elif request.method == 'GET':
         form.overseasCheck.data = application_data.confirmation_data.gender_recognition_outside_uk
-        return render_template(
-            'start-application/overseas-check.html',
-            form=form
-        )
+
+    return render_template(
+        'start-application/overseas-check.html',
+        form=form,
+        back=get_previous_page(application_data, 'startApplication.reference')
+    )
 
 
 @startApplication.route('/overseas-approved-check', methods=['GET', 'POST'])
@@ -190,14 +194,16 @@ def overseas_approved_check():
         application_data.confirmation_data.gender_recognition_from_approved_country = strtobool(form.overseasApprovedCheck.data)
         DataStore.save_application(application_data)
 
-        return local_redirect(url_for('startApplication.declaration'))
+        return get_next_page(application_data, 'startApplication.declaration')
 
-    else:
+    elif request.method == 'GET':
         form.overseasApprovedCheck.data = application_data.confirmation_data.gender_recognition_from_approved_country
-        return render_template(
-            'start-application/overseas-approved-check.html',
-            form=form
-        )
+
+    return render_template(
+        'start-application/overseas-approved-check.html',
+        form=form,
+        back=get_previous_page(application_data, 'startApplication.overseas_check')
+    )
 
 
 @startApplication.route('/declaration', methods=['GET', 'POST'])
@@ -205,31 +211,25 @@ def overseas_approved_check():
 def declaration():
     form = DeclerationForm()
     application_data = DataStore.load_application_by_session_reference_number()
-    back = (url_for('startApplication.overseas_approved_check')
-            if application_data.confirmation_data.gender_recognition_outside_uk
-            else url_for('startApplication.overseas_check'))
+    back_link = ('startApplication.overseas_approved_check'
+                 if application_data.confirmation_data.gender_recognition_outside_uk
+                 else 'startApplication.overseas_check')
 
     if request.method == 'POST':
         if form.validate_on_submit():
             application_data.confirmation_data.consent_to_GRO_contact = form.consent.data
             DataStore.save_application(application_data)
 
-            return local_redirect(url_for('taskList.index'))
-
-        return render_template(
-            'start-application/declaration.html',
-            form=form,
-            back=back
-        )
+            return get_next_page(application_data, 'taskList.index')
 
     else:
         form.consent.data = application_data.confirmation_data.consent_to_GRO_contact
 
-        return render_template(
-            'start-application/declaration.html',
-            form=form,
-            back=back
-        )
+    return render_template(
+        'start-application/declaration.html',
+        form=form,
+        back=get_previous_page(application_data, back_link)
+    )
 
 
 @startApplication.route('/clearsession', methods=['GET'])
@@ -237,3 +237,19 @@ def declaration():
 def clearsession():
     session.clear()
     return local_redirect(url_for('startApplication.index'))
+
+
+def get_next_page(application_data: ApplicationData, next_page_in_journey: str):
+    return get_next_page_global(
+        next_page_in_journey=next_page_in_journey,
+        section_check_your_answers_page=None,
+        section_status=application_data.confirmation_data.section_status,
+        application_data=application_data)
+
+
+def get_previous_page(application_data: ApplicationData, previous_page_in_journey: str):
+    return get_previous_page_global(
+        previous_page_in_journey=previous_page_in_journey,
+        section_check_your_answers_page=None,
+        section_status=application_data.confirmation_data.section_status,
+        application_data=application_data)

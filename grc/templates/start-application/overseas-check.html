@@ -5,7 +5,7 @@
 {% block title %}Have you ever been issued a Gender Recognition Certificate (or its equivalent) in another country?{% endblock %}
 
 {% block backLink %}
-    <a href="{{ url_for('startApplication.reference') }}" class="govuk-back-link">Back</a>
+    <a href="{{ back }}" class="govuk-back-link">Back</a>
 {% endblock %}
 
 {% block content %}
@@ -14,7 +14,7 @@
 
             {{ error_summary.renderFor(form) }}
 
-            <form method="POST" action="{{ url_for('startApplication.overseas_check') }}">
+            <form method="POST" action="#">
                 {{ form.csrf_token }}
 
                 {{ radios.renderFor(

@@ -5,7 +5,7 @@
 {% block title %}Declaration of consent{% endblock %}
 
 {% block backLink %}
-    <a href="{{ url_for('partnershipDetails.stayTogether') }}" class="govuk-back-link">Back</a>
+    <a href="{{ back }}" class="govuk-back-link">Back</a>
 {% endblock %}
 
 {% block content %}
@@ -36,7 +36,7 @@
                 and sign it in front of someone authorised to administer oaths.
             </p>
 
-            <form method="POST" action="{{ url_for('partnershipDetails.partnerAgrees') }}">
+            <form method="POST" action="#">
                 {{ form.csrf_token }}
 
                 {{ radios.renderFor(

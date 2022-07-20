@@ -30,7 +30,7 @@
                 birth certificate and, if appropriate, a new certificate for your marriage or civil partnership.
             </p>
 
-            <form method="POST" action="{{ url_for('startApplication.declaration') }}">
+            <form method="POST" action="#">
                 {{ form.csrf_token }}
 
                 {{ checkbox_single.renderFor(

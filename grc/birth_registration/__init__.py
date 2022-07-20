@@ -1,10 +1,12 @@
 import datetime
 from flask import Blueprint, render_template, request, url_for
 from grc.business_logic.data_store import DataStore
+from grc.business_logic.data_structures.application_data import ApplicationData
 from grc.business_logic.data_structures.birth_registration_data import AdoptedInTheUkEnum
 from grc.list_status import ListStatus
 from grc.birth_registration.forms import NameForm, DobForm, UkCheckForm, CountryForm, PlaceOfBirthForm, MothersNameForm, FatherNameCheckForm, FathersNameForm, AdoptedForm, AdoptedUKForm, ForcesForm, CheckYourAnswers
 from grc.utils.decorators import LoginRequired
+from grc.utils.get_next_page import get_next_page_global, get_previous_page_global
 from grc.utils.redirect import local_redirect
 from grc.utils.strtobool import strtobool
 
@@ -23,11 +25,7 @@ def index():
         application_data.birth_registration_data.last_name = form.last_name.data
         DataStore.save_application(application_data)
 
-        next_page = ('birthRegistration.checkYourAnswers'
-                     if application_data.birth_registration_data.section_status == ListStatus.COMPLETED
-                     else 'birthRegistration.dob')
-
-        return local_redirect(url_for(next_page))
+        return get_next_page(application_data, 'birthRegistration.dob')
 
     if request.method == 'GET':
         form.first_name.data = application_data.birth_registration_data.first_name
@@ -36,7 +34,8 @@ def index():
 
     return render_template(
         'birth-registration/name.html',
-        form=form
+        form=form,
+        back=get_previous_page(application_data, 'taskList.index')
     )
 
 
@@ -53,11 +52,7 @@ def dob():
             int(form.day.data))
         DataStore.save_application(application_data)
 
-        next_page = ('birthRegistration.checkYourAnswers'
-                     if application_data.birth_registration_data.section_status == ListStatus.COMPLETED
-                     else 'birthRegistration.ukCheck')
-
-        return local_redirect(url_for(next_page))
+        return get_next_page(application_data, 'birthRegistration.ukCheck')
 
     if request.method == 'GET':
         if application_data.birth_registration_data.date_of_birth is not None:
@@ -67,7 +62,8 @@ def dob():
 
     return render_template(
         'birth-registration/dob.html',
-        form=form
+        form=form,
+        back=get_previous_page(application_data, 'birthRegistration.index')
     )
 
 
@@ -97,24 +93,19 @@ def ukCheck():
         DataStore.save_application(application_data)
 
         if application_data.birth_registration_data.birth_registered_in_uk:
-            if application_data.birth_registration_data.town_city_of_birth is not None:
-                next_page = 'birthRegistration.checkYourAnswers'
-            else:
-                next_page = 'birthRegistration.placeOfBirth'
+            next_page = 'birthRegistration.placeOfBirth'
         else:
-            if application_data.birth_registration_data.country_of_birth is not None:
-                next_page = 'birthRegistration.checkYourAnswers'
-            else:
-                next_page = 'birthRegistration.country'
+            next_page = 'birthRegistration.country'
 
-        return local_redirect(url_for(next_page))
+        return get_next_page(application_data, next_page)
 
     else:
         form.birth_registered_in_uk.data = application_data.birth_registration_data.birth_registered_in_uk
 
     return render_template(
         'birth-registration/uk-check.html',
-        form=form
+        form=form,
+        back=get_previous_page(application_data, 'birthRegistration.dob')
     )
 
 
@@ -128,14 +119,15 @@ def country():
         application_data.birth_registration_data.country_of_birth = form.country_of_birth.data
         DataStore.save_application(application_data)
 
-        return local_redirect(url_for('birthRegistration.checkYourAnswers'))
+        return get_next_page(application_data, 'birthRegistration.checkYourAnswers')
 
     if request.method == 'GET':
         form.country_of_birth.data = application_data.birth_registration_data.country_of_birth
 
     return render_template(
         'birth-registration/country.html',
-        form=form
+        form=form,
+        back=get_previous_page(application_data, 'birthRegistration.ukCheck')
     )
 
 
@@ -149,18 +141,15 @@ def placeOfBirth():
         application_data.birth_registration_data.town_city_of_birth = form.place_of_birth.data
         DataStore.save_application(application_data)
 
-        next_page = ('birthRegistration.checkYourAnswers'
-                     if application_data.birth_registration_data.section_status == ListStatus.COMPLETED
-                     else 'birthRegistration.mothersName')
-
-        return local_redirect(url_for(next_page))
+        return get_next_page(application_data, 'birthRegistration.mothersName')
 
     if request.method == 'GET':
         form.place_of_birth.data = application_data.birth_registration_data.town_city_of_birth
 
     return render_template(
         'birth-registration/place-of-birth.html',
-        form=form
+        form=form,
+        back=get_previous_page(application_data, 'birthRegistration.ukCheck')
     )
 
 
@@ -176,20 +165,19 @@ def mothersName():
         application_data.birth_registration_data.mothers_maiden_name = form.maiden_name.data
         DataStore.save_application(application_data)
 
-        next_page = ('birthRegistration.checkYourAnswers'
-                     if application_data.birth_registration_data.section_status == ListStatus.COMPLETED
-                     else 'birthRegistration.fathersNameCheck')
-
-        return local_redirect(url_for(next_page))
+        return get_next_page(application_data, 'birthRegistration.fathersNameCheck')
 
     if request.method == 'GET':
         form.first_name.data = application_data.birth_registration_data.mothers_first_name
         form.last_name.data = application_data.birth_registration_data.mothers_last_name
         form.maiden_name.data = application_data.birth_registration_data.mothers_maiden_name
 
+    back_link = get_previous_page(application_data, 'birthRegistration.placeOfBirth')
+
     return render_template(
         'birth-registration/mothers-name.html',
-        form=form
+        form=form,
+        back=back_link
     )
 
 
@@ -209,26 +197,20 @@ def fathersNameCheck():
 
         DataStore.save_application(application_data)
 
-        if application_data.birth_registration_data.fathers_name_on_birth_certificate and \
-            (application_data.birth_registration_data.fathers_first_name is None or
-             application_data.birth_registration_data.fathers_last_name is None):
-            # We are missing Father's Name - go to that page (even if we're IN_REVIEW)
-            next_page = 'birthRegistration.fathersName'
-        elif application_data.birth_registration_data.section_status == ListStatus.COMPLETED:
-            next_page = 'birthRegistration.checkYourAnswers'
-        elif application_data.birth_registration_data.fathers_name_on_birth_certificate:
+        if application_data.birth_registration_data.fathers_name_on_birth_certificate:
             next_page = 'birthRegistration.fathersName'
         else:
             next_page = 'birthRegistration.adopted'
 
-        return local_redirect(url_for(next_page))
+        return get_next_page(application_data, next_page)
 
     else:
         form.fathers_name_on_certificate.data = application_data.birth_registration_data.fathers_name_on_birth_certificate
 
     return render_template(
         'birth-registration/fathers-name-check.html',
-        form=form
+        form=form,
+        back=get_previous_page(application_data, 'birthRegistration.mothersName')
     )
 
 
@@ -243,11 +225,7 @@ def fathersName():
         application_data.birth_registration_data.fathers_last_name = form.last_name.data
         DataStore.save_application(application_data)
 
-        next_page = ('birthRegistration.checkYourAnswers'
-                     if application_data.birth_registration_data.section_status == ListStatus.COMPLETED
-                     else 'birthRegistration.adopted')
-
-        return local_redirect(url_for(next_page))
+        return get_next_page(application_data, 'birthRegistration.adopted')
 
     if request.method == 'GET':
         form.first_name.data = application_data.birth_registration_data.fathers_first_name
@@ -255,7 +233,8 @@ def fathersName():
 
     return render_template(
         'birth-registration/fathers-name.html',
-        form=form
+        form=form,
+        back=get_previous_page(application_data, 'birthRegistration.fathersNameCheck')
     )
 
 
@@ -278,18 +257,12 @@ def adopted():
 
         DataStore.save_application(application_data)
 
-        if application_data.birth_registration_data.adopted and \
-           application_data.birth_registration_data.adopted_in_the_uk is None:
-            # We are missing "Adopted in the UK" - go to that page (even if we're IN_REVIEW)
-            next_page = 'birthRegistration.adoptedUK'
-        elif application_data.birth_registration_data.section_status == ListStatus.COMPLETED:
-            next_page = 'birthRegistration.checkYourAnswers'
-        elif application_data.birth_registration_data.adopted:
+        if application_data.birth_registration_data.adopted:
             next_page = 'birthRegistration.adoptedUK'
         else:
             next_page = 'birthRegistration.forces'
 
-        return local_redirect(url_for(next_page))
+        return get_next_page(application_data, next_page)
 
     if request.method == 'GET':
         form.adopted.data = application_data.birth_registration_data.adopted
@@ -297,7 +270,7 @@ def adopted():
     return render_template(
         'birth-registration/adopted.html',
         form=form,
-        back=back
+        back=get_previous_page(application_data, back)
     )
 
 
@@ -315,7 +288,7 @@ def adoptedUK():
                      if application_data.birth_registration_data.section_status == ListStatus.COMPLETED
                      else 'birthRegistration.forces')
 
-        return local_redirect(url_for(next_page))
+        return get_next_page(application_data, next_page)
 
     if request.method == 'GET':
         form.adopted_uk.data = (
@@ -324,7 +297,8 @@ def adoptedUK():
 
     return render_template(
         'birth-registration/adopted-uk.html',
-        form=form
+        form=form,
+        back=get_previous_page(application_data, 'birthRegistration.adopted')
     )
 
 
@@ -338,15 +312,20 @@ def forces():
         application_data.birth_registration_data.forces_registration = strtobool(form.forces.data)
         DataStore.save_application(application_data)
 
-        return local_redirect(url_for('birthRegistration.checkYourAnswers'))
+        return get_next_page(application_data, 'birthRegistration.checkYourAnswers')
 
     if request.method == 'GET':
         form.forces.data = application_data.birth_registration_data.forces_registration
 
+    back_link = ('birthRegistration.adoptedUK'
+                 if application_data.birth_registration_data.adopted
+                 else 'birthRegistration.adopted')
+
     return render_template(
         'birth-registration/forces.html',
         form=form,
-        application_data=application_data
+        application_data=application_data,
+        back=get_previous_page(application_data, back_link)
     )
 
 
@@ -362,8 +341,29 @@ def checkYourAnswers():
     if request.method == 'POST':
         return local_redirect(url_for('taskList.index'))
 
+    back_link = ('birthRegistration.forces'
+                 if application_data.birth_registration_data.birth_registered_in_uk
+                 else 'birthRegistration.country')
+
     return render_template(
         'birth-registration/check-your-answers.html',
         form=form,
-        application_data=application_data
+        application_data=application_data,
+        back=get_previous_page(application_data, back_link)
     )
+
+
+def get_next_page(application_data: ApplicationData, next_page_in_journey: str):
+    return get_next_page_global(
+        next_page_in_journey=next_page_in_journey,
+        section_check_your_answers_page='birthRegistration.checkYourAnswers',
+        section_status=application_data.birth_registration_data.section_status,
+        application_data=application_data)
+
+
+def get_previous_page(application_data: ApplicationData, previous_page_in_journey: str):
+    return get_previous_page_global(
+        previous_page_in_journey=previous_page_in_journey,
+        section_check_your_answers_page='birthRegistration.checkYourAnswers',
+        section_status=application_data.birth_registration_data.section_status,
+        application_data=application_data)

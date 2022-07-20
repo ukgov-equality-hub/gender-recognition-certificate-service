@@ -5,7 +5,7 @@
 {% block title %}Were you previously married or in a civil partnership, and your spouse or partner died?{% endblock %}
 
 {% block backLink %}
-    <a href="{{ url_for('partnershipDetails.index') }}" class="govuk-back-link">Back</a>
+    <a href="{{ back }}" class="govuk-back-link">Back</a>
 {% endblock %}
 
 {% block content %}
@@ -14,7 +14,7 @@
 
             {{ error_summary.renderFor(form) }}
 
-            <form method="POST">
+            <form method="POST" action="#">
                 {{ form.csrf_token }}
 
                 {{ radios.renderFor(

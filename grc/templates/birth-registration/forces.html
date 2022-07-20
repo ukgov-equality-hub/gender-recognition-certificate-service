@@ -5,10 +5,7 @@
 {% block title %}Was your birth registered by a Forces registering service?{% endblock %}
 
 {% block backLink %}
-    {% set backLink = (url_for('birthRegistration.adoptedUK')
-                       if application_data.birth_registration_data.adopted
-                       else url_for('birthRegistration.adopted')) %}
-    <a href="{{ backLink }}" class="govuk-back-link">Back</a>
+    <a href="{{ back }}" class="govuk-back-link">Back</a>
 {% endblock %}
 
 {% block content %}
@@ -17,7 +14,7 @@
 
             {{ error_summary.renderFor(form) }}
 
-            <form method="POST" action="{{ url_for('birthRegistration.forces') }}">
+            <form method="POST" action="#">
                 {{ form.csrf_token }}
 
                 {{ radios.renderFor(

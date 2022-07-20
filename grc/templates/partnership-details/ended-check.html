@@ -5,7 +5,7 @@
 {% block title %}Have you ever been married or in a civil partnership that ended?{% endblock %}
 
 {% block backLink %}
-    <a href="{{ url_for('partnershipDetails.partnerDied') }}" class="govuk-back-link">Back</a>
+    <a href="{{ back }}" class="govuk-back-link">Back</a>
 {% endblock %}
 
 {% block content %}
@@ -14,7 +14,7 @@
 
             {{ error_summary.renderFor(form) }}
 
-            <form method="POST" action="{{ url_for('partnershipDetails.endedCheck') }}">
+            <form method="POST" action="#">
                 {{ form.csrf_token }}
 
                 {{ radios.renderFor(

@@ -365,7 +365,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     # Click each "Change" link to check it takes us to the correct page
     await asserts.change_links_to_url(link_text='Change if you are currently married or in a civil partnership', expected_url='/partnership-details')
     await asserts.change_links_to_url(link_text='Change if you plan to remain married after receiving your Gender Recognition Certificate', expected_url='/partnership-details/stay-together')
-    await asserts.change_links_to_url(link_text='Change if you understand that you will receive an Interim GRC', expected_url='/partnership-details/interim-check')
+    await asserts.change_links_to_url(link_text='Change if you understand that you will receive an Interim GRC', expected_url='/partnership-details/interim-check', save_and_continue_button_text='Continue')
 
     # Click "Back" to get back to the "Stay Together" page, then choose "Yes"
     await helpers.click_button('Back')
@@ -531,7 +531,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.change_links_to_url(link_text='Change if you are currently married or in a civil partnership', expected_url='/partnership-details')
     await asserts.change_links_to_url(link_text='Change if you plan to remain married after receiving your Gender Recognition Certificate', expected_url='/partnership-details/stay-together')
     await asserts.change_links_to_url(link_text='Change if you can provide a declaration of consent from your spouse', expected_url='/partnership-details/partner-agrees')
-    await asserts.change_links_to_url(link_text='Change if you understand that you will receive an Interim GRC', expected_url='/partnership-details/interim-check')
+    await asserts.change_links_to_url(link_text='Change if you understand that you will receive an Interim GRC', expected_url='/partnership-details/interim-check', save_and_continue_button_text='Continue')
 
     # Click "Back" to get back to the "Partner Agrees" page, then choose "Yes"
     await helpers.click_button('Back')
@@ -765,7 +765,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     # Click each "Change" link to check it takes us to the correct page
     await asserts.change_links_to_url(link_text='Change if you are currently married or in a civil partnership', expected_url='/partnership-details')
     await asserts.change_links_to_url(link_text='Change if you plan to remain in your civil partnership after receiving your Gender Recognition Certificate', expected_url='/partnership-details/stay-together')
-    await asserts.change_links_to_url(link_text='Change if you understand that you will receive an Interim GRC', expected_url='/partnership-details/interim-check')
+    await asserts.change_links_to_url(link_text='Change if you understand that you will receive an Interim GRC', expected_url='/partnership-details/interim-check', save_and_continue_button_text='Continue')
 
     # Click "Back" to get back to the "Stay Together" page, then choose "Yes"
     await helpers.click_button('Back')
@@ -922,7 +922,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.change_links_to_url(link_text='Change if you are currently married or in a civil partnership', expected_url='/partnership-details')
     await asserts.change_links_to_url(link_text='Change if you plan to remain in your civil partnership after receiving your Gender Recognition Certificate', expected_url='/partnership-details/stay-together')
     await asserts.change_links_to_url(link_text='Change if you can provide a declaration of consent from your civil partner', expected_url='/partnership-details/partner-agrees')
-    await asserts.change_links_to_url(link_text='Change if you understand that you will receive an Interim GRC', expected_url='/partnership-details/interim-check')
+    await asserts.change_links_to_url(link_text='Change if you understand that you will receive an Interim GRC', expected_url='/partnership-details/interim-check', save_and_continue_button_text='Continue')
 
     # Click "Back" to get back to the "Partner Agrees" page, then choose "Yes"
     await helpers.click_button('Back')

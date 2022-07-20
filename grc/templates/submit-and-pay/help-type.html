@@ -6,7 +6,7 @@
 {% block title %}Applying for help with the fee{% endblock %}
 
 {% block backLink %}
-    <a href="{{ url_for('submitAndPay.index') }}" class="govuk-back-link">Back</a>
+    <a href="{{ back }}" class="govuk-back-link">Back</a>
 {% endblock %}
 
 {% block content %}
@@ -28,7 +28,7 @@
                 You can also download the EX160 form from that page and submit it with your application.
             </p>
 
-            <form method="POST" action="{{ url_for('submitAndPay.helpType') }}">
+            <form method="POST" action="#">
                 {{ form.csrf_token }}
 
                 {{ radios.renderFor(

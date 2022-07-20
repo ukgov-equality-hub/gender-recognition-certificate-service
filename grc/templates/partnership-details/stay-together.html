@@ -8,7 +8,7 @@
 {% block title %}Do you plan to remain {{ inYourPartnershipName }} after you receive your Gender Recognition Certificate?{% endblock %}
 
 {% block backLink %}
-    <a href="{{ url_for('partnershipDetails.index') }}" class="govuk-back-link">Back</a>
+    <a href="{{ back }}" class="govuk-back-link">Back</a>
 {% endblock %}
 
 {% block content %}
@@ -17,7 +17,7 @@
 
             {{ error_summary.renderFor(form) }}
 
-            <form method="POST" action="{{ url_for('partnershipDetails.stayTogether') }}">
+            <form method="POST" action="#">
                 {{ form.csrf_token }}
 
                 {{ radios.renderFor(

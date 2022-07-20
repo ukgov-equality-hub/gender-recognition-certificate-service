@@ -7,12 +7,14 @@ from requests.structures import CaseInsensitiveDict
 import json
 import uuid
 from grc.business_logic.data_store import DataStore
+from grc.business_logic.data_structures.application_data import ApplicationData
 from grc.business_logic.data_structures.submit_and_pay_data import HelpWithFeesType
 from grc.external_services.gov_uk_notify import GovUkNotify
 from grc.models import db, Application, ApplicationStatus
 from grc.list_status import ListStatus
 from grc.submit_and_pay.forms import MethodCheckForm, HelpTypeForm, CheckYourAnswers
 from grc.utils.decorators import LoginRequired
+from grc.utils.get_next_page import get_next_page_global, get_previous_page_global
 from grc.utils.redirect import local_redirect
 from grc.utils.strtobool import strtobool
 
@@ -35,16 +37,17 @@ def index():
         DataStore.save_application(application_data)
 
         if application_data.submit_and_pay_data.applying_for_help_with_fee:
-            return local_redirect(url_for('submitAndPay.helpType'))
+            return get_next_page(application_data, 'submitAndPay.helpType')
         else:
-            return local_redirect(url_for('submitAndPay.checkYourAnswers'))
+            return get_next_page(application_data, 'submitAndPay.checkYourAnswers')
 
     if request.method == 'GET':
         form.applying_for_help_with_fee.data = application_data.submit_and_pay_data.applying_for_help_with_fee
 
     return render_template(
         'submit-and-pay/method.html',
-        form=form
+        form=form,
+        back=get_previous_page(application_data, 'taskList.index')
     )
 
 
@@ -66,7 +69,7 @@ def helpType():
 
             DataStore.save_application(application_data)
 
-            return local_redirect(url_for('submitAndPay.checkYourAnswers'))
+            return get_next_page(application_data, 'submitAndPay.checkYourAnswers')
 
     if request.method == 'GET' and application_data.submit_and_pay_data.how_applying_for_help_with_fees is not None:
         form.how_applying_for_fees.data = application_data.submit_and_pay_data.how_applying_for_help_with_fees.name
@@ -74,7 +77,8 @@ def helpType():
 
     return render_template(
         'submit-and-pay/help-type.html',
-        form=form
+        form=form,
+        back=get_previous_page(application_data, 'submitAndPay.index')
     )
 
 
@@ -127,10 +131,16 @@ def checkYourAnswers():
             except BaseException as err:
                 flash(err, 'error')
 
+    if application_data.submit_and_pay_data.applying_for_help_with_fee:
+        back_link = 'submitAndPay.helpType'
+    else:
+        back_link = 'submitAndPay.index'
+
     return render_template(
         'submit-and-pay/check-your-answers.html',
         form=form,
-        application_data=application_data
+        application_data=application_data,
+        back=get_previous_page(application_data, back_link)
     )
 
 
@@ -247,3 +257,19 @@ def mark_files_created(reference_number: str):
     if application is not None:
         application.filesCreated = True
         db.session.commit()
+
+
+def get_next_page(application_data: ApplicationData, next_page_in_journey: str):
+    return get_next_page_global(
+        next_page_in_journey=next_page_in_journey,
+        section_check_your_answers_page=None,
+        section_status=application_data.section_status_submit_and_pay_data,
+        application_data=application_data)
+
+
+def get_previous_page(application_data: ApplicationData, previous_page_in_journey: str):
+    return get_previous_page_global(
+        previous_page_in_journey=previous_page_in_journey,
+        section_check_your_answers_page=None,
+        section_status=application_data.section_status_submit_and_pay_data,
+        application_data=application_data)

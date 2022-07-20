@@ -5,7 +5,7 @@
 {% block title %}Were you adopted in the United Kingdom?{% endblock %}
 
 {% block backLink %}
-    <a href="{{ url_for('birthRegistration.adopted') }}" class="govuk-back-link">Back</a>
+    <a href="{{ back }}" class="govuk-back-link">Back</a>
 {% endblock %}
 
 {% block content %}
@@ -14,7 +14,7 @@
 
             {{ error_summary.renderFor(form) }}
 
-            <form method="POST" action="{{ url_for('birthRegistration.adoptedUK') }}">
+            <form method="POST" action="#">
                 {{ form.csrf_token }}
 
                 {{ radios.renderFor(

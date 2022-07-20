@@ -5,7 +5,7 @@
 {% block title %}What country was your birth registered in?{% endblock %}
 
 {% block backLink %}
-    <a href="{{ url_for('birthRegistration.ukCheck') }}" class="govuk-back-link">Back</a>
+    <a href="{{ back }}" class="govuk-back-link">Back</a>
 {% endblock %}
 
 {% block content %}
@@ -14,7 +14,7 @@
 
             {{ error_summary.renderFor(form) }}
 
-            <form method="POST" action="{{ url_for('birthRegistration.country') }}">
+            <form method="POST" action="#">
                 {{ form.csrf_token }}
 
                 {{ textInput.renderFor(
