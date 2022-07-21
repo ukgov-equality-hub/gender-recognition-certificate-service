@@ -149,13 +149,13 @@
 
 
             <p class="govuk-body">
-                <a href="{{ url_for('applications.download', reference_number=application.reference_number) }}"
+                <a href="{{ url_for('applications.download', reference_number=reference_number) }}"
                    target="_blank" class="govuk-link">
                     Download application (PDF)
                 </a>
             </p>
             <p class="govuk-body govuk-!-margin-bottom-8">
-                <a href="{{ url_for('applications.attachments', reference_number=application.reference_number) }}"
+                <a href="{{ url_for('applications.attachments', reference_number=reference_number) }}"
                    target="_blank" class="govuk-link">
                     Download attachments (ZIP file)
                 </a>
@@ -218,7 +218,7 @@
                     {% if applicationData['submitAndPay']['method'] == 'Online' %}
                         {{ summary_list_item(
                             title='Payment reference',
-                            value=(payment_details['reference'])
+                            value=(reference_number)
                         ) }}
                     {% endif %}
 
@@ -535,16 +535,16 @@
                 {{ table_caption_and_head_rows(caption="Uploaded documents") }}
                 
                 {% macro uploadedDocumentsList(section) %}
-                    <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0">
+                    <ol class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0" style="list-style-type: auto;">
                         {% for item in applicationData[section]['files'] %}
                             <li>
                                 <a href="{{ request.host_url[:-1] + url_for('applications.downloadfile', file_name=item) }}"
                                    class="govuk-link">
-                                    {{ item | replace(applicationData['reference_number'] + '__' + section + '__', '') }}
+                                    {{ item | replace(reference_number + '__' + section + '__', '') }}
                                 </a>
                             </li>
                         {% endfor %}
-                    </ul>
+                    </ol>
                 {% endmacro %}
             
                 <tbody class="govuk-table__body">

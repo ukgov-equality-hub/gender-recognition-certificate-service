@@ -1,4 +1,4 @@
-{% macro adminapplication(application, reference_number, payment_details) %}
+{% macro adminapplication(application, reference_number) %}
     <h1>
         {% if (application.partnershipDetails.marriageCivilPartnership == 'Married' or application.partnershipDetails.marriageCivilPartnership == 'Civil partnership') and (application.partnershipDetails.stayTogether == 'No' or application.partnershipDetails.partnerAgrees == 'No') %}
             INTERIM CERTIFICATE APPLICATION: {{ reference_number }}
@@ -28,7 +28,7 @@
     <ul class="govuk-list govuk-list--bullet">
         <li>Payment method: <strong>{{ application.submitAndPay.method }}</strong></li>
         {% if application.submitAndPay.method == 'Online' %}
-            <li>Reference: <strong>{{ payment_details.reference }}</strong></li>
+            <li>Reference: <strong>{{ reference_number }}</strong></li>
         {% endif %}
         {% if application.submitAndPay.method == 'Help' %}
             <li>Help type: <strong>

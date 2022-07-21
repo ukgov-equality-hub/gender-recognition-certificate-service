@@ -66,17 +66,14 @@ class ApplicationFiles():
 
                 html_template = 'applications/download_user.html'
                 all_sections = self.sections
-                payment_details = None
                 if is_admin:
                     html_template = 'applications/download.html'
                     all_sections = ['statutoryDeclarations', 'marriageDocuments', 'nameChange', 'medicalReports', 'genderEvidence', 'overseasCertificate']
-                    payment_details = json.loads(application['submitAndPay']['paymentDetails'])
 
                 html = render_template(
                     html_template,
                     application=application,
-                    reference_number=reference_number,
-                    payment_details=payment_details
+                    reference_number=reference_number
                 )
 
                 import io

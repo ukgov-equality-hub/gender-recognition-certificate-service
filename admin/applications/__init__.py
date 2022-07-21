@@ -54,20 +54,16 @@ def index():
 @applications.route('/applications/<reference_number>', methods=['GET'])
 @AdminViewerRequired
 def view(reference_number):
-    import json
-
     application = Application.query.filter_by(
         reference_number=reference_number
     ).first()
 
     logger.log(LogLevel.INFO, f"{logger.mask_email_address(session['signedIn'])} accessed application {reference_number}")
-    payment_details = json.loads(application.data()['submitAndPay']['paymentDetails']) if application.data()['submitAndPay']['method'] == 'Online' else None
 
     return render_template(
         'applications/view-application.html',
         application=application,
         reference_number=reference_number,
-        payment_details=payment_details,
         strptime=datetime.strptime,
         get_radio_pretty_value=get_radio_pretty_value
     )
