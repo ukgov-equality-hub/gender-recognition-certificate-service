@@ -28,8 +28,9 @@ class ApplicationFiles():
                 with zipfile.ZipFile(zip_buffer, 'x', zipfile.ZIP_DEFLATED, False) as zipper:
                     for section in self.sections:
                         if section in application and 'files' in application[section]:
-                            for object_name in application[section]['files']:
+                            for idx, object_name in enumerate(application[section]['files']):
                                 data = AwsS3Client().download_object(object_name)
+                                object_name = str(object_name).replace(f'__{section}__', f'__{section}__{idx + 1}_')
                                 zipper.writestr(object_name, data.getvalue())
 
                     data, _ = self.create_or_download_pdf(reference_number, application, attach_files=False, download=True)
