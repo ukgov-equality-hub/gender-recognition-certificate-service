@@ -1,9 +1,13 @@
+import ast
 import os
 import io
 from datetime import datetime
+import jsonpickle
 from dateutil.relativedelta import relativedelta
-from flask import Blueprint, request, current_app
+from flask import Blueprint, request
 from sqlalchemy.sql import extract
+from grc.business_logic.data_store_converter import convert_weakly_typed_to_strongly_typed
+from grc.business_logic.data_structures.application_data import ApplicationData
 from grc.utils.decorators import JobTokenRequired
 from grc.models import db, Application, ApplicationStatus, SecurityCode
 from grc.utils.application_files import ApplicationFiles
@@ -15,6 +19,48 @@ jobs = Blueprint('jobs', __name__)
 @jobs.route('/jobs', methods=['GET'])
 def index():
     return ('', 200)
+
+
+@jobs.route('/jobs/check-user-input-formats', methods=['GET'])
+@JobTokenRequired
+def check_user_input_formats():
+    number_of_applications_in_old_format: int = 0
+    number_of_applications_in_new_format: int = 0
+
+    applications = Application.query.all()
+
+    for application in applications:
+        try:
+            application_data_obj: ApplicationData = jsonpickle.decode(application.user_input)
+            number_of_applications_in_new_format = number_of_applications_in_new_format + 1
+        except:
+            number_of_applications_in_old_format = number_of_applications_in_old_format + 1
+
+    return f"{number_of_applications_in_old_format} applications in old format. {number_of_applications_in_new_format} applications in new format"
+
+
+
+@jobs.route('/jobs/migrate-user-input-to-new-format', methods=['GET'])
+@JobTokenRequired
+def migrate_user_input_to_pickle_format():
+    number_of_applications_in_old_format: int = 0
+    number_of_applications_in_new_format: int = 0
+
+    applications = Application.query.all()
+
+    for application in applications:
+        try:
+            application_data_obj: ApplicationData = jsonpickle.decode(application.user_input)
+            number_of_applications_in_new_format = number_of_applications_in_new_format + 1
+        except:
+            application_data_obj = convert_weakly_typed_to_strongly_typed(ast.literal_eval(application.user_input))
+            number_of_applications_in_old_format = number_of_applications_in_old_format + 1
+            application.user_input = jsonpickle.encode(application_data_obj)
+
+    db.session.commit()
+
+    return f"Conversion complete. {number_of_applications_in_old_format} converted from old to new format. {number_of_applications_in_new_format} already in new format"
+
 
 
 @jobs.route('/jobs/create-files', methods=['GET'])
