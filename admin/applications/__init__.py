@@ -1,6 +1,6 @@
 from datetime import datetime
 from flask import Blueprint, render_template, url_for, session, make_response
-from grc.business_logic.data_structures.birth_registration_data import AdoptedInTheUkEnum
+from grc.business_logic.data_store import DataStore
 from grc.utils.decorators import AdminViewerRequired, AdminRequired
 from grc.models import db, Application, ApplicationStatus
 from grc.external_services.aws_s3_client import AwsS3Client
@@ -9,18 +9,6 @@ from grc.utils.logger import LogLevel, Logger
 
 applications = Blueprint('applications', __name__)
 logger = Logger()
-
-
-def get_radio_pretty_value(formName, fieldName, value):
-    if formName == 'AdoptedUKForm':
-        if value in ['Yes', AdoptedInTheUkEnum.ADOPTED_IN_THE_UK_YES]:
-            return 'Yes'
-        if value in ['No', AdoptedInTheUkEnum.ADOPTED_IN_THE_UK_NO]:
-            return 'No'
-        if value in ["DO_NOT_KNOW", AdoptedInTheUkEnum.ADOPTED_IN_THE_UK_DO_NOT_KNOW]:
-            return "I don't know"
-    else:
-        return None
 
 
 @applications.route('/applications', methods=['GET'])
@@ -54,18 +42,13 @@ def index():
 @applications.route('/applications/<reference_number>', methods=['GET'])
 @AdminViewerRequired
 def view(reference_number):
-    application = Application.query.filter_by(
-        reference_number=reference_number
-    ).first()
+    application_data = DataStore.load_application(reference_number)
 
     logger.log(LogLevel.INFO, f"{logger.mask_email_address(session['signedIn'])} accessed application {reference_number}")
 
     return render_template(
         'applications/view-application.html',
-        application=application,
-        reference_number=reference_number,
-        strptime=datetime.strptime,
-        get_radio_pretty_value=get_radio_pretty_value
+        application_data=application_data
     )
 
 

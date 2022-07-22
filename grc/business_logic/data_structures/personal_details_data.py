@@ -52,7 +52,11 @@ class PersonalDetailsData:
     @property
     def transition_date_formatted_MMMM_YYYY(self) -> str: return self.transition_date.strftime('%B %Y')
     @property
+    def transition_date_formatted_DD_MM_YYYY(self) -> str: return self.transition_date.strftime('%d/%m/%Y')
+    @property
     def statutory_declaration_date_formatted_DD_MMMM_YYYY(self) -> str: return self.statutory_declaration_date.strftime('%d %B %Y')
+    @property
+    def statutory_declaration_date_formatted_DD_MM_YYYY(self) -> str: return self.statutory_declaration_date.strftime('%d/%m/%Y')
     @property
     def changed_name_to_reflect_gender_formatted(self) -> str: return 'Yes' if self.changed_name_to_reflect_gender else 'No'
     @property
