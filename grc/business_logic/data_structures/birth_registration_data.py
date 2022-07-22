@@ -37,6 +37,8 @@ class BirthRegistrationData:
     @property
     def date_of_birth_formatted_DD_MMMM_YYYY(self) -> str: return self.date_of_birth.strftime('%d %B %Y')
     @property
+    def date_of_birth_formatted_DD_MM_YYYY_dots(self) -> str: return self.date_of_birth.strftime('%d.%m.%Y')
+    @property
     def birth_registered_in_uk_formatted(self) -> str: return 'Yes' if self.birth_registered_in_uk else 'No'
     @property
     def fathers_name_on_birth_certificate_formatted(self) -> str: return 'Yes' if self.fathers_name_on_birth_certificate else 'No'

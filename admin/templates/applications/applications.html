@@ -51,11 +51,12 @@
                             </thead>
                             <tbody class="govuk-table__body">
                                 {% for application in newApplications %}
+                                    {% set application_data = application.application_data() %}
                                     <tr class="govuk-table__row">
                                         <th scope="row" class="govuk-table__header">
-                                            {{ application.data().personalDetails.title }}
-                                            {{ application.data().personalDetails.first_name }}
-                                            <span style="text-decoration: underline;">{{ application.data().personalDetails.last_name }}</span>
+                                            {{ application_data.personal_details_data.title }}
+                                            {{ application_data.personal_details_data.first_names }}
+                                            <span style="text-decoration: underline;">{{ application_data.personal_details_data.last_name }}</span>
                                         </th>
                                         <td class="govuk-table__cell">
                                             {{ application.updated | format_date }}
@@ -67,7 +68,7 @@
                                                        class="govuk-link">
                                                         View application
                                                         <span class="govuk-visually-hidden">
-                                                            for {{ application.data().personalDetails.title }} {{ application.data().personalDetails.first_name }} {{ application.data().personalDetails.last_name }}
+                                                            for {{ application_data.personal_details_data.title }} {{ application_data.personal_details_data.first_names }} {{ application_data.personal_details_data.last_name }}
                                                         </span>
                                                     </a>
                                                 </li>
@@ -101,11 +102,12 @@
                             </thead>
                             <tbody class="govuk-table__body">
                                 {% for application in downloadedApplications %}
+                                    {% set application_data = application.application_data() %}
                                     <tr class="govuk-table__row">
                                         <th scope="row" class="govuk-table__header">
-                                            {{ application.data().personalDetails.title }}
-                                            {{ application.data().personalDetails.first_name }}
-                                            <span style="text-decoration: underline;">{{ application.data().personalDetails.last_name }}</span>
+                                            {{ application_data.personal_details_data.title }}
+                                            {{ application_data.personal_details_data.first_names }}
+                                            <span style="text-decoration: underline;">{{ application_data.personal_details_data.last_name }}</span>
                                         </th>
                                         <td class="govuk-table__cell">
                                             {{ application.updated | format_date }}
@@ -123,7 +125,7 @@
                                                        class="govuk-link">
                                                         View application
                                                         <span class="govuk-visually-hidden">
-                                                            for {{ application.data().personalDetails.title }} {{ application.data().personalDetails.first_name }} {{ application.data().personalDetails.last_name }}
+                                                            for {{ application_data.personal_details_data.title }} {{ application_data.personal_details_data.first_names }} {{ application_data.personal_details_data.last_name }}
                                                         </span>
                                                     </a>
                                                 </li>
@@ -133,7 +135,7 @@
                                                            class="govuk-link">
                                                             Mark application as complete
                                                             <span class="govuk-visually-hidden">
-                                                                for {{ application.data().personalDetails.title }} {{ application.data().personalDetails.first_name }} {{ application.data().personalDetails.last_name }}
+                                                                for {{ application_data.personal_details_data.title }} {{ application_data.personal_details_data.first_names }} {{ application_data.personal_details_data.last_name }}
                                                             </span>
                                                         </a>
                                                     </li>
@@ -170,11 +172,12 @@
                             </thead>
                             <tbody class="govuk-table__body">
                                 {% for application in completedApplications %}
+                                    {% set application_data = application.application_data() %}
                                     <tr class="govuk-table__row">
                                         <th scope="row" class="govuk-table__header">
-                                            {{ application.data().personalDetails.title }}
-                                            {{ application.data().personalDetails.first_name }}
-                                            <span style="text-decoration: underline;">{{ application.data().personalDetails.last_name }}</span>
+                                            {{ application_data.personal_details_data.title }}
+                                            {{ application_data.personal_details_data.first_names }}
+                                            <span style="text-decoration: underline;">{{ application_data.personal_details_data.last_name }}</span>
                                         </th>
                                         <td class="govuk-table__cell">
                                             {{ application.updated | format_date }}
@@ -190,7 +193,7 @@
                                                class="govuk-link">
                                                 View application
                                                 <span class="govuk-visually-hidden">
-                                                    for {{ application.data().personalDetails.title }} {{ application.data().personalDetails.first_name }} {{ application.data().personalDetails.last_name }}
+                                                    for {{ application_data.personal_details_data.title }} {{ application_data.personal_details_data.first_names }} {{ application_data.personal_details_data.last_name }}
                                                 </span>
                                             </a>
                                         </td>
