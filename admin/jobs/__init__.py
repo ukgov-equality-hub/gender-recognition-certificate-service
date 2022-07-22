@@ -30,13 +30,13 @@ def create_files():
         print('Creating attachments zipfile for application %s' % application.reference_number, flush=True)
         ApplicationFiles().create_or_download_attachments(
             application.reference_number,
-            application.data(),
+            application.application_data(),
             download=False
         )
         print('Creating pdf for application %s' % application.reference_number, flush=True)
         ApplicationFiles().create_or_download_pdf(
             application.reference_number,
-            application.data(),
+            application.application_data(),
             is_admin=True,
             attach_files=True,
             download=False
@@ -213,7 +213,7 @@ def application_notifications():
     for application in applications:
         ApplicationFiles().delete_application_files(
             application.reference_number,
-            application.data(),
+            application.application_data(),
         )
         application.email = ''
         application.user_input = ''
@@ -255,7 +255,7 @@ def application_notifications():
     for application in applications:
         ApplicationFiles().delete_application_files(
             application.reference_number,
-            application.data(),
+            application.application_data(),
         )
         application.email = ''
         application.user_input = ''

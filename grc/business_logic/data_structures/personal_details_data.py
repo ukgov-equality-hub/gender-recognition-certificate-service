@@ -46,6 +46,15 @@ class PersonalDetailsData:
             ((self.address_country + ', ') if self.address_country else '') +
             self.address_postcode
         )
+    @property
+    def address_with_line_breaks(self) -> str:
+        return (
+            self.address_line_one + '\n' +
+            ((self.address_line_two + '\n') if self.address_line_two else '') +
+            self.address_town_city + '\n' +
+            ((self.address_country + '\n') if self.address_country else '') +
+            self.address_postcode
+        )
 
     @property
     def affirmed_gender_formatted(self) -> str: return 'Male' if self.affirmed_gender == AffirmedGender.MALE else 'Female'

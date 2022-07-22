@@ -1,53 +1,13 @@
-{% if session['application']['birthRegistration']['ukCheck'] == 'Yes' and session['application' ]['birthRegistration']['adopted'] != 'Yes' %}
-* your original or a certified copy (https://www.gov.uk/certifying-a-document) of your full birth certificate
-{% endif %}
-
-{% if session['application']['birthRegistration']['ukCheck'] == 'Yes' and session['application']['birthRegistration']['adopted'] == 'Yes' %}
+{% if application_data.birth_registration_data.birth_registered_in_uk %}
+    {% if application_data.birth_registration_data.adopted %}
 * your original or a certified copy (https://www.gov.uk/certifying-a-document) of your full adoption certificate
-{% endif %}
-
-{% if session['application']['birthRegistration']['ukCheck'] == 'No' %}
+    {% else %}
+* your original or a certified copy (https://www.gov.uk/certifying-a-document) of your full birth certificate
+    {% endif %}
+{% else %}
 * an official confirmation of date of birth and birth gender
 {% endif %}
 
-{#
-<!-- {% if session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Neither' %}
-* a statutory declaration for single applicants (https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852944/t467-eng.pdf)
-{% endif %}
-
-{% if session['application']['partnershipDetails']['marriageCivilPartnership'] != 'Neither' %}
-* a statutory declaration for applicants who are married or in a civil partnership (https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852943/t466-eng.pdf)
-{% endif %}
-
-{% if session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Married' and session['application']['partnershipDetails']['stayTogether'] == 'Yes' %}
-* your spouse's statutory declaration (https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852946/t469-eng.pdf)
-{% endif %}
-
-{% if session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Civil partnership' and session['application']['partnershipDetails']['stayTogether'] == 'Yes' %}
-* your civil partner's statutory declaration (https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/852946/t469-eng.pdf)
-{% endif %}
-
-{% if session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Married' %}
-* your original marriage certificate or a certified copy (https://www.gov.uk/certifying-a-document)
-{% endif %}
-
-{% if session['application']['partnershipDetails']['marriageCivilPartnership'] == 'Civil partnership' %}
-* your original civil partnership certificate or a certified copy (https://www.gov.uk/certifying-a-document)
-{% endif %}
-
-{% if session['application']['partnershipDetails']['partnerDied'] == 'Yes' %}
-* a copy of your spouse or civil partner's death certificate
-{% endif %}
-
-{% if session['application']['partnershipDetails']['endedCheck'] == 'Yes' %}
-* a copy of your decree(s) dissolving the marriage or civil partnership
-{% endif %}
-
-{% if session['application']['confirmation']['overseasCheck'] == 'Yes' %}
-* official documentation that shows that your affirmed gender has been recognised in an approved country or territory
-{% endif %} -->
-#}
-
-{% if session['application']['submitAndPay']['helpType'] == 'Using the EX160 form' %}
+{% if application_data.submit_and_pay_data.is_using_ex160_form %}
 * an EX160 form (https://www.gov.uk/government/publications/apply-for-help-with-court-and-tribunal-fees)
 {% endif %}

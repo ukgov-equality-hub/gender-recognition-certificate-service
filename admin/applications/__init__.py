@@ -95,7 +95,7 @@ def download(reference_number):
         from grc.utils.application_files import ApplicationFiles
         bytes, file_name = ApplicationFiles().create_or_download_pdf(
             application.reference_number,
-            application.data(),
+            application.application_data(),
             is_admin=True,
             attach_files=True,
             download=True
@@ -153,7 +153,7 @@ def attachments(reference_number):
         from grc.utils.application_files import ApplicationFiles
         bytes, file_name = ApplicationFiles().create_or_download_attachments(
             application.reference_number,
-            application.data(),
+            application.application_data(),
             download=True
         )
 

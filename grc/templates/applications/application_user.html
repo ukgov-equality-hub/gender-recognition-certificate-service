@@ -1,157 +1,140 @@
-{% macro userapplication(application) %}
-<h1>
-    {% if (application.partnershipDetails.marriageCivilPartnership == 'Married' or application.partnershipDetails.marriageCivilPartnership == 'Civil partnership') and (application.partnershipDetails.stayTogether == 'No' or application.partnershipDetails.partnerAgrees == 'No') %}
-    INTERIM CERTIFICATE APPLICATION
-    {% else %}
-    FULL CERTIFICATE APPLICATION
-    {% endif %}
-</h1>
-
-<h4 class="govuk-heading-m">Confirmation</h4>
-<ul class="govuk-list govuk-list--bullet">
-    <li>Have you ever been issued a Gender Recognition Certificate (or it's equivalent) in another country? <strong>{{ application.confirmation.overseasCheck }}</strong></li>
-    <li>Do you have official documentation that shows your affirmed gender has been recognised in one of these countries or territories? <strong>{{ application.confirmation.overseasApprovedCheck }}</strong></li>
-    <li>I confirm that I meet the requirements for applying for a Gender Recognition Certificate and I consent to the General Register Office contacting me about my application: <strong>{{ application.confirmation.declaration }}</strong></li>
-</ul>
-
-<h4 class="govuk-heading-m">Personal details</h4>
-<ul class="govuk-list govuk-list--bullet">
-    <li>Name on certificate
-        <ul class="govuk-list govuk-list--bullet">
-            <li>Title: <strong>{{ application.personalDetails.title }}</strong></li>
-            <li>First name: <strong>{{ application.personalDetails.first_name }}</strong></li>
-            <li>Last name: <strong style="text-decoration: underline;">{{ application.personalDetails.last_name }}</strong></li>
-        </ul>
-    </li>
-    <li>Changed name: <strong>{{ application.personalDetails.previousNamesCheck }}</strong></li>
-    {% if 'contactPreferences' in application.personalDetails %}
-    <li>Contact preferences
-        <ul class="govuk-list govuk-list--bullet">
-            {% if application.personalDetails.contactPreferences.email != '' %}
-            <li>Email: <strong>{{ application.personalDetails.contactPreferences.email }}</strong></li>
-            {% endif %}
-            {% if application.personalDetails.contactPreferences.post != '' %}
-            <li>Post: <strong>{{ application.personalDetails.contactPreferences.post }}</strong></li>
-            {% endif %}
-            {% if application.personalDetails.contactPreferences.phone != '' %}
-            <li>Phone: <strong>{{ application.personalDetails.contactPreferences.phone }}</strong></li>
-            {% endif %}
-        </ul>
-    </li>
-    {% endif %}
-    {% if 'address' in application.personalDetails %}
-    <li>Address
-        <ul class="govuk-list govuk-list--bullet">
-            <li>Building and street: <strong>{{ application.personalDetails.address.address_line_one }}</strong></li>
-            {% if 'address_line_two' in application.personalDetails.address %}
-            {% if application.personalDetails.address.address_line_two != '' %}
-            <li><strong>{{ application.personalDetails.address.address_line_two }}</strong></li>
-            {% endif %}
-            {% endif %}
-            <li>Town or city: <strong>{{ application.personalDetails.address.town }}</strong></li>
-            <li>Country: <strong>{{ application.personalDetails.address.country }}</strong></li>
-            <li>Postcode: <strong>{{ application.personalDetails.address.postcode }}</strong></li>
-        </ul>
-    </li>
-    {% endif %}
-    {% if 'contactDates' in application.personalDetails %}
-    <li>Unavailable over the next 6 months: <strong>{{ application.personalDetails.contactDates.answer }}</strong>
-        {% if application.personalDetails.contactDates.answer == 'Yes' %}
-        <ul class="govuk-list govuk-list--bullet">
-            <li>Dates you're unavailable: <strong>{{ application.personalDetails.contactDates.dates }}</strong></li>
-        </ul>
+{% macro userapplication(application_data) %}
+    <h1>
+        {% if application_data.partnership_details_data.is_interim_certificate %}
+            INTERIM CERTIFICATE APPLICATION
+        {% else %}
+            FULL CERTIFICATE APPLICATION
         {% endif %}
-    </li>
-    {% endif %}
-    {% if 'hmrc' in application.personalDetails %}
-    <li>Notify HMRC: <strong>{{ application.personalDetails.hmrc.answer }}</strong>
-        {% if application.personalDetails.hmrc.answer == 'Yes' %}
-        <ul class="govuk-list govuk-list--bullet">
-            <li>National Insurance number: <strong>{{ application.personalDetails.hmrc.national_insurance_number }}</strong></li>
-        </ul>
+    </h1>
+
+    <h4 class="govuk-heading-m">Confirmation</h4>
+    <ul class="govuk-list govuk-list--bullet">
+        <li>Have you ever been issued a Gender Recognition Certificate (or it's equivalent) in another country? <strong>{{ application_data.confirmation_data.gender_recognition_outside_uk_formatted }}</strong></li>
+        {% if application_data.confirmation_data.gender_recognition_outside_uk %}
+            <li>Do you have official documentation that shows your affirmed gender has been recognised in one of these countries or territories? <strong>{{ application_data.confirmation_data.gender_recognition_from_approved_country_formatted }}</strong></li>
         {% endif %}
-    </li>
-    {% endif %}
-</ul>
+        <li>I confirm that I meet the requirements for applying for a Gender Recognition Certificate and I consent to the General Register Office contacting me about my application: <strong>{{ application_data.confirmation_data.consent_to_GRO_contact_formatted }}</strong></li>
+    </ul>
 
-<h4 class="govuk-heading-m">Birth registration information</h4>
-<ul class="govuk-list govuk-list--bullet">
-    <li>Birth name
-        <ul class="govuk-list govuk-list--bullet">
-            <li>First name: <strong>{{ application.birthRegistration.first_name }}</strong></li>
-            <li>Middle name(s): <strong>{{ application.birthRegistration.middle_names }}</strong></li>
-            <li>Last name: <strong>{{ application.birthRegistration.last_name }}</strong></li>
-        </ul>
-    </li>
-    {% if 'sex' in application.birthRegistration %}
-    <li>Sex registered at birth: <strong>{{ application.birthRegistration.sex }}</strong></li>
-    {% endif %}
-    {% if 'dob' in application.birthRegistration %}
-    <li>Date of birth: <strong>{{ application.birthRegistration.dob.day }}/{{ application.birthRegistration.dob.month }}/{{ application.birthRegistration.dob.year }}</strong></li>
-    {% endif %}
-    {% if 'ukCheck' in application.birthRegistration %}
-    <li>Birth registered in UK: <strong>{{ application.birthRegistration.ukCheck }}</strong></li>
-    {% endif %}
-    {% if application.birthRegistration.ukCheck == 'Yes' %}
-    <li>Mother's name
-        <ul class="govuk-list govuk-list--bullet">
-            <li>First name: <strong>{{ application.birthRegistration.mothers_first_name }}</strong></li>
-            <li>Last name: <strong>{{ application.birthRegistration.mothers_last_name }}</strong></li>
-            <li>Maiden name: <strong>{{ application.birthRegistration.mothers_maiden_name }}</strong></li>
-        </ul>
-    </li>
-    {% if application.birthRegistration.fathersNameCheck == 'Yes' %}
-    <li>Father's name listed: <strong>{{ application.birthRegistration.fathersNameCheck }}</strong></li>
-    <li>Father's name
-        <ul class="govuk-list govuk-list--bullet">
-            <li>First name: <strong>{{ application.birthRegistration.fathers_first_name }}</strong></li>
-            <li>Last name: <strong>{{ application.birthRegistration.fathers_last_name }}</strong></li>
-        </ul>
-    </li>
-    {% endif %}
-    {% if 'place_of_birth' in application.birthRegistration %}
-    <li>Place of birth: <strong>{{ application.birthRegistration.place_of_birth }}</strong></li>
-    {% endif %}
-    {% if 'adopted' in application.birthRegistration %}
-    <li>Adopted: <strong>{{ application.birthRegistration.adopted }}</strong></li>
-    {% endif %}
-    {% if application.birthRegistration.adopted == 'Yes' %}
-    <li>Adopted in the UK: <strong>{{ application.birthRegistration.adopted_uk }}</strong></li>
-    {% endif %}
-    <li>Forces registering service, British Consul or High Commission, or under Merchant Shipping or Civil Aviation provisions: <strong>{{ application.birthRegistration.forces }}</strong></li>
-    {% else %}
-    {% if 'country' in application.birthRegistration %}
-    <li>Registered birth country: <strong>{{ application.birthRegistration.country }}</strong></li>
-    {% endif %}
-    {% endif %}
-</ul>
+    <h4 class="govuk-heading-m">Personal details</h4>
+    <ul class="govuk-list govuk-list--bullet">
+        <li>Name on certificate
+            <ul class="govuk-list govuk-list--bullet">
+                <li>Title: <strong>{{ application_data.personal_details_data.title }}</strong></li>
+                <li>First name: <strong>{{ application_data.personal_details_data.first_names }}</strong></li>
+                <li>Last name: <strong style="text-decoration: underline;">{{ application_data.personal_details_data.last_name }}</strong></li>
+            </ul>
+        </li>
+        <li>Changed name: <strong>{{ application_data.personal_details_data.changed_name_to_reflect_gender_formatted }}</strong></li>
+        <li>Affirmed gender: <strong>{{ application_data.personal_details_data.affirmed_gender_formatted }}</strong></li>
+        <li>Transition date: <strong>{{ application_data.personal_details_data.transition_date_formatted_MMMM_YYYY }}</strong></li>
+        <li>Statutory Declaration date: <strong>{{ application_data.personal_details_data.statutory_declaration_date_formatted_DD_MMMM_YYYY }}</strong></li>
+        <li>Contact preferences
+            <ul class="govuk-list govuk-list--bullet">
+                {% if application_data.personal_details_data.contact_email_address %}
+                    <li>Email: <strong>{{ application_data.personal_details_data.contact_email_address }}</strong></li>
+                {% endif %}
+                {% if application_data.personal_details_data.contact_by_post %}
+                    <li>Post: <strong>{{ application_data.personal_details_data.address_comma_separated }}</strong></li>
+                {% endif %}
+                {% if application_data.personal_details_data.contact_phone_number != '' %}
+                    <li>Phone: <strong>{{ application_data.personal_details_data.contact_phone_number }}</strong></li>
+                {% endif %}
+            </ul>
+        </li>
+        <li>Address
+            <ul class="govuk-list govuk-list--bullet">
+                <li>Building and street: <strong>{{ application_data.personal_details_data.address_line_one }}</strong></li>
+                {% if application_data.personal_details_data.address_line_two %}
+                    <li><strong>{{ application_data.personal_details_data.address_line_two }}</strong></li>
+                {% endif %}
+                <li>Town or city: <strong>{{ application_data.personal_details_data.address_town_city }}</strong></li>
+                {% if application_data.personal_details_data.address_country %}
+                    <li>Country: <strong>{{ application_data.personal_details_data.address_country }}</strong></li>
+                {% endif %}
+                <li>Postcode: <strong>{{ application_data.personal_details_data.address_postcode }}</strong></li>
+            </ul>
+        </li>
+        <li>Unavailable over the next 6 months: <strong>{{ application_data.personal_details_data.contact_dates_should_avoid_formatted }}</strong>
+            {% if application_data.personal_details_data.contact_dates_should_avoid %}
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>Dates you're unavailable: <strong>{{ application_data.personal_details_data.contact_dates_to_avoid }}</strong></li>
+                </ul>
+            {% endif %}
+        </li>
+        <li>Notify HMRC: <strong>{{ application_data.personal_details_data.tell_hmrc_formatted }}</strong>
+            {% if application_data.personal_details_data.tell_hmrc %}
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>National Insurance number: <strong>{{ application_data.personal_details_data.national_insurance_number }}</strong></li>
+                </ul>
+            {% endif %}
+        </li>
+    </ul>
 
-<h4 class="govuk-heading-m">Marriage or civil partnership details</h4>
-<ul class="govuk-list govuk-list--bullet">
-    <li>Currently married or in a civil partnership: <strong>{{ application.partnershipDetails.marriageCivilPartnership }}</strong></li>
-    {% if application.partnershipDetails.marriageCivilPartnership == 'Neither' %}
-    <li>Spouse or partner has died: <strong>{{ application.partnershipDetails.partnerDied }}</strong></li>
-    <li>Married or in a civil partnership has ended: <strong>{{ application.partnershipDetails.endedCheck }}</strong></li>
-    {% else %}
-    <li>Remain married: <strong>{{ application.partnershipDetails.stayTogether }}</strong></li>
-    {% if application.partnershipDetails.stayTogether == 'Yes' %}
-    <li>Can provide a declaration of consent from your spouse: <strong>{{ application.partnershipDetails.partnerAgrees }}</strong></li>
-    {% endif %}
-    {% if application.partnershipDetails.stayTogether == 'No' or application.partnershipDetails.partnerAgrees == 'No' %}
-    <li>Interim GRC: <strong>{{ application.partnershipDetails.interimCheck }}</strong></li>
-    {% endif %}
-    {% endif %}
-</ul>
+    <h4 class="govuk-heading-m">Birth registration information</h4>
+    <ul class="govuk-list govuk-list--bullet">
+        <li>Birth name
+            <ul class="govuk-list govuk-list--bullet">
+                <li>First name: <strong>{{ application_data.birth_registration_data.first_name }}</strong></li>
+                <li>Middle name(s): <strong>{{ application_data.birth_registration_data.middle_names }}</strong></li>
+                <li>Last name: <strong>{{ application_data.birth_registration_data.last_name }}</strong></li>
+            </ul>
+        </li>
+        <li>Date of birth: <strong>{{ application_data.birth_registration_data.date_of_birth_formatted_DD_MMMM_YYYY }}</strong></li>
+        <li>Birth registered in UK: <strong>{{ application_data.birth_registration_data.birth_registered_in_uk_formatted }}</strong></li>
+        {% if application_data.birth_registration_data.birth_registered_in_uk %}
+            <li>Mother's name
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>First name: <strong>{{ application_data.birth_registration_data.mothers_first_name }}</strong></li>
+                    <li>Last name: <strong>{{ application_data.birth_registration_data.mothers_last_name }}</strong></li>
+                    <li>Maiden name: <strong>{{ application_data.birth_registration_data.mothers_maiden_name }}</strong></li>
+                </ul>
+            </li>
+            <li>Father's name listed on birth certificate: <strong>{{ application_data.birth_registration_data.fathers_name_on_birth_certificate_formatted }}</strong></li>
+            {% if application_data.birth_registration_data.fathers_name_on_birth_certificate %}
+                <li>Father's name
+                    <ul class="govuk-list govuk-list--bullet">
+                        <li>First name: <strong>{{ application_data.birth_registration_data.fathers_first_name }}</strong></li>
+                        <li>Last name: <strong>{{ application_data.birth_registration_data.fathers_last_name }}</strong></li>
+                    </ul>
+                </li>
+            {% endif %}
+            <li>Place of birth: <strong>{{ application_data.birth_registration_data.town_city_of_birth }}</strong></li>
+            <li>Adopted: <strong>{{ application_data.birth_registration_data.adopted_formatted }}</strong></li>
+            {% if application_data.birth_registration_data.adopted %}
+                <li>Adopted in the UK: <strong>{{ application_data.birth_registration_data.adopted_in_the_uk_formatted }}</strong></li>
+            {% endif %}
+            <li>Forces registering service, British Consul or High Commission, or under Merchant Shipping or Civil Aviation provisions:
+                <strong>{{ application_data.birth_registration_data.forces_registration_formatted }}</strong></li>
+        {% else %}
+            <li>Registered birth country: <strong>{{ application_data.birth_registration_data.country_of_birth }}</strong></li>
+        {% endif %}
+    </ul>
 
-<h4 class="govuk-heading-m">Documents to post</h4>
-<ul class="govuk-list govuk-list--bullet">
-    {% if application.birthRegistration.ukCheck == 'Yes' and application.birthRegistration.adopted != 'Yes' %}
-    <li>your original or a certified copy of your full birth certificate</li>
-    {% endif %}
-    {% if application.submitAndPay.helpType == 'Using the EX160 form' %}
-    <li>an EX160 form</li>
-    {% endif %}
-</ul>
+    <h4 class="govuk-heading-m">Marriage or civil partnership details</h4>
+    <ul class="govuk-list govuk-list--bullet">
+        <li>Currently married or in a civil partnership: <strong>{{ application_data.partnership_details_data.currently_in_a_partnership_formatted }}</strong></li>
+        {% if application_data.partnership_details_data.is_not_in_partnership %}
+            <li>Spouse or partner has died: <strong>{{ application_data.partnership_details_data.previous_partnership_partner_died_formatted }}</strong></li>
+            <li>Married or in a civil partnership has ended: <strong>{{ application_data.partnership_details_data.previous_partnership_ended_formatted }}</strong></li>
+        {% else %}
+            <li>Remain married: <strong>{{ application_data.partnership_details_data.plan_to_remain_in_a_partnership_formatted }}</strong></li>
+            {% if application_data.partnership_details_data.plan_to_remain_in_a_partnership %}
+                <li>Can provide a declaration of consent from your spouse: <strong>{{ application_data.partnership_details_data.partner_agrees_formatted }}</strong></li>
+            {% endif %}
+            {% if application_data.partnership_details_data.is_interim_certificate %}
+                <li>Interim GRC: <strong>{{ application_data.partnership_details_data.confirm_understood_interim_certificate_formatted }}</strong></li>
+            {% endif %}
+        {% endif %}
+    </ul>
 
-<h2 class="govuk-heading-m">Your documents</h2>
+    <h4 class="govuk-heading-m">Documents to post</h4>
+    <ul class="govuk-list govuk-list--bullet">
+        <li>your original or a certified copy of your full birth or adoption certificate</li>
+        {% if application_data.submit_and_pay_data.is_using_ex160_form %}
+            <li>an EX160 form</li>
+        {% endif %}
+    </ul>
+
+    <h2 class="govuk-heading-m">Your documents</h2>
 {% endmacro %}
