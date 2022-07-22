@@ -113,7 +113,6 @@ def isFirstVisit():
                         logger.log(LogLevel.INFO, f"{logger.mask_email_address(session['validatedEmail'])} accessed their application")
                         session.clear()  # Clear out session['validatedEmail']
                         session['reference_number'] = application.reference_number
-                        session['application'] = application.data()
                         return local_redirect(url_for('taskList.index'))
 
                     else:
@@ -141,7 +140,7 @@ def returnToIsFirstVisitPageWithInvalidReferenceError(form):
 @LoginRequired
 def backToIsFirstVisit():
     application = loadApplicationFromDatabaseByReferenceNumber(session['reference_number'])
-    session.clear()  # Clear out session['reference_number'] session['application']
+    session.clear()  # Clear out session['reference_number']
     session['validatedEmail'] = application.email
     return local_redirect(url_for('startApplication.isFirstVisit'))
 

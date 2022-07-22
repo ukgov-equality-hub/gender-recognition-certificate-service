@@ -72,7 +72,7 @@ def AdminRequired(f):
 def Unauthorized(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if 'application' in session:
+        if 'reference_number' in session:
             logger.log(LogLevel.WARN, f"(Unauthorized) {get_signedin_user()} has attempted to access {request.host_url}")
             return local_redirect(url_for('taskList.index'))
         return f(*args, **kwargs)

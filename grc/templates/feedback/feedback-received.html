@@ -12,7 +12,7 @@
                 Thank you for your feedback
             </h1>
 
-            {% if 'application' in session %}
+            {% if 'reference_number' in session %}
                 <p class="govuk-body">
                     <a href="{{ url_for('taskList.index') }}">Return to your application</a>
                 </p>
