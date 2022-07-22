@@ -1,9 +1,9 @@
-{% macro adminapplication(application) %}
+{% macro adminapplication(application, reference_number) %}
     <h1>
         {% if (application.partnershipDetails.marriageCivilPartnership == 'Married' or application.partnershipDetails.marriageCivilPartnership == 'Civil partnership') and (application.partnershipDetails.stayTogether == 'No' or application.partnershipDetails.partnerAgrees == 'No') %}
-            INTERIM CERTIFICATE APPLICATION
+            INTERIM CERTIFICATE APPLICATION: {{ reference_number }}
         {% else %}
-            FULL CERTIFICATE APPLICATION
+            FULL CERTIFICATE APPLICATION: {{ reference_number }}
         {% endif %}
     </h1>
 
@@ -27,6 +27,9 @@
     <h4 class="govuk-heading-m">Payment details</h4>
     <ul class="govuk-list govuk-list--bullet">
         <li>Payment method: <strong>{{ application.submitAndPay.method }}</strong></li>
+        {% if application.submitAndPay.method == 'Online' %}
+            <li>Reference: <strong>{{ reference_number }}</strong></li>
+        {% endif %}
         {% if application.submitAndPay.method == 'Help' %}
             <li>Help type: <strong>
                 {% if application.submitAndPay.helpType == 'Using the online service' %}
@@ -52,14 +55,14 @@
             <ul class="govuk-list govuk-list--bullet">
                 <li>Title: <strong>{{ application.personalDetails.title }}</strong></li>
                 <li>First name: <strong>{{ application.personalDetails.first_name }}</strong></li>
-                <li>Last name: <strong>{{ application.personalDetails.last_name }}</strong></li>
+                <li>Last name: <strong style="text-decoration: underline;">{{ application.personalDetails.last_name }}</strong></li>
             </ul>
         </li>
         <li>Changed name: <strong>{{ application.personalDetails.previousNamesCheck }}</strong></li>
         <li>
             Affirmed gender:
             <strong>
-                {{ ('Male' if applicationData.personalDetails.affirmed_gender == 'MALE' else 'Female') }}
+                {{ ('Male' if application.personalDetails.affirmed_gender == 'MALE' else 'Female') }}
             </strong>
         </li>
         <li>Transition date: <strong>{{ application.personalDetails.transition_date_month }}/{{ application.personalDetails.transition_date_year }}</strong></li>
@@ -125,6 +128,7 @@
         {% if 'ukCheck' in application.birthRegistration %}
             <li>Birth registered in UK: <strong>{{ application.birthRegistration.ukCheck }}</strong></li>
         {% endif %}
+        <li>Affirmed gender: <strong>{{ 'Male' if application.personalDetails.affirmed_gender == 'MALE' else 'Female' }}</strong></li>
         {% if application.birthRegistration.ukCheck == 'Yes' %}
             <li>Mother's name
                 <ul class="govuk-list govuk-list--bullet">
@@ -161,6 +165,7 @@
 
 
     <h2 class="govuk-heading-m">Your documents</h2>
+    {#
     {% if 'files' in application.statutoryDeclarations %}
         <h4>Statutory documents</h4>
         <ul class="govuk-list govuk-list--bullet">
@@ -254,4 +259,5 @@
             <li>an EX160 form</li>
         {% endif %}
     </ul>
+    #}
 {% endmacro %}

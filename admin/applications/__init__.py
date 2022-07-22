@@ -30,13 +30,16 @@ def index():
 
     newApplications = Application.query.filter_by(
         status=ApplicationStatus.SUBMITTED
-    )
+    ).order_by(Application.updated.desc())
+
     downloadedApplications = Application.query.filter_by(
         status=ApplicationStatus.DOWNLOADED
-    )
+    ).order_by(Application.updated.desc())
+
     completedApplications = Application.query.filter_by(
         status=ApplicationStatus.COMPLETED
-    )
+    ).order_by(Application.updated.desc())
+
     logger.log(LogLevel.INFO, f"{logger.mask_email_address(session['signedIn'])} accessed all applications")
 
     return render_template(
@@ -60,6 +63,7 @@ def view(reference_number):
     return render_template(
         'applications/view-application.html',
         application=application,
+        reference_number=reference_number,
         strptime=datetime.strptime,
         get_radio_pretty_value=get_radio_pretty_value
     )
@@ -110,6 +114,7 @@ def download(reference_number):
             application.reference_number,
             application.data(),
             is_admin=True,
+            attach_files=True,
             download=True
         )
 
