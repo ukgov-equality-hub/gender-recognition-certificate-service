@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 {% import "helper-macros/random-id.html" as random_id %}
-{% set applicationData = application.data() %}
 
 {% block title %}
     Application for
@@ -212,7 +211,7 @@
                         value=(application_data.submit_and_pay_data.applying_for_help_with_fee_formatted)
                     ) }}
 
-                    {% if applicationData['submitAndPay']['method'] == 'Online' %}
+                    {% if not application_data.submit_and_pay_data.applying_for_help_with_fee %}
                         {{ summary_list_item(
                             title='Payment reference',
                             value=(reference_number)
@@ -379,7 +378,8 @@
                     {% endmacro %}
                     {{ summary_list_item(
                         title="Address",
-                        value=(addressValue())
+                        value=(addressValue()),
+                        alternativeCopyValue=(application_data.personal_details_data.address_with_line_breaks)
                     ) }}
 
                     {{ summary_list_item(

@@ -153,7 +153,7 @@ def download():
 
     bytes, file_name = ApplicationFiles().create_or_download_pdf(
         application_data.reference_number,
-        session['application'],
+        application_data,
         is_admin=False,
         attach_files=True,
         download=True
@@ -203,16 +203,16 @@ def confirmation():
     mark_complete(application_data.reference_number)
 
     @copy_current_request_context
-    def create_files(reference_number, application):
+    def create_files(reference_number, application_data):
         from grc.utils.application_files import ApplicationFiles
         ApplicationFiles().create_or_download_attachments(
             reference_number,
-            application,
+            application_data,
             download=False
         )
         ApplicationFiles().create_or_download_pdf(
             reference_number,
-            application,
+            application_data,
             is_admin=True,
             attach_files=True,
             download=False
@@ -220,11 +220,11 @@ def confirmation():
 
         mark_files_created(reference_number)
 
-    threading.Thread(target=create_files, args=[application_data.reference_number, session['application']]).start()
+    threading.Thread(target=create_files, args=[application_data.reference_number, application_data]).start()
 
     GovUkNotify().send_email_completed_application(
         email_address=application_data.email_address,
-        documents_to_be_posted=render_template('documents.html')
+        documents_to_be_posted=render_template('documents.html', application_data=application_data)
     )
 
     html = render_template(
