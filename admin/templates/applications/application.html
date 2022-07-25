@@ -1,9 +1,9 @@
 {% macro adminapplication(application_data) %}
     <h1>
         {% if application_data.partnership_details_data.is_interim_certificate %}
-            INTERIM CERTIFICATE APPLICATION: {{ reference_number }}
+            INTERIM CERTIFICATE APPLICATION: {{ application_data.reference_number }}
         {% else %}
-            FULL CERTIFICATE APPLICATION: {{ reference_number }}
+            FULL CERTIFICATE APPLICATION: {{ application_data.reference_number }}
         {% endif %}
     </h1>
 
@@ -28,7 +28,7 @@
     <ul class="govuk-list govuk-list--bullet">
         <li>Payment method: <strong>{{ application_data.submit_and_pay_data.applying_for_help_with_fee_formatted }}</strong></li>
         {% if not application_data.submit_and_pay_data.applying_for_help_with_fee %}
-            <li>Reference: <strong>{{ reference_number }}</strong></li>
+            <li>Reference: <strong>{{ application_data.reference_number }}</strong></li>
         {% endif %}
         {% if application_data.submit_and_pay_data.applying_for_help_with_fee %}
             <li>Help type: <strong>
