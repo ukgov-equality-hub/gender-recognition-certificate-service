@@ -45,21 +45,34 @@ def check_user_input_formats():
 def migrate_user_input_to_pickle_format():
     number_of_applications_in_old_format: int = 0
     number_of_applications_in_new_format: int = 0
+    number_of_applications_with_no_data: int = 0
+    data_migration_failed_for_these_applications = []
 
     applications = Application.query.all()
 
     for application in applications:
         try:
-            application_data_obj: ApplicationData = jsonpickle.decode(application.user_input)
-            number_of_applications_in_new_format = number_of_applications_in_new_format + 1
+            if application.user_input:
+                application_data_obj: ApplicationData = jsonpickle.decode(application.user_input)
+                number_of_applications_in_new_format = number_of_applications_in_new_format + 1
+            else:
+                application_data_obj: ApplicationData = ApplicationData()
+                number_of_applications_with_no_data = number_of_applications_with_no_data + 1
+                application.user_input = jsonpickle.encode(application_data_obj)
         except:
-            application_data_obj = convert_weakly_typed_to_strongly_typed(ast.literal_eval(application.user_input))
-            number_of_applications_in_old_format = number_of_applications_in_old_format + 1
-            application.user_input = jsonpickle.encode(application_data_obj)
+            try:
+                application_data_obj: ApplicationData = convert_weakly_typed_to_strongly_typed(ast.literal_eval(application.user_input))
+                number_of_applications_in_old_format = number_of_applications_in_old_format + 1
+                application.user_input = jsonpickle.encode(application_data_obj)
+            except:
+                data_migration_failed_for_these_applications.append(application.reference_number)
 
     db.session.commit()
 
-    return f"Conversion complete. {number_of_applications_in_old_format} converted from old to new format. {number_of_applications_in_new_format} already in new format"
+    return f"Conversion complete." \
+           f" {number_of_applications_in_old_format} converted from old to new format." \
+           f" {number_of_applications_in_new_format} already in new format." \
+           f" Migration failed for {data_migration_failed_for_these_applications}"
 
 
 
