@@ -1,5 +1,5 @@
 from functools import wraps
-from flask import g, request, abort, url_for, current_app, request, session
+from flask import abort, url_for, current_app, request, session
 from grc.utils.redirect import local_redirect
 from grc.utils.logger import LogLevel, Logger
 
