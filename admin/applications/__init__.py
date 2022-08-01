@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import Blueprint, render_template, url_for, session, make_response
+from flask import Blueprint, abort, render_template, url_for, session, make_response
 from grc.business_logic.data_store import DataStore
 from grc.utils.decorators import AdminViewerRequired, AdminRequired
 from grc.models import db, Application, ApplicationStatus
@@ -56,6 +56,8 @@ def view(reference_number):
 @AdminViewerRequired
 def downloadfile(file_name):
     data = AwsS3Client().download_object(file_name)
+    if data is None:
+        return abort(503)
 
     file_type = 'application/octet-stream'
     if '.' in file_name:
