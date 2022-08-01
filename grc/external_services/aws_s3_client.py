@@ -6,6 +6,9 @@ from botocore.exceptions import ClientError
 from flask import current_app
 from botocore.client import Config
 from grc.utils.config_helper import ConfigHelper
+from grc.utils.logger import LogLevel, Logger
+
+logger = Logger()
 
 
 class AwsS3Client:
@@ -54,9 +57,9 @@ class AwsS3Client:
             file.seek(0)
             self.s3.upload_fileobj(file, self.bucket_name, object_name)
 
-        except ClientError as e:
+        except Exception as e:
             logging.error(e)
-            print(e, flush=True)
+            logger.log(LogLevel.ERROR, e)
             return False
 
         return True
@@ -96,25 +99,28 @@ class AwsS3Client:
                             file_type = 'jpeg'
                         data = 'data:image/' + file_type + ';base64, ' + data
 
-        except ClientError as e:
+        except Exception as e:
             logging.error(e)
-            print(e, flush=True)
+            logger.log(LogLevel.ERROR, e)
+            data = None
+            width = 0
+            height = 0
 
         return data, width, height
 
 
     def download_object(self, object_name):
-        print('Downloading %s' % object_name, flush=True)
+        logger.log(LogLevel.INFO, f"Downloading {object_name}")
         data = None
         try:
             bytes_buffer = io.BytesIO()
             self.s3.download_fileobj(Bucket=self.bucket_name, Key=object_name, Fileobj=bytes_buffer)
             data = bytes_buffer
 
-        except ClientError as e:
+        except Exception as e:
             logging.error(e)
-            print(e, flush=True)
-            return None
+            logger.log(LogLevel.ERROR, e)
+            data = None
 
         return data
 
@@ -128,9 +134,9 @@ class AwsS3Client:
                 for data in file:
                     fout.write(data)
 
-        except ClientError as e:
+        except Exception as e:
             logging.error(e)
-            print(e, flush=True)
+            logger.log(LogLevel.ERROR, e)
             return False
 
         return True
@@ -142,9 +148,9 @@ class AwsS3Client:
             #data = str(infile_object.get('Body', '').read())
             yield infile_object.get('Body', '').read() #bytes(data, 'utf-8')
 
-        except ClientError as e:
+        except Exception as e:
             logging.error(e)
-            print(e, flush=True)
+            logger.log(LogLevel.ERROR, e)
             return False
 
         return True
@@ -154,9 +160,9 @@ class AwsS3Client:
         try:
             self.s3.delete_object(Bucket=self.bucket_name, Key=object_name)
 
-        except ClientError as e:
+        except Exception as e:
             logging.error(e)
-            print(e, flush=True)
+            logger.log(LogLevel.ERROR, e)
             return False
 
         return True
@@ -168,9 +174,9 @@ class AwsS3Client:
             for key in self.s3.list_objects(Bucket=self.bucket_name)['Contents']:
                 data.append(key['Key'])
 
-        except ClientError as e:
+        except Exception as e:
             logging.error(e)
-            print(e, flush=True)
-            return None
+            logger.log(LogLevel.ERROR, e)
+            data = []
 
         return data

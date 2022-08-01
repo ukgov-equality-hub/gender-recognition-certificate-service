@@ -3,6 +3,9 @@ from typing import Callable, List, Dict
 from grc.business_logic.data_structures.application_data import ApplicationData
 from grc.business_logic.data_structures.uploads_data import UploadsData, EvidenceFile
 from grc.external_services.aws_s3_client import AwsS3Client
+from grc.utils.logger import LogLevel, Logger
+
+logger = Logger()
 
 
 class ApplicationFiles():
@@ -40,10 +43,11 @@ class ApplicationFiles():
                         files = self.section_files[section](application_data.uploads_data)
                         for file_index, evidence_file in enumerate(files):
                             data = AwsS3Client().download_object(evidence_file.aws_file_name)
-                            file_name_parts = evidence_file.aws_file_name.split('__')
-                            file_name_parts[2] = f"{(file_index + 1)}_{file_name_parts[2]}"
-                            attachment_file_name = '__'.join(file_name_parts)
-                            zipper.writestr(attachment_file_name, data.getvalue())
+                            if data is not None:
+                                file_name_parts = evidence_file.aws_file_name.split('__')
+                                file_name_parts[2] = f"{(file_index + 1)}_{file_name_parts[2]}"
+                                attachment_file_name = '__'.join(file_name_parts)
+                                zipper.writestr(attachment_file_name, data.getvalue())
 
                     data, _ = self.create_or_download_pdf(reference_number, application_data, attach_files=False, download=True)
                     zipper.writestr('application.pdf', data)
@@ -54,7 +58,7 @@ class ApplicationFiles():
                     bytes = None
 
         except Exception as e:
-            print(e, flush=True)
+            logger.log(LogLevel.ERROR, e)
 
         return bytes, zip_file_file_name
 
@@ -83,9 +87,11 @@ class ApplicationFiles():
                     all_sections = ['statutoryDeclarations', 'marriageDocuments', 'nameChange', 'medicalReports', 'genderEvidence', 'overseasCertificate']
 
                 html = render_template(html_template, application_data=application_data)
+                pdfs = []
+                attachments_html = ''
 
                 import io
-                import PyPDF2
+                import fitz # PyPDF2
                 from xhtml2pdf import pisa
                 data = io.BytesIO()
                 pisa.CreatePDF(html, dest=data)
@@ -93,13 +99,16 @@ class ApplicationFiles():
 
                 # Attach any PDF's
                 def merge_pdfs(pdfs):
-                    import io
-                    merger = PyPDF2.PdfFileMerger()
+                    #merger = PyPDF2.PdfFileMerger(strict=False)
+                    #for pdf_fileobj in pdfs:
+                    #    merger.append(pdf_fileobj)
+
+                    merger = fitz.open()
                     for pdf_fileobj in pdfs:
-                        merger.append(pdf_fileobj)
+                        merger.insert_pdf(fitz.open(stream=pdf_fileobj, filetype='pdf'))
 
                     pdf = io.BytesIO()
-                    merger.write(pdf)
+                    merger.save(pdf)
                     merger.close()
                     pdf.seek(0)
                     return pdf
@@ -130,22 +139,27 @@ class ApplicationFiles():
                             pdfs.append(pdf)
 
                             data = AwsS3Client().download_object(object_name)
-                            pdfs.append(data)
-                            print('Attaching ' + object_name)
+                            if data is not None:
+                                pdfs.append(data)
+                                logger.log(LogLevel.INFO, f"Attaching {object_name}")
+                            else:
+                                logger.log(LogLevel.ERROR, f"Error attaching {object_name}")
                         else:
                             data, width, height = AwsS3Client().download_object_data(object_name)
                             pdf = io.BytesIO()
-                            html = f'<p style="font-size: 12px;">Attachment {idx} of {num} - {clean_object_name()}</p><p>&nbsp;</p><p>&nbsp;</p><img src="{data}" width="{width}" height="{height}" style="max-width: 90%;">'
+                            if data is not None:
+                                html = f'<p style="font-size: 12px;">Attachment {idx} of {num} - {clean_object_name()}</p><p>&nbsp;</p><p>&nbsp;</p><img src="{data}" width="{width}" height="{height}" style="max-width: 90%;">'
+                            else:
+                                html = f'<p style="font-size: 12px;">Attachment {idx} of {num} - {clean_object_name()}</p><p>&nbsp;</p><p>&nbsp;</p><p>Error downloading file, please try again later</p>'
+                                logger.log(LogLevel.ERROR, f"Error downloading {object_name}")
+
                             if idx == 1:
                                 html = f'<h3 style="font-size: 14px;">Your {section_name()}</h3>{html}'
 
                             pisa.CreatePDF(html, dest=pdf)
                             pdf.seek(0)
                             pdfs.append(pdf)
-                            print('Adding image ' + object_name)
-
-                pdfs = []
-                attachments_html = ''
+                            logger.log(LogLevel.INFO, f"Adding image {object_name}")
 
                 for section in all_sections:
                     files = self.section_files[section](application_data.uploads_data)
@@ -165,7 +179,7 @@ class ApplicationFiles():
                     pisa.CreatePDF(attachments_html, dest=pdf)
                     pdf.seek(0)
                     pdfs.append(pdf)
-                    print('Adding attachments pdf')
+                    logger.log(LogLevel.INFO, "Adding attachments pdf")
 
                 if len(pdfs) > 0:
                     pdfs.insert(0, data)
@@ -178,7 +192,7 @@ class ApplicationFiles():
                     bytes = None
 
         except Exception as e:
-            print(e, flush=True)
+            logger.log(LogLevel.ERROR, e)
 
         return bytes, file_name
 
