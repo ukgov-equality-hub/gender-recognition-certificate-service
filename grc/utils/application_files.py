@@ -1,4 +1,9 @@
+import fitz  # PyPDF2
+import io
 import os
+import zipfile
+from flask import render_template
+from xhtml2pdf import pisa
 from typing import Callable, List, Dict
 from grc.business_logic.data_structures.application_data import ApplicationData
 from grc.business_logic.data_structures.uploads_data import UploadsData, EvidenceFile
@@ -33,9 +38,6 @@ class ApplicationFiles():
                 if download:
                     bytes = data.getvalue()
             else:
-                import io
-                import zipfile
-
                 zip_buffer = io.BytesIO()
 
                 with zipfile.ZipFile(zip_buffer, 'x', zipfile.ZIP_DEFLATED, False) as zipper:
@@ -77,9 +79,6 @@ class ApplicationFiles():
                 if download:
                     bytes = data.getvalue()
             else:
-                import json
-                from flask import render_template
-
                 html_template = 'applications/download_user.html'
                 all_sections = self.sections
                 if is_admin:
@@ -91,9 +90,6 @@ class ApplicationFiles():
                 object_names = []
                 attachments_html = ''
 
-                import io
-                import fitz # PyPDF2
-                from xhtml2pdf import pisa
                 data = io.BytesIO()
                 pisa.CreatePDF(html, dest=data)
                 data.seek(0)
