@@ -23,6 +23,10 @@ section_files:  Dict[str, Callable[[UploadsData], List[EvidenceFile]]] = {
     'statutoryDeclarations': (lambda u: u.statutory_declarations),
 }
 
+def get_files_for_section(section, application_data):
+    return section_files[section](application_data.uploads_data)
+
+
 class ApplicationFiles():
     def create_or_download_attachments(self, reference_number, application_data: ApplicationData, download=False):
         bytes = None
@@ -40,7 +44,7 @@ class ApplicationFiles():
 
                 with zipfile.ZipFile(zip_buffer, 'x', zipfile.ZIP_DEFLATED, False) as zipper:
                     for section in sections:
-                        files = section_files[section](application_data.uploads_data)
+                        files = get_files_for_section(section, application_data)
                         for file_index, evidence_file in enumerate(files):
                             data = AwsS3Client().download_object(evidence_file.aws_file_name)
                             if data is not None:
@@ -145,7 +149,7 @@ class ApplicationFiles():
                             logger.log(LogLevel.INFO, f"Adding image {object_name}")
 
                 for section in all_sections:
-                    files = section_files[section](application_data.uploads_data)
+                    files = get_files_for_section(section, application_data)
                     title = False
                     num_attachments = len(files)
                     for file_index, evidence_file in enumerate(files):
@@ -183,7 +187,7 @@ class ApplicationFiles():
         AwsS3Client().delete_object(reference_number + '.pdf')
 
         for section in sections:
-            files = section_files[section](application_data.uploads_data)
+            files = get_files_for_section(section, application_data)
             for evidence_file in files:
                 AwsS3Client().delete_object(evidence_file.aws_file_name)
 
