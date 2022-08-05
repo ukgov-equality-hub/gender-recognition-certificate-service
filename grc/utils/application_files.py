@@ -26,6 +26,9 @@ section_files:  Dict[str, Callable[[UploadsData], List[EvidenceFile]]] = {
 def get_files_for_section(section, application_data):
     return section_files[section](application_data.uploads_data)
 
+def get_section_name(section):
+    return section_names[sections.index(section)]
+
 
 class ApplicationFiles():
     def create_or_download_attachments(self, reference_number, application_data: ApplicationData, download=False):
@@ -94,11 +97,8 @@ class ApplicationFiles():
                 def add_object(section, object_name, original_file_name, idx, num):
                     file_type = ''
 
-                    def section_name():
-                        return section_names[sections.index(section)]
-
                     if idx == 1:
-                        pdfs.append(create_section_heading_pdf(section_name()))
+                        pdfs.append(create_section_heading_pdf(get_section_name(section)))
 
                     if '.' in object_name:
                         file_type = object_name[object_name.rindex('.') + 1:]
