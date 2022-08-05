@@ -12,20 +12,18 @@ from grc.utils.logger import LogLevel, Logger
 
 logger = Logger()
 
+sections = ['medicalReports', 'genderEvidence', 'nameChange', 'marriageDocuments', 'overseasCertificate', 'statutoryDeclarations']
+section_names = ['Medical Reports', 'Gender Evidence', 'Name Change', 'Marriage Documents', 'Overseas Certificate', 'Statutory Declarations']
+section_files:  Dict[str, Callable[[UploadsData], List[EvidenceFile]]] = {
+    'medicalReports': (lambda u: u.medical_reports),
+    'genderEvidence': (lambda u: u.evidence_of_living_in_gender),
+    'nameChange': (lambda u: u.name_change_documents),
+    'marriageDocuments': (lambda u: u.partnership_documents),
+    'overseasCertificate': (lambda u: u.overseas_documents),
+    'statutoryDeclarations': (lambda u: u.statutory_declarations),
+}
 
 class ApplicationFiles():
-    def __init__(self):
-        self.sections = ['medicalReports', 'genderEvidence', 'nameChange', 'marriageDocuments', 'overseasCertificate', 'statutoryDeclarations']
-        self.section_names = ['Medical Reports', 'Gender Evidence', 'Name Change', 'Marriage Documents', 'Overseas Certificate', 'Statutory Declarations']
-        self.section_files:  Dict[str, Callable[[UploadsData], List[EvidenceFile]]] = {
-            'medicalReports': (lambda u: u.medical_reports),
-            'genderEvidence': (lambda u: u.evidence_of_living_in_gender),
-            'nameChange': (lambda u: u.name_change_documents),
-            'marriageDocuments': (lambda u: u.partnership_documents),
-            'overseasCertificate': (lambda u: u.overseas_documents),
-            'statutoryDeclarations': (lambda u: u.statutory_declarations),
-        }
-
     def create_or_download_attachments(self, reference_number, application_data: ApplicationData, download=False):
         bytes = None
         zip_file_file_name = ''
@@ -41,8 +39,8 @@ class ApplicationFiles():
                 zip_buffer = io.BytesIO()
 
                 with zipfile.ZipFile(zip_buffer, 'x', zipfile.ZIP_DEFLATED, False) as zipper:
-                    for section in self.sections:
-                        files = self.section_files[section](application_data.uploads_data)
+                    for section in sections:
+                        files = section_files[section](application_data.uploads_data)
                         for file_index, evidence_file in enumerate(files):
                             data = AwsS3Client().download_object(evidence_file.aws_file_name)
                             if data is not None:
@@ -80,7 +78,7 @@ class ApplicationFiles():
                     bytes = data.getvalue()
             else:
                 html_template = 'applications/download_user.html'
-                all_sections = self.sections
+                all_sections = sections
                 if is_admin:
                     html_template = 'applications/download.html'
                     all_sections = ['statutoryDeclarations', 'marriageDocuments', 'nameChange', 'medicalReports', 'genderEvidence', 'overseasCertificate']
@@ -105,7 +103,7 @@ class ApplicationFiles():
                     file_type = ''
 
                     def section_name():
-                        return self.section_names[self.sections.index(section)]
+                        return section_names[sections.index(section)]
 
                     def clean_object_name():
                         new_name = object_name
@@ -161,7 +159,7 @@ class ApplicationFiles():
                             logger.log(LogLevel.INFO, f"Adding image {object_name}")
 
                 for section in all_sections:
-                    files = self.section_files[section](application_data.uploads_data)
+                    files = section_files[section](application_data.uploads_data)
                     title = False
                     num_attachments = len(files)
                     for file_index, evidence_file in enumerate(files):
@@ -169,7 +167,7 @@ class ApplicationFiles():
                             add_object(section, evidence_file.aws_file_name, file_index + 1, num_attachments)
                         else:
                             if not title:
-                                attachments_html += f'<h3 style="font-size: 14px;">{self.section_names[self.sections.index(section)]}</h3>'
+                                attachments_html += f'<h3 style="font-size: 14px;">{section_names[sections.index(section)]}</h3>'
                                 title = True
                             attachments_html += f'<p style="font-size: 12px;">Attachment {file_index + 1} of {num_attachments}: {evidence_file.aws_file_name}</p>'
 
@@ -202,8 +200,8 @@ class ApplicationFiles():
         AwsS3Client().delete_object(reference_number + '.zip')
         AwsS3Client().delete_object(reference_number + '.pdf')
 
-        for section in self.sections:
-            files = self.section_files[section](application_data.uploads_data)
+        for section in sections:
+            files = section_files[section](application_data.uploads_data)
             for evidence_file in files:
                 AwsS3Client().delete_object(evidence_file.aws_file_name)
 
