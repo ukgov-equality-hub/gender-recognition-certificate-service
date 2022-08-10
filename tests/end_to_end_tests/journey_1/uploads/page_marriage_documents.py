@@ -73,7 +73,7 @@ async def run_checks_on_page(page: Page, asserts: AssertHelpers, helpers: PageHe
 
     # Try to upload a document of the wrong type
     await helpers.upload_file_invalid_file_type(field='documents')
-    await helpers.click_button('Upload file')
+    await helpers.click_button('Upload 1 file')
     await asserts.url(PAGE_URL)
     await asserts.accessibility()
     await asserts.h1(PAGE_H1)
@@ -83,7 +83,7 @@ async def run_checks_on_page(page: Page, asserts: AssertHelpers, helpers: PageHe
 
     # Try to upload an empty file
     await helpers.upload_file_invalid_zero_bytes(field='documents')
-    await helpers.click_button('Upload file')
+    await helpers.click_button('Upload 1 file')
     await asserts.url(PAGE_URL)
     await asserts.accessibility()
     await asserts.h1(PAGE_H1)
@@ -94,7 +94,7 @@ async def run_checks_on_page(page: Page, asserts: AssertHelpers, helpers: PageHe
     # Try to upload a document that is too large
     page.set_default_timeout(data.TIMEOUT_FOR_SLOW_OPERATIONS)  # This is a slow operation, so increase the maximum wait time
     await helpers.upload_file_invalid_too_large(field='documents')
-    await helpers.click_button('Upload file')
+    await helpers.click_button('Upload 1 file')
     await asserts.url(PAGE_URL)
     page.set_default_timeout(data.DEFAULT_TIMEOUT)  # We're done with the slow part - set the timeout back to its usual value
     await asserts.accessibility()
@@ -107,7 +107,7 @@ async def run_checks_on_page(page: Page, asserts: AssertHelpers, helpers: PageHe
 
     # Upload a valid document
     await helpers.upload_file_valid(field='documents', file_name=DOCUMENT_ONE_NAME)
-    await helpers.click_button('Upload file')
+    await helpers.click_button('Upload 1 file')
     await asserts.url(PAGE_URL)
     await asserts.accessibility()
     await asserts.h1(PAGE_H1)
@@ -161,7 +161,7 @@ async def run_checks_on_page(page: Page, asserts: AssertHelpers, helpers: PageHe
 
     # Upload a valid document
     await helpers.upload_file_valid(field='documents', file_name=DOCUMENT_ONE_NAME)
-    await helpers.click_button('Upload file')
+    await helpers.click_button('Upload 1 file')
     await asserts.url(PAGE_URL)
     await asserts.accessibility()
     await asserts.h1(PAGE_H1)

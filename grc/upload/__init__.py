@@ -42,7 +42,7 @@ def uploadInfoPage(section_url: str):
     files = section.file_list(application_data.uploads_data)
 
     if form.validate_on_submit():
-        if form.button_clicked.data == 'Upload file':
+        if form.button_clicked.data.startswith('Upload '):
             for document in request.files.getlist('documents'):
                 filename = secure_filename(document.filename)
                 object_name = application_data.reference_number + '__' + section.data_section + '__' + filename
