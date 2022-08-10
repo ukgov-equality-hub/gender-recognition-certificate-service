@@ -1,6 +1,7 @@
 from typing import List, Callable
 from flask import Blueprint, render_template, request, url_for, abort
 from werkzeug.utils import secure_filename
+import fitz
 from grc.business_logic.data_store import DataStore
 from grc.business_logic.data_structures.uploads_data import UploadsData, EvidenceFile
 from grc.upload.forms import UploadForm, DeleteForm
@@ -53,11 +54,20 @@ def uploadInfoPage(section_url: str):
             for document in request.files.getlist('documents'):
                 filename = secure_filename(document.filename)
                 object_name = application_data.reference_number + '__' + section.data_section + '__' + filename
+                password_required = False
+
+                if filename.lower().endswith('.pdf'):
+                    doc = fitz.open(stream=document.read(), filetype='pdf')
+                    if doc.needs_pass:
+                        password_required = True
+                    doc.close()
+
                 AwsS3Client().upload_fileobj(document, object_name)
 
                 new_evidence_file = EvidenceFile()
                 new_evidence_file.original_file_name = document.filename
                 new_evidence_file.aws_file_name = object_name
+                new_evidence_file.password_required = password_required
                 files.append(new_evidence_file)
 
             DataStore.save_application(application_data)
