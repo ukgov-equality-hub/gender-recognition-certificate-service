@@ -18,7 +18,7 @@ WORKDIR /app
 COPY requirements.txt requirements.txt
 RUN pip3 install -r requirements.txt
 
-ADD . .
+COPY . .
 
 # RUN pip install pre-commit
 # RUN pre-commit install --install-hooks
