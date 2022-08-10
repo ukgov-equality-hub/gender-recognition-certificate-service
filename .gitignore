@@ -15,6 +15,7 @@ build/
 node_modules
 instance/config.py
 *.py.txt
+.DS_Store
 
 # Developer-specific settings
 .vscode/settings.json
