@@ -29,8 +29,7 @@ def index():
             ).first()
 
             if user is not None:
-                password_ok = check_password_hash(user.password, form.password.data)
-                if password_ok:
+                if check_password_hash(user.password, form.password.data):
                     if user.passwordResetRequired:
                         session['emailAddress'] = email_address
                         logger.log(LogLevel.INFO, f"{logger.mask_email_address(email_address)} password reset required")
