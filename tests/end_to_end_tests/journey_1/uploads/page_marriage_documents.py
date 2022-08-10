@@ -54,13 +54,13 @@ async def run_checks_on_page(page: Page, asserts: AssertHelpers, helpers: PageHe
     await asserts.documents_uploaded(0)
 
     # Don't upload any documents, click "Save and continue"
-    await helpers.click_button('Save and continue')
-    await asserts.url(PAGE_URL)
-    await asserts.accessibility()
-    await asserts.h1(PAGE_H1)
-    await asserts.number_of_errors(1)
-    await asserts.error(field='documents', message='Select a JPG, BMP, PNG, TIF or PDF file smaller than 10MB')
-    await asserts.documents_uploaded(0)
+    #await helpers.click_button('Save and continue')
+    #await asserts.url(PAGE_URL)
+    #await asserts.accessibility()
+    #await asserts.h1(PAGE_H1)
+    #await asserts.number_of_errors(1)
+    #await asserts.error(field='documents', message='Select a JPG, BMP, PNG, TIF or PDF file smaller than 10MB')
+    #await asserts.documents_uploaded(0)
 
     # Don't upload any documents, click "Upload file"
     await helpers.click_button('Upload file')
