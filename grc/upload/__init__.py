@@ -28,6 +28,13 @@ sections = [
     UploadSection(url='statutory-declarations', data_section='statutoryDeclarations', html_file='statutory-declarations.html', file_list=(lambda u: u.statutory_declarations))
 ]
 
+def delete_file(application_data, file_name, section):
+    AwsS3Client().delete_object(file_name)
+    files = section.file_list(application_data.uploads_data)
+    file_to_remove = next(filter(lambda file: file.aws_file_name == file_name, files), None)
+    files.remove(file_to_remove)
+    return application_data
+
 
 @upload.route('/upload/<section_url>', methods=['GET', 'POST'])
 @LoginRequired
@@ -83,10 +90,7 @@ def removeFile(section_url: str):
     application_data = DataStore.load_application_by_session_reference_number()
 
     if form.validate_on_submit():
-        AwsS3Client().delete_object(form.file.data)
-        files = section.file_list(application_data.uploads_data)
-        file_to_remove = next(filter(lambda file: file.aws_file_name == form.file.data, files), None)
-        files.remove(file_to_remove)
+        application_data = delete_file(application_data, form.file.data, section)
         DataStore.save_application(application_data)
 
     return local_redirect(url_for('upload.uploadInfoPage', section_url=section.url) + '#file-upload-section')
