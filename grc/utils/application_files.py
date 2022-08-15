@@ -90,8 +90,6 @@ class ApplicationFiles():
 
                 pdfs = []
                 object_names = []
-                attachments_html = ''
-
                 pdfs.append(create_application_cover_sheet_pdf(application_data, is_admin))
 
                 def add_object(section, object_name, original_file_name, idx, num):
@@ -136,22 +134,16 @@ class ApplicationFiles():
                             pdfs.append(create_pdf_from_html(html))
                             logger.log(LogLevel.INFO, f"Adding image {object_name}")
 
-                for section in all_sections:
-                    files = get_files_for_section(section, application_data)
-                    title = False
-                    num_attachments = len(files)
-                    for file_index, evidence_file in enumerate(files):
-                        if attach_files:
-                            add_object(section, evidence_file.aws_file_name, evidence_file.original_file_name, file_index + 1, num_attachments)
-                        else:
-                            if not title:
-                                attachments_html += f'<h3 style="font-size: 14px;">{section_names[sections.index(section)]}</h3>'
-                                title = True
-                            attachments_html += f'<p style="font-size: 12px;">Attachment {file_index + 1} of {num_attachments}: {evidence_file.aws_file_name}</p>'
+                if attach_files:
+                    for section in all_sections:
+                        files = get_files_for_section(section, application_data)
+                        for file_index, evidence_file in enumerate(files):
+                            add_object(section, evidence_file.aws_file_name, evidence_file.original_file_name, file_index + 1, len(files))
 
-                if attachments_html != '':
-                    pdfs.append(create_pdf_from_html(attachments_html))
-                    logger.log(LogLevel.INFO, "Adding attachments pdf")
+                else:
+                    attachments_pdf = create_attachment_names_pdf(all_sections, application_data)
+                    if attachments_pdf:
+                        pdfs.append(attachments_pdf)
 
                 object_names.insert(0, '')
                 data = merge_pdfs(pdfs)
@@ -194,6 +186,20 @@ def create_application_cover_sheet_pdf(application_data, is_admin):
 def create_section_heading_pdf(section_name):
     html = f'<h3 style="font-size: 14px;">Your {section_name}</h3>'
     return create_pdf_from_html(html)
+
+
+def create_attachment_names_pdf(all_sections, application_data):
+    attachments_html = ''
+    for section in all_sections:
+        files = get_files_for_section(section, application_data)
+        if len(files) > 0:
+            attachments_html += f'<h3 style="font-size: 14px;">{get_section_name(section)}</h3>'
+            for file_index, evidence_file in enumerate(files):
+                attachments_html += f'<p style="font-size: 12px;">Attachment {file_index + 1} of {len(files)}: {evidence_file.aws_file_name}</p>'
+
+    if attachments_html != '':
+        logger.log(LogLevel.INFO, "Adding attachments pdf")
+        return create_pdf_from_html(attachments_html)
 
 
 def merge_pdfs(pdfs):
