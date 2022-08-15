@@ -97,15 +97,15 @@ class ApplicationFiles():
                     def section_name():
                         return section_names[sections.index(section)]
 
+                    if idx == 1:
+                        pdfs.append(create_section_heading_pdf(section_name()))
+
                     if '.' in object_name:
                         file_type = object_name[object_name.rindex('.') + 1:]
 
                         if file_type.lower() == 'pdf':
                             html = f'<p style="font-size: 12px;">Next page: Attachment {idx} of {num} - {original_file_name}</p>'
-                            if idx == 1:
-                                html = f'<h3 style="font-size: 14px;">Your {section_name()}</h3>{html}'
                             object_names.append(f'{object_name} header file')
-
                             pdfs.append(create_pdf_from_html(html))
 
                             data = AwsS3Client().download_object(object_name)
@@ -132,9 +132,6 @@ class ApplicationFiles():
                             else:
                                 html = f'<p style="font-size: 12px;">Attachment {idx} of {num} - {original_file_name}</p><p>&nbsp;</p><p>&nbsp;</p><p>Error downloading file, please try again later</p>'
                                 logger.log(LogLevel.ERROR, f"Error downloading {object_name}")
-
-                            if idx == 1:
-                                html = f'<h3 style="font-size: 14px;">Your {section_name()}</h3>{html}'
 
                             pdfs.append(create_pdf_from_html(html))
                             logger.log(LogLevel.INFO, f"Adding image {object_name}")
@@ -191,6 +188,11 @@ def create_pdf_from_html(html):
 def create_application_cover_sheet_pdf(application_data, is_admin):
     html_template = ('applications/download.html' if is_admin else 'applications/download_user.html')
     html = render_template(html_template, application_data=application_data)
+    return create_pdf_from_html(html)
+
+
+def create_section_heading_pdf(section_name):
+    html = f'<h3 style="font-size: 14px;">Your {section_name}</h3>'
     return create_pdf_from_html(html)
 
 
