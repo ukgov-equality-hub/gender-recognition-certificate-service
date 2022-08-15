@@ -88,16 +88,7 @@ class ApplicationFiles():
                 object_names = []
                 attachments_html = ''
 
-                data = io.BytesIO()
-                pisa.CreatePDF(html, dest=data)
-                data.seek(0)
-
-                # Attach any PDF's
-                def html_to_pdf(html):
-                    pdf = io.BytesIO()
-                    pisa.CreatePDF(html, dest=pdf)
-                    pdf.seek(0)
-                    return pdf
+                data = create_pdf_from_html(html)
 
                 def add_object(section, object_name, idx, num):
                     file_type = ''
@@ -120,6 +111,8 @@ class ApplicationFiles():
                                 html = f'<h3 style="font-size: 14px;">Your {section_name()}</h3>{html}'
                             object_names.append(f'{object_name} header file')
 
+                            pdfs.append(create_pdf_from_html(html))
+
                             data = AwsS3Client().download_object(object_name)
                             if data is not None:
                                 doc = fitz.open(stream=data, filetype='pdf')
@@ -128,13 +121,10 @@ class ApplicationFiles():
                                     # We can check the type of password (user/owner):
                                     # doc.authenticate('') == 2
                                     # https://pymupdf.readthedocs.io/en/latest/document.html#Document.authenticate
-                                    html += f'<h3 style="font-size: 14px; color: red;">Unable to add {clean_object_name()}. A password is required.</h3>'
-                                    pdf = html_to_pdf(html)
-                                    pdfs.append(pdf)
+                                    html = f'<h3 style="font-size: 14px; color: red;">Unable to add {clean_object_name()}. A password is required.</h3>'
+                                    pdfs.append(create_pdf_from_html(html))
                                     logger.log(LogLevel.ERROR, f"file {object_name} needs a password!")
                                 else:
-                                    pdf = html_to_pdf(html)
-                                    pdfs.append(pdf)
                                     pdfs.append(data)
                                     object_names.append(object_name)
                                     logger.log(LogLevel.INFO, f"Attaching {object_name}")
@@ -142,7 +132,6 @@ class ApplicationFiles():
                                 logger.log(LogLevel.ERROR, f"Error attaching {object_name}")
                         else:
                             data, width, height = AwsS3Client().download_object_data(object_name)
-                            pdf = io.BytesIO()
                             if data is not None:
                                 html = f'<p style="font-size: 12px;">Attachment {idx} of {num} - {clean_object_name()}</p><p>&nbsp;</p><p>&nbsp;</p><img src="{data}" width="{width}" height="{height}" style="max-width: 90%;">'
                             else:
@@ -152,10 +141,7 @@ class ApplicationFiles():
                             if idx == 1:
                                 html = f'<h3 style="font-size: 14px;">Your {section_name()}</h3>{html}'
 
-                            pisa.CreatePDF(html, dest=pdf)
-                            pdf.seek(0)
-                            pdfs.append(pdf)
-                            object_names.append(object_name)
+                            pdfs.append(create_pdf_from_html(html))
                             logger.log(LogLevel.INFO, f"Adding image {object_name}")
 
                 for section in all_sections:
@@ -172,11 +158,7 @@ class ApplicationFiles():
                             attachments_html += f'<p style="font-size: 12px;">Attachment {file_index + 1} of {num_attachments}: {evidence_file.aws_file_name}</p>'
 
                 if attachments_html != '':
-                    pdf = io.BytesIO()
-                    pisa.CreatePDF(attachments_html, dest=pdf)
-                    pdf.seek(0)
-                    pdfs.append(pdf)
-                    object_names.append('')
+                    pdfs.append(create_pdf_from_html(attachments_html))
                     logger.log(LogLevel.INFO, "Adding attachments pdf")
 
                 if len(pdfs) > 0:
@@ -204,6 +186,13 @@ class ApplicationFiles():
             files = section_files[section](application_data.uploads_data)
             for evidence_file in files:
                 AwsS3Client().delete_object(evidence_file.aws_file_name)
+
+
+def create_pdf_from_html(html):
+    pdf = io.BytesIO()
+    pisa.CreatePDF(html, dest=pdf)
+    pdf.seek(0)
+    return pdf
 
 
 def merge_pdfs(pdfs):
