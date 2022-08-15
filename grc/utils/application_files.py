@@ -81,18 +81,15 @@ class ApplicationFiles():
                 if download:
                     bytes = data.getvalue()
             else:
-                html_template = 'applications/download_user.html'
                 all_sections = sections
                 if is_admin:
-                    html_template = 'applications/download.html'
                     all_sections = ['statutoryDeclarations', 'marriageDocuments', 'nameChange', 'medicalReports', 'genderEvidence', 'overseasCertificate']
 
-                html = render_template(html_template, application_data=application_data)
                 pdfs = []
                 object_names = []
                 attachments_html = ''
-
-                data = create_pdf_from_html(html)
+                
+                pdfs.append(create_application_cover_sheet_pdf(application_data, is_admin))
 
                 def add_object(section, object_name, idx, num):
                     file_type = ''
@@ -165,11 +162,9 @@ class ApplicationFiles():
                     pdfs.append(create_pdf_from_html(attachments_html))
                     logger.log(LogLevel.INFO, "Adding attachments pdf")
 
-                if len(pdfs) > 0:
-                    pdfs.insert(0, data)
-                    object_names.insert(0, '')
-                    data = merge_pdfs(pdfs)
-
+                object_names.insert(0, '')
+                data = merge_pdfs(pdfs)
+                
                 bytes = data.read()
                 if is_admin and not attach_files:
                     AwsS3Client().upload_fileobj(data, file_name)
@@ -197,6 +192,12 @@ def create_pdf_from_html(html):
     pisa.CreatePDF(html, dest=pdf)
     pdf.seek(0)
     return pdf
+
+
+def create_application_cover_sheet_pdf(application_data, is_admin):
+    html_template = ('applications/download.html' if is_admin else 'applications/download_user.html')
+    html = render_template(html_template, application_data=application_data)
+    return create_pdf_from_html(html)
 
 
 def merge_pdfs(pdfs):
