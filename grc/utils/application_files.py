@@ -173,31 +173,50 @@ def add_object(pdfs, section, object_name, original_file_name, idx, num):
             html = f'<p style="font-size: 12px;">Next page: Attachment {idx} of {num} - {original_file_name}</p>'
             pdfs.append(create_pdf_from_html(html))
 
-            data = AwsS3Client().download_object(object_name)
-            if data is not None:
-                doc = fitz.open(stream=data, filetype='pdf')
-                if doc.needs_pass:
-                    # We can check the type of password (user/owner):
-                    # doc.authenticate('') == 2
-                    # https://pymupdf.readthedocs.io/en/latest/document.html#Document.authenticate
-                    html = f'<h3 style="font-size: 14px; color: red;">Unable to add {original_file_name}. A password is required.</h3>'
-                    pdfs.append(create_pdf_from_html(html))
-                    logger.log(LogLevel.ERROR, f"file {object_name} needs a password!")
+            try:
+                data = AwsS3Client().download_object(object_name)
+                if data is not None:
+                    doc = fitz.open(stream=data, filetype='pdf')
+                    if doc.needs_pass:
+                        # We can check the type of password (user/owner):
+                        # doc.authenticate('') == 2
+                        # https://pymupdf.readthedocs.io/en/latest/document.html#Document.authenticate
+                        html = f'<h3 style="font-size: 14px; color: red;">Unable to add {original_file_name}. A password is required.</h3>'
+                        pdfs.append(create_pdf_from_html(html))
+                        logger.log(LogLevel.ERROR, f"file {object_name} needs a password!")
+                    else:
+                        pdfs.append(data)
+                        logger.log(LogLevel.INFO, f"Attaching {object_name}")
                 else:
-                    pdfs.append(data)
-                    logger.log(LogLevel.INFO, f"Attaching {object_name}")
-            else:
+                    logger.log(LogLevel.ERROR, f"Error attaching {object_name}")
+                    pdfs.append(create_pdf_for_attachment_error(original_file_name))
+            except:
                 logger.log(LogLevel.ERROR, f"Error attaching {object_name}")
+                pdfs.append(create_pdf_for_attachment_error(original_file_name))
         else:
-            data, width, height = AwsS3Client().download_object_data(object_name)
-            if data is not None:
-                html = f'<p style="font-size: 12px;">Attachment {idx} of {num} - {original_file_name}</p><p>&nbsp;</p><p>&nbsp;</p><img src="{data}" width="{width}" height="{height}" style="max-width: 90%;">'
-            else:
-                html = f'<p style="font-size: 12px;">Attachment {idx} of {num} - {original_file_name}</p><p>&nbsp;</p><p>&nbsp;</p><p>Error downloading file, please try again later</p>'
-                logger.log(LogLevel.ERROR, f"Error downloading {object_name}")
+            try:
+                data, width, height = AwsS3Client().download_object_data(object_name)
+                if data is not None:
+                    html = f'<p style="font-size: 12px;">Attachment {idx} of {num} - {original_file_name}</p><p>&nbsp;</p><p>&nbsp;</p><img src="{data}" width="{width}" height="{height}" style="max-width: 90%;">'
+                    pdfs.append(create_pdf_from_html(html))
+                    logger.log(LogLevel.INFO, f"Adding image {object_name}")
+                else:
+                    html = f'<p style="font-size: 12px;">Attachment {idx} of {num} - {original_file_name}</p>'
+                    pdfs.append(create_pdf_from_html(html))
+                    logger.log(LogLevel.ERROR, f"Error downloading {object_name}")
+                    pdfs.append(create_pdf_for_attachment_error(original_file_name))
 
-            pdfs.append(create_pdf_from_html(html))
-            logger.log(LogLevel.INFO, f"Adding image {object_name}")
+            except:
+                logger.log(LogLevel.ERROR, f"Error attaching {object_name}")
+                create_pdf_for_attachment_error(original_file_name)
+    else:
+        logger.log(LogLevel.ERROR, f"Error attaching {object_name}")
+        create_pdf_for_attachment_error(original_file_name)
+
+
+def create_pdf_for_attachment_error(file_name):
+    html = f'<h3 style="font-size: 14px; color: red;">WARNING: Could not attach file ({file_name})</h3>'
+    return create_pdf_from_html(html)
 
 
 def merge_pdfs(pdfs):
