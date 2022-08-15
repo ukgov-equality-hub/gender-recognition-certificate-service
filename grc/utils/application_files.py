@@ -89,18 +89,16 @@ class ApplicationFiles():
                     all_sections = ['statutoryDeclarations', 'marriageDocuments', 'nameChange', 'medicalReports', 'genderEvidence', 'overseasCertificate']
 
                 pdfs = []
-                object_names = []
                 pdfs.append(create_application_cover_sheet_pdf(application_data, is_admin))
 
                 if attach_files:
-                    attach_all_files(pdfs, object_names, all_sections, application_data)
+                    attach_all_files(pdfs, all_sections, application_data)
 
                 else:
                     attachments_pdf = create_attachment_names_pdf(all_sections, application_data)
                     if attachments_pdf:
                         pdfs.append(attachments_pdf)
 
-                object_names.insert(0, '')
                 data = merge_pdfs(pdfs)
                 
                 bytes = data.read()
@@ -157,14 +155,14 @@ def create_attachment_names_pdf(all_sections, application_data):
         return create_pdf_from_html(attachments_html)
 
 
-def attach_all_files(pdfs, object_names, all_sections, application_data):
+def attach_all_files(pdfs, all_sections, application_data):
     for section in all_sections:
         files = get_files_for_section(section, application_data)
         for file_index, evidence_file in enumerate(files):
-            add_object(pdfs, object_names, section, evidence_file.aws_file_name, evidence_file.original_file_name, file_index + 1, len(files))
+            add_object(pdfs, section, evidence_file.aws_file_name, evidence_file.original_file_name, file_index + 1, len(files))
 
 
-def add_object(pdfs, object_names, section, object_name, original_file_name, idx, num):
+def add_object(pdfs, section, object_name, original_file_name, idx, num):
     if idx == 1:
         pdfs.append(create_section_heading_pdf(get_section_name(section)))
 
@@ -173,7 +171,6 @@ def add_object(pdfs, object_names, section, object_name, original_file_name, idx
 
         if file_type.lower() == 'pdf':
             html = f'<p style="font-size: 12px;">Next page: Attachment {idx} of {num} - {original_file_name}</p>'
-            object_names.append(f'{object_name} header file')
             pdfs.append(create_pdf_from_html(html))
 
             data = AwsS3Client().download_object(object_name)
@@ -188,7 +185,6 @@ def add_object(pdfs, object_names, section, object_name, original_file_name, idx
                     logger.log(LogLevel.ERROR, f"file {object_name} needs a password!")
                 else:
                     pdfs.append(data)
-                    object_names.append(object_name)
                     logger.log(LogLevel.INFO, f"Attaching {object_name}")
             else:
                 logger.log(LogLevel.ERROR, f"Error attaching {object_name}")
