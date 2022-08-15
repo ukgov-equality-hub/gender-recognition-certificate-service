@@ -55,24 +55,40 @@
                     </p>
                 {% endif %}
 
-                <img id="loading" src="{{ url_for('static', filename='assets/images/loading.gif') }}" width="41"
-                     height="41" style="display: none; margin-bottom: 20px;" alt="">
+                <img id="loading" src="{{ url_for('static', filename='assets/images/loading.gif') }}" width="40"
+                     height="40" style="display: none; margin-bottom: 17px;" alt="">
                 <input id="documents" type="file" name="documents" multiple
                        accept=".jpg,.jpeg,.bmp,.png,.tif,.tiff,.pdf"
-                       class="govuk-file-upload govuk-!-margin-bottom-4 {{ 'govuk-input--error' if form.documents.errors }}">
+                       class="govuk-file-upload govuk-!-margin-bottom-4 {{ 'govuk-input--error' if form.documents.errors }}"
+                       onchange="checkFile(event)">
             </div>
-            <input type="submit" name="button_clicked" value="Upload file" class="govuk-button" data-module="govuk-button">
+            <button id="submit" type="submit" name="button_clicked" value="Upload file" class="govuk-button" data-module="govuk-button">
+                Upload file
+            </button>
 
+            {% if currently_uploaded_files != [] %}
             <p class="govuk-body govuk-!-margin-top-5">
                 Once you have uploaded all your files, click the "Save and continue" button
             </p>
+            {% endif %}
 
             <div class="govuk-button-group">
+                {% if currently_uploaded_files != [] %}
                 <input type="submit" name="button_clicked" value="Save and continue" class="govuk-button" data-module="govuk-button">
+                {% endif %}
                 <a href="{{ url_for('taskList.index') }}" class="govuk-link govuk-link--no-visited-state">
                     Return to task list
                 </a>
             </div>
         </form>
+        <script>
+        async function checkFile(event) {
+            console.log('event.target.files', event.target.files.length)
+            document.getElementById('submit').innerText = 'Upload file'
+            if (event.target.files.length > 0) {
+                document.getElementById('submit').innerText = `Upload ${event.target.files.length} ${event.target.files.length == 1 ? 'file' : 'files'}`
+            }
+        }
+        </script>
     </div>
 {% endmacro %}

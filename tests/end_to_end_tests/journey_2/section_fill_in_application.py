@@ -390,7 +390,7 @@ async def fill_in_application(page: Page, asserts: AssertHelpers, helpers: PageH
 
     # Upload a valid document
     await helpers.upload_file_valid(field='documents', file_name=DOCUMENT_ONE_NAME)
-    await helpers.click_button('Upload file')
+    await helpers.click_button('Upload 1 file')
     await asserts.url('/upload/name-change')
     await asserts.accessibility()
     await asserts.h1('Upload name change documents')
@@ -423,7 +423,7 @@ async def fill_in_application(page: Page, asserts: AssertHelpers, helpers: PageH
 
     # Upload a valid document
     await helpers.upload_file_valid(field='documents', file_name=DOCUMENT_ONE_NAME)
-    await helpers.click_button('Upload file')
+    await helpers.click_button('Upload 1 file')
     await asserts.url('/upload/marriage-documents')
     await asserts.accessibility()
     await asserts.h1('Upload marriage and civil partnership documents')
@@ -456,7 +456,7 @@ async def fill_in_application(page: Page, asserts: AssertHelpers, helpers: PageH
 
     # Upload a valid document
     await helpers.upload_file_valid(field='documents', file_name=DOCUMENT_ONE_NAME)
-    await helpers.click_button('Upload file')
+    await helpers.click_button('Upload 1 file')
     await asserts.url('/upload/overseas-certificate')
     await asserts.accessibility()
     await asserts.h1('Overseas gender recognition certificate documents')
@@ -489,7 +489,7 @@ async def fill_in_application(page: Page, asserts: AssertHelpers, helpers: PageH
 
     # Upload a valid document
     await helpers.upload_file_valid(field='documents', file_name=DOCUMENT_ONE_NAME)
-    await helpers.click_button('Upload file')
+    await helpers.click_button('Upload 1 file')
     await asserts.url('/upload/statutory-declarations')
     await asserts.accessibility()
     await asserts.h1('Statutory declarations documents')

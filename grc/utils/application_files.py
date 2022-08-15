@@ -88,6 +88,7 @@ class ApplicationFiles():
 
                 html = render_template(html_template, application_data=application_data)
                 pdfs = []
+                object_names = []
                 attachments_html = ''
 
                 import io
@@ -98,6 +99,12 @@ class ApplicationFiles():
                 data.seek(0)
 
                 # Attach any PDF's
+                def html_to_pdf(html):
+                    pdf = io.BytesIO()
+                    pisa.CreatePDF(html, dest=pdf)
+                    pdf.seek(0)
+                    return pdf
+
                 def merge_pdfs(pdfs):
                     #merger = PyPDF2.PdfFileMerger(strict=False)
                     #for pdf_fileobj in pdfs:
@@ -105,10 +112,11 @@ class ApplicationFiles():
 
                     merger = fitz.open()
                     for pdf_fileobj in pdfs:
-                        merger.insert_pdf(fitz.open(stream=pdf_fileobj, filetype='pdf'))
+                        doc = fitz.open(stream=pdf_fileobj, filetype='pdf')
+                        merger.insert_pdf(doc)
 
                     pdf = io.BytesIO()
-                    merger.save(pdf)
+                    merger.save(pdf, deflate=True)
                     merger.close()
                     pdf.seek(0)
                     return pdf
@@ -129,19 +137,29 @@ class ApplicationFiles():
                         file_type = object_name[object_name.rindex('.') + 1:]
 
                         if file_type.lower() == 'pdf':
-                            pdf = io.BytesIO()
                             html = f'<p style="font-size: 12px;">Next page: Attachment {idx} of {num} - {clean_object_name()}</p>'
                             if idx == 1:
                                 html = f'<h3 style="font-size: 14px;">Your {section_name()}</h3>{html}'
-
-                            pisa.CreatePDF(html, dest=pdf)
-                            pdf.seek(0)
-                            pdfs.append(pdf)
+                            object_names.append(f'{object_name} header file')
 
                             data = AwsS3Client().download_object(object_name)
                             if data is not None:
-                                pdfs.append(data)
-                                logger.log(LogLevel.INFO, f"Attaching {object_name}")
+                                doc = fitz.open(stream=data, filetype='pdf')
+                                if doc.needs_pass:
+
+                                    # We can check the type of password (user/owner):
+                                    # doc.authenticate('') == 2
+                                    # https://pymupdf.readthedocs.io/en/latest/document.html#Document.authenticate
+                                    html += f'<h3 style="font-size: 14px; color: red;">Unable to add {clean_object_name()}. A password is required.</h3>'
+                                    pdf = html_to_pdf(html)
+                                    pdfs.append(pdf)
+                                    logger.log(LogLevel.ERROR, f"file {object_name} needs a password!")
+                                else:
+                                    pdf = html_to_pdf(html)
+                                    pdfs.append(pdf)
+                                    pdfs.append(data)
+                                    object_names.append(object_name)
+                                    logger.log(LogLevel.INFO, f"Attaching {object_name}")
                             else:
                                 logger.log(LogLevel.ERROR, f"Error attaching {object_name}")
                         else:
@@ -159,6 +177,7 @@ class ApplicationFiles():
                             pisa.CreatePDF(html, dest=pdf)
                             pdf.seek(0)
                             pdfs.append(pdf)
+                            object_names.append(object_name)
                             logger.log(LogLevel.INFO, f"Adding image {object_name}")
 
                 for section in all_sections:
@@ -179,10 +198,12 @@ class ApplicationFiles():
                     pisa.CreatePDF(attachments_html, dest=pdf)
                     pdf.seek(0)
                     pdfs.append(pdf)
+                    object_names.append('')
                     logger.log(LogLevel.INFO, "Adding attachments pdf")
 
                 if len(pdfs) > 0:
                     pdfs.insert(0, data)
+                    object_names.insert(0, '')
                     data = merge_pdfs(pdfs)
 
                 bytes = data.read()

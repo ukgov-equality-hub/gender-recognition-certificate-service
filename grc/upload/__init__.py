@@ -1,6 +1,7 @@
 from typing import List, Callable
 from flask import Blueprint, render_template, request, url_for, abort
 from werkzeug.utils import secure_filename
+import fitz
 from grc.business_logic.data_store import DataStore
 from grc.business_logic.data_structures.uploads_data import UploadsData, EvidenceFile
 from grc.upload.forms import UploadForm, DeleteForm
@@ -28,6 +29,13 @@ sections = [
     UploadSection(url='statutory-declarations', data_section='statutoryDeclarations', html_file='statutory-declarations.html', file_list=(lambda u: u.statutory_declarations))
 ]
 
+def delete_file(application_data, file_name, section):
+    AwsS3Client().delete_object(file_name)
+    files = section.file_list(application_data.uploads_data)
+    file_to_remove = next(filter(lambda file: file.aws_file_name == file_name, files), None)
+    files.remove(file_to_remove)
+    return application_data
+
 
 @upload.route('/upload/<section_url>', methods=['GET', 'POST'])
 @LoginRequired
@@ -42,15 +50,24 @@ def uploadInfoPage(section_url: str):
     files = section.file_list(application_data.uploads_data)
 
     if form.validate_on_submit():
-        if form.button_clicked.data == 'Upload file':
+        if form.button_clicked.data.startswith('Upload '):
             for document in request.files.getlist('documents'):
                 filename = secure_filename(document.filename)
                 object_name = application_data.reference_number + '__' + section.data_section + '__' + filename
+                password_required = False
+
+                if filename.lower().endswith('.pdf'):
+                    doc = fitz.open(stream=document.read(), filetype='pdf')
+                    if doc.needs_pass:
+                        password_required = True
+                    doc.close()
+
                 AwsS3Client().upload_fileobj(document, object_name)
 
                 new_evidence_file = EvidenceFile()
                 new_evidence_file.original_file_name = document.filename
                 new_evidence_file.aws_file_name = object_name
+                new_evidence_file.password_required = password_required
                 files.append(new_evidence_file)
 
             DataStore.save_application(application_data)
@@ -83,10 +100,7 @@ def removeFile(section_url: str):
     application_data = DataStore.load_application_by_session_reference_number()
 
     if form.validate_on_submit():
-        AwsS3Client().delete_object(form.file.data)
-        files = section.file_list(application_data.uploads_data)
-        file_to_remove = next(filter(lambda file: file.aws_file_name == form.file.data, files), None)
-        files.remove(file_to_remove)
+        application_data = delete_file(application_data, form.file.data, section)
         DataStore.save_application(application_data)
 
     return local_redirect(url_for('upload.uploadInfoPage', section_url=section.url) + '#file-upload-section')

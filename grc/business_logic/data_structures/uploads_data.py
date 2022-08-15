@@ -4,6 +4,7 @@ from typing import List
 class EvidenceFile:
     original_file_name: str
     aws_file_name: str
+    password_required: bool = False
 
 
 class UploadsData:

@@ -71,7 +71,11 @@ def downloadfile(file_name):
 
     logger.log(LogLevel.INFO, f"{logger.mask_email_address(session['signedIn'])} downloaded file {file_name}")
 
-    response = make_response(data.getvalue())
+    bytes = data.getvalue()
+    if bytes is None:
+        return abort(404)
+
+    response = make_response(bytes)
     response.headers.set('Content-Type', file_type)
     return response
 
@@ -104,6 +108,9 @@ def download(reference_number):
         )
 
         logger.log(LogLevel.INFO, f"{logger.mask_email_address(session['signedIn'])} downloaded application {reference_number}")
+
+        if bytes is None:
+            return abort(404)
 
         response = make_response(bytes)
         response.headers.set('Content-Type', 'application/pdf')
@@ -161,7 +168,10 @@ def attachments(reference_number):
 
         logger.log(LogLevel.INFO, f"{logger.mask_email_address(session['signedIn'])} downloaded files for application {reference_number}")
 
-        message = "attachments zipped"
+        session['message'] = "attachments zipped"
+        if bytes is None:
+            return abort(404)
+
         response = make_response(bytes)
         response.headers.set('Content-Type', 'application/zip')
         response.headers.set('Content-Disposition', 'attachment', filename=file_name)
