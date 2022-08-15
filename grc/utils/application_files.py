@@ -92,53 +92,11 @@ class ApplicationFiles():
                 object_names = []
                 pdfs.append(create_application_cover_sheet_pdf(application_data, is_admin))
 
-                def add_object(section, object_name, original_file_name, idx, num):
-                    file_type = ''
-
-                    if idx == 1:
-                        pdfs.append(create_section_heading_pdf(get_section_name(section)))
-
-                    if '.' in object_name:
-                        file_type = object_name[object_name.rindex('.') + 1:]
-
-                        if file_type.lower() == 'pdf':
-                            html = f'<p style="font-size: 12px;">Next page: Attachment {idx} of {num} - {original_file_name}</p>'
-                            object_names.append(f'{object_name} header file')
-                            pdfs.append(create_pdf_from_html(html))
-
-                            data = AwsS3Client().download_object(object_name)
-                            if data is not None:
-                                doc = fitz.open(stream=data, filetype='pdf')
-                                if doc.needs_pass:
-
-                                    # We can check the type of password (user/owner):
-                                    # doc.authenticate('') == 2
-                                    # https://pymupdf.readthedocs.io/en/latest/document.html#Document.authenticate
-                                    html = f'<h3 style="font-size: 14px; color: red;">Unable to add {original_file_name}. A password is required.</h3>'
-                                    pdfs.append(create_pdf_from_html(html))
-                                    logger.log(LogLevel.ERROR, f"file {object_name} needs a password!")
-                                else:
-                                    pdfs.append(data)
-                                    object_names.append(object_name)
-                                    logger.log(LogLevel.INFO, f"Attaching {object_name}")
-                            else:
-                                logger.log(LogLevel.ERROR, f"Error attaching {object_name}")
-                        else:
-                            data, width, height = AwsS3Client().download_object_data(object_name)
-                            if data is not None:
-                                html = f'<p style="font-size: 12px;">Attachment {idx} of {num} - {original_file_name}</p><p>&nbsp;</p><p>&nbsp;</p><img src="{data}" width="{width}" height="{height}" style="max-width: 90%;">'
-                            else:
-                                html = f'<p style="font-size: 12px;">Attachment {idx} of {num} - {original_file_name}</p><p>&nbsp;</p><p>&nbsp;</p><p>Error downloading file, please try again later</p>'
-                                logger.log(LogLevel.ERROR, f"Error downloading {object_name}")
-
-                            pdfs.append(create_pdf_from_html(html))
-                            logger.log(LogLevel.INFO, f"Adding image {object_name}")
-
                 if attach_files:
                     for section in all_sections:
                         files = get_files_for_section(section, application_data)
                         for file_index, evidence_file in enumerate(files):
-                            add_object(section, evidence_file.aws_file_name, evidence_file.original_file_name, file_index + 1, len(files))
+                            add_object(pdfs, object_names, section, evidence_file.aws_file_name, evidence_file.original_file_name, file_index + 1, len(files))
 
                 else:
                     attachments_pdf = create_attachment_names_pdf(all_sections, application_data)
@@ -200,6 +158,46 @@ def create_attachment_names_pdf(all_sections, application_data):
     if attachments_html != '':
         logger.log(LogLevel.INFO, "Adding attachments pdf")
         return create_pdf_from_html(attachments_html)
+
+
+def add_object(pdfs, object_names, section, object_name, original_file_name, idx, num):
+    if idx == 1:
+        pdfs.append(create_section_heading_pdf(get_section_name(section)))
+
+    if '.' in object_name:
+        file_type = object_name[object_name.rindex('.') + 1:]
+
+        if file_type.lower() == 'pdf':
+            html = f'<p style="font-size: 12px;">Next page: Attachment {idx} of {num} - {original_file_name}</p>'
+            object_names.append(f'{object_name} header file')
+            pdfs.append(create_pdf_from_html(html))
+
+            data = AwsS3Client().download_object(object_name)
+            if data is not None:
+                doc = fitz.open(stream=data, filetype='pdf')
+                if doc.needs_pass:
+                    # We can check the type of password (user/owner):
+                    # doc.authenticate('') == 2
+                    # https://pymupdf.readthedocs.io/en/latest/document.html#Document.authenticate
+                    html = f'<h3 style="font-size: 14px; color: red;">Unable to add {original_file_name}. A password is required.</h3>'
+                    pdfs.append(create_pdf_from_html(html))
+                    logger.log(LogLevel.ERROR, f"file {object_name} needs a password!")
+                else:
+                    pdfs.append(data)
+                    object_names.append(object_name)
+                    logger.log(LogLevel.INFO, f"Attaching {object_name}")
+            else:
+                logger.log(LogLevel.ERROR, f"Error attaching {object_name}")
+        else:
+            data, width, height = AwsS3Client().download_object_data(object_name)
+            if data is not None:
+                html = f'<p style="font-size: 12px;">Attachment {idx} of {num} - {original_file_name}</p><p>&nbsp;</p><p>&nbsp;</p><img src="{data}" width="{width}" height="{height}" style="max-width: 90%;">'
+            else:
+                html = f'<p style="font-size: 12px;">Attachment {idx} of {num} - {original_file_name}</p><p>&nbsp;</p><p>&nbsp;</p><p>Error downloading file, please try again later</p>'
+                logger.log(LogLevel.ERROR, f"Error downloading {object_name}")
+
+            pdfs.append(create_pdf_from_html(html))
+            logger.log(LogLevel.INFO, f"Adding image {object_name}")
 
 
 def merge_pdfs(pdfs):
