@@ -101,22 +101,6 @@ class ApplicationFiles():
                     pdf.seek(0)
                     return pdf
 
-                def merge_pdfs(pdfs):
-                    #merger = PyPDF2.PdfFileMerger(strict=False)
-                    #for pdf_fileobj in pdfs:
-                    #    merger.append(pdf_fileobj)
-
-                    merger = fitz.open()
-                    for pdf_fileobj in pdfs:
-                        doc = fitz.open(stream=pdf_fileobj, filetype='pdf')
-                        merger.insert_pdf(doc)
-
-                    pdf = io.BytesIO()
-                    merger.save(pdf, deflate=True)
-                    merger.close()
-                    pdf.seek(0)
-                    return pdf
-
                 def add_object(section, object_name, idx, num):
                     file_type = ''
 
@@ -222,3 +206,15 @@ class ApplicationFiles():
             files = self.section_files[section](application_data.uploads_data)
             for evidence_file in files:
                 AwsS3Client().delete_object(evidence_file.aws_file_name)
+
+
+def merge_pdfs(pdfs):
+    merger = fitz.open()
+    for pdf_fileobj in pdfs:
+        merger.insert_pdf(fitz.open(stream=pdf_fileobj, filetype='pdf'))
+
+    pdf = io.BytesIO()
+    merger.save(pdf)
+    merger.close()
+    pdf.seek(0)
+    return pdf
