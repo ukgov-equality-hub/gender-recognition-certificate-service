@@ -88,26 +88,20 @@ class ApplicationFiles():
                 pdfs = []
                 object_names = []
                 attachments_html = ''
-                
+
                 pdfs.append(create_application_cover_sheet_pdf(application_data, is_admin))
 
-                def add_object(section, object_name, idx, num):
+                def add_object(section, object_name, original_file_name, idx, num):
                     file_type = ''
 
                     def section_name():
                         return section_names[sections.index(section)]
 
-                    def clean_object_name():
-                        new_name = object_name
-                        new_name = new_name[len(reference_number):]
-                        new_name = str(new_name).replace(f'__{section}__', '')
-                        return new_name
-
                     if '.' in object_name:
                         file_type = object_name[object_name.rindex('.') + 1:]
 
                         if file_type.lower() == 'pdf':
-                            html = f'<p style="font-size: 12px;">Next page: Attachment {idx} of {num} - {clean_object_name()}</p>'
+                            html = f'<p style="font-size: 12px;">Next page: Attachment {idx} of {num} - {original_file_name}</p>'
                             if idx == 1:
                                 html = f'<h3 style="font-size: 14px;">Your {section_name()}</h3>{html}'
                             object_names.append(f'{object_name} header file')
@@ -122,7 +116,7 @@ class ApplicationFiles():
                                     # We can check the type of password (user/owner):
                                     # doc.authenticate('') == 2
                                     # https://pymupdf.readthedocs.io/en/latest/document.html#Document.authenticate
-                                    html = f'<h3 style="font-size: 14px; color: red;">Unable to add {clean_object_name()}. A password is required.</h3>'
+                                    html = f'<h3 style="font-size: 14px; color: red;">Unable to add {original_file_name}. A password is required.</h3>'
                                     pdfs.append(create_pdf_from_html(html))
                                     logger.log(LogLevel.ERROR, f"file {object_name} needs a password!")
                                 else:
@@ -134,9 +128,9 @@ class ApplicationFiles():
                         else:
                             data, width, height = AwsS3Client().download_object_data(object_name)
                             if data is not None:
-                                html = f'<p style="font-size: 12px;">Attachment {idx} of {num} - {clean_object_name()}</p><p>&nbsp;</p><p>&nbsp;</p><img src="{data}" width="{width}" height="{height}" style="max-width: 90%;">'
+                                html = f'<p style="font-size: 12px;">Attachment {idx} of {num} - {original_file_name}</p><p>&nbsp;</p><p>&nbsp;</p><img src="{data}" width="{width}" height="{height}" style="max-width: 90%;">'
                             else:
-                                html = f'<p style="font-size: 12px;">Attachment {idx} of {num} - {clean_object_name()}</p><p>&nbsp;</p><p>&nbsp;</p><p>Error downloading file, please try again later</p>'
+                                html = f'<p style="font-size: 12px;">Attachment {idx} of {num} - {original_file_name}</p><p>&nbsp;</p><p>&nbsp;</p><p>Error downloading file, please try again later</p>'
                                 logger.log(LogLevel.ERROR, f"Error downloading {object_name}")
 
                             if idx == 1:
@@ -151,7 +145,7 @@ class ApplicationFiles():
                     num_attachments = len(files)
                     for file_index, evidence_file in enumerate(files):
                         if attach_files:
-                            add_object(section, evidence_file.aws_file_name, file_index + 1, num_attachments)
+                            add_object(section, evidence_file.aws_file_name, evidence_file.original_file_name, file_index + 1, num_attachments)
                         else:
                             if not title:
                                 attachments_html += f'<h3 style="font-size: 14px;">{section_names[sections.index(section)]}</h3>'
