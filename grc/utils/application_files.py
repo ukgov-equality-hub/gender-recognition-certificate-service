@@ -93,10 +93,7 @@ class ApplicationFiles():
                 pdfs.append(create_application_cover_sheet_pdf(application_data, is_admin))
 
                 if attach_files:
-                    for section in all_sections:
-                        files = get_files_for_section(section, application_data)
-                        for file_index, evidence_file in enumerate(files):
-                            add_object(pdfs, object_names, section, evidence_file.aws_file_name, evidence_file.original_file_name, file_index + 1, len(files))
+                    attach_all_files(pdfs, object_names, all_sections, application_data)
 
                 else:
                     attachments_pdf = create_attachment_names_pdf(all_sections, application_data)
@@ -158,6 +155,13 @@ def create_attachment_names_pdf(all_sections, application_data):
     if attachments_html != '':
         logger.log(LogLevel.INFO, "Adding attachments pdf")
         return create_pdf_from_html(attachments_html)
+
+
+def attach_all_files(pdfs, object_names, all_sections, application_data):
+    for section in all_sections:
+        files = get_files_for_section(section, application_data)
+        for file_index, evidence_file in enumerate(files):
+            add_object(pdfs, object_names, section, evidence_file.aws_file_name, evidence_file.original_file_name, file_index + 1, len(files))
 
 
 def add_object(pdfs, object_names, section, object_name, original_file_name, idx, num):
