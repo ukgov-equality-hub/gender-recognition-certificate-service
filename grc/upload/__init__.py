@@ -8,6 +8,9 @@ from grc.upload.forms import UploadForm, DeleteForm
 from grc.utils.decorators import LoginRequired
 from grc.external_services.aws_s3_client import AwsS3Client
 from grc.utils.redirect import local_redirect
+from grc.utils.logger import LogLevel, Logger
+
+logger = Logger()
 
 upload = Blueprint('upload', __name__)
 
@@ -57,10 +60,13 @@ def uploadInfoPage(section_url: str):
                 password_required = False
 
                 if filename.lower().endswith('.pdf'):
-                    doc = fitz.open(stream=document.read(), filetype='pdf')
-                    if doc.needs_pass:
-                        password_required = True
-                    doc.close()
+                    try:
+                        doc = fitz.open(stream=document.read(), filetype='pdf')
+                        if doc.needs_pass:
+                            password_required = True
+                        doc.close()
+                    except:
+                        logger.log(LogLevel.ERROR, f"User uploaded PDF attachment ({object_name}) which could not be opened")
 
                 AwsS3Client().upload_fileobj(document, object_name)
 

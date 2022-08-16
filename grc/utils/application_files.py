@@ -1,4 +1,9 @@
+import fitz  # PyPDF2
+import io
 import os
+import zipfile
+from flask import render_template
+from xhtml2pdf import pisa
 from typing import Callable, List, Dict
 from grc.business_logic.data_structures.application_data import ApplicationData
 from grc.business_logic.data_structures.uploads_data import UploadsData, EvidenceFile
@@ -7,20 +12,25 @@ from grc.utils.logger import LogLevel, Logger
 
 logger = Logger()
 
+sections = ['medicalReports', 'genderEvidence', 'nameChange', 'marriageDocuments', 'overseasCertificate', 'statutoryDeclarations']
+section_names = ['Medical Reports', 'Gender Evidence', 'Name Change', 'Marriage Documents', 'Overseas Certificate', 'Statutory Declarations']
+section_files:  Dict[str, Callable[[UploadsData], List[EvidenceFile]]] = {
+    'medicalReports': (lambda u: u.medical_reports),
+    'genderEvidence': (lambda u: u.evidence_of_living_in_gender),
+    'nameChange': (lambda u: u.name_change_documents),
+    'marriageDocuments': (lambda u: u.partnership_documents),
+    'overseasCertificate': (lambda u: u.overseas_documents),
+    'statutoryDeclarations': (lambda u: u.statutory_declarations),
+}
+
+def get_files_for_section(section, application_data):
+    return section_files[section](application_data.uploads_data)
+
+def get_section_name(section):
+    return section_names[sections.index(section)]
+
 
 class ApplicationFiles():
-    def __init__(self):
-        self.sections = ['medicalReports', 'genderEvidence', 'nameChange', 'marriageDocuments', 'overseasCertificate', 'statutoryDeclarations']
-        self.section_names = ['Medical Reports', 'Gender Evidence', 'Name Change', 'Marriage Documents', 'Overseas Certificate', 'Statutory Declarations']
-        self.section_files:  Dict[str, Callable[[UploadsData], List[EvidenceFile]]] = {
-            'medicalReports': (lambda u: u.medical_reports),
-            'genderEvidence': (lambda u: u.evidence_of_living_in_gender),
-            'nameChange': (lambda u: u.name_change_documents),
-            'marriageDocuments': (lambda u: u.partnership_documents),
-            'overseasCertificate': (lambda u: u.overseas_documents),
-            'statutoryDeclarations': (lambda u: u.statutory_declarations),
-        }
-
     def create_or_download_attachments(self, reference_number, application_data: ApplicationData, download=False):
         bytes = None
         zip_file_file_name = ''
@@ -33,14 +43,11 @@ class ApplicationFiles():
                 if download:
                     bytes = data.getvalue()
             else:
-                import io
-                import zipfile
-
                 zip_buffer = io.BytesIO()
 
                 with zipfile.ZipFile(zip_buffer, 'x', zipfile.ZIP_DEFLATED, False) as zipper:
-                    for section in self.sections:
-                        files = self.section_files[section](application_data.uploads_data)
+                    for section in sections:
+                        files = get_files_for_section(section, application_data)
                         for file_index, evidence_file in enumerate(files):
                             data = AwsS3Client().download_object(evidence_file.aws_file_name)
                             if data is not None:
@@ -77,135 +84,23 @@ class ApplicationFiles():
                 if download:
                     bytes = data.getvalue()
             else:
-                import json
-                from flask import render_template
-
-                html_template = 'applications/download_user.html'
-                all_sections = self.sections
+                all_sections = sections
                 if is_admin:
-                    html_template = 'applications/download.html'
                     all_sections = ['statutoryDeclarations', 'marriageDocuments', 'nameChange', 'medicalReports', 'genderEvidence', 'overseasCertificate']
 
-                html = render_template(html_template, application_data=application_data)
                 pdfs = []
-                object_names = []
-                attachments_html = ''
+                pdfs.append(create_application_cover_sheet_pdf(application_data, is_admin))
 
-                import io
-                import fitz # PyPDF2
-                from xhtml2pdf import pisa
-                data = io.BytesIO()
-                pisa.CreatePDF(html, dest=data)
-                data.seek(0)
+                if attach_files:
+                    attach_all_files(pdfs, all_sections, application_data)
 
-                # Attach any PDF's
-                def html_to_pdf(html):
-                    pdf = io.BytesIO()
-                    pisa.CreatePDF(html, dest=pdf)
-                    pdf.seek(0)
-                    return pdf
+                else:
+                    attachments_pdf = create_attachment_names_pdf(all_sections, application_data)
+                    if attachments_pdf:
+                        pdfs.append(attachments_pdf)
 
-                def merge_pdfs(pdfs):
-                    #merger = PyPDF2.PdfFileMerger(strict=False)
-                    #for pdf_fileobj in pdfs:
-                    #    merger.append(pdf_fileobj)
-
-                    merger = fitz.open()
-                    for pdf_fileobj in pdfs:
-                        doc = fitz.open(stream=pdf_fileobj, filetype='pdf')
-                        merger.insert_pdf(doc)
-
-                    pdf = io.BytesIO()
-                    merger.save(pdf, deflate=True)
-                    merger.close()
-                    pdf.seek(0)
-                    return pdf
-
-                def add_object(section, object_name, idx, num):
-                    file_type = ''
-
-                    def section_name():
-                        return self.section_names[self.sections.index(section)]
-
-                    def clean_object_name():
-                        new_name = object_name
-                        new_name = new_name[len(reference_number):]
-                        new_name = str(new_name).replace(f'__{section}__', '')
-                        return new_name
-
-                    if '.' in object_name:
-                        file_type = object_name[object_name.rindex('.') + 1:]
-
-                        if file_type.lower() == 'pdf':
-                            html = f'<p style="font-size: 12px;">Next page: Attachment {idx} of {num} - {clean_object_name()}</p>'
-                            if idx == 1:
-                                html = f'<h3 style="font-size: 14px;">Your {section_name()}</h3>{html}'
-                            object_names.append(f'{object_name} header file')
-
-                            data = AwsS3Client().download_object(object_name)
-                            if data is not None:
-                                doc = fitz.open(stream=data, filetype='pdf')
-                                if doc.needs_pass:
-
-                                    # We can check the type of password (user/owner):
-                                    # doc.authenticate('') == 2
-                                    # https://pymupdf.readthedocs.io/en/latest/document.html#Document.authenticate
-                                    html += f'<h3 style="font-size: 14px; color: red;">Unable to add {clean_object_name()}. A password is required.</h3>'
-                                    pdf = html_to_pdf(html)
-                                    pdfs.append(pdf)
-                                    logger.log(LogLevel.ERROR, f"file {object_name} needs a password!")
-                                else:
-                                    pdf = html_to_pdf(html)
-                                    pdfs.append(pdf)
-                                    pdfs.append(data)
-                                    object_names.append(object_name)
-                                    logger.log(LogLevel.INFO, f"Attaching {object_name}")
-                            else:
-                                logger.log(LogLevel.ERROR, f"Error attaching {object_name}")
-                        else:
-                            data, width, height = AwsS3Client().download_object_data(object_name)
-                            pdf = io.BytesIO()
-                            if data is not None:
-                                html = f'<p style="font-size: 12px;">Attachment {idx} of {num} - {clean_object_name()}</p><p>&nbsp;</p><p>&nbsp;</p><img src="{data}" width="{width}" height="{height}" style="max-width: 90%;">'
-                            else:
-                                html = f'<p style="font-size: 12px;">Attachment {idx} of {num} - {clean_object_name()}</p><p>&nbsp;</p><p>&nbsp;</p><p>Error downloading file, please try again later</p>'
-                                logger.log(LogLevel.ERROR, f"Error downloading {object_name}")
-
-                            if idx == 1:
-                                html = f'<h3 style="font-size: 14px;">Your {section_name()}</h3>{html}'
-
-                            pisa.CreatePDF(html, dest=pdf)
-                            pdf.seek(0)
-                            pdfs.append(pdf)
-                            object_names.append(object_name)
-                            logger.log(LogLevel.INFO, f"Adding image {object_name}")
-
-                for section in all_sections:
-                    files = self.section_files[section](application_data.uploads_data)
-                    title = False
-                    num_attachments = len(files)
-                    for file_index, evidence_file in enumerate(files):
-                        if attach_files:
-                            add_object(section, evidence_file.aws_file_name, file_index + 1, num_attachments)
-                        else:
-                            if not title:
-                                attachments_html += f'<h3 style="font-size: 14px;">{self.section_names[self.sections.index(section)]}</h3>'
-                                title = True
-                            attachments_html += f'<p style="font-size: 12px;">Attachment {file_index + 1} of {num_attachments}: {evidence_file.aws_file_name}</p>'
-
-                if attachments_html != '':
-                    pdf = io.BytesIO()
-                    pisa.CreatePDF(attachments_html, dest=pdf)
-                    pdf.seek(0)
-                    pdfs.append(pdf)
-                    object_names.append('')
-                    logger.log(LogLevel.INFO, "Adding attachments pdf")
-
-                if len(pdfs) > 0:
-                    pdfs.insert(0, data)
-                    object_names.insert(0, '')
-                    data = merge_pdfs(pdfs)
-
+                data = merge_pdfs(pdfs)
+                
                 bytes = data.read()
                 if is_admin and not attach_files:
                     AwsS3Client().upload_fileobj(data, file_name)
@@ -222,7 +117,115 @@ class ApplicationFiles():
         AwsS3Client().delete_object(reference_number + '.zip')
         AwsS3Client().delete_object(reference_number + '.pdf')
 
-        for section in self.sections:
-            files = self.section_files[section](application_data.uploads_data)
+        for section in sections:
+            files = get_files_for_section(section, application_data)
             for evidence_file in files:
                 AwsS3Client().delete_object(evidence_file.aws_file_name)
+
+
+def create_pdf_from_html(html):
+    pdf = io.BytesIO()
+    pisa.CreatePDF(html, dest=pdf)
+    pdf.seek(0)
+    return pdf
+
+
+def create_application_cover_sheet_pdf(application_data, is_admin):
+    html_template = ('applications/download.html' if is_admin else 'applications/download_user.html')
+    html = render_template(html_template, application_data=application_data)
+    return create_pdf_from_html(html)
+
+
+def create_section_heading_pdf(section_name):
+    html = f'<h3 style="font-size: 14px;">Your {section_name}</h3>'
+    return create_pdf_from_html(html)
+
+
+def create_attachment_names_pdf(all_sections, application_data):
+    attachments_html = ''
+    for section in all_sections:
+        files = get_files_for_section(section, application_data)
+        if len(files) > 0:
+            attachments_html += f'<h3 style="font-size: 14px;">{get_section_name(section)}</h3>'
+            for file_index, evidence_file in enumerate(files):
+                attachments_html += f'<p style="font-size: 12px;">Attachment {file_index + 1} of {len(files)}: {evidence_file.aws_file_name}</p>'
+
+    if attachments_html != '':
+        logger.log(LogLevel.INFO, "Adding attachments pdf")
+        return create_pdf_from_html(attachments_html)
+
+
+def attach_all_files(pdfs, all_sections, application_data):
+    for section in all_sections:
+        files = get_files_for_section(section, application_data)
+        for file_index, evidence_file in enumerate(files):
+            add_object(pdfs, section, evidence_file.aws_file_name, evidence_file.original_file_name, file_index + 1, len(files))
+
+
+def add_object(pdfs, section, object_name, original_file_name, idx, num):
+    if idx == 1:
+        pdfs.append(create_section_heading_pdf(get_section_name(section)))
+
+    if '.' in object_name:
+        file_type = object_name[object_name.rindex('.') + 1:]
+
+        if file_type.lower() == 'pdf':
+            html = f'<p style="font-size: 12px;">Next page: Attachment {idx} of {num} - {original_file_name}</p>'
+            pdfs.append(create_pdf_from_html(html))
+
+            try:
+                data = AwsS3Client().download_object(object_name)
+                if data is not None:
+                    doc = fitz.open(stream=data, filetype='pdf')
+                    if doc.needs_pass:
+                        # We can check the type of password (user/owner):
+                        # doc.authenticate('') == 2
+                        # https://pymupdf.readthedocs.io/en/latest/document.html#Document.authenticate
+                        html = f'<h3 style="font-size: 14px; color: red;">Unable to add {original_file_name}. A password is required.</h3>'
+                        pdfs.append(create_pdf_from_html(html))
+                        logger.log(LogLevel.ERROR, f"file {object_name} needs a password!")
+                    else:
+                        pdfs.append(data)
+                        logger.log(LogLevel.INFO, f"Attaching {object_name}")
+                else:
+                    logger.log(LogLevel.ERROR, f"Error attaching {object_name}")
+                    pdfs.append(create_pdf_for_attachment_error(original_file_name))
+            except:
+                logger.log(LogLevel.ERROR, f"Error attaching {object_name}")
+                pdfs.append(create_pdf_for_attachment_error(original_file_name))
+        else:
+            try:
+                data, width, height = AwsS3Client().download_object_data(object_name)
+                if data is not None:
+                    html = f'<p style="font-size: 12px;">Attachment {idx} of {num} - {original_file_name}</p><p>&nbsp;</p><p>&nbsp;</p><img src="{data}" width="{width}" height="{height}" style="max-width: 90%;">'
+                    pdfs.append(create_pdf_from_html(html))
+                    logger.log(LogLevel.INFO, f"Adding image {object_name}")
+                else:
+                    html = f'<p style="font-size: 12px;">Attachment {idx} of {num} - {original_file_name}</p>'
+                    pdfs.append(create_pdf_from_html(html))
+                    logger.log(LogLevel.ERROR, f"Error downloading {object_name}")
+                    pdfs.append(create_pdf_for_attachment_error(original_file_name))
+
+            except:
+                logger.log(LogLevel.ERROR, f"Error attaching {object_name}")
+                create_pdf_for_attachment_error(original_file_name)
+    else:
+        logger.log(LogLevel.ERROR, f"Error attaching {object_name}")
+        create_pdf_for_attachment_error(original_file_name)
+
+
+def create_pdf_for_attachment_error(file_name):
+    html = f'<h3 style="font-size: 14px; color: red;">WARNING: Could not attach file ({file_name})</h3>'
+    return create_pdf_from_html(html)
+
+
+def merge_pdfs(pdfs):
+    merger = fitz.open()
+    for pdf_fileobj in pdfs:
+        merger.insert_pdf(fitz.open(stream=pdf_fileobj, filetype='pdf'))
+
+    pdf = io.BytesIO()
+    merger.save(pdf)
+    merger.close()
+    pdf.seek(0)
+    return pdf
