@@ -4,6 +4,7 @@ from werkzeug.utils import secure_filename
 import fitz
 import uuid
 from grc.business_logic.data_store import DataStore
+from grc.business_logic.data_structures.application_data import any_duplicate_aws_file_names
 from grc.business_logic.data_structures.uploads_data import UploadsData, EvidenceFile
 from grc.upload.forms import UploadForm, DeleteForm
 from grc.utils.decorators import LoginRequired
@@ -34,7 +35,12 @@ sections = [
 ]
 
 def delete_file(application_data, file_name, section):
-    AwsS3Client().delete_object(file_name)
+    try:
+        AwsS3Client().delete_object(file_name)
+    except:
+        logger.log(LogLevel.ERROR, f"Could not delete file {file_name}")
+        # We could not delete the file. Perhaps it doesn't exist.
+        pass
     files = section.file_list(application_data.uploads_data)
     file_to_remove = next(filter(lambda file: file.aws_file_name == file_name, files), None)
     files.remove(file_to_remove)
@@ -91,7 +97,8 @@ def uploadInfoPage(section_url: str):
         form=form,
         deleteform=deleteform,
         section_url=section.url,
-        currently_uploaded_files=files
+        currently_uploaded_files=files,
+        duplicate_aws_file_names=any_duplicate_aws_file_names(files)
     )
 
 
@@ -119,3 +126,22 @@ def removeFile(section_url: str):
         DataStore.save_application(application_data)
 
     return local_redirect(url_for('upload.uploadInfoPage', section_url=section.url) + '#file-upload-section')
+
+
+@upload.route('/upload/<section_url>/remove-all-files-in-section', methods=['POST'])
+@LoginRequired
+def removeAllFilesInSection(section_url: str):
+    section = next(filter(lambda section: section.url == section_url, sections), None)
+    if section is None:
+        abort(404)
+
+    application_data = DataStore.load_application_by_session_reference_number()
+
+    files = section.file_list(application_data.uploads_data)
+    aws_file_names = list(map(lambda file: file.aws_file_name, files))
+    for aws_file_name in aws_file_names:
+        application_data = delete_file(application_data, aws_file_name, section)
+
+    DataStore.save_application(application_data)
+
+    return local_redirect(url_for('upload.uploadInfoPage', section_url=section.url))

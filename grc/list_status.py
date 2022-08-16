@@ -7,3 +7,4 @@ class ListStatus(enum.Enum):
     NOT_STARTED = "NOT STARTED"
     CANNOT_START_YET = "CANNOT START YET"
     IN_REVIEW = "IN REVIEW"  # Value 'in progress' is used only at task list
+    ERROR = "ERROR"

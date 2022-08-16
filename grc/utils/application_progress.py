@@ -6,5 +6,7 @@ def calculate_progress_status_colour(value):
         return ''
     elif value == ListStatus.IN_PROGRESS:
         return 'govuk-tag--blue'
+    elif value == ListStatus.ERROR:
+        return 'govuk-tag--red'
     else:
         return 'govuk-tag--grey'
