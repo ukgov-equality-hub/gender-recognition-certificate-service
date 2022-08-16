@@ -51,9 +51,7 @@ class ApplicationFiles():
                         for file_index, evidence_file in enumerate(files):
                             data = AwsS3Client().download_object(evidence_file.aws_file_name)
                             if data is not None:
-                                file_name_parts = evidence_file.aws_file_name.split('__')
-                                file_name_parts[2] = f"{(file_index + 1)}_{file_name_parts[2]}"
-                                attachment_file_name = '__'.join(file_name_parts)
+                                attachment_file_name = f"{reference_number}__{section}__{(file_index + 1)}_{evidence_file.original_file_name}"
                                 zipper.writestr(attachment_file_name, data.getvalue())
 
                     data, _ = self.create_or_download_pdf(reference_number, application_data, attach_files=False, download=True)

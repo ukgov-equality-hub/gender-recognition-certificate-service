@@ -2,6 +2,7 @@ from typing import List, Callable
 from flask import Blueprint, render_template, request, url_for, abort
 from werkzeug.utils import secure_filename
 import fitz
+import uuid
 from grc.business_logic.data_store import DataStore
 from grc.business_logic.data_structures.uploads_data import UploadsData, EvidenceFile
 from grc.upload.forms import UploadForm, DeleteForm
@@ -55,11 +56,10 @@ def uploadInfoPage(section_url: str):
     if form.validate_on_submit():
         if form.button_clicked.data.startswith('Upload '):
             for document in request.files.getlist('documents'):
-                filename = secure_filename(document.filename)
-                object_name = application_data.reference_number + '__' + section.data_section + '__' + filename
+                object_name = create_aws_file_name(application_data.reference_number, section.data_section, document.filename)
                 password_required = False
 
-                if filename.lower().endswith('.pdf'):
+                if document.filename.lower().endswith('.pdf'):
                     try:
                         doc = fitz.open(stream=document.read(), filetype='pdf')
                         if doc.needs_pass:
@@ -93,6 +93,15 @@ def uploadInfoPage(section_url: str):
         section_url=section.url,
         currently_uploaded_files=files
     )
+
+
+def create_aws_file_name(reference_number, section_name, original_file_name):
+    filename = secure_filename(original_file_name)
+    last_dot_position = filename.rfind('.')
+    file_prefix = (filename[:last_dot_position]) if last_dot_position > -1 else filename
+    file_extension = (filename[(last_dot_position + 1):]) if last_dot_position > -1 else ''
+    aws_file_name = f"{reference_number}__{section_name}__{file_prefix}_{uuid.uuid4().hex}.{file_extension}"
+    return aws_file_name
 
 
 @upload.route('/upload/<section_url>/remove-file', methods=['POST'])
