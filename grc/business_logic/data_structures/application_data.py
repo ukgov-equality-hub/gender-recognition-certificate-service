@@ -170,7 +170,7 @@ class ApplicationData:
 
 
 def any_duplicate_aws_file_names(uploads_files: List[EvidenceFile]):
-    aws_file_names = list(map(lambda file: file.aws_file_name, uploads_files))
-    unique_aws_file_names = list(dict.fromkeys(aws_file_names))
-    are_duplicates = len(aws_file_names) > len(unique_aws_file_names)
-    return are_duplicates
+    aws_file_names = [file.aws_file_name for file in uploads_files]
+    duplicate_aws_file_names = [file_name for file_name in aws_file_names if aws_file_names.count(file_name) > 1]
+    any_duplicates = len(duplicate_aws_file_names) > 0
+    return any_duplicates

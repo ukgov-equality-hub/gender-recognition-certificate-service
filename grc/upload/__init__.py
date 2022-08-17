@@ -37,8 +37,8 @@ sections = [
 def delete_file(application_data, file_name, section):
     try:
         AwsS3Client().delete_object(file_name)
-    except:
-        logger.log(LogLevel.ERROR, f"Could not delete file {file_name}")
+    except Exception as e:
+        logger.log(LogLevel.ERROR, f"Could not delete file ({file_name}). Error was ({e})")
         # We could not delete the file. Perhaps it doesn't exist.
         pass
     files = section.file_list(application_data.uploads_data)
