@@ -37,3 +37,8 @@ class DeleteForm(FlaskForm):
 
     def get_csrf_token(self):
         return self._csrf.generate_csrf_token('csrf_token')
+
+
+class DeleteAllFilesInSectionForm(FlaskForm):
+    def get_csrf_token(self):
+        return self._csrf.generate_csrf_token('csrf_token')

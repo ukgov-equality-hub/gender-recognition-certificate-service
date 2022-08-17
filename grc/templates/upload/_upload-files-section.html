@@ -1,6 +1,27 @@
 
-{% macro render(form, deleteform, currently_uploaded_files, section_url) %}
+{% macro render(form, deleteform, deleteAllFilesInSectionForm, currently_uploaded_files, section_url, duplicate_aws_file_names) %}
     <div id="file-upload-section" class="govuk-!-margin-top-8">
+        {% if duplicate_aws_file_names %}
+            <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" data-module="govuk-error-summary">
+                <h2 class="govuk-error-summary__title" id="error-summary-title">
+                    There is a problem
+                </h2>
+
+                <div class="govuk-error-summary__body">
+                    <p class="govuk-list govuk-error-summary__list">
+                        The upload failed. Please remove your files and re-upload.
+                    </p>
+                </div>
+
+                <form method="POST" action="{{ url_for('upload.removeAllFilesInSection', section_url=section_url) }}#file-upload-section">
+                    <input type="hidden" name="csrf_token" value="{{ deleteAllFilesInSectionForm.get_csrf_token() }}">
+                    <button class="govuk-button govuk-button--warning govuk-!-margin-bottom-0" data-module="govuk-button">
+                        Remove all files
+                    </button>
+                </form>
+            </div>
+        {% endif %}
+
         {% if currently_uploaded_files %}
             <h2 class="govuk-heading-m">
                 Uploaded files
@@ -15,17 +36,19 @@
                         </dd>
                         <dd class="govuk-summary-list__actions">
 
-                            <form method="POST" action="{{ url_for('upload.removeFile', section_url=section_url) }}#file-upload-section">
-                                <input type="hidden" name="csrf_token" value="{{ deleteform.get_csrf_token() }}">
+                            {% if not duplicate_aws_file_names %}
+                                <form method="POST" action="{{ url_for('upload.removeFile', section_url=section_url) }}#file-upload-section">
+                                    <input type="hidden" name="csrf_token" value="{{ deleteform.get_csrf_token() }}">
 
-                                <input type="hidden" name="file" value="{{ evidence_file.aws_file_name }}">
-                                <button class="govuk-button govuk-button--warning govuk-!-margin-bottom-0" data-module="govuk-button">
-                                    Remove
-                                    <span class="govuk-visually-hidden">
-                                        {{ evidence_file.original_file_name }} file
-                                    </span>
-                                </button>
-                            </form>
+                                    <input type="hidden" name="file" value="{{ evidence_file.aws_file_name }}">
+                                    <button class="govuk-button govuk-button--warning govuk-!-margin-bottom-0" data-module="govuk-button">
+                                        Remove
+                                        <span class="govuk-visually-hidden">
+                                            {{ evidence_file.original_file_name }} file
+                                        </span>
+                                    </button>
+                                </form>
+                            {% endif %}
 
                         </dd>
                     </div>
@@ -34,53 +57,62 @@
             </dl>
         {% endif %}
 
-        <form method="POST" enctype="multipart/form-data"
-              onsubmit="document.getElementById('documents').style.display = 'none'; document.getElementById('loading').style.display = 'inline-block';">
-            <input type="hidden" name="csrf_token" value="{{ form.get_csrf_token() }}">
+        {% if not duplicate_aws_file_names %}
+            <form method="POST" enctype="multipart/form-data"
+                  onsubmit="document.getElementById('documents').style.display = 'none'; document.getElementById('loading').style.display = 'inline-block';">
+                <input type="hidden" name="csrf_token" value="{{ form.get_csrf_token() }}">
 
-            <div class="govuk-form-group {{ 'govuk-form-group--error' if form.errors }} govuk-!-margin-bottom-2">
-                <label for="documents" class="govuk-label govuk-label--m">
-                    Upload files
-                </label>
-                <div id="documents-hint" class="govuk-hint">
-                    The files must be a JPG, BMP, PNG, TIF or PDF and be smaller than 10MB
-                </div>
-                {% if form.documents.errors %}
-                    <p id="documents-error" class="govuk-error-message">
-                        {% for error in form.errors %}
-                            {% for e in form[error].errors %}
-                                <span class="govuk-visually-hidden">Error:</span> {{ e }}
+                <div class="govuk-form-group {{ 'govuk-form-group--error' if form.errors }} govuk-!-margin-bottom-2">
+                    <label for="documents" class="govuk-label govuk-label--m">
+                        Upload files
+                    </label>
+                    <div id="documents-hint" class="govuk-hint">
+                        The files must be a JPG, BMP, PNG, TIF or PDF and be smaller than 10MB
+                    </div>
+                    {% if form.documents.errors %}
+                        <p id="documents-error" class="govuk-error-message">
+                            {% for error in form.errors %}
+                                {% for e in form[error].errors %}
+                                    <span class="govuk-visually-hidden">Error:</span> {{ e }}
+                                {% endfor %}
                             {% endfor %}
-                        {% endfor %}
+                        </p>
+                    {% endif %}
+
+                    <img id="loading" src="{{ url_for('static', filename='assets/images/loading.gif') }}" width="40"
+                         height="40" style="display: none; margin-bottom: 17px;" alt="">
+                    <input id="documents" type="file" name="documents" multiple
+                           accept=".jpg,.jpeg,.bmp,.png,.tif,.tiff,.pdf"
+                           class="govuk-file-upload govuk-!-margin-bottom-4 {{ 'govuk-input--error' if form.documents.errors }}"
+                           onchange="checkFile(event)">
+                </div>
+                <button id="submit" type="submit" name="button_clicked" value="Upload file" class="govuk-button" data-module="govuk-button">
+                    Upload file
+                </button>
+
+                {% if currently_uploaded_files != [] %}
+                    <p class="govuk-body govuk-!-margin-top-5">
+                        Once you have uploaded all your files, click the "Save and continue" button
                     </p>
                 {% endif %}
 
-                <img id="loading" src="{{ url_for('static', filename='assets/images/loading.gif') }}" width="40"
-                     height="40" style="display: none; margin-bottom: 17px;" alt="">
-                <input id="documents" type="file" name="documents" multiple
-                       accept=".jpg,.jpeg,.bmp,.png,.tif,.tiff,.pdf"
-                       class="govuk-file-upload govuk-!-margin-bottom-4 {{ 'govuk-input--error' if form.documents.errors }}"
-                       onchange="checkFile(event)">
-            </div>
-            <button id="submit" type="submit" name="button_clicked" value="Upload file" class="govuk-button" data-module="govuk-button">
-                Upload file
-            </button>
-
-            {% if currently_uploaded_files != [] %}
-            <p class="govuk-body govuk-!-margin-top-5">
-                Once you have uploaded all your files, click the "Save and continue" button
-            </p>
-            {% endif %}
-
-            <div class="govuk-button-group">
-                {% if currently_uploaded_files != [] %}
-                <input type="submit" name="button_clicked" value="Save and continue" class="govuk-button" data-module="govuk-button">
-                {% endif %}
+                <div class="govuk-button-group">
+                    {% if currently_uploaded_files != [] %}
+                        <input type="submit" name="button_clicked" value="Save and continue" class="govuk-button" data-module="govuk-button">
+                    {% endif %}
+                    <a href="{{ url_for('taskList.index') }}" class="govuk-link govuk-link--no-visited-state">
+                        Return to task list
+                    </a>
+                </div>
+            </form>
+        {% else %}
+            <p class="govuk-body">
                 <a href="{{ url_for('taskList.index') }}" class="govuk-link govuk-link--no-visited-state">
                     Return to task list
                 </a>
-            </div>
-        </form>
+            </p>
+        {% endif %}
+
         <script>
         async function checkFile(event) {
             console.log('event.target.files', event.target.files.length)

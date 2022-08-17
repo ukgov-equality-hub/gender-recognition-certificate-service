@@ -1,8 +1,9 @@
+from typing import List
 from grc.business_logic.data_structures.confirmation_data import ConfirmationData
 from grc.business_logic.data_structures.birth_registration_data import BirthRegistrationData
 from grc.business_logic.data_structures.personal_details_data import PersonalDetailsData
 from grc.business_logic.data_structures.partnership_details_data import PartnershipDetailsData
-from grc.business_logic.data_structures.uploads_data import UploadsData
+from grc.business_logic.data_structures.uploads_data import UploadsData, EvidenceFile
 from grc.business_logic.data_structures.submit_and_pay_data import SubmitAndPayData, HelpWithFeesType
 from grc.list_status import ListStatus
 
@@ -55,6 +56,8 @@ class ApplicationData:
         if self.need_medical_reports:
             if len(self.uploads_data.medical_reports) == 0:
                 return ListStatus.NOT_STARTED
+            elif any_duplicate_aws_file_names(self.uploads_data.medical_reports):
+                return ListStatus.ERROR
             else:
                 return ListStatus.COMPLETED
         else:
@@ -65,6 +68,8 @@ class ApplicationData:
         if self.need_evidence_of_living_in_gender:
             if len(self.uploads_data.evidence_of_living_in_gender) == 0:
                 return ListStatus.NOT_STARTED
+            elif any_duplicate_aws_file_names(self.uploads_data.evidence_of_living_in_gender):
+                return ListStatus.ERROR
             else:
                 return ListStatus.COMPLETED
         else:
@@ -75,6 +80,8 @@ class ApplicationData:
         if self.need_name_change_documents:
             if len(self.uploads_data.name_change_documents) == 0:
                 return ListStatus.NOT_STARTED
+            elif any_duplicate_aws_file_names(self.uploads_data.name_change_documents):
+                return ListStatus.ERROR
             else:
                 return ListStatus.COMPLETED
         else:
@@ -85,6 +92,8 @@ class ApplicationData:
         if self.need_partnership_documents:
             if len(self.uploads_data.partnership_documents) == 0:
                 return ListStatus.NOT_STARTED
+            elif any_duplicate_aws_file_names(self.uploads_data.partnership_documents):
+                return ListStatus.ERROR
             else:
                 return ListStatus.COMPLETED
         else:
@@ -95,6 +104,8 @@ class ApplicationData:
         if self.need_overseas_documents:
             if len(self.uploads_data.overseas_documents) == 0:
                 return ListStatus.NOT_STARTED
+            elif any_duplicate_aws_file_names(self.uploads_data.overseas_documents):
+                return ListStatus.ERROR
             else:
                 return ListStatus.COMPLETED
         else:
@@ -104,6 +115,8 @@ class ApplicationData:
     def section_status_statutory_declarations(self) -> ListStatus:
         if len(self.uploads_data.statutory_declarations) == 0:
             return ListStatus.NOT_STARTED
+        elif any_duplicate_aws_file_names(self.uploads_data.statutory_declarations):
+            return ListStatus.ERROR
         else:
             return ListStatus.COMPLETED
 
@@ -154,3 +167,10 @@ class ApplicationData:
                     return ListStatus.IN_PROGRESS
 
         return ListStatus.IN_REVIEW
+
+
+def any_duplicate_aws_file_names(uploads_files: List[EvidenceFile]):
+    aws_file_names = [file.aws_file_name for file in uploads_files]
+    duplicate_aws_file_names = [file_name for file_name in aws_file_names if aws_file_names.count(file_name) > 1]
+    any_duplicates = len(duplicate_aws_file_names) > 0
+    return any_duplicates
