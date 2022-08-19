@@ -1,10 +1,6 @@
 {% macro adminapplication(application_data) %}
     <h1>
-        {% if application_data.partnership_details_data.is_interim_certificate %}
-            INTERIM CERTIFICATE APPLICATION
-        {% else %}
-            FULL CERTIFICATE APPLICATION
-        {% endif %}
+        {{ application_data.application_certificate_type }}
     </h1>
 
     <h4 class="govuk-heading-m">Marriage or civil partnership details</h4>

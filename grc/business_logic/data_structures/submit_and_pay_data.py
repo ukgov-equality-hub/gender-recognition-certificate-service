@@ -22,13 +22,19 @@ class SubmitAndPayData:
     is_submitted: bool = False
 
     @property
-    def applying_for_help_with_fee_formatted(self) -> str: return 'Help' if self.applying_for_help_with_fee else 'Online'
+    def applying_for_help_with_fee_formatted(self) -> str:
+        return 'Help' if self.applying_for_help_with_fee else 'Online'
+
     @property
     def how_applying_for_help_with_fees_formatted(self) -> str:
         return ('Using the online service'
                 if self.how_applying_for_help_with_fees == HelpWithFeesType.USING_ONLINE_SERVICE
                 else 'Using the EX160 form')
+
     @property
-    def is_using_online_service(self) -> bool: return self.how_applying_for_help_with_fees == HelpWithFeesType.USING_ONLINE_SERVICE
+    def is_using_online_service(self) -> bool:
+        return self.how_applying_for_help_with_fees == HelpWithFeesType.USING_ONLINE_SERVICE
+
     @property
-    def is_using_ex160_form(self) -> bool: return self.how_applying_for_help_with_fees == HelpWithFeesType.USING_EX160_FORM
+    def is_using_ex160_form(self) -> bool:
+        return self.how_applying_for_help_with_fees == HelpWithFeesType.USING_EX160_FORM

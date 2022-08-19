@@ -135,11 +135,7 @@
                 <span style="text-decoration: underline;">{{ application_data.personal_details_data.last_name }}</span>
 
                 <span class="govuk-caption-l" style="margin-top: 15px;">
-                    {% if application_data.partnership_details_data.is_interim_certificate %}
-                        INTERIM CERTIFICATE APPLICATION: {{ application_data.reference_number }}
-                    {% else %}
-                        FULL CERTIFICATE APPLICATION: {{ application_data.reference_number }}
-                    {% endif %}
+                    {{ application_data.application_certificate_type }}: {{ application_data.reference_number }}
                 </span>
             </h1>
 
