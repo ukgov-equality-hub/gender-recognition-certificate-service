@@ -38,18 +38,32 @@ class ApplicationData:
                self.confirmation_data.gender_recognition_from_approved_country
 
     @property
-    def need_medical_reports(self) -> bool: return self.is_uk_application
+    def application_certificate_type(self) -> str:
+        certificate_type = 'INTERIM' if self.partnership_details_data.is_interim_certificate else 'FULL'
+        overseas_type = 'OVERSEAS' if self.is_overseas_application else 'STANDARD'
+        return f'{certificate_type} {overseas_type} CERTIFICATE APPLICATION'
+
     @property
-    def need_evidence_of_living_in_gender(self) -> bool: return self.is_uk_application
+    def need_medical_reports(self) -> bool:
+        return self.is_uk_application
+
     @property
-    def need_name_change_documents(self) -> bool: return self.personal_details_data.changed_name_to_reflect_gender
+    def need_evidence_of_living_in_gender(self) -> bool:
+        return self.is_uk_application
+
+    @property
+    def need_name_change_documents(self) -> bool:
+        return self.personal_details_data.changed_name_to_reflect_gender
+
     @property
     def need_partnership_documents(self) -> bool:
         return self.partnership_details_data.is_currently_in_partnership or \
                self.partnership_details_data.previous_partnership_partner_died or \
                self.partnership_details_data.previous_partnership_ended
+
     @property
-    def need_overseas_documents(self) -> bool: return self.is_overseas_application
+    def need_overseas_documents(self) -> bool:
+        return self.is_overseas_application
 
     @property
     def section_status_medical_reports(self) -> ListStatus:

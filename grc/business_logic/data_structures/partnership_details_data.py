@@ -20,29 +20,50 @@ class PartnershipDetailsData:
     previous_partnership_ended: bool = None
 
     @property
-    def is_married(self) -> bool: return self.currently_in_a_partnership == CurrentlyInAPartnershipEnum.MARRIED
+    def is_married(self) -> bool:
+        return self.currently_in_a_partnership == CurrentlyInAPartnershipEnum.MARRIED
+
     @property
-    def is_in_civil_partnership(self) -> bool: return self.currently_in_a_partnership == CurrentlyInAPartnershipEnum.CIVIL_PARTNERSHIP
+    def is_in_civil_partnership(self) -> bool:
+        return self.currently_in_a_partnership == CurrentlyInAPartnershipEnum.CIVIL_PARTNERSHIP
+
     @property
-    def is_currently_in_partnership(self) -> bool: return self.is_married or self.is_in_civil_partnership
+    def is_currently_in_partnership(self) -> bool:
+        return self.is_married or self.is_in_civil_partnership
+
     @property
-    def is_not_in_partnership(self) -> bool: return not self.is_currently_in_partnership
+    def is_not_in_partnership(self) -> bool:
+        return not self.is_currently_in_partnership
 
     @property
     def currently_in_a_partnership_formatted(self) -> str:
-        if self.currently_in_a_partnership == CurrentlyInAPartnershipEnum.MARRIED: return 'Married'
-        if self.currently_in_a_partnership == CurrentlyInAPartnershipEnum.CIVIL_PARTNERSHIP: return 'Civil partnership'
-        if self.currently_in_a_partnership == CurrentlyInAPartnershipEnum.NEITHER: return 'Neither'
+        if self.currently_in_a_partnership == CurrentlyInAPartnershipEnum.MARRIED:
+            return 'Married'
+        elif self.currently_in_a_partnership == CurrentlyInAPartnershipEnum.CIVIL_PARTNERSHIP:
+            return 'Civil partnership'
+        elif self.currently_in_a_partnership == CurrentlyInAPartnershipEnum.NEITHER:
+            return 'Neither'
+
     @property
-    def plan_to_remain_in_a_partnership_formatted(self) -> str: return 'Yes' if self.plan_to_remain_in_a_partnership else 'No'
+    def plan_to_remain_in_a_partnership_formatted(self) -> str:
+        return 'Yes' if self.plan_to_remain_in_a_partnership else 'No'
+
     @property
-    def partner_agrees_formatted(self) -> str: return 'Yes' if self.partner_agrees else 'No'
+    def partner_agrees_formatted(self) -> str:
+        return 'Yes' if self.partner_agrees else 'No'
+
     @property
-    def previous_partnership_partner_died_formatted(self) -> str: return 'Yes' if self.previous_partnership_partner_died else 'No'
+    def previous_partnership_partner_died_formatted(self) -> str:
+        return 'Yes' if self.previous_partnership_partner_died else 'No'
+
     @property
-    def confirm_understood_interim_certificate_formatted(self) -> str: return 'Yes' if self.confirm_understood_interim_certificate else 'No'
+    def confirm_understood_interim_certificate_formatted(self) -> str:
+        return 'Yes' if self.confirm_understood_interim_certificate else 'No'
+
     @property
-    def previous_partnership_ended_formatted(self) -> str: return 'Yes' if self.previous_partnership_ended else 'No'
+    def previous_partnership_ended_formatted(self) -> str:
+        return 'Yes' if self.previous_partnership_ended else 'No'
+
     @property
     def is_interim_certificate(self) -> bool:
         return self.is_currently_in_partnership and \
