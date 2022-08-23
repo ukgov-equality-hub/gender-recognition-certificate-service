@@ -65,7 +65,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     # ------------------------------------------------
     await asserts.url('/partnership-details/partner-died')
     await asserts.accessibility()
-    await asserts.h1('Were you previously married or in a civil partnership, and your spouse or partner died?')
+    await asserts.h1('Were you previously married or in a civil partnership and your spouse or partner died?')
     await asserts.number_of_errors(0)
 
     # Clicking "Back" should take us back to the Are You Married page
@@ -92,14 +92,14 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     # ------------------------------------------------
     await asserts.url('/partnership-details/partner-died')
     await asserts.accessibility()
-    await asserts.h1('Were you previously married or in a civil partnership, and your spouse or partner died?')
+    await asserts.h1('Were you previously married or in a civil partnership and your spouse or partner died?')
     await asserts.number_of_errors(0)
 
     # Don't select an option, click "Save and continue"
     await helpers.click_button('Save and continue')
     await asserts.url('/partnership-details/partner-died')
     await asserts.accessibility()
-    await asserts.h1('Were you previously married or in a civil partnership, and your spouse or partner died?')
+    await asserts.h1('Were you previously married or in a civil partnership and your spouse or partner died?')
     await asserts.number_of_errors(1)
     await asserts.error(field='partner_died', message='Select if you were previously married or in a civil partnership, and your spouse or partner died')
 
@@ -123,7 +123,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     # ------------------------------------------------
     await asserts.url('/partnership-details/partner-died')
     await asserts.accessibility()
-    await asserts.h1('Were you previously married or in a civil partnership, and your spouse or partner died?')
+    await asserts.h1('Were you previously married or in a civil partnership and your spouse or partner died?')
     await asserts.number_of_errors(0)
 
     # Check the values we entered have been remembered
@@ -217,7 +217,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     # ------------------------------------------------
     await asserts.url('/partnership-details/partner-died')
     await asserts.accessibility()
-    await asserts.h1('Were you previously married or in a civil partnership, and your spouse or partner died?')
+    await asserts.h1('Were you previously married or in a civil partnership and your spouse or partner died?')
     await asserts.number_of_errors(0)
 
     # Click "Back" to get back to the "Are You Married" page, then choose "Married"
