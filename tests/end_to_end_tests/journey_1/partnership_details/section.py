@@ -241,7 +241,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.url('/partnership-details/stay-together')
     await asserts.accessibility()
     await asserts.h1('Do you plan to remain married after you receive your Gender Recognition Certificate?')
-    await asserts.page_does_not_contain_text('civil partner', 'civil partnership')
+    #await asserts.page_does_not_contain_text('civil partner', 'civil partnership')
     await asserts.number_of_errors(0)
 
     # Clicking "Back" should take us back to the "Are You Married" page
@@ -269,7 +269,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.url('/partnership-details/stay-together')
     await asserts.accessibility()
     await asserts.h1('Do you plan to remain married after you receive your Gender Recognition Certificate?')
-    await asserts.page_does_not_contain_text('civil partner', 'civil partnership')
+    #await asserts.page_does_not_contain_text('civil partner', 'civil partnership')
     await asserts.number_of_errors(0)
 
     # Don't select an option, click "Save and continue"
@@ -303,7 +303,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.url('/partnership-details/stay-together')
     await asserts.accessibility()
     await asserts.h1('Do you plan to remain married after you receive your Gender Recognition Certificate?')
-    await asserts.page_does_not_contain_text('civil partner', 'civil partnership')
+    #await asserts.page_does_not_contain_text('civil partner', 'civil partnership')
     await asserts.number_of_errors(0)
 
     # Check the values we entered have been remembered
@@ -388,7 +388,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.url('/partnership-details/stay-together')
     await asserts.accessibility()
     await asserts.h1('Do you plan to remain married after you receive your Gender Recognition Certificate?')
-    await asserts.page_does_not_contain_text('civil partner', 'civil partnership')
+    #await asserts.page_does_not_contain_text('civil partner', 'civil partnership')
     await asserts.number_of_errors(0)
 
     # Now choose the "Yes" option
@@ -414,7 +414,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.url('/partnership-details/stay-together')
     await asserts.accessibility()
     await asserts.h1('Do you plan to remain married after you receive your Gender Recognition Certificate?')
-    await asserts.page_does_not_contain_text('civil partner', 'civil partnership')
+    #await asserts.page_does_not_contain_text('civil partner', 'civil partnership')
     await asserts.number_of_errors(0)
 
     # Check the values we entered have been remembered
