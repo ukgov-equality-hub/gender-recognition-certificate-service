@@ -23,29 +23,21 @@
                 What you need to do next
             </h2>
             <p class="govuk-body">
-                Post the rest of your documents to us as soon as possible – include your name and address so we can match them to your application.
+                Post your birth or adoption certificate to us as soon as possible – include your name, address and application
+                reference number so we can match it to your application. Send either an original or a
+                <a href="https://www.gov.uk/certifying-a-document" rel="external" target="_blank" class="govuk-link">certified copy (opens in a new tab)</a>
+                – it will be posted back to you.
             </p>
-            <p class="govuk-body govuk-!-margin-bottom-2">
-                You need to post:
-            </p>
-            <ul class="govuk-list govuk-list--bullet">
-                <li>
-                    your original or a
-                    <a href="https://www.gov.uk/certifying-a-document" rel="external" target="_blank" class="govuk-link">
-                        certified copy (opens in new tab){# No line break here to ensure the <a> doesn't include a trailing space #}</a>
-                    of your full birth or adoption certificate (this will be posted back to you)
-                </li>
 
-                {% if application_data.submit_and_pay_data.is_using_ex160_form %}
-                    <li>
-                        an
-                        <a href="https://www.gov.uk/government/publications/apply-for-help-with-court-and-tribunal-fees"
-                           rel="external" target="_blank" class="govuk-link">
-                            EX160 form (opens in new tab)
-                        </a>
-                    </li>
-                {% endif %}
-            </ul>
+            {% if application_data.submit_and_pay_data.is_using_ex160_form %}
+                <p class="govuk-body">
+                    You also need to post an
+                    <a href="https://www.gov.uk/government/publications/apply-for-help-with-court-and-tribunal-fees"
+                        rel="external" target="_blank" class="govuk-link">
+                        EX160 form (opens in new tab)
+                    </a>
+                </p>
+            {% endif %}
 
             <p class="govuk-body govuk-!-margin-bottom-2">
                 Send to:
@@ -76,6 +68,9 @@
                 <a href="http://www.nidirect.gov.uk/index/do-it-online/government-citizens-and-rights-online/order-a-birth-adoption-death-marriage-or-civil-partnership-certificate.htm"
                    target="_blank" rel="external" class="govuk-link">
                     getting certificates in Northern Ireland (opens in a new tab)</a>.
+            </p>
+            <p class="govuk-body">
+                Do not send us any other documents unless we ask you to.
             </p>
             <p class="govuk-body">
                 Once you’ve sent your documents, your application will be reviewed by the Gender Recognition Panel.

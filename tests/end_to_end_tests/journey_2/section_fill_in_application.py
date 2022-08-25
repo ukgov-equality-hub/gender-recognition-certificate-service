@@ -336,7 +336,7 @@ async def fill_in_application(page: Page, asserts: AssertHelpers, helpers: PageH
     # ------------------------------------------------
     await asserts.url('/partnership-details/partner-died')
     await asserts.accessibility()
-    await asserts.h1('Were you previously married or in a civil partnership, and your spouse or partner died?')
+    await asserts.h1('Were you previously married or in a civil partnership and your spouse or partner died?')
     await asserts.number_of_errors(0)
 
     # Select a valid option, click "Save and continue"

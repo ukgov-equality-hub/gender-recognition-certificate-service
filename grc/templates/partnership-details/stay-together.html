@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% import "govuk-design-system-templates/error-summary.html" as error_summary %}
 {% import "govuk-design-system-templates/radios.html" as radios %}
+{% import "govuk-design-system-templates/hint.html" as hint %}
 
 {% set inYourPartnershipName = 'married'
        if application_data.partnership_details_data.is_married
@@ -25,7 +26,14 @@
                     fieldName='stay_together',
                     question="Do you plan to remain " + inYourPartnershipName + " after you receive your Gender Recognition Certificate?",
                     radiosOptions={
-                        'questionIsPageHeading': true
+                        'questionIsPageHeading': true,
+                        'conditionalOptions': [
+                            (True,
+                            hint.render({
+                                'htmlOrText': 'If you are in a same-sex civil partnership and want to <a href="https://www.gov.uk/convert-civil-partnership" target="_blank" class="govuk-link">convert your civil partnership to a marriage (opens in a new tab)</a>, you must do that before you apply for a Gender Recognition Certificate.'
+                            })
+                            )
+                        ]
                     }
                 ) }}
 
