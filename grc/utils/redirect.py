@@ -2,7 +2,7 @@ import html
 from flask import Response
 
 
-def local_redirect(location: str, code: int = 302):
+def local_redirect(location: str, code: int=302):
     display_location = html.escape(location)
     response = Response(
         '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">\n'

@@ -8,6 +8,12 @@ from grc.business_logic.data_structures.submit_and_pay_data import SubmitAndPayD
 from grc.list_status import ListStatus
 
 
+def any_duplicate_aws_file_names(uploads_files: List[EvidenceFile]):
+    aws_file_names = [file.aws_file_name for file in uploads_files]
+    duplicate_aws_file_names = [file_name for file_name in aws_file_names if aws_file_names.count(file_name) > 1]
+    return len(duplicate_aws_file_names) > 0
+
+
 class ApplicationData:
     reference_number: str = None
     email_address: str = None
@@ -26,6 +32,14 @@ class ApplicationData:
         self.partnership_details_data = PartnershipDetailsData()
         self.uploads_data = UploadsData()
         self.submit_and_pay_data = SubmitAndPayData()
+
+    def _upload_section_status(self, section):
+        if len(section) == 0:
+            return ListStatus.NOT_STARTED
+        elif any_duplicate_aws_file_names(section):
+            return ListStatus.ERROR
+        else:
+            return ListStatus.COMPLETED
 
     @property
     def is_uk_application(self) -> bool:
@@ -68,71 +82,41 @@ class ApplicationData:
     @property
     def section_status_medical_reports(self) -> ListStatus:
         if self.need_medical_reports:
-            if len(self.uploads_data.medical_reports) == 0:
-                return ListStatus.NOT_STARTED
-            elif any_duplicate_aws_file_names(self.uploads_data.medical_reports):
-                return ListStatus.ERROR
-            else:
-                return ListStatus.COMPLETED
+            return self._upload_section_status(self.uploads_data.medical_reports)
         else:
             return ListStatus.CANNOT_START_YET
 
     @property
     def section_status_evidence_of_living_in_gender(self) -> ListStatus:
         if self.need_evidence_of_living_in_gender:
-            if len(self.uploads_data.evidence_of_living_in_gender) == 0:
-                return ListStatus.NOT_STARTED
-            elif any_duplicate_aws_file_names(self.uploads_data.evidence_of_living_in_gender):
-                return ListStatus.ERROR
-            else:
-                return ListStatus.COMPLETED
+            return self._upload_section_status(self.uploads_data.evidence_of_living_in_gender)
         else:
             return ListStatus.CANNOT_START_YET
 
     @property
     def section_status_name_change_documents(self) -> ListStatus:
         if self.need_name_change_documents:
-            if len(self.uploads_data.name_change_documents) == 0:
-                return ListStatus.NOT_STARTED
-            elif any_duplicate_aws_file_names(self.uploads_data.name_change_documents):
-                return ListStatus.ERROR
-            else:
-                return ListStatus.COMPLETED
+            return self._upload_section_status(self.uploads_data.name_change_documents)
         else:
             return ListStatus.CANNOT_START_YET
 
     @property
     def section_status_partnership_documents(self) -> ListStatus:
         if self.need_partnership_documents:
-            if len(self.uploads_data.partnership_documents) == 0:
-                return ListStatus.NOT_STARTED
-            elif any_duplicate_aws_file_names(self.uploads_data.partnership_documents):
-                return ListStatus.ERROR
-            else:
-                return ListStatus.COMPLETED
+            return self._upload_section_status(self.uploads_data.partnership_documents)
         else:
             return ListStatus.CANNOT_START_YET
 
     @property
     def section_status_overseas_documents(self) -> ListStatus:
         if self.need_overseas_documents:
-            if len(self.uploads_data.overseas_documents) == 0:
-                return ListStatus.NOT_STARTED
-            elif any_duplicate_aws_file_names(self.uploads_data.overseas_documents):
-                return ListStatus.ERROR
-            else:
-                return ListStatus.COMPLETED
+            return self._upload_section_status(self.uploads_data.overseas_documents)
         else:
             return ListStatus.CANNOT_START_YET
 
     @property
     def section_status_statutory_declarations(self) -> ListStatus:
-        if len(self.uploads_data.statutory_declarations) == 0:
-            return ListStatus.NOT_STARTED
-        elif any_duplicate_aws_file_names(self.uploads_data.statutory_declarations):
-            return ListStatus.ERROR
-        else:
-            return ListStatus.COMPLETED
+        return self._upload_section_status(self.uploads_data.statutory_declarations)
 
     @property
     def section_status_submit_and_pay_data(self) -> ListStatus:
@@ -181,10 +165,3 @@ class ApplicationData:
                     return ListStatus.IN_PROGRESS
 
         return ListStatus.IN_REVIEW
-
-
-def any_duplicate_aws_file_names(uploads_files: List[EvidenceFile]):
-    aws_file_names = [file.aws_file_name for file in uploads_files]
-    duplicate_aws_file_names = [file_name for file_name in aws_file_names if aws_file_names.count(file_name) > 1]
-    any_duplicates = len(duplicate_aws_file_names) > 0
-    return any_duplicates

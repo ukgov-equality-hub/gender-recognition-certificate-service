@@ -46,6 +46,13 @@ def delete_file(application_data, file_name, section):
     files.remove(file_to_remove)
     return application_data
 
+def create_aws_file_name(reference_number, section_name, original_file_name):
+    filename = secure_filename(original_file_name)
+    last_dot_position = filename.rfind('.')
+    file_prefix = (filename[:last_dot_position]) if last_dot_position > -1 else filename
+    file_extension = (filename[(last_dot_position + 1):]) if last_dot_position > -1 else ''
+    aws_file_name = f"{reference_number}__{section_name}__{file_prefix}_{uuid.uuid4().hex}.{file_extension}"
+    return aws_file_name
 
 @upload.route('/upload/<section_url>', methods=['GET', 'POST'])
 @LoginRequired
@@ -102,15 +109,6 @@ def uploadInfoPage(section_url: str):
         currently_uploaded_files=files,
         duplicate_aws_file_names=any_duplicate_aws_file_names(files)
     )
-
-
-def create_aws_file_name(reference_number, section_name, original_file_name):
-    filename = secure_filename(original_file_name)
-    last_dot_position = filename.rfind('.')
-    file_prefix = (filename[:last_dot_position]) if last_dot_position > -1 else filename
-    file_extension = (filename[(last_dot_position + 1):]) if last_dot_position > -1 else ''
-    aws_file_name = f"{reference_number}__{section_name}__{file_prefix}_{uuid.uuid4().hex}.{file_extension}"
-    return aws_file_name
 
 
 @upload.route('/upload/<section_url>/remove-file', methods=['POST'])
