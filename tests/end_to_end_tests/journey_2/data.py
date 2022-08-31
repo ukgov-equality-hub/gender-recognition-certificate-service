@@ -7,6 +7,7 @@ EMAIL_ADDRESS = 'test@example.com'
 
 TITLE = 'Mr'
 FIRST_NAME = 'Joseph'
+MIDDLE_NAMES = 'Adam Brian'
 LAST_NAME = 'Bloggs'
 
 ADDRESS_LINE_ONE = '16-20'

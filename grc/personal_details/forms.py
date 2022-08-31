@@ -14,6 +14,8 @@ class NameForm(FlaskForm):
         validators=[DataRequired(message='Enter your first name(s)')]
     )
 
+    middle_names = StringField()
+
     last_name = StringField(
         validators=[DataRequired(message='Enter your last name')]
     )

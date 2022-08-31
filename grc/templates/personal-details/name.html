@@ -45,9 +45,19 @@
                             form,
                             fieldName='first_name',
                             textInputForOptions={
-                                'labelOptions': { 'htmlOrText': 'First name(s)' },
+                                'labelOptions': { 'htmlOrText': 'First name' },
                                 'classes': 'govuk-!-width-three-quarters',
                                 'autocomplete': 'given-name'
+                            }
+                        ) }}
+
+                        {{ textInput.renderFor(
+                            form,
+                            fieldName='middle_names',
+                            textInputForOptions={
+                                'labelOptions': { 'htmlOrText': 'Middle names (only required if you have middle names)' },
+                                'classes': 'govuk-!-width-three-quarters',
+                                'autocomplete': 'additional-name'
                             }
                         ) }}
 

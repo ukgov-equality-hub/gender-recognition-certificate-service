@@ -66,6 +66,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     # Enter valid details, click Save and continue
     await helpers.fill_textbox(field='title', value=data.TITLE)
     await helpers.fill_textbox(field='first_name', value=data.FIRST_NAME)
+    await helpers.fill_textbox(field='middle_names', value=data.MIDDLE_NAMES)
     await helpers.fill_textbox(field='last_name', value=data.LAST_NAME)
     await helpers.click_button('Save and continue')
 
@@ -91,6 +92,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     # The fields should be pre-populated with the values we just entered
     await asserts.field_value(field='title', expected_value=data.TITLE)
     await asserts.field_value(field='first_name', expected_value=data.FIRST_NAME)
+    await asserts.field_value(field='middle_names', expected_value=data.MIDDLE_NAMES)
     await asserts.field_value(field='last_name', expected_value=data.LAST_NAME)
 
     # Click "Return to task list" to return to Task List page
@@ -706,7 +708,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
 
     # Check the values in the summary table
     await asserts.check_your_answers_rows(10)
-    await asserts.check_your_answers_row(row_name='Name', expected_value=f"{data.TITLE} {data.FIRST_NAME} {data.LAST_NAME}")
+    await asserts.check_your_answers_row(row_name='Name', expected_value=f"{data.TITLE} {data.FIRST_NAME} {data.MIDDLE_NAMES} {data.LAST_NAME}")
     await asserts.check_your_answers_row(row_name='Affirmed gender', expected_value='Male')
     await asserts.check_your_answers_row(row_name='When you transitioned', expected_value=data.TRANSITION_DATE_FORMATTED)
     await asserts.check_your_answers_row(row_name='When you signed your statutory declaration', expected_value=data.STATUTORY_DECLARATION_DATE_FORMATTED)

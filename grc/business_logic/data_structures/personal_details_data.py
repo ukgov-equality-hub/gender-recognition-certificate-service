@@ -11,7 +11,9 @@ class AffirmedGender(GrcEnum):
 
 class PersonalDetailsData:
     title: str = None
-    first_names: str = None
+    first_name: str = None
+    first_names: str = None  # Deprecated - this will be removed as soon as we have migrated all user across to the first_name field
+    middle_names: str = None
     last_name: str = None
 
     affirmed_gender: AffirmedGender = None
@@ -91,7 +93,7 @@ class PersonalDetailsData:
 
     @property
     def section_status(self) -> ListStatus:
-        if self.title is None or self.first_names is None or self.last_name is None:
+        if self.title is None or self.first_name is None or self.last_name is None:
             return ListStatus.NOT_STARTED
 
         if self.affirmed_gender is None:
