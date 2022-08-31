@@ -5,6 +5,7 @@
     Application for
     {{ application_data.personal_details_data.title }}
     {{ application_data.personal_details_data.first_names }}
+    {{ application_data.personal_details_data.middle_names }}
     {{ application_data.personal_details_data.last_name }}
 {% endblock %}
 
@@ -20,6 +21,7 @@
                 Application for
                 {{ application_data.personal_details_data.title }}
                 {{ application_data.personal_details_data.first_names }}
+                {{ application_data.personal_details_data.middle_names }}
                 <span style="text-decoration: underline;">{{ application_data.personal_details_data.last_name }}</span>
             </li>
         </ol>
@@ -132,6 +134,7 @@
                 Application for
                 {{ application_data.personal_details_data.title }}
                 {{ application_data.personal_details_data.first_names }}
+                {{ application_data.personal_details_data.middle_names }}
                 <span style="text-decoration: underline;">{{ application_data.personal_details_data.last_name }}</span>
 
                 <span class="govuk-caption-l" style="margin-top: 15px;">
@@ -266,8 +269,13 @@
                     ) }}
 
                     {{ summary_list_item(
-                        subtitle="First name(s)",
+                        subtitle="First name",
                         value=application_data.personal_details_data.first_names
+                    ) }}
+
+                    {{ summary_list_item(
+                        subtitle="Middle name(s)",
+                        value=application_data.personal_details_data.middle_names
                     ) }}
 
                     {{ summary_list_item(

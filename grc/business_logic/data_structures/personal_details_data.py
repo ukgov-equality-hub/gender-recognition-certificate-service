@@ -12,6 +12,7 @@ class AffirmedGender(GrcEnum):
 class PersonalDetailsData:
     title: str = None
     first_names: str = None
+    middle_names: str = None
     last_name: str = None
 
     affirmed_gender: AffirmedGender = None

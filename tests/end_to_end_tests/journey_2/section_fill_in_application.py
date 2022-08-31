@@ -110,6 +110,7 @@ async def fill_in_application(page: Page, asserts: AssertHelpers, helpers: PageH
     # Enter valid details, click Save and continue
     await helpers.fill_textbox(field='title', value=data.TITLE)
     await helpers.fill_textbox(field='first_name', value=data.FIRST_NAME)
+    await helpers.fill_textbox(field='middle_names', value=data.MIDDLE_NAMES)
     await helpers.fill_textbox(field='last_name', value=data.LAST_NAME)
     await helpers.click_button('Save and continue')
 
@@ -535,7 +536,7 @@ async def fill_in_application(page: Page, asserts: AssertHelpers, helpers: PageH
     await asserts.check_your_answers_row(row_name='Do you have official documentation that shows you have ever been issued a Gender Recognition Certificate (or its equivalent) in one of the allowed countries or territories?', expected_value='Yes')
     await asserts.check_your_answers_row(row_name='Do you consent to the General Register Office contacting you about your application?', expected_value='Yes')
 
-    await asserts.check_your_answers_row(row_name='Name (as you would like it to appear on your Gender Recognition Certificate)', expected_value=f"{data.TITLE} {data.FIRST_NAME} {data.LAST_NAME}")
+    await asserts.check_your_answers_row(row_name='Name (as you would like it to appear on your Gender Recognition Certificate)', expected_value=f"{data.TITLE} {data.FIRST_NAME} {data.MIDDLE_NAMES} {data.LAST_NAME}")
     await asserts.check_your_answers_row(row_name='Affirmed gender', expected_value='Male')
     await asserts.check_your_answers_row(row_name='When you transitioned', expected_value='March 2000')
     await asserts.check_your_answers_row(row_name='When you signed your statutory declaration', expected_value=data.STATUTORY_DECLARATION_DATE_FORMATTED)
