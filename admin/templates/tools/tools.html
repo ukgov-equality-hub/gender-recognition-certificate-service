@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}GRC admin tools{% endblock %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <h1 class="govuk-heading-l">
+                GRC admin tools
+            </h1>
+
+            <ul class="govuk-list govuk-list--bullet">
+                <li>
+                    <a href="{{ url_for('tools.unlock_file_locked_for_editing') }}"
+                       class="govuk-link">
+                        Unlock PDF that is locked for editing
+                    </a>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Unlock PDF that is locked for editing{% endblock %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <h1 class="govuk-heading-l">
+                Unlock PDF that is locked for editing
+            </h1>
+
+            <form method="POST" enctype="multipart/form-data">
+                {{ form.csrf_token }}
+
+                <div class="govuk-form-group {{ 'govuk-form-group--error' if form.errors }} govuk-!-margin-bottom-2">
+                    <label for="documents" class="govuk-label govuk-label--m">
+                        Upload files
+                    </label>
+                    {% if form.file.errors %}
+                        <p id="documents-error" class="govuk-error-message">
+                            {% for error in form.errors %}
+                                {% for e in form[error].errors %}
+                                    <span class="govuk-visually-hidden">Error:</span> {{ e }}
+                                {% endfor %}
+                            {% endfor %}
+                        </p>
+                    {% endif %}
+
+                    <input id="file" type="file" name="file"
+                           class="govuk-file-upload govuk-!-margin-bottom-4 {{ 'govuk-input--error' if form.file.errors }}">
+                </div>
+
+                <button class="govuk-button" data-module="govuk-button">
+                    Upload and unlock file
+                </button>
+            </form>
+
+        </div>
+    </div>
+{% endblock %}

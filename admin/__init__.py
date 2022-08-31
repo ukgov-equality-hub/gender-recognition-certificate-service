@@ -96,6 +96,9 @@ def create_app(test_config=None):
     from admin.jobs import jobs
     app.register_blueprint(jobs)
 
+    # Tools
+    from admin.tools import tools
+    app.register_blueprint(tools)
 
     # Health Check
     from admin.health_check import health_check
