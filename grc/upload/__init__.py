@@ -276,3 +276,41 @@ def removeAllFilesInSection(section_url: str):
     DataStore.save_application(application_data)
 
     return local_redirect(url_for('upload.uploadInfoPage', section_url=section.url))
+
+
+@upload.route('/upload/<section_url>/download', methods=['GET'])
+@LoginRequired
+def download(section_url):
+    section = next(filter(lambda section: section.url == section_url, sections), None)
+    if section is None:
+        abort(404)
+
+    file_name = request.args.get('file', default=None)
+    if file_name is not None:
+        application_data = DataStore.load_application_by_session_reference_number()
+        files = [file for file in section.file_list(application_data.uploads_data) if file.aws_file_name == file_name]
+        if len(files) == 0:
+            return abort(403)
+
+        data = AwsS3Client().download_object(file_name)
+        if data:
+            file_type = 'application/octet-stream'
+            if '.' in file_name:
+                file_type = file_name[file_name.rindex('.') + 1:]
+                if file_type == 'pdf':
+                    file_type = 'application/pdf'
+                elif file_type == 'jpg':
+                    file_type = 'image/jpeg'
+                else:
+                    file_type = 'image/' + file_type
+
+            bytes = data.getvalue()
+            if bytes is None:
+                return abort(404)
+
+            response = make_response(bytes)
+            response.headers.set('Content-Type', file_type)
+            response.headers.set('Content-Disposition', 'attachment', filename=file_name)
+            return response
+
+    abort(404)
