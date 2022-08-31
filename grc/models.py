@@ -37,7 +37,14 @@ class Application(db.Model):
     filesCreated = db.Column(db.Boolean, default=False)
 
     def application_data(self) -> ApplicationData:
-        return jsonpickle.decode(self.user_input)
+        application_data: ApplicationData = jsonpickle.decode(self.user_input)
+
+        # Migrate this user's first name from the "first_names" field to the "first_name" field
+        if application_data.personal_details_data.first_name is None and application_data.personal_details_data.first_names is not None:
+            application_data.personal_details_data.first_name = application_data.personal_details_data.first_names
+            application_data.personal_details_data.first_names = None
+
+        return application_data
 
 
 class SecurityCode(db.Model):

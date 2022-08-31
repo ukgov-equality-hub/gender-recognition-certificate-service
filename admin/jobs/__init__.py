@@ -1,9 +1,11 @@
 import os
 import io
 from datetime import datetime
+import jsonpickle
 from dateutil.relativedelta import relativedelta
 from flask import Blueprint, request
 from sqlalchemy.sql import extract
+from grc.business_logic.data_structures.application_data import ApplicationData
 from grc.external_services.gov_uk_notify import GovUkNotify
 from grc.models import db, Application, ApplicationStatus, SecurityCode
 from grc.utils.decorators import JobTokenRequired
@@ -16,6 +18,77 @@ jobs = Blueprint('jobs', __name__)
 @jobs.route('/jobs', methods=['GET'])
 def index():
     return ('', 200)
+
+
+@jobs.route('/jobs/check-first-name-formats', methods=['GET'])
+@JobTokenRequired
+def check_first_name_formats():
+    number_of_applications_in_old_format: int = 0
+    number_of_applications_in_new_format: int = 0
+    number_of_applications_in_both_formats: int = 0
+    number_of_applications_with_no_middle_names: int = 0
+    logic_error: int = 0
+
+    applications = Application.query.all()
+
+    for application in applications:
+        application_data: ApplicationData = jsonpickle.decode(application.user_input)
+
+        if application_data.personal_details_data.first_name is None and application_data.personal_details_data.first_names is None:
+            number_of_applications_with_no_middle_names = number_of_applications_with_no_middle_names + 1
+        elif application_data.personal_details_data.first_name is None and application_data.personal_details_data.first_names is not None:
+            number_of_applications_in_old_format = number_of_applications_in_old_format + 1
+        elif application_data.personal_details_data.first_name is not None and application_data.personal_details_data.first_names is None:
+            number_of_applications_in_new_format = number_of_applications_in_new_format + 1
+        elif application_data.personal_details_data.first_name is not None and application_data.personal_details_data.first_names is not None:
+            number_of_applications_in_both_formats = number_of_applications_in_both_formats + 1
+        else:
+            logic_error = logic_error + 1
+
+    return f"{number_of_applications_in_old_format} applications in old format. " \
+           f"{number_of_applications_in_new_format} applications in new format. " \
+           f"{number_of_applications_with_no_middle_names} applications with no middle name set. " \
+           f"{number_of_applications_in_both_formats} applications in both formats (this is an error). " \
+           f"{logic_error} other errors (this is an error)."
+
+
+@jobs.route('/jobs/migrate-first-names-to-new-format', methods=['GET'])
+@JobTokenRequired
+def migrate_first_names_to_new_format():
+    number_of_applications_in_old_format: int = 0
+    number_of_applications_in_new_format: int = 0
+    number_of_applications_in_both_formats: int = 0
+    number_of_applications_with_no_middle_names: int = 0
+    logic_error: int = 0
+
+    applications = Application.query.all()
+
+    for application in applications:
+        application_data: ApplicationData = jsonpickle.decode(application.user_input)
+
+        if application_data.personal_details_data.first_name is None and application_data.personal_details_data.first_names is None:
+            number_of_applications_with_no_middle_names = number_of_applications_with_no_middle_names + 1
+        elif application_data.personal_details_data.first_name is None and application_data.personal_details_data.first_names is not None:
+            application_data.personal_details_data.first_name = application_data.personal_details_data.first_names
+            application_data.personal_details_data.first_names = None
+            application.user_input = jsonpickle.encode(application_data)
+            number_of_applications_in_old_format = number_of_applications_in_old_format + 1
+        elif application_data.personal_details_data.first_name is not None and application_data.personal_details_data.first_names is None:
+            number_of_applications_in_new_format = number_of_applications_in_new_format + 1
+        elif application_data.personal_details_data.first_name is not None and application_data.personal_details_data.first_names is not None:
+            number_of_applications_in_both_formats = number_of_applications_in_both_formats + 1
+        else:
+            logic_error = logic_error + 1
+
+    db.session.commit()
+
+    return f"Conversion complete. " \
+           f"{number_of_applications_in_old_format} converted from old to new format. " \
+           f"{number_of_applications_in_new_format} already in new format. " \
+           f"{number_of_applications_with_no_middle_names} applications with no middle name set. " \
+           f"{number_of_applications_in_both_formats} applications in both formats (this is an error). " \
+           f"{logic_error} other errors (this is an error)."
+
 
 
 @jobs.route('/jobs/create-files', methods=['GET'])

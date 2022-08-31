@@ -21,7 +21,7 @@ def index():
 
     if form.validate_on_submit():
         application_data.personal_details_data.title = form.title.data
-        application_data.personal_details_data.first_names = form.first_name.data
+        application_data.personal_details_data.first_name = form.first_name.data
         application_data.personal_details_data.middle_names = form.middle_names.data
         application_data.personal_details_data.last_name = form.last_name.data
         DataStore.save_application(application_data)
@@ -30,7 +30,7 @@ def index():
 
     if request.method == 'GET':
         form.title.data = application_data.personal_details_data.title
-        form.first_name.data = application_data.personal_details_data.first_names
+        form.first_name.data = application_data.personal_details_data.first_name
         form.middle_names.data = application_data.personal_details_data.middle_names
         form.last_name.data = application_data.personal_details_data.last_name
 
