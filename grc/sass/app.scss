@@ -34,6 +34,10 @@ body {
   }
 }
 
+.govuk-button {
+  white-space: nowrap;
+}
+
 // cookie banner
 div.govuk-cookie-banner[hidden] {
   display: none;

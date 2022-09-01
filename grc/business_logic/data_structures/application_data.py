@@ -8,6 +8,10 @@ from grc.business_logic.data_structures.submit_and_pay_data import SubmitAndPayD
 from grc.list_status import ListStatus
 
 
+def any_password_protected_files(uploads_files: List[EvidenceFile]):
+    return len([file for file in uploads_files if file.password_required]) > 0
+
+
 def any_duplicate_aws_file_names(uploads_files: List[EvidenceFile]):
     aws_file_names = [file.aws_file_name for file in uploads_files]
     duplicate_aws_file_names = [file_name for file_name in aws_file_names if aws_file_names.count(file_name) > 1]
@@ -36,6 +40,8 @@ class ApplicationData:
     def _upload_section_status(self, section):
         if len(section) == 0:
             return ListStatus.NOT_STARTED
+        elif any_password_protected_files(section):
+            return ListStatus.ERROR
         elif any_duplicate_aws_file_names(section):
             return ListStatus.ERROR
         else:

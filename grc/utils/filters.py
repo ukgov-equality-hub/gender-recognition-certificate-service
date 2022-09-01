@@ -16,6 +16,16 @@ def format_date_filter(context, dt):
     return ''
 
 @jinja2.pass_context
+@blueprint.app_template_filter('remove_file_name_from_error')
+def remove_file_name_from_error_filter(context, error):
+    try:
+        if error.index(':'):
+            return error[error.index(':') + 1:].strip()
+    except:
+        pass
+    return error
+
+@jinja2.pass_context
 @blueprint.app_template_filter('image_data')
 def image_data_filter(context, image_name):
     print('image_data_filter', flush=True)

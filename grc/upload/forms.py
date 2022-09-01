@@ -1,5 +1,5 @@
-from flask_wtf import FlaskForm
-from wtforms import MultipleFileField, HiddenField, RadioField
+from flask_wtf import Form, FlaskForm
+from wtforms import MultipleFileField, HiddenField, RadioField, PasswordField, SubmitField, FormField, FieldList
 from wtforms.validators import DataRequired
 from grc.utils.form_custom_validators import MultiFileAllowed, fileSizeLimit, fileVirusScan, StrictRequiredIf
 
@@ -34,6 +34,33 @@ class DeleteForm(FlaskForm):
     file = HiddenField(
         validators=[DataRequired(message='Field is required')]
     )
+
+    def get_csrf_token(self):
+        return self._csrf.generate_csrf_token('csrf_token')
+
+
+class PasswordForm(Form):
+    aws_file_name = HiddenField(
+        validators=[DataRequired(message='Field is required')]
+    )
+
+    original_file_name = HiddenField(
+        validators=[DataRequired(message='Field is required')]
+    )
+
+    file_index = HiddenField(
+        validators=[DataRequired(message='Field is required')]
+    )
+
+    password = PasswordField(
+        validators=[DataRequired(message='Enter your password')]
+    )
+
+    button_clicked = SubmitField()
+
+
+class PasswordsForm(FlaskForm):
+    files = FieldList(FormField(PasswordForm), min_entries=1)
 
     def get_csrf_token(self):
         return self._csrf.generate_csrf_token('csrf_token')
