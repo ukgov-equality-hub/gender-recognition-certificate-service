@@ -27,27 +27,32 @@ def check_first_name_formats():
     number_of_applications_in_new_format: int = 0
     number_of_applications_in_both_formats: int = 0
     number_of_applications_with_no_middle_names: int = 0
+    number_of_anonymised_applications: int = 0
     logic_error: int = 0
 
     applications = Application.query.all()
 
     for application in applications:
-        application_data: ApplicationData = jsonpickle.decode(application.user_input)
+        if application.user_input:
+            application_data: ApplicationData = jsonpickle.decode(application.user_input)
 
-        if application_data.personal_details_data.first_name is None and application_data.personal_details_data.first_names is None:
-            number_of_applications_with_no_middle_names = number_of_applications_with_no_middle_names + 1
-        elif application_data.personal_details_data.first_name is None and application_data.personal_details_data.first_names is not None:
-            number_of_applications_in_old_format = number_of_applications_in_old_format + 1
-        elif application_data.personal_details_data.first_name is not None and application_data.personal_details_data.first_names is None:
-            number_of_applications_in_new_format = number_of_applications_in_new_format + 1
-        elif application_data.personal_details_data.first_name is not None and application_data.personal_details_data.first_names is not None:
-            number_of_applications_in_both_formats = number_of_applications_in_both_formats + 1
+            if application_data.personal_details_data.first_name is None and application_data.personal_details_data.first_names is None:
+                number_of_applications_with_no_middle_names = number_of_applications_with_no_middle_names + 1
+            elif application_data.personal_details_data.first_name is None and application_data.personal_details_data.first_names is not None:
+                number_of_applications_in_old_format = number_of_applications_in_old_format + 1
+            elif application_data.personal_details_data.first_name is not None and application_data.personal_details_data.first_names is None:
+                number_of_applications_in_new_format = number_of_applications_in_new_format + 1
+            elif application_data.personal_details_data.first_name is not None and application_data.personal_details_data.first_names is not None:
+                number_of_applications_in_both_formats = number_of_applications_in_both_formats + 1
+            else:
+                logic_error = logic_error + 1
         else:
-            logic_error = logic_error + 1
+            number_of_anonymised_applications = number_of_anonymised_applications + 1
 
     return f"{number_of_applications_in_old_format} applications in old format. " \
            f"{number_of_applications_in_new_format} applications in new format. " \
            f"{number_of_applications_with_no_middle_names} applications with no middle name set. " \
+           f"{number_of_anonymised_applications} anonymised applications. " \
            f"{number_of_applications_in_both_formats} applications in both formats (this is an error). " \
            f"{logic_error} other errors (this is an error)."
 
@@ -59,26 +64,30 @@ def migrate_first_names_to_new_format():
     number_of_applications_in_new_format: int = 0
     number_of_applications_in_both_formats: int = 0
     number_of_applications_with_no_middle_names: int = 0
+    number_of_anonymised_applications: int = 0
     logic_error: int = 0
 
     applications = Application.query.all()
 
     for application in applications:
-        application_data: ApplicationData = jsonpickle.decode(application.user_input)
+        if application.user_input:
+            application_data: ApplicationData = jsonpickle.decode(application.user_input)
 
-        if application_data.personal_details_data.first_name is None and application_data.personal_details_data.first_names is None:
-            number_of_applications_with_no_middle_names = number_of_applications_with_no_middle_names + 1
-        elif application_data.personal_details_data.first_name is None and application_data.personal_details_data.first_names is not None:
-            application_data.personal_details_data.first_name = application_data.personal_details_data.first_names
-            application_data.personal_details_data.first_names = None
-            application.user_input = jsonpickle.encode(application_data)
-            number_of_applications_in_old_format = number_of_applications_in_old_format + 1
-        elif application_data.personal_details_data.first_name is not None and application_data.personal_details_data.first_names is None:
-            number_of_applications_in_new_format = number_of_applications_in_new_format + 1
-        elif application_data.personal_details_data.first_name is not None and application_data.personal_details_data.first_names is not None:
-            number_of_applications_in_both_formats = number_of_applications_in_both_formats + 1
+            if application_data.personal_details_data.first_name is None and application_data.personal_details_data.first_names is None:
+                number_of_applications_with_no_middle_names = number_of_applications_with_no_middle_names + 1
+            elif application_data.personal_details_data.first_name is None and application_data.personal_details_data.first_names is not None:
+                application_data.personal_details_data.first_name = application_data.personal_details_data.first_names
+                application_data.personal_details_data.first_names = None
+                application.user_input = jsonpickle.encode(application_data)
+                number_of_applications_in_old_format = number_of_applications_in_old_format + 1
+            elif application_data.personal_details_data.first_name is not None and application_data.personal_details_data.first_names is None:
+                number_of_applications_in_new_format = number_of_applications_in_new_format + 1
+            elif application_data.personal_details_data.first_name is not None and application_data.personal_details_data.first_names is not None:
+                number_of_applications_in_both_formats = number_of_applications_in_both_formats + 1
+            else:
+                logic_error = logic_error + 1
         else:
-            logic_error = logic_error + 1
+            number_of_anonymised_applications = number_of_anonymised_applications + 1
 
     db.session.commit()
 
@@ -86,6 +95,7 @@ def migrate_first_names_to_new_format():
            f"{number_of_applications_in_old_format} converted from old to new format. " \
            f"{number_of_applications_in_new_format} already in new format. " \
            f"{number_of_applications_with_no_middle_names} applications with no middle name set. " \
+           f"{number_of_anonymised_applications} anonymised applications. " \
            f"{number_of_applications_in_both_formats} applications in both formats (this is an error). " \
            f"{logic_error} other errors (this is an error)."
 
