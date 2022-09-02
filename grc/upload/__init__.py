@@ -4,11 +4,12 @@ from werkzeug.utils import secure_filename
 import fitz
 import uuid
 from grc.business_logic.data_store import DataStore
-from grc.business_logic.data_structures.application_data import any_duplicate_aws_file_names
+from grc.business_logic.data_structures.application_data import any_duplicate_aws_file_names, ApplicationData
 from grc.business_logic.data_structures.uploads_data import UploadsData, EvidenceFile
 from grc.upload.forms import UploadForm, DeleteForm, PasswordsForm, DeleteAllFilesInSectionForm
 from grc.utils.decorators import LoginRequired
 from grc.external_services.aws_s3_client import AwsS3Client
+from grc.utils.flask_child_form_add_custom_errors import add_error_for_child_form
 from grc.utils.redirect import local_redirect
 from grc.utils.logger import LogLevel, Logger
 
@@ -66,28 +67,30 @@ def create_aws_file_name(reference_number, section_name, original_file_name):
     return aws_file_name
 
 def check_pdf_password(section, application_data, passwordForm):
-    password_ok = False
     files = section.file_list(application_data.uploads_data)
     file_to_check = next(filter(lambda file: file.aws_file_name == passwordForm.aws_file_name.data, files), None)
     if file_to_check is not None:
         data = AwsS3Client().download_object(file_to_check.aws_file_name)
         if data is not None:
             doc = fitz.open(stream=data.getvalue(), filetype='pdf')
-            if doc.needs_pass:
-                if doc.authenticate(passwordForm.password.data):
+            if not doc.needs_pass:
+                return True
 
-                    # Generate a new PDF
-                    pdf = create_pdf_from_doc(doc)
+            if doc.authenticate(passwordForm.password.data):
 
-                    AwsS3Client().delete_object(file_to_check.aws_file_name)
-                    AwsS3Client().upload_fileobj(pdf, file_to_check.aws_file_name)
+                # Generate a new PDF
+                pdf = create_pdf_from_doc(doc)
 
-                    file_to_check.password_required = False
-                    DataStore.save_application(application_data)
-                    password_ok = True
+                AwsS3Client().delete_object(file_to_check.aws_file_name)
+                AwsS3Client().upload_fileobj(pdf, file_to_check.aws_file_name)
+
+                file_to_check.password_required = False
+                DataStore.save_application(application_data)
+                doc.close()
+                return True
 
             doc.close()
-    return application_data, password_ok
+    return False
 
 def clear_form_errors(form):
     for _form_field, form_error in form.errors.items():
@@ -171,67 +174,55 @@ def documentPassword(section_url: str):
 
     passwordsForm = PasswordsForm()
     application_data = DataStore.load_application_by_session_reference_number()
-    error = ''
-    file_index = -1
 
+    if request.method == 'POST':
+        if remove_file_button_was_clicked(passwordsForm):
+            remove_file_based_on_button_click(passwordsForm, application_data, section)
 
-    if passwordsForm.validate_on_submit():
+        else:
+            passwordsForm.validate()
 
-        # All password fields have been submitted
-        errors = []
-        for passwordForm in passwordsForm.files:
-            application_data, password_ok = check_pdf_password(section, application_data, passwordForm)
-            if not password_ok:
-                errors.append(f'{passwordForm.original_file_name.data}: The password is incorrect')  # { 'password': ['The password is incorrect'] }
-
-        passwordsForm.files.errors = errors
-
-    elif request.method == 'POST':
-
-        # EITHER remove has been clicked, OR not all passwords have been entered
-        remove_file = False
-        for passwordForm in passwordsForm.files:
-            if passwordForm.button_clicked.data:
-                application_data = delete_file(application_data, passwordForm.aws_file_name.data, section)
-                DataStore.save_application(application_data)
-                remove_file = True
-                clear_form_errors(passwordsForm)
-
-        if not remove_file:
-            errors = []
-            has_password = False
             for passwordForm in passwordsForm.files:
                 if passwordForm.password.data:
-                    has_password = True
-                    application_data, password_ok = check_pdf_password(section, application_data, passwordForm)
+                    password_ok = check_pdf_password(section, application_data, passwordForm)
                     if not password_ok:
-                        errors.append(f'{passwordForm.original_file_name.data}: The password is incorrect')
+                        wrong_password_error_message = f"{passwordForm.original_file_name.data}: The password is incorrect"
+                        add_error_for_child_form(passwordsForm.files, passwordForm, 'password', wrong_password_error_message)
                 else:
-                    errors.append('')
-
-            if not has_password:
-                errors = []
-                for passwordForm in passwordsForm.files:
-                    errors.append(f'{passwordForm.original_file_name.data}: The password is required')
-
-            clear_form_errors(passwordsForm)
-            for error in errors:
-                if error != '':
-                    passwordsForm.files.errors = errors
+                    no_password_error_message = f"{passwordForm.original_file_name.data}: Enter the password for this document"
+                    add_error_for_child_form(passwordsForm.files, passwordForm, 'password', no_password_error_message)
 
     files = [file for file in section.file_list(application_data.uploads_data) if file.password_required]
     if len(files) == 0:
         return local_redirect(url_for('upload.uploadInfoPage', section_url=section.url) + '#file-upload-section')
+
+    files_before = len(passwordsForm.files)
     passwordsForm.process(data={ 'files': files })
+    files_after = len(passwordsForm.files)
+
+    if files_before != files_after:
+        clear_form_errors(passwordsForm)
 
     return render_template(
         "upload/document-password.html",
         passwordsForm=passwordsForm,
         section_url=section.url,
-        currently_uploaded_files=files,
-        error=error,
-        file_index=file_index
+        currently_uploaded_files=files
     )
+
+
+def remove_file_button_was_clicked(passwords_form: PasswordsForm):
+    for password_form in passwords_form.files:
+        if password_form.button_clicked.data:
+            return True
+    return False
+
+
+def remove_file_based_on_button_click(passwords_form: PasswordsForm, application_data: ApplicationData, section: UploadSection):
+    for password_form in passwords_form.files:
+        if password_form.button_clicked.data:
+            delete_file(application_data, password_form.aws_file_name.data, section)
+            DataStore.save_application(application_data)
 
 
 @upload.route('/upload/<section_url>/remove-file', methods=['POST'])

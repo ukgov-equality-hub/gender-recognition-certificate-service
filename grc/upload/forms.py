@@ -53,7 +53,9 @@ class PasswordForm(Form):
     )
 
     password = PasswordField(
-        validators=[DataRequired(message='Enter your password')]
+        # We would normally validate DataRequired
+        # But we want to generate the error messages dynamically, including the file name in the error message
+        # So we do this in the upload/__init__.py file
     )
 
     button_clicked = SubmitField()
