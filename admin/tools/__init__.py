@@ -3,7 +3,7 @@ import io
 from flask import Blueprint, render_template, make_response, request
 from admin.tools.forms import UnlockFileForm
 from grc.utils.decorators import AdminViewerRequired
-from grc.utils.logger import Logger
+from grc.utils.logger import Logger, LogLevel
 
 tools = Blueprint('tools', __name__)
 logger = Logger()
@@ -15,21 +15,34 @@ def index():
     return render_template('tools/tools.html')
 
 
-@tools.route('/tools/unlock-file-locked-for-editing', methods=['GET', 'POST'])
+@tools.route('/tools/unlock-pdfs', methods=['GET', 'POST'])
 @AdminViewerRequired
-def unlock_file_locked_for_editing():
+def unlock_pdfs():
     form = UnlockFileForm()
 
     if form.validate_on_submit():
         file = request.files.getlist('file')[0]
-        input_pdf_file = fitz.open(stream=file.read(), filetype='pdf')
+        try:
+            input_pdf_file = fitz.open(stream=file.read(), filetype='pdf')
 
-        pdf_bytes = unlock_pdf(input_pdf_file)
+            if input_pdf_file.needs_pass:
+                if form.pdf_password.data:
+                    if not input_pdf_file.authenticate(form.pdf_password.data):
+                        form.pdf_password.errors.append('The password was incorrect. You will also need to select the file again')
+                else:
+                    form.file.errors.append("This file is password protected. Enter the password. You will also need to select the file again")
 
-        input_file_name_prefix = get_filename_without_extension(file.filename)
-        output_file_name = f"{input_file_name_prefix} (unlocked).pdf"
+            if not form.errors:
+                pdf_bytes = unlock_pdf(input_pdf_file)
 
-        return make_pdf_download_response(pdf_bytes, output_file_name)
+                input_file_name_prefix = get_filename_without_extension(file.filename)
+                output_file_name = f"{input_file_name_prefix} (unlocked).pdf"
+
+                return make_pdf_download_response(pdf_bytes, output_file_name)
+
+        except Exception as e:
+            logger.log(LogLevel.ERROR, f"File could not be converted. Error was {e}")
+            form.file.errors.append(f"The file could not be converted. The error was: {e}")
 
     return render_template(
         'tools/unlock-file-locked-for-editing.html',

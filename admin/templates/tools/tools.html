@@ -2,6 +2,21 @@
 
 {% block title %}GRC admin tools{% endblock %}
 
+{% block backLink %}
+    <div class="govuk-breadcrumbs">
+        <ol class="govuk-breadcrumbs__list">
+            <li class="govuk-breadcrumbs__list-item">
+                <a class="govuk-breadcrumbs__link" href="{{ url_for('admin.index') }}">
+                    Admin home page
+                </a>
+            </li>
+            <li class="govuk-breadcrumbs__list-item">
+                Admin tools
+            </li>
+        </ol>
+    </div>
+{% endblock %}
+
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
@@ -12,9 +27,9 @@
 
             <ul class="govuk-list govuk-list--bullet">
                 <li>
-                    <a href="{{ url_for('tools.unlock_file_locked_for_editing') }}"
+                    <a href="{{ url_for('tools.unlock_pdfs') }}"
                        class="govuk-link">
-                        Unlock PDF that is locked for editing
+                        Unlock PDFs
                     </a>
                 </li>
             </ul>

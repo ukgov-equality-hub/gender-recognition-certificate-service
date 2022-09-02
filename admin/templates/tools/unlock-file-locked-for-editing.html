@@ -1,21 +1,63 @@
 {% extends 'base.html' %}
+{% import "govuk-design-system-templates/error-summary.html" as error_summary %}
+{% import "govuk-design-system-templates/text-input.html" as textInput %}
 
-{% block title %}Unlock PDF that is locked for editing{% endblock %}
+{% block title %}Unlock PDFs{% endblock %}
+
+{% block backLink %}
+    <div class="govuk-breadcrumbs">
+        <ol class="govuk-breadcrumbs__list">
+            <li class="govuk-breadcrumbs__list-item">
+                <a class="govuk-breadcrumbs__link" href="{{ url_for('admin.index') }}">
+                    Admin home page
+                </a>
+            </li>
+            <li class="govuk-breadcrumbs__list-item">
+                <a class="govuk-breadcrumbs__link" href="{{ url_for('tools.index') }}">
+                    Admin tools
+                </a>
+            </li>
+            <li class="govuk-breadcrumbs__list-item">
+                Unlock PDFs
+            </li>
+        </ol>
+    </div>
+{% endblock %}
 
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
+            {{ error_summary.renderFor(form) }}
+
             <h1 class="govuk-heading-l">
-                Unlock PDF that is locked for editing
+                Unlock PDFs
             </h1>
+
+            <p class="govuk-body">
+                This tool will:
+            </p>
+            <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-6">
+                <li class="govuk-!-margin-bottom-3">
+                    Remove PDF password-protection<br>
+                    <span style="color: #505a5f;">
+                        for PDFs where you need to supply the password to open the file
+                    </span>
+                </li>
+                <li>
+                    Remove PDF lock protection<br>
+                    <span style="color: #505a5f;">
+                        for PDFs that you can open, but you are blocked from merging or editing
+                    </span>
+                </li>
+            </ul>
 
             <form method="POST" enctype="multipart/form-data">
                 {{ form.csrf_token }}
 
-                <div class="govuk-form-group {{ 'govuk-form-group--error' if form.errors }} govuk-!-margin-bottom-2">
-                    <label for="documents" class="govuk-label govuk-label--m">
-                        Upload files
+                <div class="govuk-form-group {{ 'govuk-form-group--error' if form.file.errors }} govuk-!-margin-bottom-2">
+                    <label for="file" class="govuk-label govuk-label--m">
+                        PDF file to upload
                     </label>
                     {% if form.file.errors %}
                         <p id="documents-error" class="govuk-error-message">
@@ -27,9 +69,25 @@
                         </p>
                     {% endif %}
 
-                    <input id="file" type="file" name="file"
+                    <input id="file" type="file" name="file" accept=".pdf"
                            class="govuk-file-upload govuk-!-margin-bottom-4 {{ 'govuk-input--error' if form.file.errors }}">
                 </div>
+
+                {{ textInput.renderFor(
+                    form,
+                    fieldName='pdf_password',
+                    textInputForOptions={
+                        'labelOptions': {
+                            'htmlOrText': 'PDF password',
+                            'classes': 'govuk-label--m'
+                        },
+                        'hintOptions': {
+                            'htmlOrText': 'Only required for PDFs where you need the password to open the file'
+                        },
+                        'classes': 'govuk-input--width-20',
+                        'type': 'password',
+                    }
+                ) }}
 
                 <button class="govuk-button" data-module="govuk-button">
                     Upload and unlock file
