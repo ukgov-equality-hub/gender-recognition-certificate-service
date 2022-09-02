@@ -1,4 +1,3 @@
-
 {% macro render(form, deleteform, deleteAllFilesInSectionForm, currently_uploaded_files, section_url, duplicate_aws_file_names) %}
     <div id="file-upload-section" class="govuk-!-margin-top-8">
         {% if duplicate_aws_file_names %}
@@ -32,6 +31,10 @@
 
                     <div class="govuk-summary-list__row">
                         <dd class="govuk-summary-list__value govuk-!-width-full" style="vertical-align: middle;">
+                            {% if evidence_file.password_required %}
+                            <img src="{{ url_for('static', filename='assets/images/padlock.svg') }}" style="width: 30px; vertical-align: bottom; margin-right: 2px;">
+                            {% endif %}
+
                             {{ evidence_file.original_file_name }}
                         </dd>
                         <dd class="govuk-summary-list__actions">
@@ -42,9 +45,9 @@
 
                                     <input type="hidden" name="file" value="{{ evidence_file.aws_file_name }}">
                                     <button class="govuk-button govuk-button--warning govuk-!-margin-bottom-0" data-module="govuk-button">
-                                        Remove
+                                        Remove file
                                         <span class="govuk-visually-hidden">
-                                            {{ evidence_file.original_file_name }} file
+                                            {{ evidence_file.original_file_name }}
                                         </span>
                                     </button>
                                 </form>
@@ -54,6 +57,14 @@
                     </div>
 
                 {% endfor %}
+
+                {% if currently_uploaded_files | selectattr('password_required', 'equalto', true) | list | length > 0 %}
+                <p>
+                    {{ currently_uploaded_files | selectattr('password_required', 'equalto', true) | list | length }}
+                    {% if currently_uploaded_files | selectattr('password_required', 'equalto', true) | list | length == 1 %}file is{% else %}files are{% endif %} password protected.
+                    <a href="{{ url_for('upload.documentPassword', section_url=section_url) }}" class="gov-link">Click here to manage passwords</a>.
+                </p>
+                {% endif %}
             </dl>
         {% endif %}
 

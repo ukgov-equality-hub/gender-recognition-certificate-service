@@ -109,7 +109,7 @@ async def run_checks_on_page(page: Page, asserts: AssertHelpers, helpers: PageHe
     await asserts.document_uploaded(file_name=DOCUMENT_ONE_NAME)
 
     # Remove the uploaded document
-    await helpers.click_button(f"Remove {DOCUMENT_ONE_NAME} file")
+    await helpers.click_button(f"Remove file {DOCUMENT_ONE_NAME}")
     await asserts.url(PAGE_URL)
     await asserts.accessibility()
     await asserts.h1(PAGE_H1)

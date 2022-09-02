@@ -29,13 +29,13 @@
 
 {% macro renderFor(form, fieldName, textInputForOptions) %}
 
-    {% set _ = textInputForOptions.labelOptions.__setitem__("for", fieldName) %}
+    {% set _ = textInputForOptions.labelOptions.__setitem__("for", form[fieldName].name) %}
 
     {{ render({
-        'id': fieldName,
-        'name': fieldName,
+        'id': form[fieldName].name,
+        'name': form[fieldName].name,
         'value': form[fieldName].data,
-        'errors': form[fieldName].errors,
+        'errors': textInputForOptions.errors if textInputForOptions.errors else form[fieldName].errors,
 
         'labelOptions': textInputForOptions.labelOptions,
         'hintOptions': textInputForOptions.hintOptions,

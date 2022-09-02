@@ -2,6 +2,8 @@ from datetime import datetime
 from dateutil import tz
 import jinja2
 import flask
+from wtforms import FieldList
+
 from grc.external_services.aws_s3_client import AwsS3Client
 
 blueprint = flask.Blueprint('filters', __name__)
@@ -14,6 +16,21 @@ def format_date_filter(context, dt):
         dt = dt.replace(tzinfo=tz.gettz('UTC')).astimezone(tz.gettz('Europe/London'))
         return datetime.strftime(dt, '%d/%m/%Y %H:%M')
     return ''
+
+@jinja2.pass_context
+@blueprint.app_template_filter('remove_file_name_from_error')
+def remove_file_name_from_error_filter(context, error):
+    try:
+        if error.index(':'):
+            return error[error.index(':') + 1:].strip()
+    except:
+        pass
+    return error
+
+@jinja2.pass_context
+@blueprint.app_template_filter('is_FieldList')
+def is_FieldList(context, value):
+    return isinstance(value, FieldList)
 
 @jinja2.pass_context
 @blueprint.app_template_filter('image_data')
