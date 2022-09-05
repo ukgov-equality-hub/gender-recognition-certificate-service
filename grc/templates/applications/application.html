@@ -16,6 +16,15 @@
             {% endif %}
             {% if application_data.partnership_details_data.is_interim_certificate %}
                 <li>Interim GRC: <strong>{{ application_data.partnership_details_data.confirm_understood_interim_certificate_formatted }}</strong></li>
+            {% else %}
+                <li>
+                    Partner details:
+                    <ul class="govuk-list govuk-list--bullet">
+                        <li>Partner first name: <strong>{{ application_data.partnership_details_data.partner_first_name }}</strong></li>
+                        <li>Partner last name: <strong>{{ application_data.partnership_details_data.partner_last_name }}</strong></li>
+                        <li>Partner postal address: <strong>{{ application_data.partnership_details_data.partner_postal_address }}</strong></li>
+                    </ul>
+                </li>
             {% endif %}
         {% endif %}
     </ul>

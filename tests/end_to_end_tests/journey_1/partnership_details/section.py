@@ -558,11 +558,11 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await helpers.click_button('Save and continue')
 
     # ------------------------------------------------
-    # ---- Marriage details: Check Your Answers page
+    # ---- Your spouse's details page
     # ------------------------------------------------
-    await asserts.url('/partnership-details/check-your-answers')
+    await asserts.url('/partnership-details/partner-details')
     await asserts.accessibility()
-    await asserts.h1('Check your answers: Marriage or civil partnership details')
+    await asserts.h1("Your spouse's details")
     await asserts.number_of_errors(0)
 
     # Clicking "Back" should take us back to the Partner Agrees page
@@ -582,6 +582,62 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.is_checked(field='partner_agrees', value='True')
     await asserts.not_checked(field='partner_agrees', value='False')
 
+    # Continue to the "Your spouse's details" page
+    await helpers.click_button('Save and continue')
+
+    # ------------------------------------------------
+    # ---- Your spouse's details page
+    # ------------------------------------------------
+    await asserts.url('/partnership-details/partner-details')
+    await asserts.accessibility()
+    await asserts.h1("Your spouse's details")
+    await asserts.page_does_not_contain_text('civil partner', 'civil partnership')
+    await asserts.number_of_errors(0)
+
+    # Don't enter any details, click Save and continue
+    await helpers.fill_textbox(field='partner_first_name', value='')
+    await helpers.fill_textbox(field='partner_last_name', value='')
+    await helpers.fill_textbox(field='partner_postal_address', value='')
+    await helpers.click_button('Save and continue')
+    await asserts.url('/partnership-details/partner-details')
+    await asserts.accessibility()
+    await asserts.h1("Your spouse's details")
+    await asserts.number_of_errors(3)
+    await asserts.error(field='partner_first_name', message="Enter your spouse or civil partner's first name")
+    await asserts.error(field='partner_last_name', message="Enter your spouse or civil partner's last name")
+    await asserts.error(field='partner_postal_address', message="Enter your spouse or civil partner's postal address")
+
+    # Enter valid details, click Save and continue
+    await helpers.fill_textbox(field='partner_first_name', value=data.PARTNER_FIRST_NAME)
+    await helpers.fill_textbox(field='partner_last_name', value=data.PARTNER_LAST_NAME)
+    await helpers.fill_textbox(field='partner_postal_address', value=data.PARTNER_POSTAL_ADDRESS)
+    await helpers.click_button('Save and continue')
+
+    # ------------------------------------------------
+    # ---- Marriage details: Check Your Answers page
+    # ------------------------------------------------
+    await asserts.url('/partnership-details/check-your-answers')
+    await asserts.accessibility()
+    await asserts.h1('Check your answers: Marriage or civil partnership details')
+    await asserts.number_of_errors(0)
+
+    # Clicking "Back" should take us back to the Partner Agrees page
+    await helpers.click_button('Back')
+
+    # ------------------------------------------------
+    # ---- Your spouse's details page
+    # ------------------------------------------------
+    await asserts.url('/partnership-details/partner-details')
+    await asserts.accessibility()
+    await asserts.h1("Your spouse's details")
+    await asserts.page_does_not_contain_text('civil partner', 'civil partnership')
+    await asserts.number_of_errors(0)
+
+    # Check the values we entered have been remembered
+    await asserts.field_value(field='partner_first_name', expected_value=data.PARTNER_FIRST_NAME)
+    await asserts.field_value(field='partner_last_name', expected_value=data.PARTNER_LAST_NAME)
+    await asserts.field_value(field='partner_postal_address', expected_value=data.PARTNER_POSTAL_ADDRESS)
+
     # Continue to the Marriage details: Check Your Answers page
     await helpers.click_button('Save and continue')
 
@@ -594,15 +650,28 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(0)
 
     # Check the values in the table
-    await asserts.check_your_answers_rows(3)
+    await asserts.check_your_answers_rows(6)
     await asserts.check_your_answers_row(row_name='Currently married or in a civil partnership', expected_value='Married')
     await asserts.check_your_answers_row(row_name='Remain married', expected_value='Yes')
     await asserts.check_your_answers_row(row_name='Can provide a declaration of consent from your spouse', expected_value='Yes')
+    await asserts.check_your_answers_row(row_name="Spouse's first name", expected_value=data.PARTNER_FIRST_NAME)
+    await asserts.check_your_answers_row(row_name="Spouse's last name", expected_value=data.PARTNER_LAST_NAME)
+    await asserts.check_your_answers_row(row_name="Spouse's postal address", expected_value=data.PARTNER_POSTAL_ADDRESS)
 
     # Click each "Change" link to check it takes us to the correct page
     await asserts.change_links_to_url(link_text='Change if you are currently married or in a civil partnership', expected_url='/partnership-details')
     await asserts.change_links_to_url(link_text='Change if you plan to remain married after receiving your Gender Recognition Certificate', expected_url='/partnership-details/stay-together')
     await asserts.change_links_to_url(link_text='Change if you can provide a declaration of consent from your spouse', expected_url='/partnership-details/partner-agrees')
+    await asserts.change_links_to_url(link_text="Change your spouse's first name", expected_url='/partnership-details/partner-details')
+    await asserts.change_links_to_url(link_text="Change your spouse's last name", expected_url='/partnership-details/partner-details')
+    await asserts.change_links_to_url(link_text="Change your spouse's postal address", expected_url='/partnership-details/partner-details')
+
+    # REWIND!
+    # Go all the way back to the "Are you married" page,
+    # Select the "Civil partnership" option
+    # Go through all the same journeys, checking the text has changed from "married" to "in a civil partnership"
+    await helpers.click_button('Back')
+    await asserts.url('/partnership-details/partner-details')
 
     # REWIND!
     # Go all the way back to the "Are you married" page,
@@ -944,11 +1013,11 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await helpers.click_button('Save and continue')
 
     # ------------------------------------------------
-    # ---- Marriage details: Check Your Answers page
+    # ---- Your civil partner's details page
     # ------------------------------------------------
-    await asserts.url('/partnership-details/check-your-answers')
+    await asserts.url('/partnership-details/partner-details')
     await asserts.accessibility()
-    await asserts.h1('Check your answers: Marriage or civil partnership details')
+    await asserts.h1("Your civil partner's details")
     await asserts.number_of_errors(0)
 
     # Clicking "Back" should take us back to the Partner Agrees page
@@ -972,6 +1041,62 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await helpers.click_button('Save and continue')
 
     # ------------------------------------------------
+    # ---- Your civil partner's details page
+    # ------------------------------------------------
+    await asserts.url('/partnership-details/partner-details')
+    await asserts.accessibility()
+    await asserts.h1("Your civil partner's details")
+    await asserts.page_does_not_contain_text('marriage', 'married', 'spouse')
+    await asserts.number_of_errors(0)
+
+    # Don't enter any details, click Save and continue
+    await helpers.fill_textbox(field='partner_first_name', value='')
+    await helpers.fill_textbox(field='partner_last_name', value='')
+    await helpers.fill_textbox(field='partner_postal_address', value='')
+    await helpers.click_button('Save and continue')
+    await asserts.url('/partnership-details/partner-details')
+    await asserts.accessibility()
+    await asserts.h1("Your civil partner's details")
+    await asserts.number_of_errors(3)
+    await asserts.error(field='partner_first_name', message="Enter your spouse or civil partner's first name")
+    await asserts.error(field='partner_last_name', message="Enter your spouse or civil partner's last name")
+    await asserts.error(field='partner_postal_address', message="Enter your spouse or civil partner's postal address")
+
+    # Enter valid details, click Save and continue
+    await helpers.fill_textbox(field='partner_first_name', value=data.PARTNER_FIRST_NAME)
+    await helpers.fill_textbox(field='partner_last_name', value=data.PARTNER_LAST_NAME)
+    await helpers.fill_textbox(field='partner_postal_address', value=data.PARTNER_POSTAL_ADDRESS)
+    await helpers.click_button('Save and continue')
+
+    # ------------------------------------------------
+    # ---- Marriage details: Check Your Answers page
+    # ------------------------------------------------
+    await asserts.url('/partnership-details/check-your-answers')
+    await asserts.accessibility()
+    await asserts.h1('Check your answers: Marriage or civil partnership details')
+    await asserts.number_of_errors(0)
+
+    # Clicking "Back" should take us back to the Partner Agrees page
+    await helpers.click_button('Back')
+
+    # ------------------------------------------------
+    # ---- Your civil partner's details page
+    # ------------------------------------------------
+    await asserts.url('/partnership-details/partner-details')
+    await asserts.accessibility()
+    await asserts.h1("Your civil partner's details")
+    await asserts.page_does_not_contain_text('marriage', 'married', 'spouse')
+    await asserts.number_of_errors(0)
+
+    # Check the values we entered have been remembered
+    await asserts.field_value(field='partner_first_name', expected_value=data.PARTNER_FIRST_NAME)
+    await asserts.field_value(field='partner_last_name', expected_value=data.PARTNER_LAST_NAME)
+    await asserts.field_value(field='partner_postal_address', expected_value=data.PARTNER_POSTAL_ADDRESS)
+
+    # Continue to the Marriage details: Check Your Answers page
+    await helpers.click_button('Save and continue')
+
+    # ------------------------------------------------
     # ---- Marriage details: Check Your Answers page
     # ------------------------------------------------
     await asserts.url('/partnership-details/check-your-answers')
@@ -980,15 +1105,21 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(0)
 
     # Check the values in the table
-    await asserts.check_your_answers_rows(3)
+    await asserts.check_your_answers_rows(6)
     await asserts.check_your_answers_row(row_name='Currently married or in a civil partnership', expected_value='Civil partnership')
     await asserts.check_your_answers_row(row_name='Remain in your civil partnership', expected_value='Yes')
     await asserts.check_your_answers_row(row_name='Can provide a declaration of consent from your civil partner', expected_value='Yes')
+    await asserts.check_your_answers_row(row_name="Civil partner's first name", expected_value=data.PARTNER_FIRST_NAME)
+    await asserts.check_your_answers_row(row_name="Civil partner's last name", expected_value=data.PARTNER_LAST_NAME)
+    await asserts.check_your_answers_row(row_name="Civil partner's postal address", expected_value=data.PARTNER_POSTAL_ADDRESS)
 
     # Click each "Change" link to check it takes us to the correct page
     await asserts.change_links_to_url(link_text='Change if you are currently married or in a civil partnership', expected_url='/partnership-details')
     await asserts.change_links_to_url(link_text='Change if you plan to remain in your civil partnership after receiving your Gender Recognition Certificate', expected_url='/partnership-details/stay-together')
     await asserts.change_links_to_url(link_text='Change if you can provide a declaration of consent from your civil partner', expected_url='/partnership-details/partner-agrees')
+    await asserts.change_links_to_url(link_text="Change your civil partner's first name", expected_url='/partnership-details/partner-details')
+    await asserts.change_links_to_url(link_text="Change your civil partner's last name", expected_url='/partnership-details/partner-details')
+    await asserts.change_links_to_url(link_text="Change your civil partner's postal address", expected_url='/partnership-details/partner-details')
 
 
     # Click "Save and continue" to finish this section (Phew!) and return to the Task List page

@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% import "govuk-design-system-templates/error-summary.html" as error_summary %}
+{% import "govuk-design-system-templates/textarea.html" as textarea %}
+{% import "govuk-design-system-templates/text-input.html" as textInput %}
+
+{%  set partnerName = 'civil partner'
+    if application_data.partnership_details_data.is_in_civil_partnership
+    else 'spouse' %}
+{%  set inPartnershipName = 'in a civil partnership'
+    if application_data.partnership_details_data.is_in_civil_partnership
+    else 'married' %}
+
+{% block title %}Your {{ partnerName }}'s details{% endblock %}
+
+{% block backLink %}
+    <a href="{{ back }}" class="govuk-back-link">Back</a>
+{% endblock %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            {{ error_summary.renderFor(form) }}
+
+            <form method="POST" action="#">
+                {{ form.csrf_token }}
+
+                <div class="govuk-form-group {{ 'govuk-form-group--error' if form.errors }}">
+                    <fieldset class="govuk-fieldset">
+                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                            <h1 class="govuk-fieldset__heading">
+                                Your {{ partnerName }}'s details
+                            </h1>
+                        </legend>
+
+                        <p class="govuk-body">
+                            We will contact them about what to do if they change their mind about staying {{ inPartnershipName }}.
+                            We will also let them know how their pensions and benefits may be affected if you receive a
+                            Gender Recognition Certificate.
+                        </p>
+
+                        {{ textInput.renderFor(
+                            form,
+                            fieldName='partner_first_name',
+                            textInputForOptions={
+                                'labelOptions': { 'htmlOrText': 'First name' },
+                                'classes': 'govuk-input--width-20',
+                                'autocomplete': 'given-name'
+                            }
+                        ) }}
+
+                        {{ textInput.renderFor(
+                            form,
+                            fieldName='partner_last_name',
+                            textInputForOptions={
+                                'labelOptions': { 'htmlOrText': 'Last name' },
+                                'classes': 'govuk-input--width-20',
+                                'autocomplete': 'family-name'
+                            }
+                        ) }}
+
+                        {{ textarea.renderFor(
+                            form,
+                            fieldName='partner_postal_address',
+                            textareaForOptions={
+                                'labelOptions': {
+                                    'htmlOrText': "Postal address – including postcode or zip code"
+                                 },
+                                'rows': 5
+                            }
+                        ) }}
+                    </fieldset>
+                </div>
+
+                <div class="govuk-button-group">
+                    <button class="govuk-button" data-module="govuk-button">
+                        Save and continue
+                    </button>
+                    <a href="{{ url_for('taskList.index') }}" class="govuk-link govuk-link--no-visited-state">
+                        Return to task list
+                    </a>
+                </div>
+            </form>
+
+        </div>
+    </div>
+{% endblock %}
