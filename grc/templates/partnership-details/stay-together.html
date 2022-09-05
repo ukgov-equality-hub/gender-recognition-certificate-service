@@ -18,6 +18,18 @@
 
             {{ error_summary.renderFor(form) }}
 
+            {% set conditonal_options = (
+                [
+                    (True,
+                    hint.render({
+                        'htmlOrText': 'If you are in a same-sex civil partnership and want to <a href="https://www.gov.uk/convert-civil-partnership" target="_blank" class="govuk-link">convert your civil partnership to a marriage (opens in a new tab)</a>, you must do that before you apply for a Gender Recognition Certificate.'
+                    })
+                    )
+                ]
+                if application_data.partnership_details_data.is_in_civil_partnership
+                else []
+            ) %}
+
             <form method="POST" action="#">
                 {{ form.csrf_token }}
 
@@ -27,13 +39,7 @@
                     question="Do you plan to remain " + inYourPartnershipName + " after you receive your Gender Recognition Certificate?",
                     radiosOptions={
                         'questionIsPageHeading': true,
-                        'conditionalOptions': [
-                            (True,
-                            hint.render({
-                                'htmlOrText': 'If you are in a same-sex civil partnership and want to <a href="https://www.gov.uk/convert-civil-partnership" target="_blank" class="govuk-link">convert your civil partnership to a marriage (opens in a new tab)</a>, you must do that before you apply for a Gender Recognition Certificate.'
-                            })
-                            )
-                        ]
+                        'conditionalOptions': conditonal_options
                     }
                 ) }}
 

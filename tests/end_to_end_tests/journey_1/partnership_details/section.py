@@ -684,7 +684,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.url('/partnership-details/interim-check')
     await asserts.accessibility()
     await asserts.h1('Interim Gender Recognition Certificate')
-    await asserts.page_does_not_contain_text('marriage', 'married', 'spouce')
+    await asserts.page_does_not_contain_text('marriage', 'married', 'spouse')
     await asserts.number_of_errors(0)
 
     # Clicking "Back" should take us back to the Stay Together page
@@ -711,7 +711,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.url('/partnership-details/interim-check')
     await asserts.accessibility()
     await asserts.h1('Interim Gender Recognition Certificate')
-    await asserts.page_does_not_contain_text('marriage', 'married', 'spouce')
+    await asserts.page_does_not_contain_text('marriage', 'married', 'spouse')
     await asserts.number_of_errors(0)
 
     # Click "Continue"
@@ -734,7 +734,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.url('/partnership-details/interim-check')
     await asserts.accessibility()
     await asserts.h1('Interim Gender Recognition Certificate')
-    await asserts.page_does_not_contain_text('marriage', 'married', 'spouce')
+    await asserts.page_does_not_contain_text('marriage', 'married', 'spouse')
     await asserts.number_of_errors(0)
 
     # Continue to the Marriage details: Check Your Answers page
@@ -768,7 +768,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.url('/partnership-details/interim-check')
     await asserts.accessibility()
     await asserts.h1('Interim Gender Recognition Certificate')
-    await asserts.page_does_not_contain_text('marriage', 'married', 'spouce')
+    await asserts.page_does_not_contain_text('marriage', 'married', 'spouse')
     await asserts.number_of_errors(0)
 
     # Click "Back" to get back to the "Stay Together" page, then choose "Yes"
@@ -793,7 +793,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.accessibility()
     await asserts.h1('Declaration of consent')
     await asserts.fieldset_legend('Can you provide a statutory declaration from your civil partner?')
-    await asserts.page_does_not_contain_text('marriage', 'married', 'spouce')
+    await asserts.page_does_not_contain_text('marriage', 'married', 'spouse')
     await asserts.number_of_errors(0)
 
     # Clicking "Back" should take us back to the Stay Together page
@@ -821,7 +821,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.accessibility()
     await asserts.h1('Declaration of consent')
     await asserts.fieldset_legend('Can you provide a statutory declaration from your civil partner?')
-    await asserts.page_does_not_contain_text('marriage', 'married', 'spouce')
+    await asserts.page_does_not_contain_text('marriage', 'married', 'spouse')
     await asserts.number_of_errors(0)
 
     # Select the "No" option, go down that route
@@ -835,7 +835,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.url('/partnership-details/interim-check')
     await asserts.accessibility()
     await asserts.h1('Interim Gender Recognition Certificate')
-    await asserts.page_does_not_contain_text('marriage', 'married', 'spouce')
+    await asserts.page_does_not_contain_text('marriage', 'married', 'spouse')
     await asserts.number_of_errors(0)
 
     # Clicking "Back" should take us back to the Partner Agrees page
@@ -848,7 +848,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.accessibility()
     await asserts.h1('Declaration of consent')
     await asserts.fieldset_legend('Can you provide a statutory declaration from your civil partner?')
-    await asserts.page_does_not_contain_text('marriage', 'married', 'spouce')
+    await asserts.page_does_not_contain_text('marriage', 'married', 'spouse')
     await asserts.number_of_errors(0)
 
     # Check the values we entered have been remembered
@@ -864,7 +864,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.url('/partnership-details/interim-check')
     await asserts.accessibility()
     await asserts.h1('Interim Gender Recognition Certificate')
-    await asserts.page_does_not_contain_text('marriage', 'married', 'spouce')
+    await asserts.page_does_not_contain_text('marriage', 'married', 'spouse')
     await asserts.number_of_errors(0)
 
     # Continue to the Marriage details: Check Your Answers page
@@ -887,7 +887,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.url('/partnership-details/interim-check')
     await asserts.accessibility()
     await asserts.h1('Interim Gender Recognition Certificate')
-    await asserts.page_does_not_contain_text('marriage', 'married', 'spouce')
+    await asserts.page_does_not_contain_text('marriage', 'married', 'spouse')
     await asserts.number_of_errors(0)
 
     # Continue to the Marriage details: Check Your Answers page
@@ -923,7 +923,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.url('/partnership-details/interim-check')
     await asserts.accessibility()
     await asserts.h1('Interim Gender Recognition Certificate')
-    await asserts.page_does_not_contain_text('marriage', 'married', 'spouce')
+    await asserts.page_does_not_contain_text('marriage', 'married', 'spouse')
     await asserts.number_of_errors(0)
 
     # Click "Back" to get back to the "Partner Agrees" page, then choose "Yes"
@@ -936,7 +936,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.accessibility()
     await asserts.h1('Declaration of consent')
     await asserts.fieldset_legend('Can you provide a statutory declaration from your civil partner?')
-    await asserts.page_does_not_contain_text('marriage', 'married', 'spouce')
+    await asserts.page_does_not_contain_text('marriage', 'married', 'spouse')
     await asserts.number_of_errors(0)
 
     # This time, select the "Yes" option
@@ -961,7 +961,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.accessibility()
     await asserts.h1('Declaration of consent')
     await asserts.fieldset_legend('Can you provide a statutory declaration from your civil partner?')
-    await asserts.page_does_not_contain_text('marriage', 'married', 'spouce')
+    await asserts.page_does_not_contain_text('marriage', 'married', 'spouse')
     await asserts.number_of_errors(0)
 
     # Check the values we entered have been remembered
