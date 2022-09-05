@@ -44,6 +44,7 @@ Build (and run) the code:
 
 * The public-facing website should be visible at http://localhost:5000/  
   The admin website should be visible at http://localhost:5001/
+  The dashboard website should be visible at http://localhost:5002/
 
 Just run the code:
 * Open a Bash terminal in the root folder of the project
@@ -52,6 +53,7 @@ Just run the code:
 
 * The public-facing website should be visible at http://localhost:5000/  
   The admin website should be visible at http://localhost:5001/
+  The dashboard website should be visible at http://localhost:5002/
 
 Login to the admin website:
 * Visit the admin website http://localhost:5001/

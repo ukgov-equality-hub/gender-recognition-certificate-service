@@ -3,6 +3,7 @@ from dateutil import tz
 import jinja2
 import flask
 from wtforms import FieldList
+from grc.models import ApplicationStatus
 
 from grc.external_services.aws_s3_client import AwsS3Client
 
@@ -17,6 +18,22 @@ def format_date_filter(context, dt):
         return datetime.strftime(dt, '%d/%m/%Y %H:%M')
     return ''
 
+
+@jinja2.pass_context
+@blueprint.app_template_filter('application_status')
+def application_status_filter(context, status):
+    if status == ApplicationStatus.COMPLETED:
+        return 'COMPLETED'
+    elif status == ApplicationStatus.DELETED:
+        return 'DELETED'
+    elif status == ApplicationStatus.STARTED:
+        return 'STARTED'
+    elif status == ApplicationStatus.SUBMITTED:
+        return 'SUBMITTED'
+    elif status == ApplicationStatus. DOWNLOADED:
+        return 'DOWNLOADED'
+
+
 @jinja2.pass_context
 @blueprint.app_template_filter('remove_file_name_from_error')
 def remove_file_name_from_error_filter(context, error):
@@ -27,10 +44,12 @@ def remove_file_name_from_error_filter(context, error):
         pass
     return error
 
+
 @jinja2.pass_context
 @blueprint.app_template_filter('is_FieldList')
 def is_FieldList(context, value):
     return isinstance(value, FieldList)
+
 
 @jinja2.pass_context
 @blueprint.app_template_filter('image_data')
@@ -42,6 +61,7 @@ def image_data_filter(context, image_name):
         return data
     return ''
 
+
 @jinja2.pass_context
 @blueprint.app_template_filter('image_width')
 def image_width_filter(context, image_name):
@@ -52,6 +72,7 @@ def image_width_filter(context, image_name):
         return width
     return ''
 
+
 @jinja2.pass_context
 @blueprint.app_template_filter('image_height')
 def image_height_filter(context, image_name):
@@ -61,6 +82,7 @@ def image_height_filter(context, image_name):
 
         return height
     return ''
+
 
 def check_image_sizes(width, height):
 

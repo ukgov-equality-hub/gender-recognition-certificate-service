@@ -1,0 +1,51 @@
+{% macro renderFor(form) %}
+
+    {% if form.errors %}
+    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+        <h2 id="error-summary-title" class="govuk-error-summary__title">
+            There is a problem
+        </h2>
+        <div class="govuk-error-summary__body">
+            <ul class="govuk-list govuk-error-summary__list">
+                {% for field_name in form.errors %}
+
+                    {% if form[field_name] | is_FieldList %}
+                        {# This field is a FieldList, so the errors will be for the child forms #}
+                        {% set field_list = form[field_name] %}
+
+                        {% for child_form_index in range(field_list | length) %}
+                            {% set child_form = field_list[child_form_index] %}
+                            {% set errors_for_child_form = field_list.errors[child_form_index] %}
+
+                            {% for child_form_field_name in errors_for_child_form %}
+                                {% set child_form_field_html_element_name = child_form[child_form_field_name].name %}
+                                {% set child_form_field_error_messages = errors_for_child_form[child_form_field_name] %}
+
+                                {% for child_form_field_error_message in child_form_field_error_messages %}
+                                    <li>
+                                        <a href="#{{ child_form_field_html_element_name }}">
+                                            {{ child_form_field_error_message }}
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            {% endfor %}
+                        {% endfor %}
+
+                    {% else %}
+                        {# The field is not a FieldList, so the errors are for the field itself #}
+                        {% for errorText in form[field_name].errors %}
+                            <li>
+                                <a href="#{{ field_name }}">
+                                    {{ errorText }}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    {% endif %}
+
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+{% endif %}
+
+{% endmacro %}
