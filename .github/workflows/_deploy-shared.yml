@@ -13,7 +13,7 @@ on:
         required: true
         type: string
       app_name_dashboard:
-        required: false
+        required: true
         type: string
       app_name_iprestrict_admin:
         required: false

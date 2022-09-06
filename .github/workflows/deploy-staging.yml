@@ -14,6 +14,7 @@ jobs:
       cf_space: 'staging'
       app_name_public: 'grc-staging'
       app_name_admin: 'grc-staging-admin'
+      app_name_dashboard: 'grc-staging-dashboard'
       app_name_iprestrict_admin: 'grc-staging-iprestrict-admin'
       manifest_name: 'staging'
     secrets:
