@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}GRC stats{% endblock %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+
+            <h1 class="govuk-heading-l">
+                View GRC stats
+            </h1>
+
+            {% if message != "" %}
+                <div class="govuk-inset-text">{{ message }}</div>
+            {% endif %}
+
+            <h3 class="govuk-heading-s">
+                Applications by status
+            </h3>
+            <table class="govuk-table new-table">
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        {% for stat in stats.applications_by_status %}
+                        <th scope="col" class="govuk-table__header">{{ stat[0] | application_status | capitalize }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+                    <tr class="govuk-table__row">
+                        {% for stat in stats.applications_by_status %}
+                        <td scope="col" class="govuk-table__header">{{ stat[1] }}</td>
+                        {% endfor %}
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

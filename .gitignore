@@ -24,6 +24,7 @@ instance/config.py
 # Secrets
 .env
 .admin.env
+.dashboard.env
 *.py.txt
 .vscode/settings.json
 .unotes/*

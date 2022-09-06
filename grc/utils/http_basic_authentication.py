@@ -1,6 +1,6 @@
 import base64
 from flask import abort, request, Response
-from grc.utils.config_helper import ConfigHelper
+from grc.utils.logger import LogLevel, Logger
 
 
 class HttpBasicAuthentication:
@@ -8,6 +8,7 @@ class HttpBasicAuthentication:
         self.app = app
         self.required_username = app.config['BASIC_AUTH_USERNAME']
         self.required_password = app.config['BASIC_AUTH_PASSWORD']
+        self.logger = Logger()
 
         app.before_request_funcs.setdefault(None, []).append(self._handler)
 
@@ -47,8 +48,8 @@ class HttpBasicAuthentication:
             # If the header isn't present, or doesn't decode correctly, continue and send the 401 response
             pass
 
+        self.logger.log(LogLevel.WARN, f"A user has attempted to access the site with incorect HTTP auth credentials")
         response = Response('', 401)
         response.headers.add('WWW-Authenticate', 'Basic realm="Gender Recognition Certificate service"')
-        #response.headers.add('X-Application-ID', ConfigHelper.get_vcap_application().application_id)
 
         abort(response)

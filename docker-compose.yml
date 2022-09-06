@@ -13,6 +13,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
       - POSTGRES_HOST=grc_db
+
   grc_app:
     container_name: "grc_app"
     build:
@@ -26,6 +27,7 @@ services:
     depends_on:
       - grc_db
     command: /app/run.sh
+
   grc_admin:
     container_name: "grc_admin"
     build:
@@ -40,6 +42,21 @@ services:
     depends_on:
       - grc_db
     command: /app/run_admin.sh
+
+  grc_dashboard:
+    container_name: "grc_dashboard"
+    build:
+      context: .
+      dockerfile: dashboard.Dockerfile
+    ports:
+      - 5002:5002
+    env_file: .dashboard.env
+    volumes:
+      - ./:/dashboard
+    entrypoint: dockerize -wait tcp://grc_db:5432
+    depends_on:
+      - grc_db
+    command: /app/run_dashboard.sh
 
 volumes:
   dbdata:

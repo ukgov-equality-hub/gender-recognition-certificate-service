@@ -1,0 +1,6 @@
+
+{%- macro randomId(len) -%}
+  {%- for _ in range(len) -%}
+    {{ range(10) | random }}
+  {%- endfor -%}
+{%- endmacro -%}

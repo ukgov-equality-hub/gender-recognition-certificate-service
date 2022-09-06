@@ -12,6 +12,9 @@ on:
       app_name_admin:
         required: true
         type: string
+      app_name_dashboard:
+        required: true
+        type: string
       app_name_iprestrict_admin:
         required: false
         type: string
@@ -57,6 +60,11 @@ jobs:
       - name: 'Deploy Admin app to Gov.UK PaaS'
         run: |
           cf push "${{ inputs.app_name_admin }}" --manifest manifest-${{ inputs.manifest_name }}-admin.yml --strategy rolling
+
+      - name: 'Deploy Dashboard app to Gov.UK PaaS'
+        if: ${{ inputs.app_name_dashboard != '' }}
+        run: |
+          cf push "${{ inputs.app_name_dashboard }}" --manifest manifest-${{ inputs.manifest_name }}-dashboard.yml --strategy rolling
 
       - name: 'Deploy IP Restrictions (admin) app to Gov.UK PaaS'
         if: ${{ inputs.app_name_iprestrict_admin != '' }} && ${{ inputs.allowed_ips_admin != '' }}
