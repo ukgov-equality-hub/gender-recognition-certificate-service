@@ -12,7 +12,6 @@ class AffirmedGender(GrcEnum):
 class PersonalDetailsData:
     title: str = None
     first_name: str = None
-    first_names: str = None  # Deprecated - this will be removed as soon as we have migrated all user across to the first_name field
     middle_names: str = None
     last_name: str = None
 
