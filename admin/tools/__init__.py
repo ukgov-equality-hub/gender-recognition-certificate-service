@@ -35,7 +35,7 @@ def unlock_pdfs():
             if not form.errors:
                 pdf_bytes = unlock_pdf(input_pdf_file)
 
-                input_file_name_prefix = get_filename_without_extension(file.filename)
+                input_file_name_prefix = get_filename_without_pdf_extension(file.filename)
                 output_file_name = f"{input_file_name_prefix} (unlocked).pdf"
 
                 return make_pdf_download_response(pdf_bytes, output_file_name)
@@ -63,11 +63,12 @@ def unlock_pdf(input_pdf_file):
     return pdf_bytes
 
 
-def get_filename_without_extension(input_file_name):
-    last_dot_in_input_filename = input_file_name.rindex('.')
-    input_file_name_prefix = input_file_name[:last_dot_in_input_filename]
-    return input_file_name_prefix
-
+def get_filename_without_pdf_extension(input_file_name):
+    if input_file_name.endswith('.pdf'):
+        input_file_name_prefix = input_file_name[:(len(input_file_name) - 4)]
+        return input_file_name_prefix
+    else:
+        return input_file_name
 
 def make_pdf_download_response(pdf_bytes, output_file_name):
     response = make_response(pdf_bytes)
