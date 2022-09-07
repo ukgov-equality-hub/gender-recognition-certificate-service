@@ -57,11 +57,12 @@ def unlock_pdfs():
 
 
 def get_filename_without_pdf_extension(input_file_name):
-    if input_file_name.endswith('.pdf'):
-        input_file_name_prefix = input_file_name[:(len(input_file_name) - 4)]
+    if input_file_name.lower().endswith('.pdf'):
+        input_file_name_prefix = input_file_name[:-4]
         return input_file_name_prefix
     else:
         return input_file_name
+
 
 def make_pdf_download_response(pdf_bytes, output_file_name):
     response = make_response(pdf_bytes)
