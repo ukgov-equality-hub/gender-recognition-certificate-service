@@ -1,9 +1,10 @@
-import fitz
 import io
 from flask import Blueprint, render_template, make_response, request
 from admin.tools.forms import UnlockFileForm
 from grc.utils.decorators import AdminViewerRequired
 from grc.utils.logger import Logger, LogLevel
+from grc.utils.pdf_utils import is_pdf_password_correct, is_pdf_password_protected, remove_pdf_password_protection, \
+    remove_pdf_edit_protection
 
 tools = Blueprint('tools', __name__)
 logger = Logger()
@@ -22,18 +23,23 @@ def unlock_pdfs():
 
     if form.validate_on_submit():
         file = request.files.getlist('file')[0]
+        output_pdf_stream: io.BytesIO = io.BytesIO()
         try:
-            input_pdf_file = fitz.open(stream=file.read(), filetype='pdf')
+            input_pdf_stream = io.BytesIO(file.read())
 
-            if input_pdf_file.needs_pass:
+            if is_pdf_password_protected(input_pdf_stream):
                 if form.pdf_password.data:
-                    if not input_pdf_file.authenticate(form.pdf_password.data):
+                    if is_pdf_password_correct(input_pdf_stream, form.pdf_password.data):
+                        output_pdf_stream = remove_pdf_password_protection(input_pdf_stream, form.pdf_password.data)
+                    else:
                         form.pdf_password.errors.append('The password was incorrect. You will also need to select the file again')
                 else:
                     form.file.errors.append("This file is password protected. Enter the password. You will also need to select the file again")
+            else:
+                output_pdf_stream = remove_pdf_edit_protection(input_pdf_stream)
 
             if not form.errors:
-                pdf_bytes = unlock_pdf(input_pdf_file)
+                pdf_bytes = output_pdf_stream.read()
 
                 input_file_name_prefix = get_filename_without_pdf_extension(file.filename)
                 output_file_name = f"{input_file_name_prefix} (unlocked).pdf"
@@ -48,19 +54,6 @@ def unlock_pdfs():
         'tools/unlock-file-locked-for-editing.html',
         form=form
     )
-
-
-def unlock_pdf(input_pdf_file):
-    output_pdf_file = fitz.open()
-    output_pdf_file.insert_pdf(input_pdf_file)
-
-    pdf_stream = io.BytesIO()
-    output_pdf_file.save(pdf_stream, deflate=True)
-    output_pdf_file.close()
-
-    pdf_stream.seek(0)
-    pdf_bytes = pdf_stream.read()
-    return pdf_bytes
 
 
 def get_filename_without_pdf_extension(input_file_name):
