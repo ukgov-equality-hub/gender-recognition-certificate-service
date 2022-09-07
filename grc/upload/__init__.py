@@ -1,7 +1,7 @@
+import io
 from typing import List, Callable
 from flask import Blueprint, render_template, request, url_for, abort, make_response
 from werkzeug.utils import secure_filename
-import fitz
 import uuid
 from grc.business_logic.data_store import DataStore
 from grc.business_logic.data_structures.application_data import any_duplicate_aws_file_names, ApplicationData
@@ -10,6 +10,7 @@ from grc.upload.forms import UploadForm, DeleteForm, PasswordsForm, DeleteAllFil
 from grc.utils.decorators import LoginRequired
 from grc.external_services.aws_s3_client import AwsS3Client
 from grc.utils.flask_child_form_add_custom_errors import add_error_for_child_form
+from grc.utils.pdf_utils import is_pdf_password_protected, is_pdf_password_correct, remove_pdf_password_protection
 from grc.utils.redirect import local_redirect
 from grc.utils.logger import LogLevel, Logger
 
@@ -35,6 +36,7 @@ sections = [
     UploadSection(url='statutory-declarations', data_section='statutoryDeclarations', html_file='statutory-declarations.html', file_list=(lambda u: u.statutory_declarations))
 ]
 
+
 def delete_file(application_data, file_name, section):
     try:
         AwsS3Client().delete_object(file_name)
@@ -47,16 +49,6 @@ def delete_file(application_data, file_name, section):
     files.remove(file_to_remove)
     return application_data
 
-def create_pdf_from_doc(doc):
-    import io
-
-    merger = fitz.open()
-    merger.insert_pdf(doc)
-    pdf = io.BytesIO()
-    merger.save(pdf, deflate=True)
-    merger.close()
-    pdf.seek(0)
-    return pdf
 
 def create_aws_file_name(reference_number, section_name, original_file_name):
     filename = secure_filename(original_file_name)
@@ -66,35 +58,35 @@ def create_aws_file_name(reference_number, section_name, original_file_name):
     aws_file_name = f"{reference_number}__{section_name}__{file_prefix}_{uuid.uuid4().hex}.{file_extension}"
     return aws_file_name
 
+
 def check_pdf_password(section, application_data, passwordForm):
     files = section.file_list(application_data.uploads_data)
     file_to_check = next(filter(lambda file: file.aws_file_name == passwordForm.aws_file_name.data, files), None)
     if file_to_check is not None:
         data = AwsS3Client().download_object(file_to_check.aws_file_name)
         if data is not None:
-            doc = fitz.open(stream=data.getvalue(), filetype='pdf')
-            if not doc.needs_pass:
+            input_pdf_stream = io.BytesIO(data.getvalue())
+            if not is_pdf_password_protected(input_pdf_stream):
                 return True
 
-            if doc.authenticate(passwordForm.password.data):
+            if is_pdf_password_correct(input_pdf_stream, passwordForm.password.data):
 
                 # Generate a new PDF
-                pdf = create_pdf_from_doc(doc)
+                output_pdf_stream = remove_pdf_password_protection(input_pdf_stream, passwordForm.password.data)
 
                 AwsS3Client().delete_object(file_to_check.aws_file_name)
-                AwsS3Client().upload_fileobj(pdf, file_to_check.aws_file_name)
+                AwsS3Client().upload_fileobj(output_pdf_stream, file_to_check.aws_file_name)
 
                 file_to_check.password_required = False
                 DataStore.save_application(application_data)
-                doc.close()
                 return True
-
-            doc.close()
     return False
+
 
 def clear_form_errors(form):
     for _form_field, form_error in form.errors.items():
         form_error.clear()
+
 
 def delete_password_protected_files(section, application_data):
     password_protected_files = [file for file in section.file_list(application_data.uploads_data) if file.password_required]
@@ -125,11 +117,9 @@ def uploadInfoPage(section_url: str):
 
                 if document.filename.lower().endswith('.pdf'):
                     try:
-                        doc = fitz.open(stream=document.read(), filetype='pdf')
-                        if doc.needs_pass:
+                        if is_pdf_password_protected(io.BytesIO(document.read())):
                             password_required = True
                             has_password = True
-                        doc.close()
                     except:
                         logger.log(LogLevel.ERROR, f"User uploaded PDF attachment ({object_name}) which could not be opened")
 

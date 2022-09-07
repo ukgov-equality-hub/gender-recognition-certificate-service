@@ -262,7 +262,7 @@ def fileSizeLimit(max_size_in_mb):
 
 
 def fileVirusScan(form, field):
-    if current_app.config['AV_API'] is None:
+    if ('AV_API' not in current_app.config.keys()) or (not current_app.config['AV_API']):
         return
     if (field.name not in request.files or request.files[field.name].filename == ''):
         return

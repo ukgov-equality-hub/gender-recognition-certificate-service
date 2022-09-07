@@ -1,14 +1,13 @@
-import fitz  # PyPDF2
 import io
 import os
 import zipfile
 from flask import render_template
-from xhtml2pdf import pisa
 from typing import Callable, List, Dict
 from grc.business_logic.data_structures.application_data import ApplicationData
 from grc.business_logic.data_structures.uploads_data import UploadsData, EvidenceFile
 from grc.external_services.aws_s3_client import AwsS3Client
 from grc.utils.logger import LogLevel, Logger
+from grc.utils.pdf_utils import create_pdf_from_html, merge_pdfs, is_pdf_password_protected
 
 logger = Logger()
 
@@ -121,13 +120,6 @@ class ApplicationFiles():
                 AwsS3Client().delete_object(evidence_file.aws_file_name)
 
 
-def create_pdf_from_html(html):
-    pdf = io.BytesIO()
-    pisa.CreatePDF(html, dest=pdf)
-    pdf.seek(0)
-    return pdf
-
-
 def create_application_cover_sheet_pdf(application_data, is_admin):
     html_template = ('applications/download.html' if is_admin else 'applications/download_user.html')
     html = render_template(html_template, application_data=application_data)
@@ -174,8 +166,7 @@ def add_object(pdfs, section, object_name, original_file_name, idx, num):
             try:
                 data = AwsS3Client().download_object(object_name)
                 if data is not None:
-                    doc = fitz.open(stream=data, filetype='pdf')
-                    if doc.needs_pass:
+                    if is_pdf_password_protected(data):
                         # We can check the type of password (user/owner):
                         # doc.authenticate('') == 2
                         # https://pymupdf.readthedocs.io/en/latest/document.html#Document.authenticate
@@ -215,15 +206,3 @@ def add_object(pdfs, section, object_name, original_file_name, idx, num):
 def create_pdf_for_attachment_error(file_name):
     html = f'<h3 style="font-size: 14px; color: red;">WARNING: Could not attach file ({file_name})</h3>'
     return create_pdf_from_html(html)
-
-
-def merge_pdfs(pdfs):
-    merger = fitz.open()
-    for pdf_fileobj in pdfs:
-        merger.insert_pdf(fitz.open(stream=pdf_fileobj, filetype='pdf'))
-
-    pdf = io.BytesIO()
-    merger.save(pdf)
-    merger.close()
-    pdf.seek(0)
-    return pdf
