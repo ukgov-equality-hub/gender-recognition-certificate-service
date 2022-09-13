@@ -195,6 +195,24 @@
                                 title='Interim GRC',
                                 value=(application_data.partnership_details_data.confirm_understood_interim_certificate_formatted)
                             ) }}
+
+                        {% else %}
+                            {{ summary_list_item(
+                                title='Partner first name',
+                                value=(application_data.partnership_details_data.partner_first_name)
+                            ) }}
+                            {{ summary_list_item(
+                                title='Partner last name',
+                                value=(application_data.partnership_details_data.partner_last_name)
+                            ) }}
+                            {% macro partnerPostalAddressValue() %}
+                                {# WARNING: The next line should all be on one line to ensure the line breaks appear correctly! #}
+                                <span style="white-space: pre-line;">{{ application_data.partnership_details_data.partner_postal_address }}</span>
+                            {% endmacro %}
+                            {{ summary_list_item(
+                                title='Partner postal address',
+                                value=(partnerPostalAddressValue())
+                            ) }}
                         {% endif %}
                     {% endif %}
                 </tbody>

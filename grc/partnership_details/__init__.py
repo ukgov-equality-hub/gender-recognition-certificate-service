@@ -3,7 +3,8 @@ from grc.business_logic.data_store import DataStore
 from grc.business_logic.data_structures.application_data import ApplicationData
 from grc.business_logic.data_structures.partnership_details_data import CurrentlyInAPartnershipEnum
 from grc.list_status import ListStatus
-from grc.partnership_details.forms import MarriageCivilPartnershipForm, StayTogetherForm, PartnerAgreesForm, PartnerDiedForm, PreviousPartnershipEndedForm, InterimCheckForm, CheckYourAnswers
+from grc.partnership_details.forms import MarriageCivilPartnershipForm, StayTogetherForm, PartnerAgreesForm, \
+    PartnerDiedForm, PreviousPartnershipEndedForm, InterimCheckForm, CheckYourAnswers, PartnerDetailsForm
 from grc.utils.decorators import LoginRequired
 from grc.utils.get_next_page import get_next_page_global, get_previous_page_global
 from grc.utils.redirect import local_redirect
@@ -29,6 +30,9 @@ def index():
             application_data.partnership_details_data.plan_to_remain_in_a_partnership = None
             application_data.partnership_details_data.partner_agrees = None
             application_data.partnership_details_data.confirm_understood_interim_certificate = None
+            application_data.partnership_details_data.partner_first_name = None
+            application_data.partnership_details_data.partner_last_name = None
+            application_data.partnership_details_data.partner_postal_address = None
 
         DataStore.save_application(application_data)
 
@@ -61,6 +65,9 @@ def stayTogether():
 
         if not application_data.partnership_details_data.plan_to_remain_in_a_partnership:
             application_data.partnership_details_data.partner_agrees = None
+            application_data.partnership_details_data.partner_first_name = None
+            application_data.partnership_details_data.partner_last_name = None
+            application_data.partnership_details_data.partner_postal_address = None
 
         if application_data.partnership_details_data.plan_to_remain_in_a_partnership == False and previous_value != False:
             # If the user has NEWLY answered 'No', then force them to re-confirm they will receive an Interim GRC
@@ -97,6 +104,10 @@ def partnerAgrees():
 
         if application_data.partnership_details_data.partner_agrees:
             application_data.partnership_details_data.confirm_understood_interim_certificate = None
+        else:
+            application_data.partnership_details_data.partner_first_name = None
+            application_data.partnership_details_data.partner_last_name = None
+            application_data.partnership_details_data.partner_postal_address = None
 
         if application_data.partnership_details_data.partner_agrees == False and previous_value != False:
             # If the user has NEWLY answered 'No', then force them to re-confirm they will receive an Interim GRC
@@ -106,7 +117,7 @@ def partnerAgrees():
         DataStore.save_application(application_data)
 
         if application_data.partnership_details_data.partner_agrees:
-            return get_next_page(application_data, 'partnershipDetails.checkYourAnswers')
+            return get_next_page(application_data, 'partnershipDetails.partnerDetails')
         else:
             return get_next_page(application_data, 'partnershipDetails.interimCheck')
 
@@ -118,6 +129,34 @@ def partnerAgrees():
         form=form,
         application_data=application_data,
         back=get_previous_page(application_data, 'partnershipDetails.stayTogether')
+    )
+
+
+@partnershipDetails.route('/partnership-details/partner-details', methods=['GET', 'POST'])
+@LoginRequired
+def partnerDetails():
+    form = PartnerDetailsForm()
+    application_data = DataStore.load_application_by_session_reference_number()
+
+    if form.validate_on_submit():
+        application_data.partnership_details_data.partner_first_name = form.partner_first_name.data
+        application_data.partnership_details_data.partner_last_name = form.partner_last_name.data
+        application_data.partnership_details_data.partner_postal_address = form.partner_postal_address.data
+
+        DataStore.save_application(application_data)
+
+        return get_next_page(application_data, 'partnershipDetails.checkYourAnswers')
+
+    if request.method == 'GET':
+        form.partner_first_name.data = application_data.partnership_details_data.partner_first_name
+        form.partner_last_name.data = application_data.partnership_details_data.partner_last_name
+        form.partner_postal_address.data = application_data.partnership_details_data.partner_postal_address
+
+    return render_template(
+        'partnership-details/partner-details.html',
+        form=form,
+        application_data=application_data,
+        back=get_previous_page(application_data, 'partnershipDetails.partnerAgrees')
     )
 
 
@@ -207,7 +246,7 @@ def checkYourAnswers():
     elif application_data.partnership_details_data.is_interim_certificate:
         back_link = 'partnershipDetails.interimCheck'
     else:
-        back_link = 'partnershipDetails.partnerAgrees'
+        back_link = 'partnershipDetails.partnerDetails'
 
     return render_template(
         'partnership-details/check-your-answers.html',

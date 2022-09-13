@@ -12,6 +12,9 @@
 {%  set partnerName = 'civil partner'
     if application_data.partnership_details_data.is_in_civil_partnership
     else 'spouse' %}
+{%  set partnerNameCapitalised = 'Civil partner'
+    if application_data.partnership_details_data.is_in_civil_partnership
+    else 'Spouse' %}
 {%  set inYourPartnershipName = 'in your civil partnership'
     if application_data.partnership_details_data.is_in_civil_partnership
     else 'married' %}
@@ -318,7 +321,32 @@
                         ) }}
                     {% endif %}
 
-                    {% if not application_data.partnership_details_data.plan_to_remain_in_a_partnership or not application_data.partnership_details_data.partner_agrees %}
+                    {% if application_data.partnership_details_data.plan_to_remain_in_a_partnership and application_data.partnership_details_data.partner_agrees %}
+                        {{ check_your_answers_row(
+                            title=(partnerNameCapitalised + "'s first name"),
+                            changeLinkHiddenText='your ' + partnerName + "'s first name",
+                            changeLinkUrlFor='partnershipDetails.partnerDetails',
+                            value=(application_data.partnership_details_data.partner_first_name)
+                        ) }}
+                        {{ check_your_answers_row(
+                            title=(partnerNameCapitalised + "'s last name"),
+                            changeLinkHiddenText='your ' + partnerName + "'s last name",
+                            changeLinkUrlFor='partnershipDetails.partnerDetails',
+                            value=(application_data.partnership_details_data.partner_last_name)
+                        ) }}
+
+                        {% macro partnerPostalAddressValue() %}
+                            {# WARNING: The next line should all be on one line to ensure the line breaks appear correctly! #}
+                            <span style="white-space: pre-line;">{{ application_data.partnership_details_data.partner_postal_address }}</span>
+                        {% endmacro %}
+                        {{ check_your_answers_row(
+                            title=(partnerNameCapitalised + "'s postal address"),
+                            changeLinkHiddenText='your ' + partnerName + "'s postal address",
+                            changeLinkUrlFor='partnershipDetails.partnerDetails',
+                            value=(partnerPostalAddressValue())
+                        ) }}
+
+                    {% else %}
                         {{ check_your_answers_row(
                             title='Interim GRC',
                             changeLinkHiddenText='if you understand that you will receive an Interim GRC',

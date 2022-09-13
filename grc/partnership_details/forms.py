@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import RadioField
+from wtforms import RadioField, StringField
 from wtforms.validators import DataRequired
 from grc.business_logic.data_structures.partnership_details_data import CurrentlyInAPartnershipEnum
 
@@ -32,6 +32,20 @@ class PartnerAgreesForm(FlaskForm):
             (False, 'No')
         ],
         validators=[DataRequired(message='Select if you can provide a declaration of consent from your spouse or civil partner')]
+    )
+
+
+class PartnerDetailsForm(FlaskForm):
+    partner_first_name = StringField(
+        validators=[DataRequired(message="Enter your spouse or civil partner's first name")]
+    )
+
+    partner_last_name = StringField(
+        validators=[DataRequired(message="Enter your spouse or civil partner's last name")]
+    )
+
+    partner_postal_address = StringField(
+        validators=[DataRequired(message="Enter your spouse or civil partner's postal address")]
     )
 
 

@@ -180,7 +180,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(0)
 
     # Check the values in the summary table
-    await asserts.check_your_answers_rows(32)
+    await asserts.check_your_answers_rows(35)
     await asserts.check_your_answers_row(row_name='Have you ever been issued a Gender Recognition Certificate (or its equivalent) in another country?', expected_value='Yes')
     await asserts.check_your_answers_row(row_name='Do you have official documentation that shows you have ever been issued a Gender Recognition Certificate (or its equivalent) in one of the allowed countries or territories?', expected_value='Yes')
     await asserts.check_your_answers_row(row_name='Do you consent to the General Register Office contacting you about your application?', expected_value='Yes')
@@ -209,6 +209,9 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.check_your_answers_row(row_name='Currently married or in a civil partnership', expected_value='Civil partnership')
     await asserts.check_your_answers_row(row_name='Remain in your civil partnership', expected_value='Yes')
     await asserts.check_your_answers_row(row_name='Can provide a declaration of consent from your civil partner', expected_value='Yes')
+    await asserts.check_your_answers_row(row_name="Civil partner's first name", expected_value=data.PARTNER_FIRST_NAME)
+    await asserts.check_your_answers_row(row_name="Civil partner's last name", expected_value=data.PARTNER_LAST_NAME)
+    await asserts.check_your_answers_row(row_name="Civil partner's postal address", expected_value=data.PARTNER_POSTAL_ADDRESS)
 
     await asserts.check_your_answers_row(row_name='Name change documents', expected_value='document_1.bmp')
     await asserts.check_your_answers_row(row_name='Marriage documents', expected_value='document_1.bmp')
@@ -248,6 +251,9 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.change_links_to_url(link_text='Change if you are currently married or in a civil partnership', expected_url='/partnership-details')
     await asserts.change_links_to_url(link_text='Change if you plan to remain in your civil partnership after receiving your Gender Recognition Certificate', expected_url='/partnership-details/stay-together')
     await asserts.change_links_to_url(link_text='Change if you can provide a declaration of consent from your civil partner', expected_url='/partnership-details/partner-agrees')
+    await asserts.change_links_to_url(link_text="Change your civil partner's first name", expected_url='/partnership-details/partner-details')
+    await asserts.change_links_to_url(link_text="Change your civil partner's last name", expected_url='/partnership-details/partner-details')
+    await asserts.change_links_to_url(link_text="Change your civil partner's postal address", expected_url='/partnership-details/partner-details')
 
     await asserts.change_links_to_url(link_text='Change the documents you have uploaded as evidence of changing your name', expected_url='/upload/name-change', back_link_should_return_to_check_page=False, save_button_should_return_to_check_page=False)
     await asserts.change_links_to_url(link_text='Change the documents you have uploaded as evidence of your marriage or civil partnership', expected_url='/upload/marriage-documents', back_link_should_return_to_check_page=False, save_button_should_return_to_check_page=False)
