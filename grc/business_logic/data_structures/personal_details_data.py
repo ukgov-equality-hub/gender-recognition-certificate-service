@@ -39,6 +39,19 @@ class PersonalDetailsData:
     national_insurance_number: str = None
 
     @property
+    def full_name(self) -> str:
+        return (
+            self.title + ' ' +
+            self.first_name + ' ' +
+            (self.middle_names + ' ' if self.middle_names else '') +
+            self.last_name
+        )
+
+    @property
+    def middle_names_or_empty_string(self) -> str:
+        return self.middle_names if self.middle_names else ''
+
+    @property
     def address_comma_separated(self) -> str:
         return (
             self.address_line_one + ', ' +
