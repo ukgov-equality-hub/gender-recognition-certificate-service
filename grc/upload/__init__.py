@@ -114,19 +114,26 @@ def uploadInfoPage(section_url: str):
             for document in request.files.getlist('documents'):
                 object_name = create_aws_file_name(application_data.reference_number, section.data_section, document.filename)
                 password_required = False
+                original_file_name = document.filename
 
                 if document.filename.lower().endswith('.pdf'):
                     try:
-                        if is_pdf_password_protected(io.BytesIO(document.read())):
+                        from grc.utils.pdf_utils import is_pdf_form, flatten_form_pdf_stream
+                        data = io.BytesIO(document.read())
+                        if is_pdf_form(data):
+                            document = flatten_form_pdf_stream(data)
+
+                        if is_pdf_password_protected(data):
                             password_required = True
                             has_password = True
-                    except:
+                    except Exception as e:
                         logger.log(LogLevel.ERROR, f"User uploaded PDF attachment ({object_name}) which could not be opened")
+                        print(e, flush=True)
 
                 AwsS3Client().upload_fileobj(document, object_name)
 
                 new_evidence_file = EvidenceFile()
-                new_evidence_file.original_file_name = document.filename
+                new_evidence_file.original_file_name = original_file_name
                 new_evidence_file.aws_file_name = object_name
                 new_evidence_file.password_required = password_required
                 files.append(new_evidence_file)
