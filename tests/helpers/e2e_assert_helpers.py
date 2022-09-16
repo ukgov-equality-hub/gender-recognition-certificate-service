@@ -174,7 +174,7 @@ class AssertHelpers:
         assert_equal(actual_number_of_documents_already_uploaded, expected_number_of_documents_already_uploaded)
 
     async def document_uploaded(self, file_name):
-        selector = f".govuk-summary-list__row:has(.govuk-summary-list__value:text-is(\"{file_name}\"))"
+        selector = f".govuk-summary-list__row:has(.govuk-summary-list__value:has-text(\"{file_name}\"))"
         matching_elements = await self.page.locator(selector).count()
         assert_equal(matching_elements, 1)
 

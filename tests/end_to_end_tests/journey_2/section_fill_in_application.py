@@ -391,8 +391,10 @@ async def fill_in_application(page: Page, asserts: AssertHelpers, helpers: PageH
 
     # Upload a valid document
     await helpers.upload_file_valid(field='documents', file_name=DOCUMENT_ONE_NAME)
+    page.set_default_timeout(data.TIMEOUT_FOR_SLOW_OPERATIONS)
     await helpers.click_button('Upload 1 file')
     await asserts.url('/upload/name-change')
+    page.set_default_timeout(data.DEFAULT_TIMEOUT)
     await asserts.accessibility()
     await asserts.h1('Upload name change documents')
     await asserts.number_of_errors(0)
@@ -424,8 +426,10 @@ async def fill_in_application(page: Page, asserts: AssertHelpers, helpers: PageH
 
     # Upload a valid document
     await helpers.upload_file_valid(field='documents', file_name=DOCUMENT_ONE_NAME)
+    page.set_default_timeout(data.TIMEOUT_FOR_SLOW_OPERATIONS)
     await helpers.click_button('Upload 1 file')
     await asserts.url('/upload/marriage-documents')
+    page.set_default_timeout(data.DEFAULT_TIMEOUT)
     await asserts.accessibility()
     await asserts.h1('Upload marriage and civil partnership documents')
     await asserts.number_of_errors(0)
@@ -457,8 +461,10 @@ async def fill_in_application(page: Page, asserts: AssertHelpers, helpers: PageH
 
     # Upload a valid document
     await helpers.upload_file_valid(field='documents', file_name=DOCUMENT_ONE_NAME)
+    page.set_default_timeout(data.TIMEOUT_FOR_SLOW_OPERATIONS)
     await helpers.click_button('Upload 1 file')
     await asserts.url('/upload/overseas-certificate')
+    page.set_default_timeout(data.DEFAULT_TIMEOUT)
     await asserts.accessibility()
     await asserts.h1('Overseas gender recognition certificate documents')
     await asserts.number_of_errors(0)
@@ -490,8 +496,10 @@ async def fill_in_application(page: Page, asserts: AssertHelpers, helpers: PageH
 
     # Upload a valid document
     await helpers.upload_file_valid(field='documents', file_name=DOCUMENT_ONE_NAME)
+    page.set_default_timeout(data.TIMEOUT_FOR_SLOW_OPERATIONS)
     await helpers.click_button('Upload 1 file')
     await asserts.url('/upload/statutory-declarations')
+    page.set_default_timeout(data.DEFAULT_TIMEOUT)
     await asserts.accessibility()
     await asserts.h1('Statutory declarations documents')
     await asserts.number_of_errors(0)

@@ -15,14 +15,14 @@ async def check_gov_uk_pay(page: Page, asserts: AssertHelpers, helpers: PageHelp
 
     # Check the checkbox, click Save and continue
     await helpers.check_checkbox(field='certify')
-    page.set_default_timeout(data.TIMEOUT_FOR_SLOW_OPERATIONS)  # This is a slow operation, so increase the maximum wait time
+    page.set_default_timeout(data.TIMEOUT_FOR_SLOW_OPERATIONS)
     await helpers.click_button('Submit application and pay online')
 
     # ------------------------------------------------
     # ---- Gov.UK Pay - Card Details page
     # ------------------------------------------------
     await asserts.url_matches_regex('/card_details/[a-z0-9]*')
-    page.set_default_timeout(data.DEFAULT_TIMEOUT)  # We're done with the slow part - set the timeout back to its usual value
+    page.set_default_timeout(data.DEFAULT_TIMEOUT)
     await asserts.h1('Enter card details')
 
     await helpers.fill_textbox(field='cardNo', value=data.TEST_CARD_NUMBER)

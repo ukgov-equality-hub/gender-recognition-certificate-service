@@ -85,11 +85,11 @@ async def run_checks_on_page(page: Page, asserts: AssertHelpers, helpers: PageHe
     await asserts.documents_uploaded(0)
 
     # Try to upload a document that is too large
-    page.set_default_timeout(data.TIMEOUT_FOR_SLOW_OPERATIONS)  # This is a slow operation, so increase the maximum wait time
+    page.set_default_timeout(data.TIMEOUT_FOR_SLOW_OPERATIONS)
     await helpers.upload_file_invalid_too_large(field='documents')
     await helpers.click_button('Upload 1 file')
     await asserts.url(PAGE_URL)
-    page.set_default_timeout(data.DEFAULT_TIMEOUT)  # We're done with the slow part - set the timeout back to its usual value
+    page.set_default_timeout(data.DEFAULT_TIMEOUT)
     await asserts.accessibility()
     await asserts.h1(PAGE_H1)
     await asserts.number_of_errors(1)
@@ -100,8 +100,10 @@ async def run_checks_on_page(page: Page, asserts: AssertHelpers, helpers: PageHe
 
     # Upload a valid document
     await helpers.upload_file_valid(field='documents', file_name=DOCUMENT_ONE_NAME)
+    page.set_default_timeout(data.TIMEOUT_FOR_SLOW_OPERATIONS)
     await helpers.click_button('Upload 1 file')
     await asserts.url(PAGE_URL)
+    page.set_default_timeout(data.DEFAULT_TIMEOUT)
     await asserts.accessibility()
     await asserts.h1(PAGE_H1)
     await asserts.number_of_errors(0)
@@ -154,8 +156,10 @@ async def run_checks_on_page(page: Page, asserts: AssertHelpers, helpers: PageHe
 
     # Upload a valid document
     await helpers.upload_file_valid(field='documents', file_name=DOCUMENT_ONE_NAME)
+    page.set_default_timeout(data.TIMEOUT_FOR_SLOW_OPERATIONS)
     await helpers.click_button('Upload 1 file')
     await asserts.url(PAGE_URL)
+    page.set_default_timeout(data.DEFAULT_TIMEOUT)
     await asserts.accessibility()
     await asserts.h1(PAGE_H1)
     await asserts.number_of_errors(0)

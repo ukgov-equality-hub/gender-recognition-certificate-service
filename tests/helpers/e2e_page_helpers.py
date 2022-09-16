@@ -76,11 +76,13 @@ class PageHelpers:
         await self.page.set_input_files(f"input[type=\"file\"][name=\"{field}\"]", files)
 
     async def upload_file_valid(self, field, file_name):
-        valid_bmp_file_content = "BM:       6   (                   Ä  Ä          ÿÿÿ "
+        with open('tests/helpers/TestDocument.png', mode='rb') as file:
+            image_contents = file.read()
+
         files = [{
             'name': file_name,
-            'mimeType': 'image/bmp',
-            'buffer': (bytes(valid_bmp_file_content, 'utf-8'))
+            'mimeType': 'image/png',
+            'buffer': image_contents
         }]
         await self.page.set_input_files(f"input[type=\"file\"][name=\"{field}\"]", files)
 
