@@ -35,6 +35,18 @@ class BirthRegistrationData:
     forces_registration: bool = None
 
     @property
+    def full_name(self) -> str:
+        return (
+            self.first_name + ' ' +
+            (self.middle_names + ' ' if self.middle_names else '') +
+            self.last_name
+        )
+
+    @property
+    def middle_names_or_empty_string(self) -> str:
+        return self.middle_names if self.middle_names else ''
+
+    @property
     def date_of_birth_formatted_DD_MMMM_YYYY(self) -> str:
         return self.date_of_birth.strftime('%d %B %Y')
 

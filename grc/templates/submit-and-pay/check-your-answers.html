@@ -71,10 +71,7 @@
                     title='Name (as you would like it to appear on your Gender Recognition Certificate)',
                     changeLinkHiddenText='name (as you would like it to appear on your Gender Recognition Certificate)',
                     changeLinkUrlFor='personalDetails.index',
-                    value=(application_data.personal_details_data.title + ' ' +
-                           application_data.personal_details_data.first_name + ' ' +
-                           (application_data.personal_details_data.middle_names + ' ' if application_data.personal_details_data.middle_names else '') +
-                           application_data.personal_details_data.last_name)
+                    value=(application_data.personal_details_data.full_name)
                 ) }}
 
                 {{ check_your_answers_row(
@@ -189,7 +186,7 @@
                     title='Birth name',
                     changeLinkHiddenText='birth name',
                     changeLinkUrlFor='birthRegistration.index',
-                    value=(application_data.birth_registration_data.first_name + ' ' + application_data.birth_registration_data.middle_names + ' ' + application_data.birth_registration_data.last_name)
+                    value=(application_data.birth_registration_data.full_name)
                 ) }}
 
                 {{ check_your_answers_row(

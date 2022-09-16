@@ -5,7 +5,7 @@
     Application for
     {{ application_data.personal_details_data.title }}
     {{ application_data.personal_details_data.first_name }}
-    {{ application_data.personal_details_data.middle_names }}
+    {{ application_data.personal_details_data.middle_names_or_empty_string }}
     {{ application_data.personal_details_data.last_name }}
 {% endblock %}
 
@@ -21,7 +21,7 @@
                 Application for
                 {{ application_data.personal_details_data.title }}
                 {{ application_data.personal_details_data.first_name }}
-                {{ application_data.personal_details_data.middle_names }}
+                {{ application_data.personal_details_data.middle_names_or_empty_string }}
                 <span style="text-decoration: underline;">{{ application_data.personal_details_data.last_name }}</span>
             </li>
         </ol>
@@ -134,7 +134,7 @@
                 Application for
                 {{ application_data.personal_details_data.title }}
                 {{ application_data.personal_details_data.first_name }}
-                {{ application_data.personal_details_data.middle_names }}
+                {{ application_data.personal_details_data.middle_names_or_empty_string }}
                 <span style="text-decoration: underline;">{{ application_data.personal_details_data.last_name }}</span>
 
                 <span class="govuk-caption-l" style="margin-top: 15px;">
@@ -293,7 +293,7 @@
 
                     {{ summary_list_item(
                         subtitle="Middle name(s)",
-                        value=application_data.personal_details_data.middle_names
+                        value=(application_data.personal_details_data.middle_names_or_empty_string)
                     ) }}
 
                     {{ summary_list_item(
@@ -448,7 +448,7 @@
 
                     {{ summary_list_item(
                         subtitle="Middle names",
-                        value=(application_data.birth_registration_data.middle_names)
+                        value=(application_data.birth_registration_data.middle_names_or_empty_string)
                     ) }}
 
                     {{ summary_list_item(
