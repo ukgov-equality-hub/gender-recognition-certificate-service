@@ -126,11 +126,6 @@ def create_application_cover_sheet_pdf(application_data, is_admin):
     return create_pdf_from_html(html)
 
 
-def create_section_heading_pdf(section_name):
-    html = f'<h3 style="font-size: 14px;">Your {section_name}</h3>'
-    return create_pdf_from_html(html)
-
-
 def create_attachment_names_pdf(all_sections, application_data):
     attachments_html = ''
     for section in all_sections:
@@ -149,22 +144,16 @@ def attach_all_files(pdfs, all_sections, application_data):
     for section in all_sections:
         files = get_files_for_section(section, application_data)
         for file_index, evidence_file in enumerate(files):
-            add_object(pdfs, section, evidence_file.aws_file_name, evidence_file.original_file_name, file_index + 1, len(files))
+            add_object(pdfs, evidence_file.aws_file_name, evidence_file.original_file_name)
 
 
-def add_object(pdfs, section, object_name, original_file_name, idx, num):
-    if idx == 1:
-        pdfs.append(create_section_heading_pdf(get_section_name(section)))
-
-    if '.' in object_name:
-        file_type = object_name[object_name.rindex('.') + 1:]
+def add_object(pdfs, aws_file_name, original_file_name):
+    if '.' in aws_file_name:
+        file_type = aws_file_name[aws_file_name.rindex('.') + 1:]
 
         if file_type.lower() == 'pdf':
-            html = f'<p style="font-size: 12px;">Next page: Attachment {idx} of {num} - {original_file_name}</p>'
-            pdfs.append(create_pdf_from_html(html))
-
             try:
-                data = AwsS3Client().download_object(object_name)
+                data = AwsS3Client().download_object(aws_file_name)
                 if data is not None:
                     if is_pdf_password_protected(data):
                         # We can check the type of password (user/owner):
@@ -172,34 +161,32 @@ def add_object(pdfs, section, object_name, original_file_name, idx, num):
                         # https://pymupdf.readthedocs.io/en/latest/document.html#Document.authenticate
                         html = f'<h3 style="font-size: 14px; color: red;">Unable to add {original_file_name}. A password is required.</h3>'
                         pdfs.append(create_pdf_from_html(html))
-                        logger.log(LogLevel.ERROR, f"file {object_name} needs a password!")
+                        logger.log(LogLevel.ERROR, f"file {aws_file_name} needs a password!")
                     else:
                         pdfs.append(data)
-                        logger.log(LogLevel.INFO, f"Attaching {object_name}")
+                        logger.log(LogLevel.INFO, f"Attaching {aws_file_name}")
                 else:
-                    logger.log(LogLevel.ERROR, f"Error attaching {object_name}")
+                    logger.log(LogLevel.ERROR, f"Error attaching {aws_file_name}")
                     pdfs.append(create_pdf_for_attachment_error(original_file_name))
             except:
-                logger.log(LogLevel.ERROR, f"Error attaching {object_name}")
+                logger.log(LogLevel.ERROR, f"Error attaching {aws_file_name}")
                 pdfs.append(create_pdf_for_attachment_error(original_file_name))
         else:
             try:
-                data, width, height = AwsS3Client().download_object_data(object_name)
+                data, width, height = AwsS3Client().download_object_data(aws_file_name)
                 if data is not None:
-                    html = f'<p style="font-size: 12px;">Attachment {idx} of {num} - {original_file_name}</p><p>&nbsp;</p><p>&nbsp;</p><img src="{data}" width="{width}" height="{height}" style="max-width: 90%;">'
+                    html = f'<img src="{data}" width="{width}" height="{height}" style="max-width: 90%;">'
                     pdfs.append(create_pdf_from_html(html))
-                    logger.log(LogLevel.INFO, f"Adding image {object_name}")
+                    logger.log(LogLevel.INFO, f"Adding image {aws_file_name}")
                 else:
-                    html = f'<p style="font-size: 12px;">Attachment {idx} of {num} - {original_file_name}</p>'
-                    pdfs.append(create_pdf_from_html(html))
-                    logger.log(LogLevel.ERROR, f"Error downloading {object_name}")
+                    logger.log(LogLevel.ERROR, f"Error downloading {aws_file_name}")
                     pdfs.append(create_pdf_for_attachment_error(original_file_name))
 
             except:
-                logger.log(LogLevel.ERROR, f"Error attaching {object_name}")
+                logger.log(LogLevel.ERROR, f"Error attaching {aws_file_name}")
                 create_pdf_for_attachment_error(original_file_name)
     else:
-        logger.log(LogLevel.ERROR, f"Error attaching {object_name}")
+        logger.log(LogLevel.ERROR, f"Error attaching {aws_file_name}")
         create_pdf_for_attachment_error(original_file_name)
 
 
