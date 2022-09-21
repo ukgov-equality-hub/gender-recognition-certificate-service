@@ -4,7 +4,7 @@ from flask import Blueprint, render_template, request, url_for, abort, make_resp
 from werkzeug.utils import secure_filename
 import uuid
 from grc.business_logic.data_store import DataStore
-from grc.business_logic.data_structures.application_data import any_duplicate_aws_file_names, ApplicationData
+from grc.business_logic.data_structures.application_data import any_duplicate_aws_file_names
 from grc.business_logic.data_structures.uploads_data import UploadsData, EvidenceFile
 from grc.upload.forms import UploadForm, DeleteForm, PasswordsForm, DeleteAllFilesInSectionForm
 from grc.utils.decorators import LoginRequired
@@ -15,7 +15,6 @@ from grc.utils.redirect import local_redirect
 from grc.utils.logger import LogLevel, Logger
 
 logger = Logger()
-
 upload = Blueprint('upload', __name__)
 
 
@@ -100,7 +99,7 @@ def delete_password_protected_files(section, application_data):
 def uploadInfoPage(section_url: str):
     section = next(filter(lambda section: section.url == section_url, sections), None)
     if section is None:
-        abort(404)
+        return abort(404)
 
     form = UploadForm()
     deleteform = DeleteForm()
@@ -112,12 +111,21 @@ def uploadInfoPage(section_url: str):
         if form.button_clicked.data.startswith('Upload '):
             has_password = False
             for document in request.files.getlist('documents'):
-                object_name = create_aws_file_name(application_data.reference_number, section.data_section, document.filename)
+                original_file_name = document.filename
+                object_name = create_aws_file_name(application_data.reference_number, section.data_section, original_file_name)
                 password_required = False
+                file_type = ''
+                if '.' in original_file_name:
+                    file_type = original_file_name[original_file_name.rindex('.') + 1:].lower()
 
-                if document.filename.lower().endswith('.pdf'):
+                if file_type == 'pdf':
                     try:
-                        if is_pdf_password_protected(io.BytesIO(document.read())):
+                        from grc.utils.pdf_utils import is_pdf_form, flatten_form_pdf_stream
+                        data = io.BytesIO(document.read())
+                        if is_pdf_form(data):
+                            document = flatten_form_pdf_stream(data)
+
+                        if is_pdf_password_protected(data):
                             password_required = True
                             has_password = True
                     except:
@@ -126,7 +134,7 @@ def uploadInfoPage(section_url: str):
                 AwsS3Client().upload_fileobj(document, object_name)
 
                 new_evidence_file = EvidenceFile()
-                new_evidence_file.original_file_name = document.filename
+                new_evidence_file.original_file_name = original_file_name
                 new_evidence_file.aws_file_name = object_name
                 new_evidence_file.password_required = password_required
                 files.append(new_evidence_file)
@@ -160,15 +168,22 @@ def uploadInfoPage(section_url: str):
 def documentPassword(section_url: str):
     section = next(filter(lambda section: section.url == section_url, sections), None)
     if section is None:
-        abort(404)
+        return abort(404)
 
     passwordsForm = PasswordsForm()
     application_data = DataStore.load_application_by_session_reference_number()
 
     if request.method == 'POST':
-        if remove_file_button_was_clicked(passwordsForm):
-            remove_file_based_on_button_click(passwordsForm, application_data, section)
+        remove_file_button_was_clicked = False
+        for password_form in passwordsForm.files:
+            if password_form.button_clicked.data:
+                remove_file_button_was_clicked = True
 
+        if remove_file_button_was_clicked:
+            for password_form in passwordsForm.files:
+                if password_form.button_clicked.data:
+                    delete_file(application_data, password_form.aws_file_name.data, section)
+                    DataStore.save_application(application_data)
         else:
             passwordsForm.validate()
 
@@ -201,26 +216,12 @@ def documentPassword(section_url: str):
     )
 
 
-def remove_file_button_was_clicked(passwords_form: PasswordsForm):
-    for password_form in passwords_form.files:
-        if password_form.button_clicked.data:
-            return True
-    return False
-
-
-def remove_file_based_on_button_click(passwords_form: PasswordsForm, application_data: ApplicationData, section: UploadSection):
-    for password_form in passwords_form.files:
-        if password_form.button_clicked.data:
-            delete_file(application_data, password_form.aws_file_name.data, section)
-            DataStore.save_application(application_data)
-
-
 @upload.route('/upload/<section_url>/remove-file', methods=['POST'])
 @LoginRequired
 def removeFile(section_url: str):
     section = next(filter(lambda section: section.url == section_url, sections), None)
     if section is None:
-        abort(404)
+        return abort(404)
 
     form = DeleteForm()
     application_data = DataStore.load_application_by_session_reference_number()
@@ -245,7 +246,7 @@ def removeAllFilesInSection(section_url: str):
 
     section = next(filter(lambda section: section.url == section_url, sections), None)
     if section is None:
-        abort(404)
+        return abort(404)
 
     application_data = DataStore.load_application_by_session_reference_number()
 
@@ -264,7 +265,7 @@ def removeAllFilesInSection(section_url: str):
 def download(section_url):
     section = next(filter(lambda section: section.url == section_url, sections), None)
     if section is None:
-        abort(404)
+        return abort(404)
 
     file_name = request.args.get('file', default=None)
     if file_name is not None:
@@ -287,7 +288,7 @@ def download(section_url):
 
             bytes = data.getvalue()
             if bytes is None:
-                return abort(404)
+                return abort(406)
 
             response = make_response(bytes)
             response.headers.set('Content-Type', file_type)

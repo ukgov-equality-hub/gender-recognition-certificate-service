@@ -35,7 +35,9 @@
                             <img src="{{ url_for('static', filename='assets/images/padlock.svg') }}" style="width: 30px; vertical-align: bottom; margin-right: 2px;">
                             {% endif %}
 
+                            {# <a href="{{ url_for('upload.download', section_url=section_url) }}?file={{ evidence_file.aws_file_name }}" target="_blank" class="govuk-link"> #}
                             {{ evidence_file.original_file_name }}
+                            {# </a> #}
                         </dd>
                         <dd class="govuk-summary-list__actions">
 
