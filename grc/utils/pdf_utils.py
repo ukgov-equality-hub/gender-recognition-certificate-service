@@ -111,7 +111,7 @@ def flatten_form_pdf(input_fitz_pdf_document: fitz.Document) -> fitz.Document:
 
     for page in input_fitz_pdf_document:
         try:
-            pix = page.get_pixmap()
+            pix = page.get_pixmap(dpi=150)
             new_page = output_fitz_pdf_document.new_page(pno=-1)
             new_page.insert_image(rect=new_page.bound(), pixmap=pix)
         except Exception as e:
