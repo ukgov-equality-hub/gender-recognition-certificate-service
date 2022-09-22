@@ -1,6 +1,5 @@
 ---
 applications:
-  - memory: 256M
-    buildpacks:
+  - buildpacks:
     - python_buildpack
     command:  ./prod_dashboard.sh

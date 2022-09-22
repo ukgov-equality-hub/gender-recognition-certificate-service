@@ -1,7 +1,6 @@
 ---
 applications:
-  - memory: 256M
-    buildpacks:
+  - buildpacks:
     - python_buildpack
     env:
       AV_API: http://grc-production-clamav.apps.internal:8080
