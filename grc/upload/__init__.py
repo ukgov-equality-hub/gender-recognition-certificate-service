@@ -193,10 +193,10 @@ def uploadInfoPage(section_url: str):
 
             DataStore.save_application(application_data)
 
-            # if has_password:
-            #     return local_redirect(url_for('upload.documentPassword', section_url=section.url))
-            # else:
-            return local_redirect(url_for('upload.uploadInfoPage', section_url=section.url) + '#file-upload-section')
+            if has_password:
+                return local_redirect(url_for('upload.documentPassword', section_url=section.url))
+            else:
+                return local_redirect(url_for('upload.uploadInfoPage', section_url=section.url) + '#file-upload-section')
 
         elif form.button_clicked.data == 'Save and continue':
             if len(files) > 0:

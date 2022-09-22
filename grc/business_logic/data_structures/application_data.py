@@ -42,8 +42,8 @@ class ApplicationData:
     def _upload_section_status(self, section):
         if len(section) == 0:
             return ListStatus.NOT_STARTED
-        # elif any_password_protected_files(section):
-        #     return ListStatus.ERROR
+        elif any_password_protected_files(section):
+            return ListStatus.ERROR
         elif any_duplicate_aws_file_names(section):
             return ListStatus.ERROR
         else:
