@@ -2,4 +2,4 @@
 applications:
   - buildpacks:
     - python_buildpack
-    command:  ./prod_admin.sh
+    command:  waitress-serve --call 'admin:create_app'

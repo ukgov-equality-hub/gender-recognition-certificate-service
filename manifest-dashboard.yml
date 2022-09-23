@@ -2,4 +2,4 @@
 applications:
   - buildpacks:
     - python_buildpack
-    command:  ./prod_dashboard.sh
+    command:  waitress-serve --call 'dashboard:create_app'
