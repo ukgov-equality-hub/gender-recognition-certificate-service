@@ -16,7 +16,6 @@ jobs:
       app_name_admin: 'geo-gender-recognition-certificate-admin'
       app_name_dashboard: 'geo-gender-recognition-certificate-dashboard'
       app_name_iprestrict_admin: 'grc-sandbox-iprestrict-admin'
-      manifest_name: 'sandbox'
     secrets:
       cf_username: ${{ secrets.CF_USERNAME }}
       cf_password: ${{ secrets.CF_PASSWORD }}
