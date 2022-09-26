@@ -61,7 +61,7 @@ def downloadfile(file_name):
 
     file_type = 'application/octet-stream'
     if '.' in file_name:
-        file_type = file_name[file_name.rindex('.') + 1:]
+        file_type = file_name[file_name.rindex('.') + 1:].lower()
         if file_type == 'pdf':
             file_type = 'application/pdf'
         elif file_type == 'jpg':

@@ -145,13 +145,13 @@
 
             <p class="govuk-body">
                 <a href="{{ url_for('applications.download', reference_number=application_data.reference_number) }}"
-                   target="_blank" class="govuk-link">
+                    target="_blank" class="govuk-link">
                     Download application (PDF)
                 </a>
             </p>
             <p class="govuk-body govuk-!-margin-bottom-8">
                 <a href="{{ url_for('applications.attachments', reference_number=application_data.reference_number) }}"
-                   target="_blank" class="govuk-link">
+                    target="_blank" class="govuk-link">
                     Download attachments (ZIP file)
                 </a>
             </p>
@@ -546,7 +546,7 @@
                         {% for file in files %}
                             <li>
                                 <a href="{{ request.host_url[:-1] + url_for('applications.downloadfile', file_name=file.aws_file_name) }}"
-                                   class="govuk-link">
+                                    target="_blank" class="govuk-link">
                                     {{ file.original_file_name }}
                                 </a>
                             </li>

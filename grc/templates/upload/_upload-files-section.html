@@ -128,7 +128,6 @@
 
         <script>
         async function checkFile(event) {
-            console.log('event.target.files', event.target.files.length)
             document.getElementById('submit').innerText = 'Upload file'
             if (event.target.files.length > 0) {
                 document.getElementById('submit').innerText = `Upload ${event.target.files.length} ${event.target.files.length == 1 ? 'file' : 'files'}`

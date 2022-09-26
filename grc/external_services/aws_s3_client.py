@@ -75,7 +75,7 @@ class AwsS3Client:
             if '.' in object_name:
                 file_type = object_name[object_name.rindex('.') + 1:].lower()
 
-            if file_type == 'jpeg' or file_type == 'jpg' or file_type == 'png' or file_type == 'tif' or file_type == 'bmp':
+            if file_type in ['jpg', 'jpeg', 'png', 'tif', 'tiff', 'bmp']:
                 byte_value = self.download_object(object_name)
                 if byte_value is not None:
                     from PIL import Image
@@ -84,7 +84,7 @@ class AwsS3Client:
 
                     byte_value = byte_value.getvalue()
 
-                    if file_type == 'tif' or file_type == 'bmp':
+                    if file_type in ['tif', 'tiff', 'bmp']:
                         jpg = io.BytesIO()
                         img.save(jpg, 'JPEG', quality=100)
                         byte_value = jpg.getvalue()
