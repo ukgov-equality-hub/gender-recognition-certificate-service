@@ -16,7 +16,6 @@ jobs:
       app_name_admin: 'grc-production-admin'
       app_name_dashboard: 'grc-production-dashboard'
       app_name_iprestrict_admin: 'grc-production-iprestrict-admin'
-      manifest_name: 'prod'
     secrets:
       cf_username: ${{ secrets.CF_USERNAME }}
       cf_password: ${{ secrets.CF_PASSWORD }}

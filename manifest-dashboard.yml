@@ -1,0 +1,5 @@
+---
+applications:
+  - buildpacks:
+    - python_buildpack
+    command:  waitress-serve --call 'dashboard:create_app'
