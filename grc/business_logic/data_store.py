@@ -29,9 +29,11 @@ class DataStore:
 
         return application_data
 
+
     @staticmethod
     def load_application_by_session_reference_number() -> ApplicationData:
         return DataStore.load_application(session['reference_number'])
+
 
     @staticmethod
     def load_application(reference_number: str) -> ApplicationData:
@@ -46,6 +48,7 @@ class DataStore:
 
         return application_record.application_data()
 
+
     @staticmethod
     def save_application(application_data: ApplicationData) -> None:
         application_record: Application = Application.query.filter_by(
@@ -58,16 +61,19 @@ class DataStore:
         application_record.updated = datetime.datetime.now()
         db.session.commit()
 
+
     @staticmethod
     def compact_reference(reference_number: str) -> str:
         compacted_reference = reference_number.replace('-', '').replace(' ', '').upper()
         return compacted_reference
+
 
     @staticmethod
     def format_reference(reference_number: str) -> str:
         compacted_reference = DataStore.compact_reference(reference_number)
         formatted_reference = compacted_reference[0:4] + '-' + compacted_reference[4: 8]
         return formatted_reference
+
 
     @staticmethod
     def generate_unallocated_reference_number() -> str:
@@ -77,5 +83,3 @@ class DataStore:
             application_record = Application.query.filter_by(reference_number=possible_reference_number).first()
             if application_record is None:
                 return possible_reference_number
-
-

@@ -73,8 +73,7 @@ class AwsS3Client:
         try:
             file_type = ''
             if '.' in object_name:
-                file_type = object_name[object_name.rindex('.') + 1:]
-            file_type = file_type.lower()
+                file_type = object_name[object_name.rindex('.') + 1:].lower()
 
             if file_type == 'jpeg' or file_type == 'jpg' or file_type == 'png' or file_type == 'tif' or file_type == 'bmp':
                 byte_value = self.download_object(object_name)
