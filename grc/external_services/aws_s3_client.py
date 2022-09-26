@@ -86,7 +86,7 @@ class AwsS3Client:
 
                     if file_type in ['tif', 'tiff', 'bmp']:
                         jpg = io.BytesIO()
-                        img.save(jpg, 'JPEG', quality=100)
+                        img.save(jpg, 'JPEG', quality=80)
                         byte_value = jpg.getvalue()
                         jpg.close()
                         file_type = 'jpeg'
