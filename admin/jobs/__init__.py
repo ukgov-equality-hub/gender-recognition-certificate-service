@@ -1,10 +1,14 @@
 import os
 import io
+import time
+import pyAesCrypt
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from flask import Blueprint, request
 from sqlalchemy.sql import extract
+from zipstream import ZipStream
 from grc.external_services.gov_uk_notify import GovUkNotify
+from grc.external_services.aws_s3_client import AwsS3Client
 from grc.models import db, Application, ApplicationStatus, SecurityCode
 from grc.utils.decorators import JobTokenRequired
 from grc.utils.application_files import ApplicationFiles
@@ -152,11 +156,6 @@ def restore_db(db_file):
 @jobs.route('/jobs/backup-files', methods=['GET'])
 @JobTokenRequired
 def backup_files():
-    import time
-    from zipstream import ZipStream
-    import pyAesCrypt
-    from grc.external_services.aws_s3_client import AwsS3Client
-
     tic = time.perf_counter()
 
     try:
