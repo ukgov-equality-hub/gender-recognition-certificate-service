@@ -169,14 +169,26 @@ class AwsS3Client:
 
 
     def list_objects(self):
-        data = []
         try:
-            for key in self.s3.list_objects(Bucket=self.bucket_name)['Contents']:
-                data.append(key['Key'])
+            files_info = []
+            continuationToken = None
+            is_complete = False
+
+            while not is_complete:
+                if continuationToken:
+                    response = self.s3.list_objects_v2(Bucket=self.bucket_name, ContinuationToken=continuationToken)
+                else:
+                    response = self.s3.list_objects_v2(Bucket=self.bucket_name)
+
+                files_info.extend(response['Contents'])
+                if response['IsTruncated']:
+                    continuationToken = response['NextContinuationToken']
+                else:
+                    is_complete = True
+
+            return files_info
 
         except Exception as e:
             logging.error(e)
             logger.log(LogLevel.ERROR, e)
-            data = []
-
-        return data
+            return []
