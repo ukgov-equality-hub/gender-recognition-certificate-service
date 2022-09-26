@@ -11,6 +11,8 @@ from grc.utils.pdf_utils import PDFUtils
 
 logger = Logger()
 
+
+class ApplicationFiles():
 sections = ['medicalReports', 'genderEvidence', 'nameChange', 'marriageDocuments', 'overseasCertificate', 'statutoryDeclarations']
 section_names = ['Medical Reports', 'Gender Evidence', 'Name Change', 'Marriage Documents', 'Overseas Certificate', 'Statutory Declarations']
 section_files:  Dict[str, Callable[[UploadsData], List[EvidenceFile]]] = {
@@ -22,14 +24,19 @@ section_files:  Dict[str, Callable[[UploadsData], List[EvidenceFile]]] = {
     'statutoryDeclarations': (lambda u: u.statutory_declarations),
 }
 
-def get_files_for_section(section, application_data):
-    return section_files[section](application_data.uploads_data)
 
-def get_section_name(section):
-    return section_names[sections.index(section)]
+    def __init__(self):
+        pass
 
 
-class ApplicationFiles():
+    def get_files_for_section(self, section, application_data):
+        return self.section_files[section](application_data.uploads_data)
+
+
+    def get_section_name(self, section):
+        return self.section_names[self.sections.index(section)]
+
+
     def create_or_download_attachments(self, reference_number, application_data: ApplicationData, download=False):
         bytes = None
         zip_file_file_name = ''
@@ -45,8 +52,8 @@ class ApplicationFiles():
                 zip_buffer = io.BytesIO()
 
                 with zipfile.ZipFile(zip_buffer, 'x', zipfile.ZIP_DEFLATED, False) as zipper:
-                    for section in sections:
-                        files = get_files_for_section(section, application_data)
+                    for section in self.sections:
+                        files = self.get_files_for_section(section, application_data)
                         for file_index, evidence_file in enumerate(files):
                             data = AwsS3Client().download_object(evidence_file.aws_file_name)
                             if data is not None:
@@ -81,18 +88,18 @@ class ApplicationFiles():
                 if download:
                     bytes = data.getvalue()
             else:
-                all_sections = sections
+                all_sections = self.sections
                 if is_admin:
                     all_sections = ['statutoryDeclarations', 'marriageDocuments', 'nameChange', 'medicalReports', 'genderEvidence', 'overseasCertificate']
 
                 pdfs = []
-                pdfs.append(create_application_cover_sheet_pdf(application_data, is_admin))
+                pdfs.append(self.create_application_cover_sheet_pdf(application_data, is_admin))
 
                 if attach_files:
-                    attach_all_files(pdfs, all_sections, application_data)
+                    self.attach_all_files(pdfs, all_sections, application_data)
 
                 else:
-                    attachments_pdf = create_attachment_names_pdf(all_sections, application_data)
+                    attachments_pdf = self.create_attachment_names_pdf(all_sections, application_data)
                     if attachments_pdf:
                         pdfs.append(attachments_pdf)
 
@@ -114,24 +121,24 @@ class ApplicationFiles():
         AwsS3Client().delete_object(reference_number + '.zip')
         AwsS3Client().delete_object(reference_number + '.pdf')
 
-        for section in sections:
-            files = get_files_for_section(section, application_data)
+        for section in self.sections:
+            files = self.get_files_for_section(section, application_data)
             for evidence_file in files:
                 AwsS3Client().delete_object(evidence_file.aws_file_name)
 
 
-def create_application_cover_sheet_pdf(application_data, is_admin):
+    def create_application_cover_sheet_pdf(self, application_data, is_admin):
     html_template = ('applications/download.html' if is_admin else 'applications/download_user.html')
     html = render_template(html_template, application_data=application_data)
         return PDFUtils().create_pdf_from_html(html)
 
 
-def create_attachment_names_pdf(all_sections, application_data):
+    def create_attachment_names_pdf(self, all_sections, application_data):
     attachments_html = ''
     for section in all_sections:
-        files = get_files_for_section(section, application_data)
+            files = self.get_files_for_section(section, application_data)
         if len(files) > 0:
-            attachments_html += f'<h3 style="font-size: 14px;">{get_section_name(section)}</h3>'
+                attachments_html += f'<h3 style="font-size: 14px;">{self.get_section_name(section)}</h3>'
             for file_index, evidence_file in enumerate(files):
                 attachments_html += f'<p style="font-size: 12px;">Attachment {file_index + 1} of {len(files)}: {evidence_file.aws_file_name}</p>'
 
@@ -140,14 +147,14 @@ def create_attachment_names_pdf(all_sections, application_data):
             return PDFUtils().create_pdf_from_html(attachments_html)
 
 
-def attach_all_files(pdfs, all_sections, application_data):
+    def attach_all_files(self, pdfs, all_sections, application_data):
     for section in all_sections:
-        files = get_files_for_section(section, application_data)
+            files = self.get_files_for_section(section, application_data)
         for file_index, evidence_file in enumerate(files):
-            add_object(pdfs, evidence_file.aws_file_name, evidence_file.original_file_name)
+                self.add_object(pdfs, evidence_file.aws_file_name, evidence_file.original_file_name)
 
 
-def add_object(pdfs, aws_file_name, original_file_name):
+    def add_object(self, pdfs, aws_file_name, original_file_name):
     if '.' in aws_file_name:
         file_type = aws_file_name[aws_file_name.rindex('.') + 1:]
 
@@ -167,10 +174,10 @@ def add_object(pdfs, aws_file_name, original_file_name):
                         logger.log(LogLevel.INFO, f"Attaching {aws_file_name}")
                 else:
                     logger.log(LogLevel.ERROR, f"Error attaching {aws_file_name}")
-                    pdfs.append(create_pdf_for_attachment_error(original_file_name))
+                        pdfs.append(self.create_pdf_for_attachment_error(original_file_name))
             except:
                 logger.log(LogLevel.ERROR, f"Error attaching {aws_file_name}")
-                pdfs.append(create_pdf_for_attachment_error(original_file_name))
+                    pdfs.append(self.create_pdf_for_attachment_error(original_file_name))
         else:
             try:
                 data, width, height = AwsS3Client().download_object_data(aws_file_name)
@@ -180,16 +187,16 @@ def add_object(pdfs, aws_file_name, original_file_name):
                     logger.log(LogLevel.INFO, f"Adding image {aws_file_name}")
                 else:
                     logger.log(LogLevel.ERROR, f"Error downloading {aws_file_name}")
-                    pdfs.append(create_pdf_for_attachment_error(original_file_name))
+                        pdfs.append(self.create_pdf_for_attachment_error(original_file_name))
 
             except:
                 logger.log(LogLevel.ERROR, f"Error attaching {aws_file_name}")
-                create_pdf_for_attachment_error(original_file_name)
+                    self.create_pdf_for_attachment_error(original_file_name)
     else:
         logger.log(LogLevel.ERROR, f"Error attaching {aws_file_name}")
-        create_pdf_for_attachment_error(original_file_name)
+            self.create_pdf_for_attachment_error(original_file_name)
 
 
-def create_pdf_for_attachment_error(file_name):
+    def create_pdf_for_attachment_error(self, file_name):
     html = f'<h3 style="font-size: 14px; color: red;">WARNING: Could not attach file ({file_name})</h3>'
         return PDFUtils().create_pdf_from_html(html)
