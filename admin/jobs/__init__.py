@@ -1,10 +1,14 @@
 import os
 import io
+import time
+import pyAesCrypt
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from flask import Blueprint, request
 from sqlalchemy.sql import extract
+from zipstream import ZipStream
 from grc.external_services.gov_uk_notify import GovUkNotify
+from grc.external_services.aws_s3_client import AwsS3Client
 from grc.models import db, Application, ApplicationStatus, SecurityCode
 from grc.utils.decorators import JobTokenRequired
 from grc.utils.application_files import ApplicationFiles
@@ -152,40 +156,34 @@ def restore_db(db_file):
 @jobs.route('/jobs/backup-files', methods=['GET'])
 @JobTokenRequired
 def backup_files():
-    import time
-    from zipstream import ZipStream
-    import pyAesCrypt
-    from grc.external_services.aws_s3_client import AwsS3Client
-
     tic = time.perf_counter()
+    timestamp_for_filename = datetime.now()
 
     try:
         awsclient = AwsS3Client()
-        awsclient_external = AwsS3Client(external=True)
         all_files = awsclient.list_objects()
-        files = []
 
-        for key in all_files:
-            files.append({'stream': awsclient.stream_download_object(key), 'name': key})
+        maximum_filesize_per_chunk = 100 * 1000 * 1000  # 100MB
+        total_size_so_far_this_chunk = 0
+        files_in_this_chunk = []
+        next_chunk_number = 1
 
-        zip_buffer = ZipStream(files, chunksize=32768)
+        for file_info in all_files:
+            object_name = file_info['Key']
+            object_size = file_info['Size']
 
-        fin = io.BytesIO()
-        for data in zip_buffer.stream():
-            fin.write(data)
-        fin.seek(0)
+            if (total_size_so_far_this_chunk + object_size) > maximum_filesize_per_chunk:
+                if len(files_in_this_chunk) > 0:
+                    zip_encrypt_and_save_to_external_aws(files_in_this_chunk, next_chunk_number, timestamp_for_filename)
+                    files_in_this_chunk = []
+                    total_size_so_far_this_chunk = 0
+                    next_chunk_number = next_chunk_number + 1
 
-        buffer_size = 64 * 1024
-        secret_key = os.environ.get('EXTERNAL_BACKUP_ENCRYPTION_KEY', '')
-        fout = io.BytesIO()
-        pyAesCrypt.encryptStream(fin, fout, secret_key, buffer_size)
-        fout.seek(0)
+            files_in_this_chunk.append({'stream': awsclient.stream_download_object(object_name), 'name': object_name})
+            total_size_so_far_this_chunk = total_size_so_far_this_chunk + object_size
 
-        space_name = (ConfigHelper.get_vcap_application().space_name.lower()
-                      if ConfigHelper.get_vcap_application() is not None
-                      else 'local')
-        backup_file = f"{space_name}/files/{datetime.now().strftime('%Y-%m-%d--%H-%M-%S')}.zip.encrypted"
-        awsclient_external.stream_upload_object(fout, backup_file)  # or zip_buffer.stream() if we want unencrypted data
+        if len(files_in_this_chunk) > 0:
+            zip_encrypt_and_save_to_external_aws(files_in_this_chunk, next_chunk_number, timestamp_for_filename)
 
     except Exception as e:
         print(e, flush=True)
@@ -194,6 +192,29 @@ def backup_files():
     print(f"Finished in {toc - tic:0.4f} seconds", flush=True)
 
     return ('', 200)
+
+
+def zip_encrypt_and_save_to_external_aws(files, chunk_number: int, timestamp: datetime):
+    awsclient_external = AwsS3Client(external=True)
+
+    zip_buffer = ZipStream(files, chunksize=32768)
+
+    fin = io.BytesIO()
+    for data in zip_buffer.stream():
+        fin.write(data)
+    fin.seek(0)
+
+    buffer_size = 64 * 1024
+    secret_key = os.environ.get('EXTERNAL_BACKUP_ENCRYPTION_KEY', '')
+    fout = io.BytesIO()
+    pyAesCrypt.encryptStream(fin, fout, secret_key, buffer_size)
+    fout.seek(0)
+
+    space_name = (ConfigHelper.get_vcap_application().space_name.lower()
+                  if ConfigHelper.get_vcap_application() is not None
+                  else 'local')
+    backup_file = f"{space_name}/files/{timestamp.strftime('%Y-%m-%d--%H-%M-%S')}--part-{chunk_number}.zip.encrypted"
+    awsclient_external.stream_upload_object(fout, backup_file)  # or zip_buffer.stream() if we want unencrypted data
 
 
 @jobs.route('/jobs/application-notifications', methods=['GET'])
