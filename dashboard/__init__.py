@@ -75,7 +75,10 @@ def create_app(test_config=None):
     # Dashboard page
     from dashboard.stats import stats
     app.register_blueprint(stats)
-    app.add_url_rule('/', endpoint='index')
+
+    # Feedback page
+    from dashboard.feedback import feedback
+    app.register_blueprint(feedback)
 
     # Health Check
     from dashboard.health_check import health_check

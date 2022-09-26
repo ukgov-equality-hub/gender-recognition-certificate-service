@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %}View feedback{% endblock %}
+
+{% block backLink %}
+    <div class="govuk-breadcrumbs">
+        <ol class="govuk-breadcrumbs__list">
+            <li class="govuk-breadcrumbs__list-item">
+                <a class="govuk-breadcrumbs__link" href="{{ url_for('stats.index') }}">
+                    Dashboard home page
+                </a>
+            </li>
+            <li class="govuk-breadcrumbs__list-item">
+                View feedback
+            </li>
+        </ol>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <style>
+        @media screen and (min-width: 640px) {
+            .view-feedback-date {
+                white-space: nowrap;
+            }
+        }
+
+        .view-feedback-question {
+            min-width: 36%;
+        }
+    </style>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+
+            <h1 class="govuk-heading-l">
+                View feedback
+            </h1>
+
+            <p class="govuk-body govuk-!-font-size-27 govuk-!-font-weight-bold govuk-!-margin-bottom-8"
+               style="color: #85994b;">
+                There are
+                <span class="govuk-!-font-size-48">
+                    {{ num_feedback }}
+                </span>
+                feedback responses
+            </p>
+
+            <table class="govuk-table">
+                <tbody class="govuk-table__body">
+                    {% for feedback_item in all_feedback %}
+
+                        <tr class="govuk-table__row">
+                            <th rowspan="8" scope="row" class="govuk-table__header govuk-!-font-weight-regular">
+                                <span class="view-feedback-date">
+                                    {{ feedback_item.created_date_formatted }}
+                                </span><br>
+                                {{ feedback_item.created_time_formatted }}
+                            </th>
+                            <th scope="row" class="govuk-table__header view-feedback-question">Overall difficulty</th>
+                            <td class="govuk-table__cell">{{ feedback_item.how_easy_to_complete_application_formatted }}</td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__header view-feedback-question">Any questions difficult</th>
+                            <td class="govuk-table__cell">{{ feedback_item.any_questions_difficult_to_answer_formatted }}</td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__header view-feedback-question">Which questions difficult, why</th>
+                            <td class="govuk-table__cell">{{ feedback_item.which_questions_difficult_to_answer }}</td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__header view-feedback-question">Need to call admin team</th>
+                            <td class="govuk-table__cell">{{ feedback_item.needed_to_call_admin_team_formatted }}</td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__header view-feedback-question">What did you need help with</th>
+                            <td class="govuk-table__cell">{{ feedback_item.what_did_you_need_help_with }}</td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__header view-feedback-question">Used doc checker</th>
+                            <td class="govuk-table__cell">{{ feedback_item.used_doc_checker_formatted }}</td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__header view-feedback-question">Experience of doc checker</th>
+                            <td class="govuk-table__cell">{{ feedback_item.experience_of_using_doc_checker }}</td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__header view-feedback-question">Any other suggestions</th>
+                            <td class="govuk-table__cell">{{ feedback_item.any_other_suggestions }}</td>
+                        </tr>
+                    {% endfor %}
+
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+{% endblock %}
