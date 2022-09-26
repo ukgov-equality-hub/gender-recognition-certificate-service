@@ -10,7 +10,7 @@ from grc.upload.forms import UploadForm, DeleteForm, PasswordsForm, DeleteAllFil
 from grc.utils.decorators import LoginRequired
 from grc.external_services.aws_s3_client import AwsS3Client
 from grc.utils.flask_child_form_add_custom_errors import add_error_for_child_form
-from grc.utils.pdf_utils import is_pdf_password_protected, is_pdf_password_correct, remove_pdf_password_protection
+from grc.utils.pdf_utils import PDFUtils
 from grc.utils.redirect import local_redirect
 from grc.utils.logger import LogLevel, Logger
 
@@ -65,13 +65,13 @@ def check_pdf_password(section, application_data, passwordForm):
         data = AwsS3Client().download_object(file_to_check.aws_file_name)
         if data is not None:
             input_pdf_stream = io.BytesIO(data.getvalue())
-            if not is_pdf_password_protected(input_pdf_stream):
+            if not PDFUtils().is_pdf_password_protected(input_pdf_stream):
                 return True
 
-            if is_pdf_password_correct(input_pdf_stream, passwordForm.password.data):
+            if PDFUtils().is_pdf_password_correct(input_pdf_stream, passwordForm.password.data):
 
                 # Generate a new PDF
-                output_pdf_stream = remove_pdf_password_protection(input_pdf_stream, passwordForm.password.data)
+                output_pdf_stream = PDFUtils().remove_pdf_password_protection(input_pdf_stream, passwordForm.password.data)
 
                 AwsS3Client().delete_object(file_to_check.aws_file_name)
                 AwsS3Client().upload_fileobj(output_pdf_stream, file_to_check.aws_file_name)
@@ -122,10 +122,10 @@ def uploadInfoPage(section_url: str):
                     try:
                         from grc.utils.pdf_utils import is_pdf_form, flatten_form_pdf_stream
                         data = io.BytesIO(document.read())
-                        if is_pdf_form(data):
-                            document = flatten_form_pdf_stream(data)
+                        if PDFUtils().is_pdf_form(data):
+                            document = PDFUtils().flatten_form_pdf_stream(data)
 
-                        if is_pdf_password_protected(data):
+                        if PDFUtils().is_pdf_password_protected(data):
                             password_required = True
                             has_password = True
                     except:

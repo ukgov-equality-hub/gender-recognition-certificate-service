@@ -7,7 +7,7 @@ from grc.business_logic.data_structures.application_data import ApplicationData
 from grc.business_logic.data_structures.uploads_data import UploadsData, EvidenceFile
 from grc.external_services.aws_s3_client import AwsS3Client
 from grc.utils.logger import LogLevel, Logger
-from grc.utils.pdf_utils import create_pdf_from_html, merge_pdfs, is_pdf_password_protected
+from grc.utils.pdf_utils import PDFUtils
 
 logger = Logger()
 
@@ -96,7 +96,7 @@ class ApplicationFiles():
                     if attachments_pdf:
                         pdfs.append(attachments_pdf)
 
-                data = merge_pdfs(pdfs)
+                data = PDFUtils().merge_pdfs(pdfs)
                 
                 bytes = data.read()
                 if is_admin and not attach_files:
@@ -123,7 +123,7 @@ class ApplicationFiles():
 def create_application_cover_sheet_pdf(application_data, is_admin):
     html_template = ('applications/download.html' if is_admin else 'applications/download_user.html')
     html = render_template(html_template, application_data=application_data)
-    return create_pdf_from_html(html)
+        return PDFUtils().create_pdf_from_html(html)
 
 
 def create_attachment_names_pdf(all_sections, application_data):
@@ -137,7 +137,7 @@ def create_attachment_names_pdf(all_sections, application_data):
 
     if attachments_html != '':
         logger.log(LogLevel.INFO, "Adding attachments pdf")
-        return create_pdf_from_html(attachments_html)
+            return PDFUtils().create_pdf_from_html(attachments_html)
 
 
 def attach_all_files(pdfs, all_sections, application_data):
@@ -155,12 +155,12 @@ def add_object(pdfs, aws_file_name, original_file_name):
             try:
                 data = AwsS3Client().download_object(aws_file_name)
                 if data is not None:
-                    if is_pdf_password_protected(data):
+                        if PDFUtils().is_pdf_password_protected(data):
                         # We can check the type of password (user/owner):
                         # doc.authenticate('') == 2
                         # https://pymupdf.readthedocs.io/en/latest/document.html#Document.authenticate
                         html = f'<h3 style="font-size: 14px; color: red;">Unable to add {original_file_name}. A password is required.</h3>'
-                        pdfs.append(create_pdf_from_html(html))
+                            pdfs.append(PDFUtils().create_pdf_from_html(html))
                         logger.log(LogLevel.ERROR, f"file {aws_file_name} needs a password!")
                     else:
                         pdfs.append(data)
@@ -176,7 +176,7 @@ def add_object(pdfs, aws_file_name, original_file_name):
                 data, width, height = AwsS3Client().download_object_data(aws_file_name)
                 if data is not None:
                     html = f'<img src="{data}" width="{width}" height="{height}" style="max-width: 90%;">'
-                    pdfs.append(create_pdf_from_html(html))
+                        pdfs.append(PDFUtils().create_pdf_from_html(html))
                     logger.log(LogLevel.INFO, f"Adding image {aws_file_name}")
                 else:
                     logger.log(LogLevel.ERROR, f"Error downloading {aws_file_name}")
@@ -192,4 +192,4 @@ def add_object(pdfs, aws_file_name, original_file_name):
 
 def create_pdf_for_attachment_error(file_name):
     html = f'<h3 style="font-size: 14px; color: red;">WARNING: Could not attach file ({file_name})</h3>'
-    return create_pdf_from_html(html)
+        return PDFUtils().create_pdf_from_html(html)
