@@ -41,6 +41,16 @@
 
                         {{ textInput.renderFor(
                             form,
+                            fieldName='partner_title',
+                            textInputForOptions={
+                                'labelOptions': { 'htmlOrText': 'Title' },
+                                'classes': 'govuk-input--width-10',
+                                'autocomplete': 'honorific-prefix'
+                            }
+                        ) }}
+
+                        {{ textInput.renderFor(
+                            form,
                             fieldName='partner_first_name',
                             textInputForOptions={
                                 'labelOptions': { 'htmlOrText': 'First name' },

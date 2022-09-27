@@ -36,6 +36,10 @@ class PartnerAgreesForm(FlaskForm):
 
 
 class PartnerDetailsForm(FlaskForm):
+    partner_title = StringField(
+        validators=[DataRequired(message="Enter your spouse or civil partner's title")]
+    )
+
     partner_first_name = StringField(
         validators=[DataRequired(message="Enter your spouse or civil partner's first name")]
     )

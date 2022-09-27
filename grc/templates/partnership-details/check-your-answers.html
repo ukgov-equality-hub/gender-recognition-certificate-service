@@ -71,16 +71,12 @@
 
                     {% if application_data.partnership_details_data.plan_to_remain_in_a_partnership and application_data.partnership_details_data.partner_agrees %}
                         {{ check_your_answers_row(
-                            title=(partnerNameCapitalised + "'s first name"),
-                            changeLinkHiddenText='your ' + partnerName + "'s first name",
+                            title=(partnerNameCapitalised + "'s name"),
+                            changeLinkHiddenText='your ' + partnerName + "'s name",
                             changeLinkUrlFor='partnershipDetails.partnerDetails',
-                            value=(application_data.partnership_details_data.partner_first_name)
-                        ) }}
-                        {{ check_your_answers_row(
-                            title=(partnerNameCapitalised + "'s last name"),
-                            changeLinkHiddenText='your ' + partnerName + "'s last name",
-                            changeLinkUrlFor='partnershipDetails.partnerDetails',
-                            value=(application_data.partnership_details_data.partner_last_name)
+                            value=(application_data.partnership_details_data.partner_title + ' ' +
+                                   application_data.partnership_details_data.partner_first_name + ' ' +
+                                   application_data.partnership_details_data.partner_last_name)
                         ) }}
 
                         {% macro partnerPostalAddressValue() %}
