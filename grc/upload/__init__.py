@@ -3,6 +3,7 @@ from typing import List, Callable
 from flask import Blueprint, render_template, request, url_for, abort, make_response
 from werkzeug.utils import secure_filename
 import uuid
+from PIL import Image
 from grc.business_logic.data_store import DataStore
 from grc.business_logic.data_structures.application_data import any_duplicate_aws_file_names
 from grc.business_logic.data_structures.uploads_data import UploadsData, EvidenceFile
@@ -10,7 +11,7 @@ from grc.upload.forms import UploadForm, DeleteForm, PasswordsForm, DeleteAllFil
 from grc.utils.decorators import LoginRequired
 from grc.external_services.aws_s3_client import AwsS3Client
 from grc.utils.flask_child_form_add_custom_errors import add_error_for_child_form
-from grc.utils.pdf_utils import is_pdf_password_protected, is_pdf_password_correct, remove_pdf_password_protection
+from grc.utils.pdf_utils import PDFUtils
 from grc.utils.redirect import local_redirect
 from grc.utils.logger import LogLevel, Logger
 
@@ -65,13 +66,13 @@ def check_pdf_password(section, application_data, passwordForm):
         data = AwsS3Client().download_object(file_to_check.aws_file_name)
         if data is not None:
             input_pdf_stream = io.BytesIO(data.getvalue())
-            if not is_pdf_password_protected(input_pdf_stream):
+            if not PDFUtils().is_pdf_password_protected(input_pdf_stream):
                 return True
 
-            if is_pdf_password_correct(input_pdf_stream, passwordForm.password.data):
+            if PDFUtils().is_pdf_password_correct(input_pdf_stream, passwordForm.password.data):
 
                 # Generate a new PDF
-                output_pdf_stream = remove_pdf_password_protection(input_pdf_stream, passwordForm.password.data)
+                output_pdf_stream = PDFUtils().remove_pdf_password_protection(input_pdf_stream, passwordForm.password.data)
 
                 AwsS3Client().delete_object(file_to_check.aws_file_name)
                 AwsS3Client().upload_fileobj(output_pdf_stream, file_to_check.aws_file_name)
@@ -92,6 +93,44 @@ def delete_password_protected_files(section, application_data):
     for file in password_protected_files:
         application_data = delete_file(application_data, file.aws_file_name, section)
     return application_data
+
+
+def resize_image(document):
+    try:
+        img = Image.open(document)
+        file_name = document.filename
+
+        width, height = img.size
+        ratio = 1.
+        if height >= width:
+            if width > 1000:
+                ratio = 1000 / width
+            elif height > 1500:
+                ratio = 1500 / height
+        else:
+            if width > 1500:
+                ratio = 1500 / width
+            elif height > 1000:
+                ratio = 1000 / height
+        if ratio != 1.:
+            img = img.resize((int(width * ratio), int(height * ratio)), Image.ANTIALIAS)
+            image_type = file_name[file_name.rindex('.') + 1:].lower()
+            if image_type == 'tif': image_type = 'tiff'
+            if image_type == 'jpg': image_type = 'jpeg'
+
+            bytes_buffer = io.BytesIO()
+            img.save(bytes_buffer, image_type)
+            bytes_buffer.seek(0)
+            #import pathlib
+            #new_file_name = f'{pathlib.Path(__file__).parent.absolute()}/RESIZED__{file_name}'
+            #img.save(new_file_name, image_type)
+
+            return True, bytes_buffer
+
+    except Exception as e:
+        logger.log(LogLevel.ERROR, f"Could not resize image ({file_name}). Error was {e}")
+
+    return False, document
 
 
 @upload.route('/upload/<section_url>', methods=['GET', 'POST'])
@@ -120,18 +159,31 @@ def uploadInfoPage(section_url: str):
 
                 if file_type == 'pdf':
                     try:
-                        from grc.utils.pdf_utils import is_pdf_form, flatten_form_pdf_stream
                         data = io.BytesIO(document.read())
-                        if is_pdf_form(data):
-                            document = flatten_form_pdf_stream(data)
+                        if PDFUtils().is_pdf_form(data):
+                            document = PDFUtils().flatten_form_pdf_stream(data)
 
-                        if is_pdf_password_protected(data):
+                        if PDFUtils().is_pdf_password_protected(data):
                             password_required = True
                             has_password = True
+
+                        AwsS3Client().upload_fileobj(document, object_name)
                     except:
                         logger.log(LogLevel.ERROR, f"User uploaded PDF attachment ({object_name}) which could not be opened")
 
-                AwsS3Client().upload_fileobj(document, object_name)
+                elif file_type in ['jpg', 'jpeg', 'png', 'tif', 'tiff', 'bmp']:
+                    resized, resized_document = resize_image(document)
+                    AwsS3Client().upload_fileobj(resized_document, object_name)
+                    if resized:
+                        file_ext = ''
+                        original_object_name = object_name
+                        if '.' in original_object_name:
+                            file_ext = original_object_name[original_object_name.rindex('.'):]
+                            original_object_name = original_object_name[0: original_object_name.rindex('.')]
+                        AwsS3Client().upload_fileobj(document, f'{original_object_name}_original{file_ext}')
+
+                else:
+                    AwsS3Client().upload_fileobj(document, object_name)
 
                 new_evidence_file = EvidenceFile()
                 new_evidence_file.original_file_name = original_file_name
@@ -271,14 +323,16 @@ def download(section_url):
     if file_name is not None:
         application_data = DataStore.load_application_by_session_reference_number()
         files = [file for file in section.file_list(application_data.uploads_data) if file.aws_file_name == file_name]
-        if len(files) == 0:
+        if '_original.' in file_name:
+            pass
+        elif len(files) == 0:
             return abort(403)
 
         data = AwsS3Client().download_object(file_name)
         if data:
             file_type = 'application/octet-stream'
             if '.' in file_name:
-                file_type = file_name[file_name.rindex('.') + 1:]
+                file_type = file_name[file_name.rindex('.') + 1:].lower()
                 if file_type == 'pdf':
                     file_type = 'application/pdf'
                 elif file_type == 'jpg':
