@@ -14,9 +14,9 @@
                 <div class="govuk-inset-text">{{ message }}</div>
             {% endif %}
 
-            <h3 class="govuk-heading-s">
+            <h2 class="govuk-heading-m">
                 Applications by status
-            </h3>
+            </h2>
             <table class="govuk-table new-table">
                 <thead class="govuk-table__head">
                     <tr class="govuk-table__row">
@@ -33,6 +33,16 @@
                     </tr>
                 </tbody>
             </table>
+
+            <h2 class="govuk-heading-m">
+                Feedback
+            </h2>
+            <p class="govuk-body">
+                <a href="{{ url_for('feedback.view_feedback') }}" class="govuk-link">
+                    View application feedback
+                </a>
+            </p>
+
         </div>
     </div>
 {% endblock %}
