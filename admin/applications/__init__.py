@@ -99,9 +99,11 @@ def download(reference_number):
         db.session.commit()
 
         from grc.utils.application_files import ApplicationFiles
+        application_data = application.application_data()
+        application_data.updated = application.updated
         bytes, file_name = ApplicationFiles().create_or_download_pdf(
             application.reference_number,
-            application.application_data(),
+            application_data,
             is_admin=True,
             attach_files=True,
             download=True
