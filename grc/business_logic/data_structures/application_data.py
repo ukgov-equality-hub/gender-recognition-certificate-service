@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List
 from grc.business_logic.data_structures.confirmation_data import ConfirmationData
 from grc.business_logic.data_structures.birth_registration_data import BirthRegistrationData
@@ -21,6 +22,7 @@ def any_duplicate_aws_file_names(uploads_files: List[EvidenceFile]):
 class ApplicationData:
     reference_number: str = None
     email_address: str = None
+    updated: datetime = None
 
     confirmation_data: ConfirmationData
     personal_details_data: PersonalDetailsData
