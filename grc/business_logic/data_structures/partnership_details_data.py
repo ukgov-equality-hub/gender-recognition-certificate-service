@@ -16,6 +16,7 @@ class PartnershipDetailsData:
     partner_agrees: bool = None
     confirm_understood_interim_certificate: bool = None
 
+    partner_title: str = None
     partner_first_name: str = None
     partner_last_name: str = None
     partner_postal_address: str = None
@@ -87,7 +88,7 @@ class PartnershipDetailsData:
                     return ListStatus.IN_PROGRESS
 
             if self.plan_to_remain_in_a_partnership and self.partner_agrees:
-                if self.partner_first_name is None or self.partner_last_name is None or self.partner_postal_address is None:
+                if self.partner_title is None or self.partner_first_name is None or self.partner_last_name is None or self.partner_postal_address is None:
                     return ListStatus.IN_PROGRESS
 
             else:

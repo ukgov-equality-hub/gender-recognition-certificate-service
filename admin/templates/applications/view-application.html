@@ -198,6 +198,10 @@
 
                         {% else %}
                             {{ summary_list_item(
+                                title='Partner title',
+                                value=(application_data.partnership_details_data.partner_title)
+                            ) }}
+                            {{ summary_list_item(
                                 title='Partner first name',
                                 value=(application_data.partnership_details_data.partner_first_name)
                             ) }}

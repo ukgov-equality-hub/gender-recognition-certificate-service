@@ -30,6 +30,7 @@ def index():
             application_data.partnership_details_data.plan_to_remain_in_a_partnership = None
             application_data.partnership_details_data.partner_agrees = None
             application_data.partnership_details_data.confirm_understood_interim_certificate = None
+            application_data.partnership_details_data.partner_title = None
             application_data.partnership_details_data.partner_first_name = None
             application_data.partnership_details_data.partner_last_name = None
             application_data.partnership_details_data.partner_postal_address = None
@@ -65,6 +66,7 @@ def stayTogether():
 
         if not application_data.partnership_details_data.plan_to_remain_in_a_partnership:
             application_data.partnership_details_data.partner_agrees = None
+            application_data.partnership_details_data.partner_title = None
             application_data.partnership_details_data.partner_first_name = None
             application_data.partnership_details_data.partner_last_name = None
             application_data.partnership_details_data.partner_postal_address = None
@@ -105,6 +107,7 @@ def partnerAgrees():
         if application_data.partnership_details_data.partner_agrees:
             application_data.partnership_details_data.confirm_understood_interim_certificate = None
         else:
+            application_data.partnership_details_data.partner_title = None
             application_data.partnership_details_data.partner_first_name = None
             application_data.partnership_details_data.partner_last_name = None
             application_data.partnership_details_data.partner_postal_address = None
@@ -139,6 +142,7 @@ def partnerDetails():
     application_data = DataStore.load_application_by_session_reference_number()
 
     if form.validate_on_submit():
+        application_data.partnership_details_data.partner_title = form.partner_title.data
         application_data.partnership_details_data.partner_first_name = form.partner_first_name.data
         application_data.partnership_details_data.partner_last_name = form.partner_last_name.data
         application_data.partnership_details_data.partner_postal_address = form.partner_postal_address.data
@@ -148,6 +152,7 @@ def partnerDetails():
         return get_next_page(application_data, 'partnershipDetails.checkYourAnswers')
 
     if request.method == 'GET':
+        form.partner_title.data = application_data.partnership_details_data.partner_title
         form.partner_first_name.data = application_data.partnership_details_data.partner_first_name
         form.partner_last_name.data = application_data.partnership_details_data.partner_last_name
         form.partner_postal_address.data = application_data.partnership_details_data.partner_postal_address
