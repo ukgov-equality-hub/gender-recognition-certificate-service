@@ -23,7 +23,7 @@ class Application(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     reference_number = db.Column(StringEncryptedType(db.String, length=50, key=secret_key, engine=AesEngine, padding='pkcs5'), unique=True, nullable=False)
     email = db.Column(StringEncryptedType(db.String, length=500, key=secret_key, engine=AesEngine, padding='pkcs5'), nullable=False)
-    user_input = db.Column(StringEncryptedType(db.String, length=50000, key=secret_key, engine=AesEngine, padding='pkcs5'))
+    user_input = db.Column(StringEncryptedType(db.String, length=100000, key=secret_key, engine=AesEngine, padding='pkcs5'))
     status = db.Column(
         db.Enum(ApplicationStatus, name='application_status'),
         default=ApplicationStatus.STARTED
