@@ -19,6 +19,7 @@ Get and edit the config files:
   (the files are git ignored, so they shouldn't get committed - **check this!**)
   * `.env`
   * `.admin.env`
+  * `.dashboard.env`
 
 * In the `.admin.env` file, edit the line `DEFAULT_ADMIN_USER=` to use your email address
 

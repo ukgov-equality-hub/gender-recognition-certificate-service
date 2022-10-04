@@ -49,6 +49,9 @@ Project tools:
 * [Google Chat](https://mail.google.com/chat)  
   Ask a team member for access to the relevant groups
 
+* [Google Analytics](https://analytics.google.com/)  
+  Ask a team member for access. The property you need access to is `317472624`
+
 * This [Google Drive folder](https://drive.google.com/drive/u/3/folders/14BJ-tgEuGbdf1Ak0A1G8nUZxP7LdJDa0)
 
 * [Pingdom](https://www.pingdom.com/)  
