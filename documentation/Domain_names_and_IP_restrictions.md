@@ -184,3 +184,25 @@ This is based on:
 
 * Push the IP Restrictions app.  
   This should automatically be pushed each time you deploy the app via GitHub.
+
+
+### Dashboard app
+The dashboard app implements IP whitelisting through Flask instead of NGINX, this allows the whitelist to be updated quickly without the need to redeploy the whole app. The IP whitelist is stored as an environment variable within an app.
+
+To update the IP whitelist, login to Cloud Foundry and target your preferred space (production, staging etc) - See *Login to Gov.UK PaaS* above.
+
+* Find the current IP whitelist  
+  `cf env APP_NAME` 
+
+* Look for the contents of the environment variable `IP_WHITELIST`
+
+* Update the environment variable by appending your desired IP address to the list, for example, if `IP_WHITELIST` is currently  
+  `1.1.1.1`  
+  set the new value to (note the comma)  
+  `1.1.1.1,2.2.2.2`
+
+* Update the environment variable in Cloud Foundry  
+  `cf set-env APP_NAME IP_WHITELIST "1.1.1.1,2.2.2.2"`
+
+* Restart the app  
+  `cf restage APP_NAME`

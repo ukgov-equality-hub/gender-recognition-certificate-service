@@ -94,7 +94,7 @@ Ask a member of the team for the password.
   // Sandbox environment
   cf restart "geo-gender-recognition-certificate"
   
-  // Stanging environment
+  // Staging environment
   cf restart "grc-staging"
   
   // Production environment
