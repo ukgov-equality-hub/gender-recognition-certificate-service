@@ -37,7 +37,9 @@ class Application(db.Model):
     filesCreated = db.Column(db.Boolean, default=False)
 
     def application_data(self) -> ApplicationData:
-        return jsonpickle.decode(self.user_input)
+        application_data: ApplicationData = jsonpickle.decode(self.user_input)
+        application_data.updated = self.updated
+        return application_data
 
 
 class SecurityCode(db.Model):
