@@ -1,10 +1,11 @@
 {% macro adminapplication(application_data) %}
-    <h1>
-        {{ application_data.application_certificate_type }}
+    <h1 style="font-size: 24px;">
+        {{ application_data.application_certificate_type }}: {{ application_data.reference_number }}
     </h1>
+    <h3 style="font-size: 21px;">Submitted on {{ application_data.updated | format_date }}</h3>
 
-    <h4 class="govuk-heading-m">Marriage or civil partnership details</h4>
-    <ul class="govuk-list govuk-list--bullet">
+    <h4 style="font-size: 16px;">Marriage or civil partnership details</h4>
+    <ul class="govuk-list govuk-list--bullet" style="font-size: 16px;">
         <li>Currently married or in a civil partnership: <strong>{{ application_data.partnership_details_data.currently_in_a_partnership_formatted }}</strong></li>
         {% if application_data.partnership_details_data.is_not_in_partnership %}
             <li>Spouse or partner has died: <strong>{{ application_data.partnership_details_data.previous_partnership_partner_died_formatted }}</strong></li>
@@ -30,9 +31,12 @@
         {% endif %}
     </ul>
 
-    <h4 class="govuk-heading-m">Payment details</h4>
-    <ul class="govuk-list govuk-list--bullet">
+    <h4 style="font-size: 16px;">Payment details</h4>
+    <ul class="govuk-list govuk-list--bullet" style="font-size: 16px;">
         <li>Payment method: <strong>{{ application_data.submit_and_pay_data.applying_for_help_with_fee_formatted }}</strong></li>
+        {% if not application_data.submit_and_pay_data.applying_for_help_with_fee %}
+            <li>Reference: <strong>{{ application_data.reference_number }}</strong></li>
+        {% endif %}
         {% if application_data.submit_and_pay_data.applying_for_help_with_fee %}
             <li>Help type: <strong>
                 {% if application_data.submit_and_pay_data.is_using_online_service %}
@@ -45,8 +49,8 @@
         {% endif %}
     </ul>
 
-    <h4 class="govuk-heading-m">Confirmation</h4>
-    <ul class="govuk-list govuk-list--bullet">
+    <h4 style="font-size: 16px;">Confirmation</h4>
+    <ul class="govuk-list govuk-list--bullet" style="font-size: 16px;">
         <li>Have you ever been issued a Gender Recognition Certificate (or it's equivalent) in another country? <strong>{{ application_data.confirmation_data.gender_recognition_outside_uk_formatted }}</strong></li>
         {% if application_data.confirmation_data.gender_recognition_outside_uk %}
             <li>Do you have official documentation that shows your affirmed gender has been recognised in one of these countries or territories? <strong>{{ application_data.confirmation_data.gender_recognition_from_approved_country_formatted }}</strong></li>
@@ -54,14 +58,14 @@
         <li>I confirm that I meet the requirements for applying for a Gender Recognition Certificate and I consent to the General Register Office contacting me about my application: <strong>{{ application_data.confirmation_data.consent_to_GRO_contact_formatted }}</strong></li>
     </ul>
 
-    <h4 class="govuk-heading-m">Personal details</h4>
-    <ul class="govuk-list govuk-list--bullet">
+    <h4 style="font-size: 16px;">Personal details</h4>
+    <ul class="govuk-list govuk-list--bullet" style="font-size: 16px;">
         <li>Name on certificate
             <ul class="govuk-list govuk-list--bullet">
                 <li>Title: <strong>{{ application_data.personal_details_data.title }}</strong></li>
                 <li>First name: <strong>{{ application_data.personal_details_data.first_name }}</strong></li>
                 <li>Middle name(s): <strong>{{ application_data.personal_details_data.middle_names_or_empty_string }}</strong></li>
-                <li>Last name: <strong style="text-decoration: underline;">{{ application_data.personal_details_data.last_name }}</strong></li>
+                <li>Last name: <strong>{{ application_data.personal_details_data.last_name }}</strong></li>
             </ul>
         </li>
         <li>Changed name: <strong>{{ application_data.personal_details_data.changed_name_to_reflect_gender_formatted }}</strong></li>
@@ -110,8 +114,8 @@
         </li>
     </ul>
 
-    <h4 class="govuk-heading-m">Birth registration information</h4>
-    <ul class="govuk-list govuk-list--bullet">
+    <h4 style="font-size: 16px;">Birth registration information</h4>
+    <ul class="govuk-list govuk-list--bullet" style="font-size: 16px;">
         <li>Birth name
             <ul class="govuk-list govuk-list--bullet">
                 <li>First name: <strong>{{ application_data.birth_registration_data.first_name }}</strong></li>
@@ -121,6 +125,7 @@
         </li>
         <li>Date of birth: <strong>{{ application_data.birth_registration_data.date_of_birth_formatted_DD_MMMM_YYYY }}</strong></li>
         <li>Birth registered in UK: <strong>{{ application_data.birth_registration_data.birth_registered_in_uk_formatted }}</strong></li>
+        <li>Affirmed gender: <strong>{{ application_data.personal_details_data.affirmed_gender_formatted }}</strong></li>
         {% if application_data.birth_registration_data.birth_registered_in_uk %}
             <li>Mother's name
                 <ul class="govuk-list govuk-list--bullet">
@@ -158,4 +163,6 @@
             <li>an EX160 form</li>
         {% endif %}
     </ul>
+
+    <h2 class="govuk-heading-m" style="font-size: 21px;">Your documents</h2>
 {% endmacro %}
