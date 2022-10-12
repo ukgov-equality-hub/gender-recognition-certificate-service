@@ -154,98 +154,15 @@
             <li>Registered birth country: <strong>{{ application_data.birth_registration_data.country_of_birth }}</strong></li>
         {% endif %}
     </ul>
+    
 
-
-    <h2 class="govuk-heading-m" style="font-size: 21px;">Your documents</h2>
-    {#
-    <h4 style="font-size: 16px;">Statutory documents</h4>
-    <ul class="govuk-list govuk-list--bullet" style="font-size: 16px;">
-        {% for file in application_data.uploads_data.statutory_declarations %}
-            <li>
-                {{ file.original_file_name }}
-                {% if '.pdf' not in file.aws_file_name | lower %}
-                    <img src="{{ file.aws_file_name | image_data }}" width="{{ file.aws_file_name | image_width }}" height="{{ file.aws_file_name | image_height }}" style="max-width: 90%;">
-                {% endif %}
-            </li>
-        {% endfor %}
-    </ul>
-
-    {% if application_data.need_partnership_documents %}
-        <h4 style="font-size: 16px;">Marriage / civil partnership documents</h4>
-        <ul class="govuk-list govuk-list--bullet" style="font-size: 16px;">
-            {% for file in application_data.uploads_data.partnership_documents %}
-                <li>
-                    {{ file.original_file_name }}
-                    {% if '.pdf' not in file.aws_file_name | lower %}
-                        <img src="{{ file.aws_file_name | image_data }}" width="{{ file.aws_file_name | image_width }}" height="{{ file.aws_file_name | image_height }}" style="max-width: 90%;">
-                    {% endif %}
-                </li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-
-    {% if application_data.need_medical_reports %}
-        <h4 style="font-size: 16px;">Your medical reports</h4>
-        <ul class="govuk-list govuk-list--bullet" style="font-size: 16px;">
-            {% for file in application_data.uploads_data.medical_reports %}
-                <li>
-                    {{ file.original_file_name }}
-                    {% if '.pdf' not in file.aws_file_name | lower %}
-                        <img src="{{ file.aws_file_name | image_data }}" width="{{ file.aws_file_name | image_width }}" height="{{ file.aws_file_name | image_height }}" style="max-width: 90%;">
-                    {% endif %}
-                </li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-
-    {% if application_data.need_evidence_of_living_in_gender %}
-        <h4 style="font-size: 16px;">Evidence of living in your gender</h4>
-        <ul class="govuk-list govuk-list--bullet" style="font-size: 16px;">
-            {% for file in application_data.uploads_data.evidence_of_living_in_gender %}
-                <li>
-                    {{ file.original_file_name }}
-                    {% if '.pdf' not in file.aws_file_name | lower %}
-                        <img src="{{ file.aws_file_name | image_data }}" width="{{ file.aws_file_name | image_width }}" height="{{ file.aws_file_name | image_height }}" style="max-width: 90%;">
-                    {% endif %}
-                </li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-
-    {% if application_data.need_name_change_documents %}
-        <h4 style="font-size: 16px;">Name change</h4>
-        <ul class="govuk-list govuk-list--bullet" style="font-size: 16px;">
-            {% for file in application_data.uploads_data.name_change_documents %}
-                <li>
-                    {{ file.original_file_name }}
-                    {% if '.pdf' not in file.aws_file_name | lower %}
-                        <img src="{{ file.aws_file_name | image_data }}" width="{{ file.aws_file_name | image_width }}" height="{{ file.aws_file_name | image_height }}" style="max-width: 90%;">
-                    {% endif %}
-                </li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-
-    {% if application_data.need_overseas_documents %}
-        <h4 style="font-size: 16px;">Overseas certificate documents</h4>
-        <ul class="govuk-list govuk-list--bullet" style="font-size: 16px;">
-            {% for file in application_data.uploads_data.overseas_documents %}
-                <li>
-                    {{ file.original_file_name }}
-                    {% if '.pdf' not in file.aws_file_name | lower %}
-                        <img src="{{ file.aws_file_name | image_data }}" width="{{ file.aws_file_name | image_width }}" height="{{ file.aws_file_name | image_height }}" style="max-width: 90%;">
-                    {% endif %}
-                </li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-
-    <h4 style="font-size: 16px;">Documents to post</h4>
-    <ul class="govuk-list govuk-list--bullet" style="font-size: 16px;">
+    <h4 class="govuk-heading-m">Documents to post</h4>
+    <ul class="govuk-list govuk-list--bullet">
         <li>your original or a certified copy of your full birth or adoption certificate</li>
         {% if application_data.submit_and_pay_data.is_using_ex160_form %}
             <li>an EX160 form</li>
         {% endif %}
     </ul>
-    #}
+
+    <h2 class="govuk-heading-m" style="font-size: 21px;">Your documents</h2>
 {% endmacro %}
