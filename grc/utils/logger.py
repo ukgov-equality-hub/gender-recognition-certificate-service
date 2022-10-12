@@ -18,7 +18,7 @@ class Logger():
         pass
 
 
-    def mask_email_address(self, email_address):
+    def mask_email_address(self, email_address: str) -> str:
         def mask(str):
             if len(str) > 6:
                 return f"{str[0: 2]}{'*' * (len(str) - 4)}{str[-2:]}"
@@ -42,7 +42,7 @@ class Logger():
         return email_address
 
 
-    def log(self, level, message):
+    def log(self, level: LogLevel, message: str) -> None:
         session_id = ''
         try:
             session_id = f" {request.cookies['session']}"
