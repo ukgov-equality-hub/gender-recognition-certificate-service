@@ -99,12 +99,14 @@ def download(reference_number):
         db.session.commit()
 
         from grc.utils.application_files import ApplicationFiles
+        application_data = application.application_data()
+        application_data.updated = application.updated
         bytes, file_name = ApplicationFiles().create_or_download_pdf(
             application.reference_number,
-            application.application_data(),
-            is_admin=True,
-            attach_files=True,
-            download=True
+            application_data,
+            download=True,
+            create_toc=False,
+            paginate=False
         )
 
         logger.log(LogLevel.INFO, f"{logger.mask_email_address(session['signedIn'])} downloaded application {reference_number}")

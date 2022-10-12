@@ -155,7 +155,6 @@ def download():
         application_data.reference_number,
         application_data,
         is_admin=False,
-        attach_files=True,
         download=True
     )
 
@@ -212,10 +211,7 @@ def confirmation():
         )
         ApplicationFiles().create_or_download_pdf(
             reference_number,
-            application_data,
-            is_admin=True,
-            attach_files=True,
-            download=False
+            application_data
         )
 
         mark_files_created(reference_number)

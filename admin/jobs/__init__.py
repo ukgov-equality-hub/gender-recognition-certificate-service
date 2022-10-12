@@ -41,10 +41,7 @@ def create_files():
         print('Creating pdf for application %s' % application.reference_number, flush=True)
         ApplicationFiles().create_or_download_pdf(
             application.reference_number,
-            application.application_data(),
-            is_admin=True,
-            attach_files=True,
-            download=False
+            application.application_data()
         )
 
         application.filesCreated = True
