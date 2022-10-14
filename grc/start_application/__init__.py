@@ -77,9 +77,9 @@ def isFirstVisit():
         if form.validate_on_submit():
             if form.isFirstVisit.data == 'FIRST_VISIT' or form.isFirstVisit.data == 'LOST_REFERENCE':
                 try:
-                    application_data = DataStore.create_new_application(email_address=session['validatedEmail'])
+                    application = DataStore.create_new_application(email_address=session['validatedEmail'])
                     session.clear()  # Clear out session['validatedEmail']
-                    session['reference_number'] = application_data.reference_number
+                    session['reference_number'] = application.reference_number
                     return local_redirect(url_for('startApplication.reference'))
 
                 except BaseException as err:

@@ -10,7 +10,6 @@ feedback = Blueprint('feedback', __name__)
 @feedback.route('/feedback', methods=['GET'])
 def view_feedback():
     feedback_db_rows = Feedback.query.order_by(Feedback.created.desc())
-
     feedback_objects = [FeedbackViewModel(feedback_db_row) for feedback_db_row in feedback_db_rows]
 
     return render_template(
@@ -23,9 +22,7 @@ def view_feedback():
 @feedback.route('/feedback/download', methods=['GET'])
 def download_feedback():
     feedback_db_rows = Feedback.query.order_by(Feedback.created.desc())
-
     feedback_dictionaries = [vars(FeedbackViewModel(feedback_db_row)) for feedback_db_row in feedback_db_rows]
-
     fieldnames = [
         'id',
         'created',
