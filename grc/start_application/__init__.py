@@ -80,6 +80,7 @@ def isFirstVisit():
                     application = DataStore.create_new_application(email_address=session['validatedEmail'])
                     session.clear()  # Clear out session['validatedEmail']
                     session['reference_number'] = application.reference_number
+                    DataStore.increment_application_sessions(application.reference_number)
                     return local_redirect(url_for('startApplication.reference'))
 
                 except BaseException as err:
@@ -113,6 +114,7 @@ def isFirstVisit():
                         logger.log(LogLevel.INFO, f"{logger.mask_email_address(session['validatedEmail'])} accessed their application")
                         session.clear()  # Clear out session['validatedEmail']
                         session['reference_number'] = application.reference_number
+                        DataStore.increment_application_sessions(application.reference_number)
                         return local_redirect(url_for('taskList.index'))
 
                     else:
