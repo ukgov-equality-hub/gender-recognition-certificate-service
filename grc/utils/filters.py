@@ -46,6 +46,28 @@ def remove_file_name_from_error_filter(context, error):
 
 
 @jinja2.pass_context
+@blueprint.app_template_filter('plural_text')
+def plural_text_filter(context, data):
+    try:
+        if data[1] != 1:
+            if data[0] == 'address': return 'addresses'
+            return f'{data[0]}s'
+    except:
+        pass
+    return data[0]
+
+
+@jinja2.pass_context
+@blueprint.app_template_filter('number_with_commas')
+def number_with_commas_filter(context, num):
+    try:
+        return f'{num:,}'
+    except:
+        pass
+    return num
+
+
+@jinja2.pass_context
 @blueprint.app_template_filter('is_FieldList')
 def is_FieldList(context, value):
     return isinstance(value, FieldList)

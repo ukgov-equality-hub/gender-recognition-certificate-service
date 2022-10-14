@@ -58,12 +58,12 @@ def create_app(test_config=None):
         response.headers['X-Frame-Options'] = 'deny'
         response.headers['X-Content-Type-Options'] = 'nosniff'
         response.headers['Content-Security-Policy'] = "default-src 'self'; " \
-                                                        "script-src 'self' 'unsafe-inline'; " \
-                                                        "script-src-elem 'self' 'unsafe-inline'; " \
+                                                        "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; " \
+                                                        "script-src-elem 'self' 'unsafe-inline' https://cdn.jsdelivr.net; " \
                                                         "script-src-attr 'self' 'unsafe-inline'; " \
                                                         "style-src 'self' 'unsafe-inline'; " \
-                                                        "img-src 'self'; " \
-                                                        "font-src 'self'; " \
+                                                        "img-src 'self' blob: data:; " \
+                                                        "font-src 'self' data:; " \
                                                         "connect-src 'self'; " \
                                                         "form-action 'self'"
 

@@ -209,6 +209,27 @@ def validateStatutoryDeclarationDate(form, field):
             raise ValidationError('Enter a date in the past')
 
 
+def validateDateRange(form, field):
+    if not form['start_date_day'].errors and not form['start_date_month'].errors and not form['end_date_day'].errors and not form['end_date_month'].errors:
+        try:
+            start_date_day = int(form['start_date_day'].data)
+            start_date_month = int(form['start_date_month'].data)
+            start_date_year = int(form['start_date_year'].data)
+
+            start_date = date(start_date_year, start_date_month, start_date_day)
+        except Exception as e:
+            raise ValidationError('Enter a valid start year')
+
+        try:
+            end_date_day = int(form['end_date_day'].data)
+            end_date_month = int(form['end_date_month'].data)
+            end_date_year = int(form['end_date_year'].data)
+
+            end_date = date(end_date_year, end_date_month, end_date_day)
+        except Exception as e:
+            raise ValidationError('Enter a valid end year')
+
+
 def validateNationalInsuranceNumber(form, field):
 
     # https://www.gov.uk/hmrc-internal-manuals/national-insurance-manual/nim39110
