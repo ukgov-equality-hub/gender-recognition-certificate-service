@@ -154,10 +154,14 @@
             <li>Registered birth country: <strong>{{ application_data.birth_registration_data.country_of_birth }}</strong></li>
         {% endif %}
     </ul>
-    
 
-    <h4 class="govuk-heading-m">Documents to post</h4>
-    <ul class="govuk-list govuk-list--bullet">
+    <h4 style="font-size: 16px;">Declaration</h4>
+    <ul class="govuk-list govuk-list--bullet" style="font-size: 16px;">
+        <li>I certify that all the information given in this application is correct to the best of my knowledge. I understand that to make a false application is an offence: <strong>{% if application_data.submit_and_pay_data.declaration %}Yes{% else %}No{% endif %}</strong></li>
+    </ul>
+
+    <h4 style="font-size: 16px;">Documents to post</h4>
+    <ul class="govuk-list govuk-list--bullet" style="font-size: 16px;">
         <li>your original or a certified copy of your full birth or adoption certificate</li>
         {% if application_data.submit_and_pay_data.is_using_ex160_form %}
             <li>an EX160 form</li>

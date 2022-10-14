@@ -35,6 +35,7 @@ class Application(db.Model):
     completed = db.Column(db.DateTime)
     completedBy = db.Column(db.String(180))
     filesCreated = db.Column(db.Boolean, default=False)
+    number_sessions = db.Column(db.Integer, default=0)
 
     def application_data(self) -> ApplicationData:
         application_data: ApplicationData = jsonpickle.decode(self.user_input)

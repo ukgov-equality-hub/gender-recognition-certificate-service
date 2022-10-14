@@ -1,38 +1,205 @@
 {% extends 'base.html' %}
+{% import "govuk-design-system-templates/error-summary.html" as error_summary %}
+{% import "govuk-design-system-templates/text-input.html" as textInput %}
 
 {% block title %}GRC stats{% endblock %}
 
 {% block content %}
+    <script src="{{ url_for('static', filename='assets/charts.js') }}"></script>
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
 
             <h1 class="govuk-heading-l">
-                View GRC stats
+                {{ stats.applications_in_progress | number_with_commas }} {{ ['application', stats.applications_in_progress] | plural_text }} in progress
             </h1>
+            {% if stats.number_of_duplicate_emailaddresses[0]['number of applications'] > 0 %}
+            <h3 class="govuk-heading-m govuk-!-margin-bottom-2">Warnings</h3>
+            <p class="govuk-body  govuk-!-margin-0">{{ stats.number_of_duplicate_emailaddresses[0]['number of applications'] }} Email
+                {{ ['address', stats.number_of_duplicate_emailaddresses[0]['number of applications']] | plural_text }} with multiple applications.</p>
+            {% endif %}
+            <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
 
             {% if message != "" %}
                 <div class="govuk-inset-text">{{ message }}</div>
             {% endif %}
 
-            <h2 class="govuk-heading-m">
-                Applications by status
+            <h2 class="govuk-heading-l">
+                Applications to date 
+                <a id="hide_choose_dates" href="#" class="govuk-link govuk-body govuk-!-margin-left-2" onclick="showDateForm('hide')">close</a>
+                <a id="show_choose_dates" href="#" class="govuk-link govuk-body govuk-!-margin-left-2" onclick="showDateForm('show')">choose</a>
             </h2>
-            <table class="govuk-table new-table">
-                <thead class="govuk-table__head">
-                    <tr class="govuk-table__row">
-                        {% for stat in stats.applications_by_status %}
-                        <th scope="col" class="govuk-table__header">{{ stat[0] | application_status | capitalize }}</th>
-                        {% endfor %}
-                    </tr>
-                </thead>
-                <tbody class="govuk-table__body">
-                    <tr class="govuk-table__row">
-                        {% for stat in stats.applications_by_status %}
-                        <td scope="col" class="govuk-table__header">{{ stat[1] }}</td>
-                        {% endfor %}
-                    </tr>
-                </tbody>
-            </table>
+
+            {{ error_summary.renderFor(form) }}
+
+            <form id="choose_dates" method="POST">
+                {{ form.csrf_token }}
+
+                <div class="govuk-body govuk-!-margin-bottom-6">
+                    <span class=" govuk-!-padding-right-3">
+                        {% if date_range == 'last_30_days' %}
+                        <strong>Last 30 days</strong>
+                        {% else %}
+                        <a href="/?date_range=last_30_days" class="govuk-link">Last 30 days</a>
+                        {% endif %}
+                    </span>
+                    <span class=" govuk-!-padding-right-3">
+                        {% if date_range == 'last_3_months' %}
+                        <strong>Last 3 months</strong>
+                        {% else %}
+                        <a href="/?date_range=last_3_months" class="govuk-link">Last 3 months</a>
+                        {% endif %}
+                    </span>
+                    <span class=" govuk-!-padding-right-3">
+                        {% if date_range == 'last_6_months' %}
+                        <strong>Last 6 months</strong>
+                        {% else %}
+                        <a href="/?date_range=last_6_months" class="govuk-link">Last 6 months</a>
+                        {% endif %}
+                    </span>
+                    <span>
+                        {% if date_range == 'all_time' %}
+                        <strong>All time</strong>
+                        {% else %}
+                        <a href="/" class="govuk-link">All time</a>
+                        {% endif %}
+                    </span>
+                </div>
+
+                <div class="govuk-form-group">
+                    <fieldset class="govuk-fieldset">
+                        <div class="govuk-!-margin-right-5" style="display: inline-block;">
+                            <p class="govuk-body govuk-!-margin-bottom-2"><strong>From</strong></p>
+                            <div class="govuk-date-input__item">
+                                <div class="govuk-form-group">
+                                    <label for="start_date_day" class="govuk-label govuk-date-input__label">
+                                        Day
+                                    </label>
+                                    <input type="text"
+                                            id="start_date_day" name="start_date_day"
+                                            value="{{ form.start_date_day.data if form.start_date_day.data is not none }}"
+                                            pattern="[0-9]*"
+                                            inputmode="numeric"
+                                            class="govuk-input govuk-date-input__input govuk-input--width-2  {{ 'govuk-input--error' if form.start_date_day.errors }}">
+                                </div>
+                            </div>
+
+                            <div class="govuk-date-input__item">
+                                <div class="govuk-form-group">
+                                    <label for="start_date_month" class="govuk-label govuk-date-input__label">
+                                        Month
+                                    </label>
+                                    <input type="text"
+                                            id="start_date_month" name="start_date_month"
+                                            value="{{ form.start_date_month.data if form.start_date_month.data is not none }}"
+                                            pattern="[0-9]*"
+                                            inputmode="numeric"
+                                            class="govuk-input govuk-date-input__input govuk-input--width-2  {{ 'govuk-input--error' if form.start_date_month.errors }}">
+                                </div>
+                            </div>
+
+                            <div class="govuk-date-input__item">
+                                <div class="govuk-form-group">
+                                    <label for="start_date_year" class="govuk-label govuk-date-input__label">
+                                        Year
+                                    </label>
+                                    <input type="text"
+                                            id="start_date_year" name="start_date_year"
+                                            value="{{ form.start_date_year.data if form.start_date_year.data is not none }}"
+                                            pattern="[0-9]*"
+                                            inputmode="numeric"
+                                            class="govuk-input govuk-date-input__input govuk-input--width-4  {{ 'govuk-input--error' if form.start_date_year.errors }}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="govuk-!-margin-right-5" style="display: inline-block;">
+                            <p class="govuk-body govuk-!-margin-bottom-2"><strong>To</strong></p>
+                            <div class="govuk-date-input__item">
+                                <div class="govuk-form-group">
+                                    <label for="end_date_day" class="govuk-label govuk-date-input__label">
+                                        Day
+                                    </label>
+                                    <input type="text"
+                                            id="end_date_day" name="end_date_day"
+                                            value="{{ form.end_date_day.data if form.end_date_day.data is not none }}"
+                                            pattern="[0-9]*"
+                                            inputmode="numeric"
+                                            class="govuk-input govuk-date-input__input govuk-input--width-2  {{ 'govuk-input--error' if form.end_date_day.errors }}">
+                                </div>
+                            </div>
+
+                            <div class="govuk-date-input__item">
+                                <div class="govuk-form-group">
+                                    <label for="end_date_month" class="govuk-label govuk-date-input__label">
+                                        Month
+                                    </label>
+                                    <input type="text"
+                                            id="end_date_month" name="end_date_month"
+                                            value="{{ form.end_date_month.data if form.end_date_month.data is not none }}"
+                                            pattern="[0-9]*"
+                                            inputmode="numeric"
+                                            class="govuk-input govuk-date-input__input govuk-input--width-2  {{ 'govuk-input--error' if form.end_date_month.errors }}">
+                                </div>
+                            </div>
+
+                            <div class="govuk-date-input__item">
+                                <div class="govuk-form-group">
+                                    <label for="end_date_year" class="govuk-label govuk-date-input__label">
+                                        Year
+                                    </label>
+                                    <input type="text"
+                                            id="end_date_year" name="end_date_year"
+                                            value="{{ form.end_date_year.data if form.end_date_year.data is not none }}"
+                                            pattern="[0-9]*"
+                                            inputmode="numeric"
+                                            class="govuk-input govuk-date-input__input govuk-input--width-4  {{ 'govuk-input--error' if form.end_date_year.errors }}">
+                                </div>
+                            </div>
+
+                            <button class="govuk-button  govuk-!-margin-bottom-0" style="vertical-align: baseline;" data-module="govuk-button">
+                                Set date range
+                            </button>
+                        </div>
+                    </fieldset>
+                </div>
+                <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
+            </form>
+
+            <div>
+                <p class="govuk-body govuk-!-margin-bottom-1"><strong>Applications started</strong>: {{ stats.total_applications_started | number_with_commas }}</p>
+                <p class="govuk-body"><strong>Applications submitted</strong>: {{ stats.total_applications_submitted | number_with_commas }} ({{ stats.total_applications_submitted_percent }}%)</p>
+            </div>
+
+            <div class="chart" style="width: 100%; height: 500px;">
+                <div id="applications_by_month"></div>
+                <div class="links">
+                    <a href="javascript:download('applications_by_month')" class="govuk-link">Download image</a> |
+                    <a href="/download/applications_by_month" target="_blank" class="govuk-link">Download data</a>
+                </div>
+            </div>
+
+            <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
+            <div>
+                <div class="chart" style="width: calc(50% - 20px); height: 350px; margin-right: 10px;">
+                    <h3 class="govuk-heading-s">Days to complete application</h3>
+                    <div id="days_to_complete_application_banded"></div>
+                    <div class="links">
+                        <a href="javascript:download('days_to_complete_application_banded')" class="govuk-link">Download image</a> |
+                        <a href="/download/days_to_complete_application" target="_blank" class="govuk-link">Download data</a>
+                    </div>
+                </div>
+                <div class="chart" style="width: calc(50% - 20px); height: 350px; margin-left: 10px;">
+                    <h3 class="govuk-heading-s">Sessions to complete application</h3>
+                    <div id="sessions_to_complete_application_banded"></div>
+                    <div class="links">
+                        <a href="javascript:download('sessions_to_complete_application_banded')" class="govuk-link">Download image</a> |
+                        <a href="/download/sessions_to_complete_application" target="_blank" class="govuk-link">Download data</a>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
 
             <h2 class="govuk-heading-m">
                 Feedback
@@ -45,4 +212,25 @@
 
         </div>
     </div>
+    <script>
+        function showDateForm(display) {
+            if (display == 'show') {
+                document.getElementById('choose_dates').style.display = 'block'
+                document.getElementById('hide_choose_dates').style.display = 'inline'
+                document.getElementById('show_choose_dates').style.display = 'none'
+            } else {
+                document.getElementById('choose_dates').style.display = 'none'
+                document.getElementById('hide_choose_dates').style.display = 'none'
+                document.getElementById('show_choose_dates').style.display = 'inline'
+            }
+        }
+
+        showDateForm('{% if start_date and end_date %}show{% else %}hide{% endif %}')
+
+        //chart('applications_by_month', [{ 'title': 'started applications', 'data': {{ stats.started_applications_by_month | safe }} }, { 'title': 'completed applications', 'data': {{ stats.completed_applications_by_month | safe }} }], { type: 'area', limit: 12 })
+        chart('applications_by_month', [{ 'title': 'applications', 'data': {{ stats.applications_by_month | safe }} }], { type: 'area', xkey: 'application date', ykey: 'number of applications', zkey: 'status', limit: 12 })
+        chart('days_to_complete_application_banded', [{{ stats.days_to_complete_application_banded | safe }}], { type: 'bar', xkey: 'range', ykey: 'number of applications' })
+        chart('sessions_to_complete_application_banded', [{{ stats.sessions_to_complete_application_banded | safe }}], { type: 'bar', xkey: 'range', ykey: 'number of applications' })
+    </script>
+
 {% endblock %}

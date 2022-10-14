@@ -63,6 +63,16 @@ class DataStore:
 
 
     @staticmethod
+    def increment_application_sessions(reference_number: str) -> None:
+        application_record: Application = Application.query.filter_by(
+            reference_number=reference_number
+        ).first()
+
+        application_record.number_sessions += 1
+        db.session.commit()
+
+
+    @staticmethod
     def compact_reference(reference_number: str) -> str:
         compacted_reference = reference_number.replace('-', '').replace(' ', '').upper()
         return compacted_reference
