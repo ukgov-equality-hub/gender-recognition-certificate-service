@@ -64,7 +64,7 @@ def create_app(test_config=None):
         response.headers['X-Frame-Options'] = 'deny'
         response.headers['X-Content-Type-Options'] = 'nosniff'
         response.headers['Content-Security-Policy'] = "default-src 'self'; " \
-                                                        "script-src 'self' 'unsafe-inline'; " \
+                                                        "script-src 'self' 'unsafe-inline' https://*.googletagmanager.com https://*.google-analytics.com; " \
                                                         "script-src-elem 'self' 'unsafe-inline' https://*.googletagmanager.com https://*.google-analytics.com; " \
                                                         "script-src-attr 'self' 'unsafe-inline'; " \
                                                         "style-src 'self' 'unsafe-inline'; " \
