@@ -6,7 +6,7 @@ import tests.end_to_end_tests.journey_1.data as data
 
 TASK_LIST_BUTTON_NAME = 'Marriage and civil partnership documents'
 PAGE_URL = '/upload/marriage-documents'
-PAGE_H1 = 'Upload marriage and civil partnership documents'
+PAGE_H1 = 'Upload marriage or civil partnership documents'
 
 
 async def run_checks_on_page(page: Page, asserts: AssertHelpers, helpers: PageHelpers):

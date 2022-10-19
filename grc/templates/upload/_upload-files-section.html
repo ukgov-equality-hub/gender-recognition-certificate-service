@@ -1,4 +1,4 @@
-{% macro render(form, deleteform, deleteAllFilesInSectionForm, currently_uploaded_files, section_url, duplicate_aws_file_names) %}
+{% macro render(form, deleteform, deleteAllFilesInSectionForm, currently_uploaded_files, section_url, duplicate_aws_file_names, extra_upload_hint) %}
     <div id="file-upload-section" class="govuk-!-margin-top-8">
         {% if duplicate_aws_file_names %}
             <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" data-module="govuk-error-summary">
@@ -82,6 +82,11 @@
                     <div id="documents-hint" class="govuk-hint">
                         The files must be a JPG, BMP, PNG, TIF or PDF and be smaller than 10MB
                     </div>
+                    {% if extra_upload_hint %}
+                        <div id="extra-upload-hint">
+                            {{ extra_upload_hint() }}
+                        </div>
+                    {% endif %}
                     {% if form.documents.errors %}
                         <p id="documents-error" class="govuk-error-message">
                             {% for error in form.errors %}
@@ -97,6 +102,7 @@
                     <input id="documents" type="file" name="documents" multiple
                            accept=".jpg,.jpeg,.bmp,.png,.tif,.tiff,.pdf"
                            class="govuk-file-upload govuk-!-margin-bottom-4 {{ 'govuk-input--error' if form.documents.errors }}"
+                           aria-describedby="documents-hint{{ (' ' + 'extra-upload-hint') if extra_upload_hint else '' }}"
                            onchange="checkFile(event)">
                 </div>
                 <button id="submit" type="submit" name="button_clicked" value="Upload file" class="govuk-button" data-module="govuk-button">

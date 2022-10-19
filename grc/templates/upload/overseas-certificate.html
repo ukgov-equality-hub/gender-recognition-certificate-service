@@ -17,36 +17,29 @@
             <h1 class="govuk-heading-l">
                 Overseas gender recognition certificate documents
             </h1>
+            <p class="govuk-body">
+                This is where you can upload copies of your overseas gender recognition certificate documents.
+            </p>
             <div class="govuk-inset-text">
-                <p class="govuk-body">
-                    You must upload a scan or good quality photograph of your documents.
-                    If the document is longer than one page, you must upload every page.
-                    We will only accept clear images of full pages – if you take a photograph,
-                    please ensure all 4 corners of each page are visible.
-                </p>
-                <p class="govuk-body">
-                    We process and protect all documents you upload in accordance with our
-                    <a href="{{ url_for('policies.privacy_policy') }}"
-                    target="_blank" class="govuk-link">
-                        privacy policy (opens in a new tab)</a>.
-                </p>
+                Find out more about documents you can submit
+                <a href="https://www.gov.uk/apply-gender-recognition-certificate/what-documents-you-need#if-youre-on-the-overseas-route"
+                   target="_blank" class="govuk-link">
+                    if you’re on the overseas route (opens in new tab)</a>.
             </div>
             <p class="govuk-body">
-                If your affirmed gender is already recognised in an
-                <a href="https://www.gov.uk/government/publications/gender-recognition-certificate-list-of-approved-countries-and-territories"
-                   target="_blank" class="govuk-link">
-                    approved country or territory (opens in a new tab)</a>,
-                you need a document that proves this.
+                You must upload a scan or good quality photograph of your documents.
+                If the document is longer than one page, you must upload every page.
             </p>
             <p class="govuk-body">
-                The document could be:
+                We will only accept clear images of full pages.
+                If you take a photograph, please ensure all 4 corners of each page are visible.
             </p>
-            <ul class="govuk-list govuk-list--bullet">
-                <li>something that’s equal to a Gender Recognition Certificate</li>
-                <li>an updated birth certificate</li>
-                <li>a court order</li>
-                <li>an entry in a legal register</li>
-            </ul>
+            <p class="govuk-body">
+                We process and protect all documents you upload in accordance with our
+                <a href="{{ url_for('policies.privacy_policy') }}"
+                target="_blank" class="govuk-link">
+                    privacy policy (opens in a new tab)</a>.
+            </p>
 
             {{ upload_files_section.render(
                 form,
