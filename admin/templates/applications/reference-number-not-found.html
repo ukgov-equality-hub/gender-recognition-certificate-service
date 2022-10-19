@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Reference number not found{% endblock %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+
+            <h1 class="govuk-heading-l">
+                Reference number not found
+            </h1>
+
+            <p class="govuk-body">
+                We could not find an application with reference number
+                <b>
+                    {{ reference_number_text }}</b>.
+            </p>
+
+        </div>
+    </div>
+{% endblock %}

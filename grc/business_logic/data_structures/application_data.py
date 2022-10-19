@@ -50,6 +50,12 @@ class ApplicationData:
             return ListStatus.COMPLETED
 
     @property
+    def reference_number_formatted(self) -> str:
+        trimmed_reference = self.reference_number.replace('-', '').replace(' ', '').upper()
+        formatted_reference = trimmed_reference[0: 4] + '-' + trimmed_reference[4: 8]
+        return formatted_reference
+
+    @property
     def is_uk_application(self) -> bool:
         return self.confirmation_data.gender_recognition_outside_uk == False or \
                self.confirmation_data.gender_recognition_from_approved_country == False  # == False because we want to exclude None
