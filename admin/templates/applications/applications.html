@@ -14,6 +14,29 @@
                 <div class="govuk-inset-text">{{ message }}</div>
             {% endif %}
 
+            <form method="POST" action="{{ url_for('applications.search_by_reference_number') }}"
+                  class="govuk-inset-text">
+                <h2 class="govuk-heading-s govuk-!-margin-bottom-2">
+                    Search by reference number
+                </h2>
+
+                <div style="display: flex; align-items: baseline; flex-wrap: wrap">
+                    <label class="govuk-label govuk-!-margin-right-2" for="reference_number">
+                        Reference number
+                    </label>
+                    <input type="text" id="reference_number" name="reference_number" value=""
+                           class="govuk-input govuk-input--width-10 govuk-!-margin-right-2">
+
+                    <button class="govuk-button govuk-!-margin-bottom-0" data-module="govuk-button">
+                        Go
+                    </button>
+                </div>
+            </form>
+
+            <h2 class="govuk-visually-hidden">
+                All applications
+            </h2>
+
             <div class="govuk-tabs" data-module="govuk-tabs">
                 <ul class="govuk-tabs__list" role="tablist">
                     <li class="govuk-tabs__list-item govuk-tabs__list-item--selected" role="presentation">
@@ -44,6 +67,7 @@
                         <table class="govuk-table new-table">
                             <thead class="govuk-table__head">
                                 <tr class="govuk-table__row">
+                                    <th scope="col" class="govuk-table__header">Reference number</th>
                                     <th scope="col" class="govuk-table__header">Applicant name</th>
                                     <th scope="col" class="govuk-table__header">Submitted</th>
                                     <th scope="col" class="govuk-table__header"><span class="govuk-visually-hidden">Actions</span></th>
@@ -54,11 +78,14 @@
                                     {% set application_data = application.application_data() %}
                                     <tr class="govuk-table__row">
                                         <th scope="row" class="govuk-table__header">
+                                            {{ application_data.reference_number_formatted }}
+                                        </th>
+                                        <td class="govuk-table__cell">
                                             {{ application_data.personal_details_data.title }}
                                             {{ application_data.personal_details_data.first_name }}
                                             {{ application_data.personal_details_data.middle_names_or_empty_string }}
                                             <span style="text-decoration: underline;">{{ application_data.personal_details_data.last_name }}</span>
-                                        </th>
+                                        </td>
                                         <td class="govuk-table__cell">
                                             {{ application.updated | format_date }}
                                         </td>

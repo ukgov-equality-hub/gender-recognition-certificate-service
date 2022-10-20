@@ -1,11 +1,13 @@
 from datetime import datetime
-from flask import Blueprint, abort, render_template, url_for, session, make_response
+from flask import Blueprint, abort, render_template, url_for, session, make_response, request
+from admin.applications.forms import ReferenceNumberForm
 from grc.business_logic.data_store import DataStore
 from grc.utils.decorators import AdminViewerRequired, AdminRequired
 from grc.models import db, Application, ApplicationStatus
 from grc.external_services.aws_s3_client import AwsS3Client
 from grc.utils.redirect import local_redirect
 from grc.utils.logger import LogLevel, Logger
+from grc.utils.reference_number import validate_reference_number
 
 applications = Blueprint('applications', __name__)
 logger = Logger()
@@ -36,6 +38,22 @@ def index():
         newApplications=newApplications,
         downloadedApplications=downloadedApplications,
         completedApplications=completedApplications
+    )
+
+
+@applications.route('/applications/search-by-reference-number', methods=['POST'])
+@AdminViewerRequired
+def search_by_reference_number():
+    form = ReferenceNumberForm()
+
+    if form.reference_number.data:
+        if validate_reference_number(form.reference_number.data):
+            reference_number = form.reference_number.data.replace('-', '').replace(' ', '').upper()
+            return local_redirect(url_for('applications.view', reference_number=reference_number))
+
+    return render_template(
+        'applications/reference-number-not-found.html',
+        reference_number_text=form.reference_number.data
     )
 
 
