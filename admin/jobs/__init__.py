@@ -232,7 +232,7 @@ def application_notifications():
 
 def anonymise_application_after_period_of_inactivity(days_between_last_update_and_deletion):
     now = datetime.now()
-    earliest_allowed_inactive_application_updated_date = now - relativedelta(days=days_between_last_update_and_deletion)
+    earliest_allowed_inactive_application_updated_date = calculate_earliest_allowed_inactive_application_updated_date(now, days_between_last_update_and_deletion)
 
     applications_to_anonymise = Application.query.filter(
         Application.status == ApplicationStatus.STARTED,
@@ -243,6 +243,10 @@ def anonymise_application_after_period_of_inactivity(days_between_last_update_an
         anonymise_application(application_to_anonymise)
 
     db.session.commit()
+
+
+def calculate_earliest_allowed_inactive_application_updated_date(now, days_between_last_update_and_deletion):
+    return now - relativedelta(days=days_between_last_update_and_deletion)
 
 
 def send_reminder_emails_before_application_deletion(days_between_last_update_and_deletion):
@@ -288,7 +292,7 @@ def anonymise_completed_applications():
     days_between_application_completion_and_anonymisation = 7
 
     now = datetime.now()
-    earliest_allowed_application_completed_date = now - relativedelta(days=days_between_application_completion_and_anonymisation)
+    earliest_allowed_application_completed_date = calculate_earliest_allowed_application_completed_date(now, days_between_application_completion_and_anonymisation)
 
     applications_to_anonymise = Application.query.filter(
         Application.status == ApplicationStatus.COMPLETED,
@@ -299,6 +303,10 @@ def anonymise_completed_applications():
         anonymise_application(application_to_anonymise)
 
     db.session.commit()
+
+
+def calculate_earliest_allowed_application_completed_date(now, days_between_application_completion_and_anonymisation):
+    return now - relativedelta(days=days_between_application_completion_and_anonymisation)
 
 
 def anonymise_application(application_to_anonymise):
@@ -315,7 +323,7 @@ def delete_expired_security_codes():
     hours_between_security_code_creation_and_expiry = 24
 
     now = datetime.now()
-    earliest_allowed_security_code_creation_time = now - relativedelta(hours=hours_between_security_code_creation_and_expiry)
+    earliest_allowed_security_code_creation_time = calculate_earliest_allowed_security_code_creation_time(now, hours_between_security_code_creation_and_expiry)
 
     security_codes_to_delete = SecurityCode.query.filter(
         SecurityCode.created < earliest_allowed_security_code_creation_time
@@ -325,6 +333,10 @@ def delete_expired_security_codes():
         db.session.delete(security_code_to_delete)
 
     db.session.commit()
+
+
+def calculate_earliest_allowed_security_code_creation_time(now, hours_between_security_code_creation_and_expiry):
+    return now - relativedelta(hours=hours_between_security_code_creation_and_expiry)
 
 
 def get_columns():
