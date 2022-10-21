@@ -17,89 +17,35 @@
             <h1 class="govuk-heading-l">
                 Upload your medical reports
             </h1>
+            <p class="govuk-body">
+                This is where you can upload your 2 medical reports.
+            </p>
             <div class="govuk-inset-text">
-                <p class="govuk-body">
-                    You must upload a scan or good quality photograph of the whole medical report.
-                    If the report is longer than one page, you must upload every page.
-                    We will only accept clear images of full pages – if you take a photograph,
-                    please ensure all 4 corners of each page are visible.
-                </p>
-                <p class="govuk-body">
-                    We process and protect all documents you upload in accordance with our
-                    <a href="{{ url_for('policies.privacy_policy') }}"
-                       target="_blank" class="govuk-link">
-                        privacy policy (opens in a new tab)</a>.
-                </p>
+                Find out more about the
+                <a href="https://www.gov.uk/apply-gender-recognition-certificate/what-documents-you-need#medical-reports-from-the-uk"
+                   target="_blank" class="govuk-link">
+                    medical reports you need (opens in new tab)</a>.
             </div>
             <p class="govuk-body">
-                You need 2 reports written by either:
-            </p>
-            <ul class="govuk-list govuk-list--bullet">
-                <li>2 different medical doctors registered in the UK</li>
-                <li>a medical doctor and a clinical psychologist, both registered in the UK</li>
-            </ul>
-            <p class="govuk-body">
-                Neither of the reports can be written by a nurse practitioner.
+                You must upload a scan or good quality photograph of the whole medical report.
+                If the report is longer than one page, you must upload every page.
             </p>
             <p class="govuk-body">
-                The reports both need to include the name, practice address and contact details of the person who wrote the report.
-            </p>
-            <p class="govuk-body govuk-!-margin-bottom-2">
-                At least 1 of the 2 reports needs to include details of any gender affirmation treatment
-                you’ve had or plan to have, including:
-            </p>
-            <ul class="govuk-list govuk-list--bullet">
-                <li>any surgical treatments</li>
-                <li>any non-surgical treatments, such as hormone therapy</li>
-                <li>if you’ve not had any treatment and do not plan to have any, why that’s the case</li>
-            </ul>
-            <p class="govuk-body govuk-!-margin-bottom-2">
-                The first report needs to confirm your gender dysphoria diagnosis and the clinical history this was based on, including:
-            </p>
-            <ul class="govuk-list govuk-list--bullet">
-                <li>who made the diagnosis</li>
-                <li>when the diagnosis was made</li>
-                <li>what evidence was used to make the diagnosis</li>
-            </ul>
-            <p class="govuk-body">
-                This first report needs to be written by a registered doctor or clinical psychologist who
-                practises in the field of gender dysphoria. You can find one of these by:
-            </p>
-            <ul class="govuk-list govuk-list--bullet">
-                <li>asking your GP for a referral</li>
-                <li>
-                    contacting someone on the
-                    <a href="https://www.gov.uk/government/publications/gender-recognition-certificate-list-of-medical-practitioners-in-gender-dysphoria"
-                        target="_blank" class="govuk-link">
-                        list of specialists in gender dysphoria (opens in a new tab)
-                    </a>
-                    - this is not a complete list and it’s not always up-to-date
-                </li>
-            </ul>
-            <p class="govuk-body">
-                If your registered doctor or clinical psychologist is not on the list of specialists, ask them to
-                include a brief summary of their experience of practising in the field of gender dysphoria.
+                We will only accept clear images of full pages.
+                If you take a photograph, please make sure all 4 corners of each page are visible.
             </p>
             <p class="govuk-body">
-                The second report can be written by any registered doctor or clinical psychologist,
-                including your GP, a surgeon or an endocrinologist.
-            </p>
-            <p class="govuk-body">
-                There’s no required content for this second report, and it can include the same information from the first report.
-            </p>
-            <p class="govuk-body">
-                The reports do not need to be specially written for your application, so long as they meet all the requirements.
-                You may already have suitable reports in your medical records.
-            </p>
-            <p class="govuk-body">
-                If you do need new reports written, you’ll probably need to pay for them even if you use NHS medical practitioners.
-            </p>
-            <p class="govuk-body">
-                There is a
-                <a href="https://www.gov.uk/government/publications/gender-recognition-certificate-writing-medical-reports"
+                We process and protect all documents you upload in accordance with our
+                <a href="{{ url_for('policies.privacy_policy') }}"
                    target="_blank" class="govuk-link">
-                    form that medical practitioners can use to write either of these reports (opens in a new tab)</a>.
+                    privacy policy (opens in a new tab)</a>.
             </p>
+
+            {% macro extra_upload_hint() %}
+                <p class="govuk-body">
+                    Please upload the files in page order if you can.
+                </p>
+            {%- endmacro %}
 
             {{ upload_files_section.render(
                 form,
@@ -107,7 +53,8 @@
                 deleteAllFilesInSectionForm,
                 currently_uploaded_files=currently_uploaded_files,
                 section_url=section_url,
-                duplicate_aws_file_names=duplicate_aws_file_names)
+                duplicate_aws_file_names=duplicate_aws_file_names,
+                extra_upload_hint=extra_upload_hint)
             }}
 
         </div>

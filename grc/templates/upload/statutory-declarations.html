@@ -17,20 +17,6 @@
             <h1 class="govuk-heading-l">
                 Statutory declarations documents
             </h1>
-            <div class="govuk-inset-text">
-                <p class="govuk-body">
-                    You must upload a scan or good quality photograph of each document.
-                    If any document is longer than one page, you must upload every page.
-                    We will only accept clear images of full pages – if you take a photograph,
-                    please ensure all 4 corners of each page are visible.
-                </p>
-                <p class="govuk-body">
-                    We process and protect all documents you upload in accordance with our
-                    <a href="{{ url_for('policies.privacy_policy') }}"
-                    target="_blank" class="govuk-link">
-                        privacy policy (opens in a new tab)</a>.
-                </p>
-            </div>
             <p class="govuk-body">
                 This is where you can upload copies of all required statutory declarations.
             </p>
@@ -41,7 +27,6 @@
                 <li>a statutory declaration for single applicants</li>
                 <li>a statutory declaration for applicants who are married or in a civil partnership</li>
             </ul>
-
             <p class="govuk-body">
                 If you fill out the statutory declaration for applicants who are married or in a civil partnership
                 and you intend to stay in that marriage or civil partnership after you receive a certificate,
@@ -55,6 +40,21 @@
                 </a>
                 to find out which declaration is right for you and who can act as a witness when you sign your declaration.
             </p>
+            <p class="govuk-body">
+                You must upload a scan or good quality photograph of your documents.
+                If the document is longer than one page, you must upload every page.
+            </p>
+            <p class="govuk-body">
+                We will only accept clear images of full pages.
+                If you take a photograph, please ensure all 4 corners of each page are visible.
+            </p>
+            <p class="govuk-body">
+                We process and protect all documents you upload in accordance with our
+                <a href="{{ url_for('policies.privacy_policy') }}"
+                target="_blank" class="govuk-link">
+                    privacy policy (opens in a new tab)</a>.
+            </p>
+
 
             {{ upload_files_section.render(
                 form,

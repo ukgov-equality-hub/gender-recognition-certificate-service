@@ -418,7 +418,7 @@ async def fill_in_application(page: Page, asserts: AssertHelpers, helpers: PageH
     # ------------------------------------------------
     await asserts.url('/upload/marriage-documents')
     await asserts.accessibility()
-    await asserts.h1('Upload marriage and civil partnership documents')
+    await asserts.h1('Upload marriage or civil partnership documents')
     await asserts.number_of_errors(0)
     await asserts.documents_uploaded(0)
 
@@ -431,7 +431,7 @@ async def fill_in_application(page: Page, asserts: AssertHelpers, helpers: PageH
     await asserts.url('/upload/marriage-documents')
     page.set_default_timeout(data.DEFAULT_TIMEOUT)
     await asserts.accessibility()
-    await asserts.h1('Upload marriage and civil partnership documents')
+    await asserts.h1('Upload marriage or civil partnership documents')
     await asserts.number_of_errors(0)
     await asserts.documents_uploaded(1)
 

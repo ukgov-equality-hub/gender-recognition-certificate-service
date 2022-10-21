@@ -17,66 +17,35 @@
             <h1 class="govuk-heading-l">
                 Upload evidence of living in your gender
             </h1>
-            <div class="govuk-inset-text">
-                <p class="govuk-body">
-                    Please upload a scan or good quality photograph of each piece of evidence.
-                    We will only accept clear images. If you take a photograph of a letter or statement,
-                    please ensure all 4 corners of each page are visible.
-                </p>
-                <p class="govuk-body">
-                    We process and protect all documents you upload in accordance with our
-                    <a href="{{ url_for('policies.privacy_policy') }}"
-                    target="_blank" class="govuk-link">
-                        privacy policy (opens in a new tab)</a>.
-                </p>
-            </div>
             <p class="govuk-body">
-                You need copies of evidence to show that you’ve been living in your affirmed gender for the last 2 years.
-            </p>
-            <p class="govuk-body">
-                Each piece of evidence should contain at least one of the following that matches up with your affirmed gender:
-            </p>
-            <ul class="govuk-list govuk-list--bullet">
-                <li>a name</li>
-                <li>a title, like 'Mr' or 'Miss'</li>
-                <li>a gender marker, like 'male' or 'female'</li>
-            </ul>
-            <p class="govuk-body govuk-!-margin-bottom-2">
-                There are no other specific requirements for this evidence, but try to find:
-            </p>
-            <ul class="govuk-list govuk-list--bullet">
-                <li>evidence from different points over the 2 years, with roughly 4 pieces of evidence from each year</li>
-                <li>at least one piece of evidence from the last 2 or 3 months</li>
-                <li>evidence from a variety of different sources</li>
-            </ul>
-            <p class="govuk-body govuk-!-margin-bottom-2">
-                The evidence can come from before you were diagnosed with gender dysphoria.
-            </p>
-            <p class="govuk-body govuk-!-margin-bottom-2">
-                Examples of what you can upload include good quality photocopies or photographs of:
-            </p>
-            <ul class="govuk-list govuk-list--bullet">
-                <li>your driving licence</li>
-                <li>your passport</li>
-                <li>identity cards, like workplace IDs, student IDs, railcards, health insurance cards, library cards or supermarket loyalty cards</li>
-                <li>letters from solicitors, accountants, doctors, dentists or employers</li>
-                <li>bank statements</li>
-                <li>payslips, P60s and P45s</li>
-                <li>benefit letters</li>
-                <li>tax letters and documents, including council tax</li>
-                <li>credit reports</li>
-                <li>confirmation letters that you’re on the electoral register</li>
-                <li>student loan statements</li>
-                <li>utility bills, such as internet bills</li>
-                <li>rental agreements</li>
-                <li>academic certificates and documents</li>
-            </ul>
-            <p class="govuk-body">
-                You might be asked to send in more evidence after you submit your application.
+                This is where you can upload evidence to show you’ve been living in your affirmed gender for the last 2 years.
             </p>
             <div class="govuk-inset-text">
-                Do not upload more than 4 pieces of evidence for each year
+                Find out more about the
+                <a href="https://www.gov.uk/apply-gender-recognition-certificate/what-documents-you-need#evidence-of-living-in-your-gender-for-the-last-2-years"
+                   target="_blank" class="govuk-link">
+                    evidence of living in your gender you need (opens in new tab)</a>.
             </div>
+            <p class="govuk-body">
+                Please upload a scan or good quality photograph of each piece of evidence.
+            </p>
+            <p class="govuk-body">
+                We will only accept clear images.
+                If you take a photograph of a letter or statement, please make sure all 4 corners of each page are visible.
+            </p>
+            <p class="govuk-body">
+                We process and protect all documents you upload in accordance with our
+                <a href="{{ url_for('policies.privacy_policy') }}"
+                target="_blank" class="govuk-link">
+                    privacy policy (opens in a new tab)</a>.
+            </p>
+
+            {% macro extra_upload_hint() %}
+                <div class="govuk-inset-text">
+                    Do not upload more than 4 pieces of evidence for each year.
+                    Do not upload a document you have already submitted, such as a medical report.
+                </div>
+            {%- endmacro %}
 
             {{ upload_files_section.render(
                 form,
@@ -84,7 +53,8 @@
                 deleteAllFilesInSectionForm,
                 currently_uploaded_files=currently_uploaded_files,
                 section_url=section_url,
-                duplicate_aws_file_names=duplicate_aws_file_names)
+                duplicate_aws_file_names=duplicate_aws_file_names,
+                extra_upload_hint=extra_upload_hint)
             }}
 
         </div>

@@ -17,31 +17,31 @@
             <h1 class="govuk-heading-l">
                 Upload name change documents
             </h1>
-            <div class="govuk-inset-text">
-                <p class="govuk-body">
-                    You must upload a scan or good quality photograph of your name change documents.
-                    If the document is longer than one page, you must upload every page. We will only
-                    accept clear images of full pages – if you take a photograph, please ensure all
-                    4 corners of each page are visible.
-                </p>
-                <p class="govuk-body">
-                    We process and protect all documents you upload in accordance with our
-                    <a href="{{ url_for('policies.privacy_policy') }}"
-                    target="_blank" class="govuk-link">
-                        privacy policy (opens in a new tab)</a>.
-                </p>
-            </div>
             <p class="govuk-body">
-                This is where you can upload copies of all documents that show when you’ve changed your name to reflect your gender.
+                This is where you can upload copies of all documents that show when you have changed your name to reflect your gender.
             </p>
             <p class="govuk-body govuk-!-margin-bottom-2">
-                Upload:
+                You can upload:
             </p>
             <ul class="govuk-body govuk-list govuk-list--bullet">
                 <li>deed poll documents, either enrolled or unenrolled</li>
                 <li>change of name documents (Scotland)</li>
                 <li>statutory declarations</li>
             </ul>
+            <p class="govuk-body">
+                You must upload a scan or good quality photograph of your name change documents.
+                If the document is longer than one page, you must upload every page.
+            </p>
+            <p class="govuk-body">
+                We will only accept clear images of full pages.
+                If you take a photograph, please make sure all 4 corners of each page are visible.
+            </p>
+            <p class="govuk-body">
+                We process and protect all documents you upload in accordance with our
+                <a href="{{ url_for('policies.privacy_policy') }}"
+                target="_blank" class="govuk-link">
+                    privacy policy (opens in a new tab)</a>.
+            </p>
 
             {{ upload_files_section.render(
                 form,
