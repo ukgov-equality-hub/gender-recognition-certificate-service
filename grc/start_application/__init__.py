@@ -10,7 +10,6 @@ from grc.utils.decorators import EmailRequired, LoginRequired, Unauthorized, Val
 from grc.utils.reference_number import reference_number_string
 from grc.utils.redirect import local_redirect
 from grc.utils.logger import LogLevel, Logger
-from grc.utils.application_files import ApplicationFiles
 from grc.utils.strtobool import strtobool
 
 startApplication = Blueprint('startApplication', __name__)
@@ -78,14 +77,6 @@ def isFirstVisit():
         if form.validate_on_submit():
             if form.isFirstVisit.data == 'FIRST_VISIT' or form.isFirstVisit.data == 'LOST_REFERENCE':
                 try:
-                    applications_to_anonymise = Application.query.filter(
-                        Application.status == ApplicationStatus.STARTED,
-                        Application.email == session['validatedEmail']
-                    )
-
-                    for application_to_anonymise in applications_to_anonymise:
-                        anonymise_application(application_to_anonymise)
-
                     application = DataStore.create_new_application(email_address=session['validatedEmail'])
                     session.clear()  # Clear out session['validatedEmail']
                     session['reference_number'] = application.reference_number
@@ -263,13 +254,3 @@ def get_previous_page(application_data: ApplicationData, previous_page_in_journe
         section_check_your_answers_page=None,
         section_status=application_data.confirmation_data.section_status,
         application_data=application_data)
-
-
-def anonymise_application(application_to_anonymise):
-    ApplicationFiles().delete_application_files(
-        application_to_anonymise.reference_number,
-        application_to_anonymise.application_data(),
-    )
-    application_to_anonymise.email = ''
-    application_to_anonymise.user_input = ''
-    application_to_anonymise.status = ApplicationStatus.ABANDONED
