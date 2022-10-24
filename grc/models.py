@@ -17,6 +17,7 @@ class ApplicationStatus(enum.Enum):
     STARTED = "STARTED"
     SUBMITTED = "SUBMITTED"
     DOWNLOADED = "DOWNLOADED"
+    ABANDONED = "ABANDONED"
 
 
 class Application(db.Model):
