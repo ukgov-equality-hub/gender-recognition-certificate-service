@@ -318,8 +318,6 @@ def anonymise_application(application_to_anonymise, new_state: ApplicationStatus
     application_to_anonymise.user_input = ''
     application_to_anonymise.status = new_state
 
-    db.session.commit()
-
 
 def delete_expired_security_codes():
     hours_between_security_code_creation_and_expiry = 24
