@@ -291,3 +291,5 @@ def anonymise_application(application_to_anonymise):
     application_to_anonymise.email = ''
     application_to_anonymise.user_input = ''
     application_to_anonymise.status = ApplicationStatus.ABANDONED
+
+    db.session.commit()
