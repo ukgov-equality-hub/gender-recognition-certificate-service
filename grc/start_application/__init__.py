@@ -94,16 +94,17 @@ def isFirstVisit():
                     return returnToIsFirstVisitPageWithInvalidReferenceError(form)
 
                 else:
-                    if not application.email:
-                        # This application has been anonymised (i.e. after it's been submitted and processed)
+                    if (not application.email) or \
+                            application.status == ApplicationStatus.DELETED or \
+                            application.status == ApplicationStatus.ABANDONED:
+                        # This application has been anonymised (i.e. after it's been submitted and processed OR after it's been abandoned)
                         # Show the user a friendly page explaining this
-                        logger.log(LogLevel.WARN, f"{logger.mask_email_address(session['validatedEmail'])} attempted to access a completed application")
-                        return render_template('start-application/application-already-submitted.html')
+                        logger.log(LogLevel.WARN, f"{logger.mask_email_address(session['validatedEmail'])} attempted to access an anonymised application")
+                        return render_template('start-application/application-anonymised.html')
 
                     elif application.status == ApplicationStatus.COMPLETED or \
                             application.status == ApplicationStatus.SUBMITTED or \
-                            application.status == ApplicationStatus.DOWNLOADED or \
-                            application.status == ApplicationStatus.DELETED:
+                            application.status == ApplicationStatus.DOWNLOADED:
                         # This application has already been submitted
                         # Show the user a friendly page explaining this
                         logger.log(LogLevel.WARN, f"{logger.mask_email_address(session['validatedEmail'])} attempted to access a submitted application")

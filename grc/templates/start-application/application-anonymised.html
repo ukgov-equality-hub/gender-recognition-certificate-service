@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% import "govuk-design-system-templates/error-summary.html" as error_summary %}
+{% import "govuk-design-system-templates/radios.html" as radios %}
+{% import "govuk-design-system-templates/text-input.html" as textInput %}
+
+{% block title %}This application cannot be accessed{% endblock %}
+
+{% block backLink %}
+    <a href="{{ url_for('startApplication.isFirstVisit') }}"
+       class="govuk-back-link">
+        Back
+    </a>
+{% endblock %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <div class="govuk-panel govuk-panel--confirmation">
+                <h1 class="govuk-panel__title">
+                    The application with this reference number cannot be accessed
+                </h1>
+            </div>
+
+            <p class="govuk-body">
+                Contact the admin team if you need help with your application.
+            </p>
+            <p class="govuk-body">
+                <a href="mailto:GRPenquiries@justice.gov.uk" class="govuk-link">
+                    GRPenquiries@justice.gov.uk
+                </a><br>
+                Telephone: 020 3936 8968<br>
+                Monday to Friday, 9am to 5pm<br>
+                <a href=https://www.gov.uk/call-charges"
+                   target="_blank" class="govuk-link">
+                    Find out about call charges (opens in a new tab)
+                </a>
+            </p>
+
+        </div>
+    </div>
+{% endblock %}
