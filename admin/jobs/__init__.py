@@ -219,18 +219,18 @@ def zip_encrypt_and_save_to_external_aws(files, chunk_number: int, timestamp: da
 def application_notifications():
     days_between_last_update_and_deletion = 183  # approximately 6 months
 
-    anonymise_application_after_period_of_inactivity(days_between_last_update_and_deletion)
+    abandon_application_after_period_of_inactivity(days_between_last_update_and_deletion)
 
     send_reminder_emails_before_application_deletion(days_between_last_update_and_deletion)
 
-    anonymise_completed_applications()
+    delete_completed_applications()
 
     delete_expired_security_codes()
 
     return ('', 200)
 
 
-def anonymise_application_after_period_of_inactivity(days_between_last_update_and_deletion):
+def abandon_application_after_period_of_inactivity(days_between_last_update_and_deletion):
     now = datetime.now()
     earliest_allowed_inactive_application_updated_date = calculate_earliest_allowed_inactive_application_updated_date(now, days_between_last_update_and_deletion)
 
@@ -240,7 +240,7 @@ def anonymise_application_after_period_of_inactivity(days_between_last_update_an
     )
 
     for application_to_anonymise in applications_to_anonymise:
-        anonymise_application(application_to_anonymise)
+        anonymise_application(application_to_anonymise, new_state=ApplicationStatus.ABANDONED)
 
     db.session.commit()
 
@@ -288,7 +288,7 @@ def calculate_last_updated_date(today, days_to_send_reminder_before_deletion, da
     return last_updated_date
 
 
-def anonymise_completed_applications():
+def delete_completed_applications():
     days_between_application_completion_and_anonymisation = 7
 
     now = datetime.now()
@@ -300,7 +300,7 @@ def anonymise_completed_applications():
     )
 
     for application_to_anonymise in applications_to_anonymise:
-        anonymise_application(application_to_anonymise)
+        anonymise_application(application_to_anonymise, new_state=ApplicationStatus.DELETED)
 
     db.session.commit()
 
@@ -309,16 +309,14 @@ def calculate_earliest_allowed_application_completed_date(now, days_between_appl
     return now - relativedelta(days=days_between_application_completion_and_anonymisation)
 
 
-def anonymise_application(application_to_anonymise):
+def anonymise_application(application_to_anonymise, new_state: ApplicationStatus):
     ApplicationFiles().delete_application_files(
         application_to_anonymise.reference_number,
         application_to_anonymise.application_data(),
     )
     application_to_anonymise.email = ''
     application_to_anonymise.user_input = ''
-    application_to_anonymise.status = ApplicationStatus.DELETED
-
-    db.session.commit()
+    application_to_anonymise.status = new_state
 
 
 def delete_expired_security_codes():
