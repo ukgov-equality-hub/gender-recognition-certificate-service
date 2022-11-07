@@ -20,19 +20,29 @@
             <p class="govuk-body">
                 This is where you can upload evidence to show you’ve been living in your affirmed gender for the last 2 years.
             </p>
-            <div class="govuk-inset-text">
+            <p class="govuk-body">
+                For example, if you submit your application today, you will need evidence from
+                {{ date_two_years_ago.strftime('%B %Y') }}
+                to
+                {{ date_now.strftime('%B %Y') }}.
+            </p>
+            <p class="govuk-body">
                 Find out more about the
                 <a href="https://www.gov.uk/apply-gender-recognition-certificate/what-documents-you-need#evidence-of-living-in-your-gender-for-the-last-2-years"
                    target="_blank" class="govuk-link">
                     evidence of living in your gender you need (opens in new tab)</a>.
-            </div>
+            </p>
             <p class="govuk-body">
                 Please upload a scan or good quality photograph of each piece of evidence.
             </p>
-            <p class="govuk-body">
-                We will only accept clear images.
-                If you take a photograph of a letter or statement, please make sure all 4 corners of each page are visible.
-            </p>
+            <div class="govuk-warning-text govuk-!-margin-bottom-4 govuk-!-padding-0">
+                <span class="govuk-warning-text__icon govuk-!-margin-top-1" aria-hidden="true">!</span>
+                <strong class="govuk-warning-text__text">
+                    <span class="govuk-warning-text__assistive">Warning</span>
+                    We will only accept clear images.
+                    If you take a photograph of a letter or statement, please make sure all 4 corners of each page are visible.
+                </strong>
+            </div>
             <p class="govuk-body">
                 We process and protect all documents you upload in accordance with our
                 <a href="{{ url_for('policies.privacy_policy') }}"

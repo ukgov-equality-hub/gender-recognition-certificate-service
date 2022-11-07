@@ -1,5 +1,7 @@
+import datetime
 import io
 from typing import List, Callable
+from dateutil.relativedelta import relativedelta
 from flask import Blueprint, render_template, request, url_for, abort, make_response
 from werkzeug.utils import secure_filename
 import uuid
@@ -211,7 +213,9 @@ def uploadInfoPage(section_url: str):
         deleteAllFilesInSectionForm=deleteAllFilesInSectionForm,
         section_url=section.url,
         currently_uploaded_files=files,
-        duplicate_aws_file_names=any_duplicate_aws_file_names(files)
+        duplicate_aws_file_names=any_duplicate_aws_file_names(files),
+        date_now=datetime.datetime.now(),
+        date_two_years_ago=(datetime.datetime.now() - relativedelta(years=2))
     )
 
 
