@@ -30,10 +30,14 @@
                 You must upload a scan or good quality photograph of your documents.
                 If any documents are longer than one page, you must upload every page.
             </p>
-            <p class="govuk-body">
-                We will only accept clear images of full pages.
-                If you take a photograph, please ensure all 4 corners of each page are visible.
-            </p>
+            <div class="govuk-warning-text govuk-!-margin-bottom-4 govuk-!-padding-0">
+                <span class="govuk-warning-text__icon govuk-!-margin-top-1" aria-hidden="true">!</span>
+                <strong class="govuk-warning-text__text">
+                    <span class="govuk-warning-text__assistive">Warning</span>
+                    We will only accept clear images of full pages.
+                    If you take a photograph, please ensure all 4 corners of each page are visible.
+                </strong>
+            </div>
             <p class="govuk-body">
                 We process and protect all documents you upload in accordance with our
                 <a href="{{ url_for('policies.privacy_policy') }}"
