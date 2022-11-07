@@ -20,6 +20,12 @@
             <p class="govuk-body">
                 This is where you can upload evidence to show you’ve been living in your affirmed gender for the last 2 years.
             </p>
+            <p class="govuk-body">
+                For example, if you submit your application today, you will need evidence from
+                {{ date_two_years_ago.strftime('%B %Y') }}
+                to
+                {{ date_now.strftime('%B %Y') }}.
+            </p>
             <div class="govuk-inset-text">
                 Find out more about the
                 <a href="https://www.gov.uk/apply-gender-recognition-certificate/what-documents-you-need#evidence-of-living-in-your-gender-for-the-last-2-years"
