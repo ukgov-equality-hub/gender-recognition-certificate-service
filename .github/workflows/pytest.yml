@@ -8,7 +8,12 @@ env:
   FLASK_APP: grc
   LOG_LEVEL: DEBUG
   TEST_URL: http://localhost:8080
+
+  # Please note: This SECRET_KEY is only valid within the context of our automated tests.
+  #              It does not grant access to any systems outside the automated tests.
+  #              This SECRET_KEY is not re-used in any other environment (test or production)
   SECRET_KEY: ef987sd9fwkjefosf9we0svs9q3evsd0
+
   SQLALCHEMY_DATABASE_URI: postgresql://postgres:password@localhost:5432/grc
   SQLALCHEMY_TRACK_MODIFICATION: False
   DEFAULT_ADMIN_USER: grc-service-account@cabinetoffice.gov.uk
