@@ -1,26 +1,313 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine.
-# See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
-
-# Define a job to be invoked later in a workflow.
-# See: https://circleci.com/docs/2.0/configuration-reference/#jobs
+orbs:
+  slack: circleci/slack@3.4.2
+  node: circleci/node@5.0.2
+  grc-end-to-end-tests: ministryofjustice/grc-end-to-end-tests@volatile
 jobs:
-  say-hello:
-    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
-    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
+  build:
+    parameters:
+      image:
+        type: string
     docker:
-      - image: cimg/base:stable
-    # Add steps to the job
-    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
+      - image: docker:19.03-git
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: "20.10.2"
+          docker_layer_caching: true
+      - run:
+          name: Login to the ECR Docker registry
+          command: |
+            apk add --no-cache --no-progress py3-pip
+            pip install awscli
+            ecr_login="$(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)"
+            ${ecr_login}
+      - when:
+          condition:
+            equal: ["app", << parameters.image >>]
+          steps:
+            - run:
+                name: Build app Docker image
+                command: |
+                  docker build --tag << parameters.image >>:$CIRCLE_SHA1 \
+                    --label build.git.sha=$CIRCLE_SHA1 \
+                    --label build.git.branch=$CIRCLE_BRANCH \
+                    --label build.url=$CIRCLE_BUILD_URL \
+                    --file Dockerfile \
+                    .
+            - run:
+                name: Validate Python version
+                command: |
+                  docker run --rm --tty --interactive << parameters.image >>:$CIRCLE_SHA1 python --version | grep "2.7"
+      - when:
+          condition:
+            equal: ["socket-server", << parameters.image >>]
+          steps:
+            - run:
+                name: Build socket server Docker image
+                command: |
+                  docker build --tag << parameters.image >>:$CIRCLE_SHA1 \
+                    --label build.git.sha=$CIRCLE_SHA1 \
+                    --label build.git.branch=$CIRCLE_BRANCH \
+                    --label build.url=$CIRCLE_BUILD_URL \
+                    --file grc_socketserver/Dockerfile \
+                    grc_socketserver
+      - run:
+          name: Tag and push Docker image
+          command: |
+            .circleci/tag_and_push_docker_image << parameters.image >>:$CIRCLE_SHA1 << parameters.image >>
+  python_lint:
+    docker:
+      - image: cimg/python:3.7
     steps:
       - checkout
       - run:
-          name: "Say hello"
-          command: "echo Hello, World!"
+          name: Setup Python environment
+          command: |
+            pip install virtualenv
+            virtualenv lint-env
+      - restore_cache:
+          keys:
+            - pip-v1-{{ checksum "requirements/lint.txt" }}
+      - run:
+          name: Install dependencies
+          command: |
+            source lint-env/bin/activate
+            pip install --requirement requirements/lint.txt
+      - save_cache:
+          key: pip-v1-{{ checksum "requirements/lint.txt" }}
+          paths:
+            - "~/.cache/pip"
+      - run:
+          name: Lint with flake8
+          command: |
+            source lint-env/bin/activate
+            flake8 --exit-zero grc_frontend
+      - run:
+          name: Check formatting with Black
+          command: |
+            source lint-env/bin/activate
+            black --check grc_frontend
+  python_unit_test:
+    docker:
+      - image: cimg/python:2.7
+        environment:
+          DJANGO_SETTINGS_MODULE: grc_frontend.settings.testing
+          SECRET_KEY: testing_key
+    steps:
+      - checkout
+      - run:
+          name: Setup Python environment
+          command: |
+            pip install virtualenv
+            virtualenv env
+            source env/bin/activate
+            pip install pip==18.1
+      - restore_cache:
+          keys:
+            - pip-v1-{{ checksum "requirements/base.txt" }}-{{ checksum "requirements/testing.txt" }}
+      - run:
+          name: Install dependencies
+          command: |
+            source env/bin/activate
+            pip install --requirement requirements/testing.txt
+      - save_cache:
+          key: pip-v1-{{ checksum "requirements/base.txt" }}-{{ checksum "requirements/testing.txt" }}
+          paths:
+            - "~/.cache/pip"
+      - run:
+          name: Run unit tests
+          command: |
+            source env/bin/activate
+            python manage.py test --verbosity=2
+ 
+  deploy:
+    parameters:
+      namespace:
+        type: string
+      dynamic_hostname:
+        type: boolean
+    docker:
+      - image: ${ECR_ENDPOINT}/cloud-platform/tools:circleci
+    shell: /bin/sh -leo pipefail
+    environment:
+      BASH_ENV: /etc/profile
+    steps:
+      - checkout
+      - run:
+          name: Install helm v3
+          command: |
+            wget https://get.helm.sh/helm-v3.2.4-linux-amd64.tar.gz
+            tar -zxvf helm-v3.2.4-linux-amd64.tar.gz
+            mv linux-amd64/helm /usr/local/bin/helm
+      - run:
+          name: Authenticate with cluster
+          command: |
+            .circleci/authenticate_with_kubernetes_cluster
+      - deploy:
+          name: Deploy to << parameters.namespace >>
+          command: |
+            export INGRESS_CLUSTER_NAME=`kubectl get configmap ingress-cluster -o jsonpath='{.data.name}'`
+            export INGRESS_CLUSTER_WEIGHT=`kubectl get configmap ingress-cluster -o jsonpath='{.data.weight}'`
+            source .circleci/define_build_environment_variables << parameters.namespace >> << parameters.dynamic_hostname >>
+            pip3 install requests
+            export PINGDOM_IPS=`python3 bin/pingdom_ips.py`
+            ./bin/<< parameters.namespace >>_deploy.sh << parameters.dynamic_hostname >>
+            echo "export RELEASE_HOST=$RELEASE_HOST" >> $BASH_ENV
+      - slack/notify:
+          message: ":tada: (<< parameters.namespace >>) Deployed branch $CIRCLE_BRANCH"
+          title: "$RELEASE_HOST"
+          title_link: "https://$RELEASE_HOST"
 
-# Invoke jobs via workflows
-# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
+  cleanup_merged:
+    docker:
+      - image: ${ECR_ENDPOINT}/cloud-platform/tools:circleci
+    steps:
+      - checkout
+      - run:
+          name: Install helm v3
+          command: |
+            wget https://get.helm.sh/helm-v3.1.2-linux-amd64.tar.gz
+            tar -zxvf helm-v3.1.2-linux-amd64.tar.gz
+            mv linux-amd64/helm /usr/local/bin/helm
+      - run:
+          name: Authenticate with cluster
+          command: |
+            .circleci/authenticate_with_kubernetes_cluster
+      - run:
+          name: Delete uat release
+          command: |
+            ./bin/delete_uat_release.sh
+
 workflows:
-  say-hello-workflow:
+  version: 2
+  test_and_build:
     jobs:
-      - say-hello
+      - python_lint
+      - python_unit_test
+      - socket_server_tests
+      - javascript_unit_test
+      - cleanup_merged:
+          name: cleanup_merged_live
+          context:
+            - laa-grc-frontend
+            - laa-grc-frontend-live-uat
+      - build:
+          name: build_app
+          image: app
+          requires:
+            - python_lint
+            - python_unit_test
+            - javascript_unit_test
+          context:
+            - laa-grc-frontend
+            - laa-grc-frontend-app-ecr
+      - build:
+          name: build_socket_server
+          image: socket-server
+          requires:
+            - python_lint
+            - python_unit_test
+            - javascript_unit_test
+            - socket_server_tests
+          context:
+            - laa-grc-frontend
+            - laa-grc-frontend-socket-server-ecr
+      - grc-end-to-end-tests/behave:
+          requires:
+            - build_socket_server
+            - build_app
+          context: laa-grc-frontend
+          pre-steps:
+            - checkout:
+                path: grc_frontend
+            - run:
+                command: |
+                  cd grc_frontend
+                  source .circleci/define_build_environment_variables
+                  export APP_IMAGE=$ECR_URL_APP:$IMAGE_TAG
+                  export SOCKET_IMAGE=$ECR_URL_SOCKET_SERVER:$IMAGE_TAG
+                  echo "export grc_FRONTEND_IMAGE=$APP_IMAGE; export grc_SOCKET_SERVER_IMAGE=$SOCKET_IMAGE" >> $BASH_ENV
+                  echo "Setting grc Frontend image $APP_IMAGE"
+                  echo "Setting grc Socket Server image $SOCKET_IMAGE"
+
+      - deploy:
+          name: uat_deploy_live
+          namespace: uat
+          dynamic_hostname: true
+          requires:
+            - build_app
+            - build_socket_server
+          context:
+            - laa-grc-frontend
+            - laa-grc-frontend-live-uat
+            - laa-grc-frontend-app-ecr
+
+      - static_uat_deploy_approval:
+          type: approval
+          requires:
+            - build_app
+            - build_socket_server
+
+      - deploy:
+          name: static_uat_deploy_live
+          namespace: uat
+          dynamic_hostname: false
+          requires:
+            - static_uat_deploy_approval
+          context:
+            - laa-grc-frontend
+            - laa-grc-frontend-live-uat
+            - laa-grc-frontend-app-ecr
+
+      - staging_deploy_approval:
+          type: approval
+          requires:
+            - build_app
+            - build_socket_server
+          filters:
+            branches:
+              only:
+                - master
+
+      - deploy:
+          name: staging_deploy_live
+          namespace: staging
+          dynamic_hostname: false
+          requires:
+            - staging_deploy_approval
+          context:
+            - laa-grc-frontend
+            - laa-grc-frontend-live-staging
+            - laa-grc-frontend-app-ecr
+
+      - production_deploy_approval:
+          requires:
+            - staging_deploy_live
+          type: approval
+          filters:
+            branches:
+              only:
+                - master
+
+      - deploy:
+          name: training_deploy_live
+          namespace: training
+          dynamic_hostname: false
+          requires:
+            - production_deploy_approval
+          context:
+            - laa-grc-frontend
+            - laa-grc-frontend-live-training
+            - laa-grc-frontend-app-ecr
+
+      - deploy:
+          name: production_deploy_live
+          namespace: production
+          dynamic_hostname: false
+          requires:
+            - production_deploy_approval
+          context:
+            - laa-grc-frontend
+            - laa-grc-frontend-live-production
+            - laa-grc-frontend-app-ecr
