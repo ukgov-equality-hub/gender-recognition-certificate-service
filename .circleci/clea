@@ -124,25 +124,6 @@ jobs:
             ./bin/<< parameters.namespace >>_deploy.sh << parameters.dynamic_hostname >>
             echo "export RELEASE_HOST=$RELEASE_HOST" >> $BASH_ENV
 
-  cleanup_merged:
-    docker:
-      - image: ${ECR_ENDPOINT}/cloud-platform/tools:circleci
-    steps:
-      - checkout
-      - run:
-          name: Install helm v3
-          command: |
-            wget https://get.helm.sh/helm-v3.1.2-linux-amd64.tar.gz
-            tar -zxvf helm-v3.1.2-linux-amd64.tar.gz
-            mv linux-amd64/helm /usr/local/bin/helm
-      - run:
-          name: Authenticate with cluster
-          command: |
-            .circleci/authenticate_with_kubernetes_cluster
-      - run:
-          name: Delete uat release
-          command: |
-            ./bin/delete_uat_release.sh
 
 workflows:
   version: 2
@@ -151,11 +132,6 @@ workflows:
       - python_unit_test
       #- socket_server_tests
      # - javascript_unit_test
-      - cleanup_merged:
-          name: cleanup_merged_live
-          context:
-            - laa-grc-frontend
-            - laa-grc-frontend-live-uat
       - build:
           name: build_app
           image: app
