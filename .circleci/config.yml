@@ -38,7 +38,7 @@ jobs:
             - run:
                 name: Validate Python version
                 command: |
-                  docker run --rm --tty --interactive << parameters.image >>:$CIRCLE_SHA1 python --version | grep "2.7"
+                  docker run --rm --tty --interactive << parameters.image >>:$CIRCLE_SHA1 python --version | grep "3.8"
       - when:
           condition:
             equal: ["socket-server", << parameters.image >>]
@@ -59,7 +59,7 @@ jobs:
 
   python_unit_test:
     docker:
-      - image: cimg/python:2.7
+      - image: cimg/python:3.8
         environment:
           DJANGO_SETTINGS_MODULE: grc_frontend.settings.testing
           SECRET_KEY: testing_key
