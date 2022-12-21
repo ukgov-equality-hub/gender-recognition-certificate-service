@@ -154,10 +154,6 @@ jobs:
             export PINGDOM_IPS=`python3 bin/pingdom_ips.py`
             ./bin/<< parameters.namespace >>_deploy.sh << parameters.dynamic_hostname >>
             echo "export RELEASE_HOST=$RELEASE_HOST" >> $BASH_ENV
-      - slack/notify:
-          message: ":tada: (<< parameters.namespace >>) Deployed branch $CIRCLE_BRANCH"
-          title: "$RELEASE_HOST"
-          title_link: "https://$RELEASE_HOST"
 
   cleanup_merged:
     docker:
