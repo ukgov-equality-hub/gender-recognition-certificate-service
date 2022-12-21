@@ -186,7 +186,7 @@ workflows:
       - python_lint
       - python_unit_test
       #- socket_server_tests
-      - javascript_unit_test
+     # - javascript_unit_test
       - cleanup_merged:
           name: cleanup_merged_live
           context:
@@ -198,7 +198,7 @@ workflows:
           requires:
             - python_lint
             - python_unit_test
-            - javascript_unit_test
+        #    - javascript_unit_test
           context:
             - laa-grc-frontend
             - laa-grc-frontend-app-ecr
@@ -208,8 +208,8 @@ workflows:
           requires:
             - python_lint
             - python_unit_test
-            - javascript_unit_test
-            - socket_server_tests
+           # - javascript_unit_test
+           # - socket_server_tests
           context:
             - laa-grc-frontend
             - laa-grc-frontend-socket-server-ecr
