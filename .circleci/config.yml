@@ -148,7 +148,6 @@ workflows:
   version: 2
   test_and_build:
     jobs:
-      - python_lint
       - python_unit_test
       #- socket_server_tests
      # - javascript_unit_test
@@ -161,7 +160,6 @@ workflows:
           name: build_app
           image: app
           requires:
-            - python_lint
             - python_unit_test
         #    - javascript_unit_test
           context:
