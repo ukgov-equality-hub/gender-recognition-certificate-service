@@ -213,23 +213,6 @@ workflows:
           context:
             - laa-grc-frontend
             - laa-grc-frontend-socket-server-ecr
-      - grc-end-to-end-tests/behave:
-          requires:
-            - build_socket_server
-            - build_app
-          context: laa-grc-frontend
-          pre-steps:
-            - checkout:
-                path: grc_frontend
-            - run:
-                command: |
-                  cd grc_frontend
-                  source .circleci/define_build_environment_variables
-                  export APP_IMAGE=$ECR_URL_APP:$IMAGE_TAG
-                  export SOCKET_IMAGE=$ECR_URL_SOCKET_SERVER:$IMAGE_TAG
-                  echo "export grc_FRONTEND_IMAGE=$APP_IMAGE; export grc_SOCKET_SERVER_IMAGE=$SOCKET_IMAGE" >> $BASH_ENV
-                  echo "Setting grc Frontend image $APP_IMAGE"
-                  echo "Setting grc Socket Server image $SOCKET_IMAGE"
 
       - deploy:
           name: uat_deploy_live
