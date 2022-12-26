@@ -17,11 +17,7 @@ jobs:
       - setup_remote_docker:
           version: "20.10.2"
           docker_layer_caching: true
-      - run:
-          name: Set AWS_DEFAULT_REGION environment variable
-          command: |
-            echo "Setting AWS_DEFAULT_REGION to us-west-2"
-            set-env AWS_DEFAULT_REGION=us-west-2
+          
       - run:
           name: Login to the ECR Docker registry
           command: |
