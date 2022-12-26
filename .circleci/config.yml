@@ -97,12 +97,11 @@ workflows:
   version: 2
   test_and_build:
     jobs:
-      - python_unit_test
       - build:
           name: build_app
           image: app
           requires:
-            - python_unit_test
+         #   - python_unit_test
         #    - javascript_unit_test
           context:
             - laa-grc-frontend
