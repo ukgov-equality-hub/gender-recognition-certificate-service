@@ -100,7 +100,7 @@ workflows:
       - build:
           name: build_app
           image: app
-          requires:
+         # requires:
          #   - python_unit_test
         #    - javascript_unit_test
           context:
@@ -109,7 +109,7 @@ workflows:
       - build:
           name: build_socket_server
           image: socket-server
-          requires:
+         # requires:
            # - python_lint
           #  - python_unit_test
            # - javascript_unit_test
