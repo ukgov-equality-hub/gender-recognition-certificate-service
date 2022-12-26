@@ -87,7 +87,7 @@ jobs:
       - run:
           name: Run unit tests
           command: |
-            circleci build --config ./circleci/pytest.yml --job test
+            circleci build --config pytest.yml --job test
  
   deploy:
     parameters:
