@@ -111,7 +111,7 @@ workflows:
           image: socket-server
           requires:
            # - python_lint
-            - python_unit_test
+          #  - python_unit_test
            # - javascript_unit_test
            # - socket_server_tests
           context:
