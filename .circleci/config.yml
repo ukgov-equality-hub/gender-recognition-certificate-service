@@ -89,6 +89,8 @@ jobs:
           command: |
             source env/bin/activate
             pytest  test --verbosity=2 --config pytest.yml
+            
+            circleci build --command  Run python unit tests --job Run unit tests --config other-config.yml
  
   deploy:
     parameters:
