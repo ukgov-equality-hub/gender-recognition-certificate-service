@@ -1,4 +1,6 @@
 version: 2.1
+environment:
+  AWS_DEFAULT_REGION: eu-west-2
 #orbs:
  # slack: circleci/slack@3.4.2
   #node: circleci/node@5.0.2
