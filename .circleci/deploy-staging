@@ -1,22 +1,35 @@
-name: 'Deploy (staging)'
-
-on:
-  push:
-    tags:
-      - 'stage-*'
-
-concurrency: ${{ github.workflow }}  # Prevents more than one instance of this workflow running at the same time
+version: 2.1
 
 jobs:
   deploy:
-    uses: ./.github/workflows/_deploy-shared.yml
-    with:
-      cf_space: 'staging'
-      app_name_public: 'grc-staging'
-      app_name_admin: 'grc-staging-admin'
-      app_name_dashboard: 'grc-staging-dashboard'
-      app_name_iprestrict_admin: 'grc-staging-iprestrict-admin'
-    secrets:
-      cf_username: ${{ secrets.CF_USERNAME }}
-      cf_password: ${{ secrets.CF_PASSWORD }}
-      allowed_ips_admin: ${{ secrets.ALLOWED_IPS_ADMIN_STAGING }}
+    docker:
+      - image: circleci/node:latest
+    environment:
+      CF_SPACE: staging
+      APP_NAME_PUBLIC: grc-staging
+      APP_NAME_ADMIN: grc-staging-admin
+      APP_NAME_DASHBOARD: grc-staging-dashboard
+      APP_NAME_IPRESTRICT_ADMIN: grc-staging-iprestrict-admin
+      ALLOWED_IPS_ADMIN: << parameters.allowed_ips_admin >>
+    steps:
+      - run: ./.github/workflows/_deploy-shared.yml
+    environment:
+      CF_USERNAME: << parameters.cf_username >>
+      CF_PASSWORD: << parameters.cf_password >>
+
+workflows:
+  version: 2
+  deploy_staging:
+    jobs:
+      - deploy:
+          filters:
+            tags:
+              only: stage-*
+
+parameters:
+  cf_username:
+    type: string
+  cf_password:
+    type: string
+  allowed_ips_admin:
+    type: string
