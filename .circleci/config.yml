@@ -1,5 +1,19 @@
 version: 2.1
 
+references:
+  app_containers: &app_containers
+    docker:
+      - image: circleci/postgres:10.4
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_DB: grc-application-test
+  cloud_container: &cloud_container
+    docker:
+      - image: ministryofjustice/cloud-platform-tools:1.24
+        environment:
+          GITHUB_TEAM_NAME_SLUG: sustainingdevs
+          REPO_NAME: grc-application
+
 jobs:
   build:
     parameters:
