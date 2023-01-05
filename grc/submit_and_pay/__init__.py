@@ -14,6 +14,7 @@ from grc.models import db, Application, ApplicationStatus
 from grc.list_status import ListStatus
 from grc.submit_and_pay.forms import MethodCheckForm, HelpTypeForm, CheckYourAnswers
 from grc.utils.application_files import ApplicationFiles
+from grc.utils.application_progress import anonymise_application
 from grc.utils.decorators import LoginRequired
 from grc.utils.get_next_page import get_next_page_global, get_previous_page_global
 from grc.utils.redirect import local_redirect
@@ -102,7 +103,12 @@ def checkYourAnswers():
             return local_redirect(url_for('submitAndPay.confirmation'))
         else:
             random_uuid = str(uuid.uuid4())
-            return_link = request.url_root if os.getenv('TEST_URL', '') != '' or os.getenv('FLASK_ENV', '') == 'development' else str(request.url_root).replace('http://', 'https://')
+            return_link = request.url_root # if os.getenv('TEST_URL', '') != '' or os.getenv('FLASK_ENV', '') == 'development' else str(request.url_root).replace('http://', 'https://')
+            if '127.0.0.1' in return_link or 'localhost' in return_link:
+                pass
+            else:
+                return_link = return_link.replace('http:', 'https:')
+
             data = {
                 'amount': 500,
                 'reference': application_data.reference_number,
@@ -148,8 +154,6 @@ def checkYourAnswers():
 @submitAndPay.route('/submit-and-pay/download', methods=['GET'])
 @LoginRequired
 def download():
-    from grc.utils.application_files import ApplicationFiles
-
     application_data = DataStore.load_application_by_session_reference_number()
 
     bytes, file_name = ApplicationFiles().create_or_download_pdf(
@@ -204,7 +208,6 @@ def confirmation():
 
     @copy_current_request_context
     def create_files(reference_number, application_data):
-        from grc.utils.application_files import ApplicationFiles
         ApplicationFiles().create_or_download_attachments(
             reference_number,
             application_data,
@@ -231,7 +234,7 @@ def confirmation():
     )
 
     for application_to_anonymise in applications_to_anonymise:
-        anonymise_application(application_to_anonymise)
+        anonymise_application(application_to_anonymise, ApplicationStatus.ABANDONED)
 
     html = render_template(
         'submit-and-pay/confirmation.html',
@@ -280,16 +283,5 @@ def get_previous_page(application_data: ApplicationData, previous_page_in_journe
         previous_page_in_journey=previous_page_in_journey,
         section_check_your_answers_page=None,
         section_status=application_data.section_status_submit_and_pay_data,
-        application_data=application_data)
-
-
-def anonymise_application(application_to_anonymise):
-    ApplicationFiles().delete_application_files(
-        application_to_anonymise.reference_number,
-        application_to_anonymise.application_data(),
+        application_data=application_data
     )
-    application_to_anonymise.email = ''
-    application_to_anonymise.user_input = ''
-    application_to_anonymise.status = ApplicationStatus.ABANDONED
-
-    db.session.commit()
