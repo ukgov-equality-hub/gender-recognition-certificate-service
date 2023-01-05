@@ -1,43 +1,43 @@
 version: 2.1
-
 jobs:
   build:
     docker:
       - image: circleci/python:3.8
-   build_image:
-    <<: *cloud_container
-    parameters:
-      env_name:
-        type: string
-    steps:
-      - checkout
-      
-      - setup_remote_docker:
-          version: 20.10.11
-          docker_layer_caching: true
-          
-      - run:
-          name: Install dependencies
-          command: |
-            python -m venv venv
-            . venv/bin/activate
-            pip install -r requirements.txt
-      - run:
-          name: build app image
-          command: |
-            export BUILD_DATE=$(date -Is) >> $BASH_ENV
-            source $BASH_ENV
-            docker build \
-              --label build.git.sha=${CIRCLE_SHA1} \
-              --label build.git.branch=${CIRCLE_BRANCH} \
-              --label build.date=${BUILD_DATE} \
-              --build-arg APP_BUILD_DATE=${BUILD_DATE} \
-              --build-arg APP_BUILD_TAG=${CIRCLE_BRANCH} \
-              --build-arg APP_GIT_COMMIT=${CIRCLE_SHA1} \
-              -t grc-app .
-
-            docker tag grc-app "${ECR_ENDPOINT}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}"
-            docker push "${ECR_ENDPOINT}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}"
-
-            docker tag app "${ECR_ENDPOINT}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:<< parameters.env_name >>.latest"
-            docker push "${ECR_ENDPOINT}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:<< parameters.env_name >>.latest"  
+    build_image:
+      <<: *cloud_container
+      parameters:
+        env_name:
+          type: string
+      steps:
+        - checkout
+        - setup_remote_docker:
+            version: 20.10.11
+            docker_layer_caching: true
+        - run:
+            name: Install dependencies
+            command: |
+              python -m venv venv
+              . venv/bin/activate
+              pip install -r requirements.txt
+        - run:
+            name: build app image
+            command: |
+              export BUILD_DATE=$(date -Is) >> $BASH_ENV
+              source $BASH_ENV
+              docker build \
+                --label build.git.sha=${CIRCLE_SHA1} \
+                --label build.git.branch=${CIRCLE_BRANCH} \
+                --label build.date=${BUILD_DATE} \
+                --build-arg APP_BUILD_DATE=${BUILD_DATE} \
+                --build-arg APP_BUILD_TAG=${CIRCLE_BRANCH} \
+                --build-arg APP_GIT_COMMIT=${CIRCLE_SHA1} \
+                -t grc-app .
+        - run:
+            name: push app image
+            command: |
+              login="$(aws ecr get-login --region ${AWS_DEFAULT_REGION} --no-include-email)"
+              ${login}
+              docker tag grc-app "${ECR_ENDPOINT}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}"
+              docker push "${ECR_ENDPOINT}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}"
+              docker tag app "${ECR_ENDPOINT}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:<< parameters.env_name >>.latest"
+              docker push "${ECR_ENDPOINT}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:<< parameters.env_name >>.latest"
