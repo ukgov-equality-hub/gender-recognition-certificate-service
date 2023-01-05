@@ -1,19 +1,22 @@
+version: 2.1
+
 jobs:
   build:
     docker:
       - image: circleci/python:3.8
     steps:
       - checkout
-      - run: |
-          python -m venv venv
-          . venv/bin/activate
-          pip install -r requirements.txt
+      - run:
+          name: Install dependencies
+          command: |
+            python -m venv venv
+            . venv/bin/activate
+            pip install -r requirements.txt
       - run:
           name: build app image
           command: |
             export BUILD_DATE=$(date -Is) >> $BASH_ENV
             source $BASH_ENV
-
             docker build \
               --label build.git.sha=${CIRCLE_SHA1} \
               --label build.git.branch=${CIRCLE_BRANCH} \
