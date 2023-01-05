@@ -102,11 +102,11 @@ def checkYourAnswers():
             return local_redirect(url_for('submitAndPay.confirmation'))
         else:
             random_uuid = str(uuid.uuid4())
-            return_link = request.url_root if os.getenv('TEST_URL', '') != '' or os.getenv('FLASK_ENV', '') == 'development' else str(request.url_root).replace('http:', 'https:')
-            #if '127.0.0.1' in return_link or 'localhost' in return_link:
-            #    pass
-            #else:
-            #    return_link = return_link.replace('http:', 'https:')
+            return_link = request.url_root #if os.getenv('TEST_URL', '') != '' or os.getenv('FLASK_ENV', '') == 'development' else str(request.url_root).replace('http://', 'https://')
+            if '127.0.0.1' in return_link or 'localhost' in return_link:
+                pass
+            else:
+                return_link = return_link.replace('http:', 'https:')
 
             data = {
                 'amount': 500,
