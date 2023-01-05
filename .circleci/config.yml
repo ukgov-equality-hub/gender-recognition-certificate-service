@@ -5,6 +5,7 @@ jobs:
     parameters:
       env_name:
        type: string
+       default: development
     docker:
       - image: circleci/python:3.8
       
