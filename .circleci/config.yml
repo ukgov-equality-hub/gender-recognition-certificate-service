@@ -2,8 +2,12 @@ version: 2.1
 
 jobs:
   build:
+  environment:
+      - env_name:
+        type: string
     docker:
       - image: circleci/python:3.8
+      
     steps:
       - checkout
       - setup_remote_docker:
