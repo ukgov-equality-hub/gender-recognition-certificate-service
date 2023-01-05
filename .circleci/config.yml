@@ -52,6 +52,7 @@ jobs:
       - run:
           name: push app image
           command: |
+             pip install awscli
             login="$(aws ecr get-login --region ${AWS_DEFAULT_REGION} --no-include-email)"
             ${login}
 
