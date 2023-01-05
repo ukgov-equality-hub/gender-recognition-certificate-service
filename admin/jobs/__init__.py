@@ -228,7 +228,7 @@ def application_notifications():
 
 def abandon_application_after_period_of_inactivity(days_between_last_update_and_deletion):
     now = datetime.now()
-    earliest_allowed_inactive_application_updated_date = now - relativedelta(days=days_between_last_update_and_deletion)
+    earliest_allowed_inactive_application_updated_date = calculate_earliest_allowed_inactive_application_updated_date(now, days_between_last_update_and_deletion)
 
     applications_to_anonymise = Application.query.filter(
         Application.status == ApplicationStatus.STARTED,
@@ -239,6 +239,10 @@ def abandon_application_after_period_of_inactivity(days_between_last_update_and_
         anonymise_application(application_to_anonymise, new_state=ApplicationStatus.ABANDONED)
 
     db.session.commit()
+
+
+def calculate_earliest_allowed_inactive_application_updated_date(now, days_between_last_update_and_deletion):
+    return now - relativedelta(days=days_between_last_update_and_deletion)
 
 
 def send_reminder_emails_before_application_deletion(days_between_last_update_and_deletion):

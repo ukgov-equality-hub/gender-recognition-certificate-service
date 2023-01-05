@@ -14,7 +14,6 @@ from grc.models import db, Application, ApplicationStatus
 from grc.list_status import ListStatus
 from grc.submit_and_pay.forms import MethodCheckForm, HelpTypeForm, CheckYourAnswers
 from grc.utils.application_files import ApplicationFiles
-from grc.utils.application_progress import anonymise_application
 from grc.utils.decorators import LoginRequired
 from grc.utils.get_next_page import get_next_page_global, get_previous_page_global
 from grc.utils.redirect import local_redirect
@@ -234,7 +233,7 @@ def confirmation():
     )
 
     for application_to_anonymise in applications_to_anonymise:
-        anonymise_application(application_to_anonymise, ApplicationStatus.ABANDONED)
+        anonymise_application(application_to_anonymise)
 
     html = render_template(
         'submit-and-pay/confirmation.html',
@@ -285,3 +284,15 @@ def get_previous_page(application_data: ApplicationData, previous_page_in_journe
         section_status=application_data.section_status_submit_and_pay_data,
         application_data=application_data
     )
+
+
+def anonymise_application(application_to_anonymise):
+    ApplicationFiles().delete_application_files(
+        application_to_anonymise.reference_number,
+        application_to_anonymise.application_data(),
+    )
+    application_to_anonymise.email = ''
+    application_to_anonymise.user_input = ''
+    application_to_anonymise.status = ApplicationStatus.ABANDONED
+
+    db.session.commit()

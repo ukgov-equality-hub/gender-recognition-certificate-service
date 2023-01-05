@@ -12,15 +12,3 @@ def calculate_progress_status_colour(value):
         return 'govuk-tag--red'
     else:
         return 'govuk-tag--grey'
-
-
-def anonymise_application(application_to_anonymise, new_status: ApplicationStatus):
-    ApplicationFiles().delete_application_files(
-        application_to_anonymise.reference_number,
-        application_to_anonymise.application_data(),
-    )
-    application_to_anonymise.email = ''
-    application_to_anonymise.user_input = ''
-    application_to_anonymise.status = new_status
-
-    db.session.commit()
