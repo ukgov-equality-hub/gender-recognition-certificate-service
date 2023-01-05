@@ -3,8 +3,8 @@ version: 2.1
 jobs:
   build:
     parameters:
-      - env_name:
-        type: string
+      env_name:
+       type: string
     docker:
       - image: circleci/python:3.8
       
