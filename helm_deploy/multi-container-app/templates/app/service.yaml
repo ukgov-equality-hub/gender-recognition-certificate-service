@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: rails-app-service
+  labels:
+    app: rails-app-service
+spec:
+  type: {{ .Values.railsapp.service.type }}
+  ports:
+  - port: {{ .Values.railsapp.service.port }}
+    targetPort: {{ .Values.railsapp.service.targetPort }}
+    protocol: TCP
+    name: http
+  selector:
+    app: rails-app
