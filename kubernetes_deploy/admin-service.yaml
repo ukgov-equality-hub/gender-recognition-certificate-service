@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: rails-app-service
+  name: grc-admin-service
   labels:
-    app: rails-app-service
+    app: grc-admin-service
 spec:
   ports:
   - port: 3000
     name: http
     targetPort: 3000
   selector:
-    app: rails-app
+    app: grc-admin

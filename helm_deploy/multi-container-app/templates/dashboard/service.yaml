@@ -1,15 +1,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: content-api-service
+  name: grc-dashboard-service
   labels:
-    app: content-api-service
+    app: grc-dashboard-service
 spec:
-  type: {{ .Values.contentapi.service.type }}
+  type: {{ .Values.grcdashboard.service.type }}
   ports:
-    - port: {{ .Values.contentapi.service.port }}
-      targetPort: {{ .Values.contentapi.service.targetPort }}
+    - port: {{ .Values.grcdashboard.service.port }}
+      targetPort: {{ .Values.grcdashboard.service.targetPort }}
       protocol: TCP
       name: http
   selector:
-    app: content-api
+    app: grc-dashboard

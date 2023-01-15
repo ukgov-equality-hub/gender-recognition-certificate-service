@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: rails-app
+  name: grc-admin
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: rails-app
+      app: grc-admin
   template:
     metadata:
       labels:
-        app: rails-app
+        app: grc-admin
     spec:
       containers:
-      - name: rails-app
-        image: ministryofjustice/cloud-platform-multi-container-demo-app:rails-app-1.6
+      - name: grc-admin
+        image: 754256621582.dkr.ecr.eu-west-2.amazonaws.com/pet/grc-preprod-ecr:grc-admin-1.6
         ports:
         - containerPort: 3000
         env:
