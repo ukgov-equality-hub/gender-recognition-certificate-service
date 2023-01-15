@@ -1,30 +1,23 @@
-name: 'Trivy vulnerability scanner'
-
-on:
-  push:
-    branches:
-      - master
-  pull_request:
+version: 2.1
 
 jobs:
   scan:
-    runs-on: ubuntu-18.04
+    executor: ubuntu-18.04
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - checkout
+      - run:
+          name: Run Trivy vulnerability scanner in repo mode
+          command: |
+            # Install Trivy
+            wget -qO- "https://github.com/aquasecurity/trivy/releases/download/v0.15.0/trivy_0.15.0_Linux-64bit.tar.gz" | tar xz
+            sudo mv trivy /usr/local/bin/
+            trivy --version
 
-      - name: Run Trivy vulnerability scanner in repo mode
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'fs'
-          ignore-unfixed: true
-          format: 'sarif'
-          output: 'trivy-results.sarif'
-          severity: 'CRITICAL'
-          vuln-type: 'library'
-          security-checks: 'vuln,config'
+            # Run the scanner in repo mode
+            trivy fs --ignore-unfixed --format sarif --output trivy-results.sarif --severity CRITICAL --vuln-type library --security-checks vuln,config
 
-      - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v1
-        with:
-          sarif_file: 'trivy-results.sarif'
+      - run:
+          name: Upload Trivy scan results to GitHub Security tab
+          command: |
+            #Upload the results to the GitHub security tab
+            curl -H "Authorization: token ${GITHUB_TOKEN}" -H "Accept: application/vnd.github+json" -H "Content-Type: application/vnd.github+json" --data @trivy-results.sarif https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/import/sarif
