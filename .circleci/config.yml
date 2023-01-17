@@ -53,9 +53,9 @@ jobs:
             pip install playwright pytest-playwright asyncio
             pip install -e .
             python -m playwright install --with-deps
-      - run:
-          name: Database init
-          command: python setup-db.py
+     # - run:
+      #    name: Database init
+     #     command: python setup-db.py
     #  - run:
      #     name: Database migration
       #    command: |
