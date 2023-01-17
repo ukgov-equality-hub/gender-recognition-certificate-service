@@ -73,6 +73,7 @@ jobs:
             pip install flask_migrate
             pip install colorama
             pip install flask_uuid
+            pip install jsonpickle
             pytest -s --show-capture=all
       - run:
           name: build app image
