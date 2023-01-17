@@ -46,6 +46,7 @@ jobs:
             python -m venv venv
             . venv/bin/activate
             pip install -r requirements.txt
+            pip install psycopg2
       - run:
           name: Install Playwright and browsers
           command: |
