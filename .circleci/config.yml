@@ -75,7 +75,7 @@ jobs:
             pip install colorama
             pip install flask_uuid
             pip install jsonpickle
-            pip install --no-deps dateutil
+            pip install python-dateutil --upgrade
             pytest -s --show-capture=all
       - run:
           name: build app image
