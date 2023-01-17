@@ -77,6 +77,7 @@ jobs:
             pip install jsonpickle
             pip install wtforms
             pip install boto3
+            pip install pyAesCrypt
             pip install python-dateutil --upgrade
             pytest -s --show-capture=all
       - run:
