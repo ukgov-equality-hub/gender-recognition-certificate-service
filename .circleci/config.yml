@@ -72,6 +72,7 @@ jobs:
           command: |
             pip install flask_migrate
             pip install colorama
+            pip install flask_uuid
             pytest -s --show-capture=all
       - run:
           name: build app image
