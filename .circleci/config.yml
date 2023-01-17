@@ -73,6 +73,7 @@ jobs:
       - run:
           name: build app image
           command: |
+            pip install flask_migrate
             export BUILD_DATE=$(date -Is) >> $BASH_ENV
             source $BASH_ENV
             docker build \
