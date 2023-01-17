@@ -69,7 +69,10 @@ jobs:
             waitress-serve --call 'grc:create_app' &
       - run:
           name: Test with pytest
-          command: pytest -s --show-capture=all
+          command: |
+            pip install flask_migrate
+            pip install colorama
+            pytest -s --show-capture=all
       - run:
           name: build app image
           command: |
