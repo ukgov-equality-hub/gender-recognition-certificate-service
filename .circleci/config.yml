@@ -75,6 +75,7 @@ jobs:
             pip install colorama
             pip install flask_uuid
             pip install jsonpickle
+            pip install dateutil
             pytest -s --show-capture=all
       - run:
           name: build app image
