@@ -70,6 +70,7 @@ jobs:
       - run:
           name: Test with pytest
           command: |
+            pip install sqlalchemy_utils
             pip install flask_migrate
             pip install colorama
             pip install flask_uuid
