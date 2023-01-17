@@ -106,20 +106,14 @@ jobs:
 
             login="$(AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION} AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID_PREPROD} AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY_PREPROD} aws ecr get-login --no-include-email)"
             ${login}
+            
 
-            docker tag grc-app
-            "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}"
-
-            docker push
-            "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}"
-
-            docker tag grc-app
-            "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:<<
-            parameters.env_name >>.latest"
-
-            docker push
-            "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:<<
-            parameters.env_name >>.latest" 
+              docker tag grc-app "${ECR_ENDPOINT_PREPROD}:${CIRCLE_SHA1}"
+          docker push "${ECR_ENDPOINT_PREPROD}:${CIRCLE_SHA1}"
+          if [ "${CIRCLE_BRANCH}" == "main" ]; then
+            docker tag grc-app "${ECR_ENDPOINT_PREPROD}:latest"
+            docker push "${ECR_ENDPOINT_PREPROD}:latest"
+          fi
       - run:
           name: build admin image
           command: |
