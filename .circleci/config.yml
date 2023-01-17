@@ -108,8 +108,8 @@ jobs:
             ${login}
             
 
-          docker tag grc-app "${ECR_ENDPOINT_PREPROD}:${CIRCLE_SHA1}"
-          docker push "${ECR_ENDPOINT_PREPROD}:${CIRCLE_SHA1}"
+            docker tag grc-app "${ECR_ENDPOINT_PREPROD}:${CIRCLE_SHA1}"
+            docker push "${ECR_ENDPOINT_PREPROD}:${CIRCLE_SHA1}"
         #  if [ "${CIRCLE_BRANCH}" == "main" ]; then
          #   docker tag grc-app "${ECR_ENDPOINT_PREPROD}:latest"
           #  docker push "${ECR_ENDPOINT_PREPROD}:latest"
