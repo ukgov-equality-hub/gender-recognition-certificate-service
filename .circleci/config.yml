@@ -41,15 +41,11 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Set up Python
+          name: Install dependencies
           command: |
-            sudo apt-get update
-            sudo apt-get install -y python3.8
-            python3.8 -m venv venv
-            source venv/bin/activate
-            python -m pip install --upgrade pip
-            pip install flake8 pytest
-            if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+            python -m venv venv
+            . venv/bin/activate
+            pip install -r requirements.txt
       - run:
           name: Install Playwright and browsers
           command: |
