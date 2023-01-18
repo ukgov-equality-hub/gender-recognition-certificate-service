@@ -58,7 +58,10 @@ jobs:
             python -m playwright install --with-deps
       - run:
           name: Database init
-          command: python setup-db.py
+          command: |
+            pip install psycopg2
+            pip install psycopg2-binary==2.9.3
+            python setup-db.py
       - run:
           name: Database migration
           command: |
