@@ -70,20 +70,20 @@ jobs:
           name: Start site
           command: |
             waitress-serve --call 'grc:create_app' &
-   #    - run:
-    #       name: Test with pytest
-      #     command: |
-      #       pip install sqlalchemy_utils
-        #     pip install flask_migrate
-      #       pip install colorama
-        #     pip install flask_uuid
-        #     pip install jsonpickle
-        #     pip install wtforms
-         #    pip install boto3
-         #    pip install pyAesCrypt
-        #     pip install zipstream
-        #     pip install python-dateutil --upgrade
-       #      pytest -s --show-capture=all
+      - run:
+           name: Test with pytest
+           command: |
+             pip install sqlalchemy_utils
+             pip install flask_migrate
+             pip install colorama
+             pip install flask_uuid
+             pip install jsonpickle
+             pip install wtforms
+             pip install boto3
+             pip install pyAesCrypt
+             pip install zipstream
+             pip install python-dateutil --upgrade
+             pytest -s --show-capture=all
       - run:
           name: build app image
           command: |
