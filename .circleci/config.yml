@@ -85,6 +85,7 @@ jobs:
              pip install python-dateutil --upgrade
              pip install notifications_python_client
              pip install fitz
+             pip install frontend
              pytest -s --show-capture=all
       - run:
           name: build app image
