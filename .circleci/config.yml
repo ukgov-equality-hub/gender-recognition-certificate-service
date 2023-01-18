@@ -89,6 +89,7 @@ jobs:
              pip install frontend
              pip install xhtml2pdf
              pip install psycopg2
+             pip install flask_wtf
              pytest -s --show-capture=all
       - run:
           name: build app image
