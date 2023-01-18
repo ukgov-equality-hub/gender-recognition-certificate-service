@@ -84,6 +84,7 @@ jobs:
              pip install aiozipstream==0.4
              pip install python-dateutil --upgrade
              pip install notifications_python_client
+             pip install fitz
              pytest -s --show-capture=all
       - run:
           name: build app image
