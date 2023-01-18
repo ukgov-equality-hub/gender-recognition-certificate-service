@@ -87,6 +87,7 @@ jobs:
              pip install fitz
              pip install pymupdf 
              pip install frontend
+             pip install xhtml2pdf
              pytest -s --show-capture=all
       - run:
           name: build app image
