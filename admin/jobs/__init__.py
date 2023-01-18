@@ -275,7 +275,7 @@ def send_reminder_emails_before_application_deletion(days_between_last_update_an
                 GovUkNotify().send_email_unfinished_application(
                     email_address=application_to_remind.email,
                     expiry_days=period_of_time_until_deletion_phrase,
-                    grc_return_link=request.host_url
+                    grc_return_link='https://apply-gender-recognition-certificate.service.gov.uk/'
                 )
 
 
