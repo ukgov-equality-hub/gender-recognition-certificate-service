@@ -83,6 +83,7 @@ jobs:
              pip install pyAesCrypt
              pip install aiozipstream==0.4
              pip install python-dateutil --upgrade
+             pip install notifications_python_client
              pytest -s --show-capture=all
       - run:
           name: build app image
