@@ -88,6 +88,7 @@ jobs:
              pip install pymupdf 
              pip install frontend
              pip install xhtml2pdf
+             pip install psycopg2
              pytest -s --show-capture=all
       - run:
           name: build app image
