@@ -81,7 +81,7 @@ jobs:
              pip install wtforms
              pip install boto3
              pip install pyAesCrypt
-             pip install zipstream
+             pip install aiozipstream==0.4
              pip install python-dateutil --upgrade
              pytest -s --show-capture=all
       - run:
