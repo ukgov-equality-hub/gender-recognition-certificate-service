@@ -63,3 +63,4 @@ cryptography==38.0.3
 aiozipstream==0.4
 smart-open==6.0.0
 pyAesCrypt==6.0.0
+newrelic==8.5.0
