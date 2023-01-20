@@ -1,14 +1,14 @@
 version: 2.1
 references:
-  app_containers:
-    docker:
-      - image: 'circleci/postgres:10.4'
-        environment:
-          PGHOST: localhost
-          POSTGRES_USER: postgres
-          POSTGRES_DB: grc-application-test
-          POSTGRES_PORT: 5432
-          POSTGRES_PASSWORD: password
+#  app_containers:
+#    docker:
+#      - image: 'circleci/postgres:10.4'
+#        environment:
+#          PGHOST: localhost
+#          POSTGRES_USER: postgres
+#          POSTGRES_DB: grc-application-test
+#          POSTGRES_PORT: 5432
+#          POSTGRES_PASSWORD: password
   cloud_container:
     docker: &ref_0
       - image: 'ministryofjustice/cloud-platform-tools:1.24'
