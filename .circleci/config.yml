@@ -61,7 +61,6 @@ jobs:
       - run:
           name: Database init
           command: |
-            docker-compose up -d
             pip install psycopg2
             pip install psycopg2-binary==2.9.3
             python setup-db.py
