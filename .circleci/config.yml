@@ -78,8 +78,8 @@ jobs:
           command: |
             waitress-serve --call 'grc:create_app' &
       - run:
-           name: Test with pytest
-           command: |
+          name: Test with pytest
+          command: |
              pip install sqlalchemy_utils
              pip install flask_migrate
              pip install colorama
