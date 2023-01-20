@@ -76,8 +76,7 @@ jobs:
           command: >
             pip install awscli
             login="$(AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION} AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID_PREPROD} AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY_PREPROD} aws ecr get-login --no-include-email)"
-            ${login}
-           
+            ${login}      
             docker tag grc-app:latest "${ECR_ENDPOINT_PREPROD}/test:latest"
             docker push  "${ECR_ENDPOINT_PREPROD}/test:latest"
         #  if [ "${CIRCLE_BRANCH}" == "main" ]; then
