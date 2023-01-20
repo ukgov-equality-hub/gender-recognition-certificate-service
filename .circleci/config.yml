@@ -68,20 +68,20 @@ jobs:
             pip install playwright pytest-playwright asyncio
             pip install -e .
             python -m playwright install --with-deps
-#      - run:
-#          name: Database init
-#          command: |
-#            pip install psycopg2
-#            pip install psycopg2-binary==2.9.3
-#            python setup-db.py
-#      - run:
-#          name: Database migration
-#          command: |
-#            pip install psycopg2
-#            pip install psycopg2-binary==2.9.3
-#            flask db stamp head
-#            flask db migrate
-#            flask db upgrade
+      - run:
+          name: Database init
+          command: |
+            pip install psycopg2
+            pip install psycopg2-binary==2.9.3
+            python setup-db.py
+      - run:
+          name: Database migration
+          command: |
+            pip install psycopg2
+            pip install psycopg2-binary==2.9.3
+            flask db stamp head
+            flask db migrate
+            flask db upgrade
       - run:
           name: Start site
           command: |
