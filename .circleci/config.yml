@@ -129,7 +129,7 @@ jobs:
            
 
             docker tag grc-app:latest "${ECR_ENDPOINT_PREPROD}/test:latest"
-             docker push  "${ECR_ENDPOINT_PREPROD}/test:latest"
+            docker push  "${ECR_ENDPOINT_PREPROD}/test:latest"
         #  if [ "${CIRCLE_BRANCH}" == "main" ]; then
          #   docker tag grc-app "${ECR_ENDPOINT_PREPROD}:latest"
           #  docker push "${ECR_ENDPOINT_PREPROD}:latest"
