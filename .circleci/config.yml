@@ -102,7 +102,7 @@ jobs:
           name: push admin image
           command: >
             pip install awscli
-            login="$(aws ecr get-login --region ${AWS_DEFAULT_REGION}
+            login="$(aws ecr get-login --region ${AWS_DEFAULT_REGION})"
             --no-include-email)"
             ${login}
             docker tag grc-admin
@@ -133,7 +133,7 @@ jobs:
           name: push dashboard image
           command: >
             pip install awscli
-            login="$(aws ecr get-login --region ${AWS_DEFAULT_REGION}
+            login="$(aws ecr get-login --region ${AWS_DEFAULT_REGION})"
             --no-include-email)"
             ${login}
             docker tag grc-dashboard
