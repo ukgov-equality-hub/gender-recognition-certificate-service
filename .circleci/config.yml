@@ -45,7 +45,7 @@ jobs:
           DATABASE_URL: 'postgresql://postgres:password@localhost:5432/grc'
       - image: 'circleci/postgres:10.4'
         environment:
-          PGHOST: localhost
+          POSTGRES_HOST: localhost
           POSTGRES_USER: postgres
           POSTGRES_DB: grc-application-test
           POSTGRES_PORT: 5432
