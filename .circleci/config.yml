@@ -52,54 +52,54 @@ jobs:
             . venv/bin/activate
             pip install -r requirements.txt
             
-      #- run:
-       #   name: Install Playwright and browsers
-        #  command: |
-         #   pip install playwright pytest-playwright asyncio
-          #  pip install -e .
-           # python -m playwright install --with-deps
-      # - run:
-      #     name: Database init
-      #     command: |
-      #       pip install psycopg2
-      #       pip install psycopg2-binary==2.9.3
-      #       python setup-db.py
-      # - run:
-      #     name: Database migration
-      #     command: |
-      #       pip install psycopg2
-      #       pip install psycopg2-binary==2.9.3
-      #       flask db stamp head
-      #       flask db migrate
-      #       flask db upgrade
-      # - run:
-      #     name: Start site
-      #     command: |
-      #       waitress-serve --call 'grc:create_app' &
-      # - run:
-      #     name: Test with pytest
-      #     command: |
-      #       pip install sqlalchemy_utils
-      #       pip install flask_migrate
-      #       pip install colorama
-      #       pip install flask_uuid
-      #       pip install jsonpickle
-      #       pip install wtforms
-      #       pip install boto3
-      #       pip install pyAesCrypt
-      #       pip install aiozipstream==0.4
-      #       pip install python-dateutil --upgrade
-      #       pip install notifications_python_client
-      #       pip install fitz
-      #       pip install pymupdf 
-      #       pip install frontend
-      #       pip install xhtml2pdf
-      #       pip install psycopg2
-      #       pip install psycopg2-binary==2.9.3
-      #       pip install flask_wtf 
-      #       pip install email-validator
-      #       pytest -s --show-capture=all
-        - run:
+      - run:
+          name: Install Playwright and browsers
+          command: |
+            pip install playwright pytest-playwright asyncio
+            pip install -e .
+            python -m playwright install --with-deps
+      - run:
+          name: Database init
+          command: |
+            pip install psycopg2
+            pip install psycopg2-binary==2.9.3
+            python setup-db.py
+      - run:
+          name: Database migration
+          command: |
+            pip install psycopg2
+            pip install psycopg2-binary==2.9.3
+            flask db stamp head
+            flask db migrate
+            flask db upgrade
+      - run:
+          name: Start site
+          command: |
+            waitress-serve --call 'grc:create_app' &
+      - run:
+          name: Test with pytest
+          command: |
+            pip install sqlalchemy_utils
+            pip install flask_migrate
+            pip install colorama
+            pip install flask_uuid
+            pip install jsonpickle
+            pip install wtforms
+            pip install boto3
+            pip install pyAesCrypt
+            pip install aiozipstream==0.4
+            pip install python-dateutil --upgrade
+            pip install notifications_python_client
+            pip install fitz
+            pip install pymupdf 
+            pip install frontend
+            pip install xhtml2pdf
+            pip install psycopg2
+            pip install psycopg2-binary==2.9.3
+            pip install flask_wtf 
+            pip install email-validator
+            pytest -s --show-capture=all
+      - run:
           name: build app image
           command: |
             pip install flask_migrate
