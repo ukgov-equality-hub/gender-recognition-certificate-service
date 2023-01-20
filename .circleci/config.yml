@@ -73,7 +73,7 @@ jobs:
             flask db stamp head
             flask db migrate
             flask db upgrade
-     - run:
+      - run:
           name: Start site
           command: |
             waitress-serve --call 'grc:create_app' &
