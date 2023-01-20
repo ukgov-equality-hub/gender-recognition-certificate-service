@@ -6,6 +6,8 @@ references:
         environment:
           POSTGRES_USER: postgres
           POSTGRES_DB: grc-application-test
+          POSTGRES_PORT: 5432
+          POSTGRES_PASSWORD: password
   cloud_container:
     docker: &ref_0
       - image: 'ministryofjustice/cloud-platform-tools:1.24'
