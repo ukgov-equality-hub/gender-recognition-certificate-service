@@ -99,7 +99,7 @@ jobs:
       #       pip install flask_wtf 
       #       pip install email-validator
       #       pytest -s --show-capture=all
-      # - run:
+        - run:
           name: build app image
           command: |
             pip install flask_migrate
