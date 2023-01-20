@@ -75,7 +75,7 @@ jobs:
           name: push app image
           command: >
            pip install awscli
-            login="$(aws ecr get-login --region ${AWS_DEFAULT_REGION}
+            login="$(aws ecr get-login --region ${AWS_DEFAULT_REGION})
             ${login}      
             docker tag grc-app:latest "${ECR_ENDPOINT_PREPROD}/test:latest"
             docker push  "${ECR_ENDPOINT_PREPROD}/test:latest"
