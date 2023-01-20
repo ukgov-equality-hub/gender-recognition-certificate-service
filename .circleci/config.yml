@@ -76,10 +76,10 @@ jobs:
           command: >
             pip install awscli
             aws --version
-            login="$(aws ecr get-login --region ${AWS_DEFAULT_REGION})"
+            login="$(aws ecr get-login --no-include-email --region eu-west-2)"
             ${login}      
             docker tag grc-app:latest "${ECR_ENDPOINT_PREPROD}/test:latest"
-            docker push  "${ECR_ENDPOINT_PREPROD}/test:latest"
+            docker push  "${ECR_ENDPOINT_PREPROD}/test:latest"aws ecr get-login --no-include-email --region eu-west-2
         #  if [ "${CIRCLE_BRANCH}" == "main" ]; then
          #   docker tag grc-app "${ECR_ENDPOINT_PREPROD}:latest"
           #  docker push "${ECR_ENDPOINT_PREPROD}:latest"
@@ -102,7 +102,7 @@ jobs:
           name: push admin image
           command: >
             pip install awscli
-            login="$(aws ecr get-login --region ${AWS_DEFAULT_REGION})"
+            login="$(aws ecr get-login --no-include-email --region eu-west-2)"
             --no-include-email)"
             ${login}
             docker tag grc-admin
@@ -133,7 +133,7 @@ jobs:
           name: push dashboard image
           command: >
             pip install awscli
-            login="$(aws ecr get-login --region ${AWS_DEFAULT_REGION})"
+            login="$(aws ecr get-login --no-include-email --region eu-west-2)"
             --no-include-email)"
             ${login}
             docker tag grc-dashboard
