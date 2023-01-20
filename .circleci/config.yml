@@ -71,10 +71,6 @@ jobs:
               --build-arg APP_GIT_COMMIT=${CIRCLE_SHA1} \
               -t app .
       - run:
-         name: Check AWS CLI version
-         command: aws --version
-        
-      - run:
           name: push app image
           command: >
             pip install awscli
