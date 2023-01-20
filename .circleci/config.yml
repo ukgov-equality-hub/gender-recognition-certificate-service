@@ -103,7 +103,11 @@ jobs:
           command: |
             pip install flask_migrate
             export BUILD_DATE=$(date -Is) >> $BASH_ENV
-            source $BASH_ENV
+            source $BASH_ENV             
+            echo ${AWS_DEFAULT_REGION}
+            echo ${AWS_ACCESS_KEY_ID_PREPROD}
+            echo ${AWS_SECRET_ACCESS_KEY_PREPROD}
+            
             docker build \
               --label build.git.sha=${CIRCLE_SHA1} \
               --label build.git.branch=${CIRCLE_BRANCH} \
@@ -120,10 +124,7 @@ jobs:
 
             login="$(AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION} AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID_PREPROD} AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY_PREPROD} aws ecr get-login --no-include-email)"
             ${login}
-            
-            echo ${AWS_DEFAULT_REGION}
-            echo ${AWS_ACCESS_KEY_ID_PREPROD}
-            echo ${AWS_SECRET_ACCESS_KEY_PREPROD}
+           
 
             docker tag grc-app:latest ${ECR_ENDPOINT_PREPROD}/test:latest
              docker push  ${ECR_ENDPOINT_PREPROD}/test:latest
