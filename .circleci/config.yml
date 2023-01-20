@@ -18,7 +18,7 @@ references:
 jobs:
   build:
     environment:
-      FLASK_ENV: production
+      FLASK_ENV: development
       FLASK_DEBUG: 1
       FLASK_APP: grc
       LOG_LEVEL: DEBUG
