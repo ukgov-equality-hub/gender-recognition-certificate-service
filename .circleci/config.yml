@@ -52,12 +52,12 @@ jobs:
             . venv/bin/activate
             pip install -r requirements.txt
             
-      - run:
-          name: Install Playwright and browsers
-          command: |
-            pip install playwright pytest-playwright asyncio
-            pip install -e .
-            python -m playwright install --with-deps
+      #- run:
+       #   name: Install Playwright and browsers
+        #  command: |
+         #   pip install playwright pytest-playwright asyncio
+          #  pip install -e .
+           # python -m playwright install --with-deps
       # - run:
       #     name: Database init
       #     command: |
