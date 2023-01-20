@@ -104,9 +104,9 @@ jobs:
             pip install flask_migrate
             export BUILD_DATE=$(date -Is) >> $BASH_ENV
             source $BASH_ENV             
-            echo ${AWS_DEFAULT_REGION}
-            echo ${AWS_ACCESS_KEY_ID_PREPROD}
-            echo ${AWS_SECRET_ACCESS_KEY_PREPROD}
+            echo "${AWS_DEFAULT_REGION}"
+            echo "${AWS_ACCESS_KEY_ID_PREPROD}"
+            echo "${AWS_SECRET_ACCESS_KEY_PREPROD}"
             
             docker build \
               --label build.git.sha=${CIRCLE_SHA1} \
@@ -126,8 +126,8 @@ jobs:
             ${login}
            
 
-            docker tag grc-app:latest ${ECR_ENDPOINT_PREPROD}/test:latest
-             docker push  ${ECR_ENDPOINT_PREPROD}/test:latest
+            docker tag grc-app:latest "${ECR_ENDPOINT_PREPROD}/test:latest"
+             docker push  "${ECR_ENDPOINT_PREPROD}/test:latest"
         #  if [ "${CIRCLE_BRANCH}" == "main" ]; then
          #   docker tag grc-app "${ECR_ENDPOINT_PREPROD}:latest"
           #  docker push "${ECR_ENDPOINT_PREPROD}:latest"
