@@ -43,6 +43,13 @@ jobs:
       - image: 'circleci/python:3.8'
         environment:
           DATABASE_URL: 'postgresql://postgres:password@localhost:5432/grc'
+      - image: 'circleci/postgres:10.4'
+        environment:
+          PGHOST: localhost
+          POSTGRES_USER: postgres
+          POSTGRES_DB: grc-application-test
+          POSTGRES_PORT: 5432
+          POSTGRES_PASSWORD: password
     steps:
       - checkout
       - setup_remote_docker:
