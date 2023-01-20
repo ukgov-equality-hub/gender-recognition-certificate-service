@@ -51,7 +51,7 @@ jobs:
             python -m venv venv
             . venv/bin/activate
             pip install -r requirements.txt
-            
+           
       - run:
           name: build app image
           command: |
@@ -70,10 +70,12 @@ jobs:
               --build-arg APP_BUILD_TAG=${CIRCLE_BRANCH} \
               --build-arg APP_GIT_COMMIT=${CIRCLE_SHA1} \
               -t app .
+              
       - run:
           name: push app image
           command: >
-            pip install awscli
+           pip install awscli
+           aws --version
             login="$(aws ecr get-login --region ${AWS_DEFAULT_REGION})"
             ${login}      
             docker tag grc-app:latest "${ECR_ENDPOINT_PREPROD}/test:latest"
@@ -96,12 +98,11 @@ jobs:
               --build-arg APP_GIT_COMMIT=${CIRCLE_SHA1} \
               -f admin.Dockerfile .
               -t grc-admin .
-      
       - run:
           name: push admin image
           command: >
             pip install awscli
-           login="$(aws ecr get-login --region ${AWS_DEFAULT_REGION})"
+            login="$(aws ecr get-login --region ${AWS_DEFAULT_REGION}
             --no-include-email)"
             ${login}
             docker tag grc-admin
@@ -132,7 +133,7 @@ jobs:
           name: push dashboard image
           command: >
             pip install awscli
-            login="$(aws ecr get-login --region ${AWS_DEFAULT_REGION})"
+            login="$(aws ecr get-login --region ${AWS_DEFAULT_REGION}
             --no-include-email)"
             ${login}
             docker tag grc-dashboard
