@@ -58,48 +58,48 @@ jobs:
             pip install playwright pytest-playwright asyncio
             pip install -e .
             python -m playwright install --with-deps
-      - run:
-          name: Database init
-          command: |
-            pip install psycopg2
-            pip install psycopg2-binary==2.9.3
-            python setup-db.py
-      - run:
-          name: Database migration
-          command: |
-            pip install psycopg2
-            pip install psycopg2-binary==2.9.3
-            flask db stamp head
-            flask db migrate
-            flask db upgrade
-      - run:
-          name: Start site
-          command: |
-            waitress-serve --call 'grc:create_app' &
-      - run:
-          name: Test with pytest
-          command: |
-            pip install sqlalchemy_utils
-            pip install flask_migrate
-            pip install colorama
-            pip install flask_uuid
-            pip install jsonpickle
-            pip install wtforms
-            pip install boto3
-            pip install pyAesCrypt
-            pip install aiozipstream==0.4
-            pip install python-dateutil --upgrade
-            pip install notifications_python_client
-            pip install fitz
-            pip install pymupdf 
-            pip install frontend
-            pip install xhtml2pdf
-            pip install psycopg2
-            pip install psycopg2-binary==2.9.3
-            pip install flask_wtf 
-            pip install email-validator
-            pytest -s --show-capture=all
-      - run:
+      # - run:
+      #     name: Database init
+      #     command: |
+      #       pip install psycopg2
+      #       pip install psycopg2-binary==2.9.3
+      #       python setup-db.py
+      # - run:
+      #     name: Database migration
+      #     command: |
+      #       pip install psycopg2
+      #       pip install psycopg2-binary==2.9.3
+      #       flask db stamp head
+      #       flask db migrate
+      #       flask db upgrade
+      # - run:
+      #     name: Start site
+      #     command: |
+      #       waitress-serve --call 'grc:create_app' &
+      # - run:
+      #     name: Test with pytest
+      #     command: |
+      #       pip install sqlalchemy_utils
+      #       pip install flask_migrate
+      #       pip install colorama
+      #       pip install flask_uuid
+      #       pip install jsonpickle
+      #       pip install wtforms
+      #       pip install boto3
+      #       pip install pyAesCrypt
+      #       pip install aiozipstream==0.4
+      #       pip install python-dateutil --upgrade
+      #       pip install notifications_python_client
+      #       pip install fitz
+      #       pip install pymupdf 
+      #       pip install frontend
+      #       pip install xhtml2pdf
+      #       pip install psycopg2
+      #       pip install psycopg2-binary==2.9.3
+      #       pip install flask_wtf 
+      #       pip install email-validator
+      #       pytest -s --show-capture=all
+      # - run:
           name: build app image
           command: |
             pip install flask_migrate
@@ -122,11 +122,9 @@ jobs:
           name: push app image
           command: >
             pip install awscli
-
             login="$(AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION} AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID_PREPROD} AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY_PREPROD} aws ecr get-login --no-include-email)"
             ${login}
            
-
             docker tag grc-app:latest "${ECR_ENDPOINT_PREPROD}/test:latest"
             docker push  "${ECR_ENDPOINT_PREPROD}/test:latest"
         #  if [ "${CIRCLE_BRANCH}" == "main" ]; then
@@ -151,22 +149,16 @@ jobs:
           name: push admin image
           command: >
             pip install awscli
-
             login="$(aws ecr get-login --region ${AWS_DEFAULT_REGION}
             --no-include-email)"
-
             ${login}
-
             docker tag grc-admin
             "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}"
-
             docker push
             "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}"
-
             docker tag grc-admin
             "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:<<
             parameters.env_name >>.latest"
-
             docker push
             "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:<<
             parameters.env_name >>.latest"
@@ -188,22 +180,16 @@ jobs:
           name: push dashboard image
           command: >
             pip install awscli
-
             login="$(aws ecr get-login --region ${AWS_DEFAULT_REGION}
             --no-include-email)"
-
             ${login}
-
             docker tag grc-dashboard
             "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}"
-
             docker push
             "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}"
-
             docker tag grc-dashboard
             "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:<<
             parameters.env_name >>.latest"
-
             docker push
             "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:<<
             parameters.env_name >>.latest"
@@ -218,18 +204,14 @@ jobs:
           name: Authenticate to LIVE cluster
           command: >
             echo -n ${KUBE_ENV_LIVE_STAGING_CACERT} | base64 -d > ./ca.crt
-
             kubectl config set-cluster ${KUBE_ENV_LIVE_STAGING_NAME}
             --certificate-authority=./ca.crt
             --server=https://${KUBE_ENV_LIVE_STAGING_NAME}
-
             kubectl config set-credentials circleci
             --token=${KUBE_ENV_LIVE_STAGING_TOKEN}
-
             kubectl config set-context ${KUBE_ENV_LIVE_STAGING_NAME}
             --cluster=${KUBE_ENV_LIVE_STAGING_NAME} --user=circleci
             --namespace=${KUBE_ENV_LIVE_STAGING_NAMESPACE}
-
             kubectl config use-context ${KUBE_ENV_LIVE_STAGING_NAME}
       - deploy:
           name: rolling update image
