@@ -19,7 +19,6 @@ references:
 jobs:
   build:
     environment:
-      <<: *github_team_name_slug
       FLASK_ENV: production
       FLASK_DEBUG: 1
       FLASK_APP: grc
