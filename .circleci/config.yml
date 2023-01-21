@@ -82,10 +82,6 @@ jobs:
       - run:
           name: push app image
           command: >
-            pip install awscli
-            aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID_PREPROD
-            aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY_PREPROD
-            aws configure set default.region $AWS_DEFAULT_REGION
             login="$(aws ecr get-login --region ${AWS_DEFAULT_REGION})"
             ${login}      
             docker tag grc-app:latest "${ECR_ENDPOINT_PREPROD}/test:latest"
@@ -111,10 +107,6 @@ jobs:
       - run:
           name: push admin image
           command: >
-            pip install awscli
-            aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID_PREPROD
-            aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY_PREPROD
-            aws configure set default.region $AWS_DEFAULT_REGION
             login="$(aws ecr get-login --region ${AWS_DEFAULT_REGION})"
             ${login}
             docker tag grc-admin
@@ -144,10 +136,6 @@ jobs:
       - run:
           name: push dashboard image
           command: >
-            pip install awscli
-            aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID_PREPROD
-            aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY_PREPROD
-            aws configure set default.region $AWS_DEFAULT_REGION
             login="$(aws ecr get-login --region ${AWS_DEFAULT_REGION})"
             ${login}
             docker tag grc-dashboard
