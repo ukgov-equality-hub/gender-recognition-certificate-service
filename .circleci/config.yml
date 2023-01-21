@@ -142,10 +142,11 @@ jobs:
               -f dashboard.Dockerfile .
               -t grc-dashboard . 
       - run:
-          name: push dashboard image
+          name: Login to ECR
           command: |
-            login="$(aws ecr get-login-password  --region eu-west-2 | docker login --username AWS --password-stdin 754256621582.dkr.ecr.eu-west-2.amazonaws.com)"
-            ${login}
+            $(aws ecr get-login-token --region eu-west-2)
+            echo $DOCKER_AUTH_TOKEN | docker login --username AWS --password-stdin 754256621582.dkr.ecr.eu-west-2.amazonaws.com
+          command: |
             docker tag app "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}"
             docker push "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}"
             if [ "${CIRCLE_BRANCH}" == "main" ]; then
