@@ -60,7 +60,8 @@ jobs:
           command: |
             sudo apt-get update
             sudo apt-get --assume-yes install python3-pip
-            sudo pip3 install awscli       
+            sudo pip3 install awscli 
+            aws --version
             
       - run:
           name: build app image
