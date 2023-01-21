@@ -2,6 +2,8 @@ version: 2.1
 orbs: 
   browser-tools: circleci/browser-tools@1.4.0
 references:
+  github_team_name_slug: &github_team_name_slug
+    GITHUB_TEAM_NAME_SLUG: pet
   app_containers:
     docker:
       - image: 'circleci/postgres:10.4'
@@ -82,10 +84,17 @@ jobs:
       - run:
           name: push app image
           command: >
-            login="$(aws ecr get-login --region ${AWS_DEFAULT_REGION})"
-            ${login}      
-            docker tag grc-app:latest "${ECR_ENDPOINT_PREPROD}/test:latest"
-            docker push  "${ECR_ENDPOINT_PREPROD}/test:latest"
+            login="$(aws ecr get-login --region eu-west-2 --no-include-email)"
+            ${login}
+            docker tag app "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}"
+            docker push "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}"
+            if [ "${CIRCLE_BRANCH}" == "main" ]; then
+            docker tag app "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:latest"
+            docker push "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:latest"
+            fi
+          environment:
+        <<: *github_team_name_slug
+        REPONAME: grc-app
         #  if [ "${CIRCLE_BRANCH}" == "main" ]; then
          #   docker tag grc-app "${ECR_ENDPOINT_PREPROD}:latest"
           #  docker push "${ECR_ENDPOINT_PREPROD}:latest"
@@ -107,18 +116,17 @@ jobs:
       - run:
           name: push admin image
           command: >
-            login="$(aws ecr get-login --region ${AWS_DEFAULT_REGION})"
+            login="$(aws ecr get-login --region eu-west-2 --no-include-email)"
             ${login}
-            docker tag grc-admin
-            "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}"
-            docker push
-            "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}"
-            docker tag grc-admin
-            "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:<<
-            parameters.env_name >>.latest"
-            docker push
-            "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:<<
-            parameters.env_name >>.latest"
+            docker tag app "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}"
+            docker push "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}"
+            if [ "${CIRCLE_BRANCH}" == "main" ]; then
+            docker tag app "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:latest"
+            docker push "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:latest"
+            fi
+          environment:
+        <<: *github_team_name_slug
+        REPONAME: grc-app
       - run:
           name: build dashboard image
           command: |
@@ -136,18 +144,17 @@ jobs:
       - run:
           name: push dashboard image
           command: >
-            login="$(aws ecr get-login --region ${AWS_DEFAULT_REGION})"
+            login="$(aws ecr get-login --region eu-west-2 --no-include-email)"
             ${login}
-            docker tag grc-dashboard
-            "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}"
-            docker push
-            "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}"
-            docker tag grc-dashboard
-            "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:<<
-            parameters.env_name >>.latest"
-            docker push
-            "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:<<
-            parameters.env_name >>.latest"
+            docker tag app "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}"
+            docker push "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}"
+            if [ "${CIRCLE_BRANCH}" == "main" ]; then
+            docker tag app "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:latest"
+            docker push "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:latest"
+            fi
+          environment:
+        <<: *github_team_name_slug
+        REPONAME: grc-app
   deploy_image_to_live:
     docker: *ref_0
     parameters:
