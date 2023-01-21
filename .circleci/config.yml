@@ -83,7 +83,7 @@ jobs:
               
       - run:
           name: push app image
-          command: >
+          command: |
             login="$(aws ecr get-login --region eu-west-2 --no-include-email)"
             ${login}
             docker tag app "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}"
@@ -93,8 +93,8 @@ jobs:
             docker push "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:latest"
             fi
           environment:
-        <<: *github_team_name_slug
-        REPONAME: grc-app
+            <<: *github_team_name_slug
+            REPONAME: grc-app
         #  if [ "${CIRCLE_BRANCH}" == "main" ]; then
          #   docker tag grc-app "${ECR_ENDPOINT_PREPROD}:latest"
           #  docker push "${ECR_ENDPOINT_PREPROD}:latest"
@@ -115,7 +115,7 @@ jobs:
               -t grc-admin .
       - run:
           name: push admin image
-          command: >
+          command: |
             login="$(aws ecr get-login --region eu-west-2 --no-include-email)"
             ${login}
             docker tag app "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}"
@@ -125,8 +125,8 @@ jobs:
             docker push "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:latest"
             fi
           environment:
-        <<: *github_team_name_slug
-        REPONAME: grc-app
+            <<: *github_team_name_slug
+            REPONAME: grc-app
       - run:
           name: build dashboard image
           command: |
@@ -143,7 +143,7 @@ jobs:
               -t grc-dashboard . 
       - run:
           name: push dashboard image
-          command: >
+          command: |
             login="$(aws ecr get-login --region eu-west-2 --no-include-email)"
             ${login}
             docker tag app "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}"
@@ -153,8 +153,8 @@ jobs:
             docker push "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:latest"
             fi
           environment:
-        <<: *github_team_name_slug
-        REPONAME: grc-app
+            <<: *github_team_name_slug
+            REPONAME: grc-app
   deploy_image_to_live:
     docker: *ref_0
     parameters:
