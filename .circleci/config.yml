@@ -29,6 +29,7 @@ jobs:
       SECRET_KEY: ef987sd9fwkjefosf9we0svs9q3evsd0
       SQLALCHEMY_DATABASE_URI: 'postgresql://postgres:password@localhost:5432/grc'
       SQLALCHEMY_TRACK_MODIFICATION: false
+      SQLALCHEMY_TRACK_MODIFICATION: false
       DEFAULT_ADMIN_USER: grc-service-account@cabinetoffice.gov.uk
       NOTIFY_API: '${TEST_NOTIFY_API}'
       NOTIFY_OVERRIDE_EMAIL: test@example.com
