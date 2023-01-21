@@ -1,4 +1,6 @@
 version: 2.1
+orbs: 
+  browser-tools: circleci/browser-tools@1.4.0
 references:
   app_containers:
     docker:
@@ -75,7 +77,7 @@ jobs:
           name: push app image
           command: >
            pip install awscli
-            login="$(aws ecr get-login-password --region eu-west-2 \docker login --username AWS --password-stdin \754256621582.dkr.ecr.eu-west-2.amazonaws.com)"
+            login="$(aws ecr get-login-password --region eu-west-2  |docker login --username AWS --password-stdin 754256621582.dkr.ecr.eu-west-2.amazonaws.com)"
             ${login}      
             docker tag grc-app:latest "${ECR_ENDPOINT_PREPROD}/test:latest"
             docker push  "${ECR_ENDPOINT_PREPROD}/test:latest"
@@ -101,7 +103,7 @@ jobs:
           name: push admin image
           command: >
             pip install awscli
-            login="$(aws ecr get-login-password --region eu-west-2 \docker login --username AWS --password-stdin \754256621582.dkr.ecr.eu-west-2.amazonaws.com)"
+            login="$(aws ecr get-login-password --region eu-west-2  |docker login --username AWS --password-stdin 754256621582.dkr.ecr.eu-west-2.amazonaws.com)"
             ${login} 
             docker tag grc-admin
             "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}"
@@ -131,7 +133,7 @@ jobs:
           name: push dashboard image
           command: >
             pip install awscli
-            login="$(aws ecr get-login-password --region eu-west-2 \docker login --username AWS --password-stdin \754256621582.dkr.ecr.eu-west-2.amazonaws.com)"
+            login="$(aws ecr get-login-password --region eu-west-2  |docker login --username AWS --password-stdin 754256621582.dkr.ecr.eu-west-2.amazonaws.com)"
             ${login} 
             docker tag grc-dashboard
             "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}"
