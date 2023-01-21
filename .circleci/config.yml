@@ -21,6 +21,7 @@ references:
 jobs:
   build:
     environment:
+      <<: *github_team_name_slug
       FLASK_ENV: production
       FLASK_DEBUG: 1
       FLASK_APP: grc
@@ -157,8 +158,7 @@ jobs:
              docker tag app "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/grc-app:latest"
              docker push "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/grc-app:latest"
            fi
-    environment:
-      <<: *github_team_name_slug
+           
       REPONAME: grc-app
 
   deploy_image_to_live:
