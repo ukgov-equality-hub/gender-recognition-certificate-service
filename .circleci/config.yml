@@ -24,7 +24,7 @@ jobs:
       FLASK_ENV: production
       FLASK_DEBUG: 1
       FLASK_APP: grc
-      LOG_LEVEL:DEBUG
+      LOG_LEVEL: DEBUG
       TEST_URL: 'http://localhost:8080'
       SECRET_KEY: ef987sd9fwkjefosf9we0svs9q3evsd0
       SQLALCHEMY_DATABASE_URI: 'postgresql://postgres:password@localhost:5432/grc'
