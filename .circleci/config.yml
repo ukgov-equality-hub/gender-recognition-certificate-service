@@ -62,9 +62,7 @@ jobs:
             sudo apt-get --assume-yes install python3-pip
             sudo pip3 install awscli 
             aws --version
-      - run:
-          name: List AWS CLI Configuration
-          command: echo $(aws configure list)
+      
             
       - run:
           name: build app image
