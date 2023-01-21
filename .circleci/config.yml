@@ -84,7 +84,7 @@ jobs:
       - run:
           name: push app image
           command: |
-            login="$(aws ecr get-login --region eu-west-2 --no-include-email)"
+            login="$(aws ecr get-login-password  --region eu-west-2 | docker login --username AWS --password-stdin 754256621582.dkr.ecr.eu-west-2.amazonaws.com)"
             ${login}
             docker tag app "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}"
             docker push "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}"
@@ -116,7 +116,7 @@ jobs:
       - run:
           name: push admin image
           command: |
-            login="$(aws ecr get-login --region eu-west-2 --no-include-email)"
+            login="$(aws ecr get-login-password  --region eu-west-2 | docker login --username AWS --password-stdin 754256621582.dkr.ecr.eu-west-2.amazonaws.com)"
             ${login}
             docker tag app "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}"
             docker push "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}"
@@ -144,7 +144,7 @@ jobs:
       - run:
           name: push dashboard image
           command: |
-            login="$(aws ecr get-login --region eu-west-2 --no-include-email)"
+            login="$(aws ecr get-login-password  --region eu-west-2 | docker login --username AWS --password-stdin 754256621582.dkr.ecr.eu-west-2.amazonaws.com)"
             ${login}
             docker tag app "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}"
             docker push "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}"
