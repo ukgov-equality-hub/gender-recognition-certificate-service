@@ -2,6 +2,8 @@ version: 2.1
 orbs: 
   browser-tools: circleci/browser-tools@1.4.0
 references:
+  github_team_name_slug: &github_team_name_slug
+    GITHUB_TEAM_NAME_SLUG: pet
   app_containers:
     docker:
       - image: 'circleci/postgres:10.4'
