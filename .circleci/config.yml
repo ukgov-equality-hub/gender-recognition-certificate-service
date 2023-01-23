@@ -39,8 +39,8 @@ jobs:
       env_name:
         type: string
         default: development
-    docker:
-      - image: 'circleci/python:3.8'
+#    docker:
+#      - image: 'circleci/python:3.8'
 #        environment:
 #          DATABASE_URL: 'postgresql://postgres:password@localhost:5432/grc'
 #          FLASK_ENV: production
@@ -60,7 +60,7 @@ jobs:
 #          AWS_REGION: eu-west-2
 #          GOVUK_PAY_API: 'https://publicapi.payments.service.gov.uk/'
 #          GOVUK_PAY_API_KEY: '${AUTOMATED_TEST_GOVUK_PAY_API_KEY}'
-      - image: 'circleci/postgres:10.4'
+#      - image: 'circleci/postgres:10.4'
 #        environment:
 #          POSTGRES_HOST: localhost
 #          POSTGRES_USER: postgres
