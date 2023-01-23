@@ -60,6 +60,8 @@ jobs:
           AWS_REGION: eu-west-2
           GOVUK_PAY_API: 'https://publicapi.payments.service.gov.uk/'
           GOVUK_PAY_API_KEY: '${AUTOMATED_TEST_GOVUK_PAY_API_KEY}'
+        ports:
+          - 8080:8080
       - image: 'circleci/postgres:10.4'
         environment:
           POSTGRES_HOST: localhost
@@ -67,6 +69,8 @@ jobs:
           POSTGRES_DB: grc-application-test
           POSTGRES_PORT: 5432
           POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
     steps:
       - checkout
       - setup_remote_docker:
