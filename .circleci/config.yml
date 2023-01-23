@@ -17,6 +17,28 @@ references:
           REPO_NAME: grc-app
 jobs:
   build:
+#    environment:
+#      FLASK_ENV: production
+#      FLASK_DEBUG: 1
+#      FLASK_APP: grc
+#      LOG_LEVEL: DEBUG
+#      TEST_URL: 'http://localhost:8080'
+#      SECRET_KEY: ef987sd9fwkjefosf9we0svs9q3evsd0
+#      SQLALCHEMY_DATABASE_URI: 'postgresql://postgres:password@localhost:5432/grc'
+#      SQLALCHEMY_TRACK_MODIFICATION: false
+#      DEFAULT_ADMIN_USER: grc-service-account@cabinetoffice.gov.uk
+#      NOTIFY_API: '${TEST_NOTIFY_API}'
+#      NOTIFY_OVERRIDE_EMAIL: test@example.com
+#      BUCKET_NAME: '${AUTOMATED_TEST_BUCKET_NAME}'
+#      AWS_ACCESS_KEY_ID: '${AUTOMATED_TEST_AWS_ACCESS_KEY_ID}'
+#      AWS_SECRET_ACCESS_KEY: '${AUTOMATED_TEST_AWS_SECRET_ACCESS_KEY}'
+#      AWS_REGION: eu-west-2
+#      GOVUK_PAY_API: 'https://publicapi.payments.service.gov.uk/'
+#      GOVUK_PAY_API_KEY: '${AUTOMATED_TEST_GOVUK_PAY_API_KEY}'
+    parameters:
+      env_name:
+        type: string
+        default: development
     docker:
       - image: 'circleci/python:3.8'
         environment:
@@ -40,14 +62,16 @@ jobs:
           GOVUK_PAY_API_KEY: '${AUTOMATED_TEST_GOVUK_PAY_API_KEY}'
     steps:
       - checkout
-#      - setup_remote_docker:
-#          version: 20.10.11
-#          docker_layer_caching: true
+      - setup_remote_docker:
+          version: 20.10.11
+          docker_layer_caching: true
       - run:
           name: Install dependencies
           command: |
+            python -m venv venv
+            . venv/bin/activate
             pip install -r requirements.txt
-            
+
       - run:
           name: Install Playwright and browsers
           command: |
@@ -77,11 +101,11 @@ jobs:
           command: |
             pip install flask_migrate
             export BUILD_DATE=$(date -Is) >> $BASH_ENV
-            source $BASH_ENV             
+            source $BASH_ENV
             echo "${AWS_DEFAULT_REGION}"
             echo "${AWS_ACCESS_KEY_ID_PREPROD}"
             echo "${AWS_SECRET_ACCESS_KEY_PREPROD}"
-            
+
             docker build \
               --label build.git.sha=${CIRCLE_SHA1} \
               --label build.git.branch=${CIRCLE_BRANCH} \
@@ -90,7 +114,7 @@ jobs:
               --build-arg APP_BUILD_TAG=${CIRCLE_BRANCH} \
               --build-arg APP_GIT_COMMIT=${CIRCLE_SHA1} \
               -t app .
-              
+
       - run:
           name: push app image
           command: >
@@ -98,7 +122,7 @@ jobs:
 
             login="$(AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION} AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID_PREPROD} AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY_PREPROD} aws ecr get-login --no-include-email)"
             ${login}
-           
+
 
             docker tag grc-app:latest "${ECR_ENDPOINT_PREPROD}/test:latest"
             docker push  "${ECR_ENDPOINT_PREPROD}/test:latest"
@@ -156,7 +180,7 @@ jobs:
               --build-arg APP_BUILD_TAG=${CIRCLE_BRANCH} \
               --build-arg APP_GIT_COMMIT=${CIRCLE_SHA1} \
               -f dashboard.Dockerfile .
-              -t grc-dashboard . 
+              -t grc-dashboard .
       - run:
           name: push dashboard image
           command: >
