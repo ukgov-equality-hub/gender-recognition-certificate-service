@@ -59,10 +59,7 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_DB: grc-application-test
           POSTGRES_PORT: 5432
-          POSTGRES_PASSWORD: password
-          
-    docker:
-      - image: 'circleci/python:3.8'
+          POSTGRES_PASSWORD: password          
     steps:
       - checkout
       - setup_remote_docker:
