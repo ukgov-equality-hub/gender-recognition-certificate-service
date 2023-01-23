@@ -75,8 +75,8 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-#            python -m venv venv
-#            . venv/bin/activate
+#           python -m venv venv
+#           . venv/bin/activate
             pip install -r requirements.txt
             
       - run:
@@ -88,14 +88,14 @@ jobs:
       - run:
           name: Database init
           command: |
-#            pip install psycopg2
-#            pip install psycopg2-binary==2.9.3
+#           pip install psycopg2
+#           pip install psycopg2-binary==2.9.3
             python setup-db.py
       - run:
           name: Database migration
           command: |
-#            pip install psycopg2
-#            pip install psycopg2-binary==2.9.3
+#           pip install psycopg2
+#           pip install psycopg2-binary==2.9.3
             flask db stamp head
             flask db migrate
             flask db upgrade
