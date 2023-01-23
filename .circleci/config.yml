@@ -69,6 +69,11 @@ jobs:
             sudo apt-get update
             sudo apt-get --assume-yes install python3-pip
             sudo pip3 install awscli
+      
+      - aws-cli/setup:
+          aws-access-key-id: ${AWS_ACCESS_KEY_ID_PREPROD}
+          aws-secret-access-key: ${AWS_SECRET_ACCESS_KEY_PREPROD}
+          aws-region: ${AWS_REGION_NAME}
 
       - run:
           name: List AWS CLI Configuration
