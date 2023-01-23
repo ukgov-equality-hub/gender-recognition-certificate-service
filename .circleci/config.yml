@@ -102,7 +102,7 @@ jobs:
           name: Start site
           command: |
             . venv/bin/activate
-            waitress-serve --call 'grc:create_app' &
+            waitress-serve --call --port=8080 'grc:create_app' &
       - run:
           name: Test with pytest
           command: |
