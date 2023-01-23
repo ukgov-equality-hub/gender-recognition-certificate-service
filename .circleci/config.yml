@@ -17,24 +17,24 @@ references:
           REPO_NAME: grc-app
 jobs:
   build:
-    environment:
-      FLASK_ENV: development
-      FLASK_DEBUG: 1
-      FLASK_APP: grc
-      LOG_LEVEL: DEBUG
-      TEST_URL: 'http://localhost:8080'
-      SECRET_KEY: ef987sd9fwkjefosf9we0svs9q3evsd0
-      SQLALCHEMY_DATABASE_URI: 'postgresql://postgres:password@localhost:5432/grc'
-      SQLALCHEMY_TRACK_MODIFICATION: false
-      DEFAULT_ADMIN_USER: grc-service-account@cabinetoffice.gov.uk
-      NOTIFY_API: '${TEST_NOTIFY_API}'
-      NOTIFY_OVERRIDE_EMAIL: test@example.com
-      BUCKET_NAME: '${AUTOMATED_TEST_BUCKET_NAME}'
-      AWS_ACCESS_KEY_ID: '${AUTOMATED_TEST_AWS_ACCESS_KEY_ID}'
-      AWS_SECRET_ACCESS_KEY: '${AUTOMATED_TEST_AWS_SECRET_ACCESS_KEY}'
-      AWS_REGION: eu-west-2
-      GOVUK_PAY_API: 'https://publicapi.payments.service.gov.uk/'
-      GOVUK_PAY_API_KEY: '${AUTOMATED_TEST_GOVUK_PAY_API_KEY}'
+#    environment:
+#      FLASK_ENV: production
+#      FLASK_DEBUG: 1
+#      FLASK_APP: grc
+#      LOG_LEVEL: DEBUG
+#      TEST_URL: 'http://localhost:8080'
+#      SECRET_KEY: ef987sd9fwkjefosf9we0svs9q3evsd0
+#      SQLALCHEMY_DATABASE_URI: 'postgresql://postgres:password@localhost:5432/grc'
+#      SQLALCHEMY_TRACK_MODIFICATION: false
+#      DEFAULT_ADMIN_USER: grc-service-account@cabinetoffice.gov.uk
+#      NOTIFY_API: '${TEST_NOTIFY_API}'
+#      NOTIFY_OVERRIDE_EMAIL: test@example.com
+#      BUCKET_NAME: '${AUTOMATED_TEST_BUCKET_NAME}'
+#      AWS_ACCESS_KEY_ID: '${AUTOMATED_TEST_AWS_ACCESS_KEY_ID}'
+#      AWS_SECRET_ACCESS_KEY: '${AUTOMATED_TEST_AWS_SECRET_ACCESS_KEY}'
+#      AWS_REGION: eu-west-2
+#      GOVUK_PAY_API: 'https://publicapi.payments.service.gov.uk/'
+#      GOVUK_PAY_API_KEY: '${AUTOMATED_TEST_GOVUK_PAY_API_KEY}'
     parameters:
       env_name:
         type: string
@@ -43,6 +43,23 @@ jobs:
       - image: 'circleci/python:3.8'
         environment:
           DATABASE_URL: 'postgresql://postgres:password@localhost:5432/grc'
+          FLASK_ENV: production
+          FLASK_DEBUG: 1
+          FLASK_APP: grc
+          LOG_LEVEL: DEBUG
+          TEST_URL: 'http://localhost:8080'
+          SECRET_KEY: ef987sd9fwkjefosf9we0svs9q3evsd0
+          SQLALCHEMY_DATABASE_URI: 'postgresql://postgres:password@localhost:5432/grc'
+          SQLALCHEMY_TRACK_MODIFICATION: false
+          DEFAULT_ADMIN_USER: grc-service-account@cabinetoffice.gov.uk
+          NOTIFY_API: '${TEST_NOTIFY_API}'
+          NOTIFY_OVERRIDE_EMAIL: test@example.com
+          BUCKET_NAME: '${AUTOMATED_TEST_BUCKET_NAME}'
+          AWS_ACCESS_KEY_ID: '${AUTOMATED_TEST_AWS_ACCESS_KEY_ID}'
+          AWS_SECRET_ACCESS_KEY: '${AUTOMATED_TEST_AWS_SECRET_ACCESS_KEY}'
+          AWS_REGION: eu-west-2
+          GOVUK_PAY_API: 'https://publicapi.payments.service.gov.uk/'
+          GOVUK_PAY_API_KEY: '${AUTOMATED_TEST_GOVUK_PAY_API_KEY}'
       - image: 'circleci/postgres:10.4'
         environment:
           POSTGRES_HOST: localhost
@@ -58,8 +75,8 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            python -m venv venv
-            . venv/bin/activate
+#            python -m venv venv
+#            . venv/bin/activate
             pip install -r requirements.txt
             
       - run:
@@ -71,14 +88,14 @@ jobs:
       - run:
           name: Database init
           command: |
-            pip install psycopg2
-            pip install psycopg2-binary==2.9.3
+#            pip install psycopg2
+#            pip install psycopg2-binary==2.9.3
             python setup-db.py
       - run:
           name: Database migration
           command: |
-            pip install psycopg2
-            pip install psycopg2-binary==2.9.3
+#            pip install psycopg2
+#            pip install psycopg2-binary==2.9.3
             flask db stamp head
             flask db migrate
             flask db upgrade
