@@ -38,10 +38,6 @@ jobs:
           AWS_REGION: eu-west-2
           GOVUK_PAY_API: 'https://publicapi.payments.service.gov.uk/'
           GOVUK_PAY_API_KEY: '${AUTOMATED_TEST_GOVUK_PAY_API_KEY}'
-        parameters:
-          env_name:
-          type: string
-          default: development
     steps:
       - checkout
 #      - setup_remote_docker:
