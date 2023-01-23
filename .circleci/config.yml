@@ -139,6 +139,10 @@ jobs:
           name: push app image
           command: |
             login="$(aws ecr get-login-password --region eu-west-2)"
+            echo $ECR_ENDPOINT_PREPROD
+            echo $GITHUB_TEAM_NAME_SLUG
+            echo $REPONAME
+            echo $CIRCLE_SHA1
             echo ${login} | docker login --username AWS --password-stdin 754256621582.dkr.ecr.eu-west-2.amazonaws.com
             docker tag app "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}"
             docker push "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}"
