@@ -39,7 +39,7 @@ jobs:
 #      env_name:
 #        type: string
 #        default: development
-#    docker:
+    docker:
       - image: 'circleci/python:3.8'
         environment:
           DATABASE_URL: 'postgresql://postgres:password@localhost:5432/grc'
