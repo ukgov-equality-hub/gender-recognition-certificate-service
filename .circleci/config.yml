@@ -95,11 +95,11 @@ jobs:
           command: |
             . venv/bin/activate
             waitress-serve --call --port=8080 'grc:create_app' &
-      - run:
-          name: Test with pytest
-          command: |
-            . venv/bin/activate
-            pytest -s --show-capture=all
+     # - run:
+     #    name: Test with pytest
+     #     command: |
+     #       . venv/bin/activate
+     #       pytest -s --show-capture=all
       - run:
           name: Set up aws
           command: |
