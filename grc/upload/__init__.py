@@ -287,10 +287,10 @@ def removeFile(section_url: str):
         DataStore.save_application(application_data)
 
     files = section.file_list(application_data.uploads_data)
-    if request.referrer.endswith('/document-password') and len(files) > 0:
-        return local_redirect(url_for('upload.documentPassword', section_url=section.url))
-    else:
-        return local_redirect(url_for('upload.uploadInfoPage', section_url=section.url) + '#file-upload-section')
+    #if 'referrer' in request and request.referrer.endswith('/document-password') and len(files) > 0:
+    #    return local_redirect(url_for('upload.documentPassword', section_url=section.url))
+    #else:
+    return local_redirect(url_for('upload.uploadInfoPage', section_url=section.url) + '#file-upload-section')
 
 
 @upload.route('/upload/<section_url>/remove-all-files-in-section', methods=['POST'])
