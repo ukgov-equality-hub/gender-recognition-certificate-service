@@ -75,26 +75,31 @@ jobs:
       - run:
           name: Install Playwright and browsers
           command: |
+            . venv/bin/activate
             pip install playwright pytest-playwright asyncio
             pip install -e .
             python -m playwright install --with-deps
       - run:
           name: Database init
           command: |
+            . venv/bin/activate
             python setup-db.py
       - run:
           name: Database migration
           command: |
+            . venv/bin/activate
             flask db stamp head
             flask db migrate
             flask db upgrade
       - run:
           name: Start site
           command: |
+            . venv/bin/activate
             waitress-serve --call 'grc:create_app' &
       - run:
           name: Test with pytest
           command: |
+            . venv/bin/activate
             pytest -s --show-capture=all
       - run:
           name: build app image
