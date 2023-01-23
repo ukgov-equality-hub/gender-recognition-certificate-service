@@ -47,6 +47,7 @@ class Config:
     AV_API = os.environ.get("AV_API")
     BASIC_AUTH_USERNAME = os.environ.get("BASIC_AUTH_USERNAME")
     BASIC_AUTH_PASSWORD = os.environ.get("BASIC_AUTH_PASSWORD")
+    SENTRY_URL = os.environ.get("SENTRY_URL")
 
 
 class DevConfig(Config):
