@@ -99,16 +99,17 @@ jobs:
             flask db migrate
             flask db upgrade
       - run:
-          name: Start site
+          name: Start site and test with pytest
           command: |
             . venv/bin/activate
             waitress-serve --call --port=8080 'grc:create_app' &
-      - run:
-          name: Test with pytest
-          command: |
-            . venv/bin/activate
-            waitress-serve --listen=127.0.0.1:8080
             pytest -s --show-capture=all
+#      - run:
+#          name: Test with pytest
+#          command: |
+#            . venv/bin/activate
+#            waitress-serve --listen=127.0.0.1:8080
+#            pytest -s --show-capture=all
       - run:
           name: build app image
           command: |
