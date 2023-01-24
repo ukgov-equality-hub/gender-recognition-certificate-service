@@ -52,7 +52,7 @@ jobs:
           SQLALCHEMY_DATABASE_URI: 'postgresql://postgres:password@localhost:5432/grc'
           SQLALCHEMY_TRACK_MODIFICATION: false
           DEFAULT_ADMIN_USER: grc-service-account@cabinetoffice.gov.uk
-          NOTIFY_API: '${TEST_NOTIFY_API}'
+          NOTIFY_API: 'grclocal-36bdb0a3-86e3-423d-b1ce-26fae1ead417-6ea644d5-1004-4169-8967-5d6086717541'
           NOTIFY_OVERRIDE_EMAIL: test@example.com
           BUCKET_NAME: '${AUTOMATED_TEST_BUCKET_NAME}'
           AWS_ACCESS_KEY_ID: '${AUTOMATED_TEST_AWS_ACCESS_KEY_ID}'
