@@ -306,11 +306,6 @@ workflows:
       - tag_production:
           requires:
             - approve_production
-      - deploy_image_to_live_prod:
-          name: deploy-production-live
-          env_name: production
-          requires:
-            - tag_production
 
 #  smoke-tests:
 #    jobs:
