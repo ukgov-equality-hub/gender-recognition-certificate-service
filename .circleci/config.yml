@@ -264,7 +264,6 @@ jobs:
                     deployment/grc-dashboard-deployment-<< parameters.env_name >> \
                     kubernetes.io/change-cause="${BUILD_DATE} set image ${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1} via CircleCI"
   tag_production:
-    <<: *cloud_container
     steps:
       - checkout
 
