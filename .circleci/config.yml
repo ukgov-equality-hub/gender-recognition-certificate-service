@@ -203,11 +203,11 @@ jobs:
           command: |
             login="$(aws ecr get-login-password --region eu-west-2)"
             echo ${login} | docker login --username AWS --password-stdin 754256621582.dkr.ecr.eu-west-2.amazonaws.com
-            docker tag grc-dashboard "${ECR_ENDPOINT_PREPROD}:grc-app:${CIRCLE_SHA1}"
-            docker push "${ECR_ENDPOINT_PREPROD}:grc-dashboard:${CIRCLE_SHA1}"
+            docker tag grc-dashboard "${ECR_ENDPOINT_PREPROD}:grc-dashboard-${CIRCLE_SHA1}"
+            docker push "${ECR_ENDPOINT_PREPROD}:grc-dashboard-${CIRCLE_SHA1}"
             if [ "${CIRCLE_BRANCH}" == "main" ]; then
-            docker tag grc-dashboard "${ECR_ENDPOINT_PREPROD}:latest/dashboard"
-            docker push "${ECR_ENDPOINT_PREPROD}:latest/dashboard"
+            docker tag grc-dashboard "${ECR_ENDPOINT_PREPROD}:dashboard-latest"
+            docker push "${ECR_ENDPOINT_PREPROD}:dashboard-latest"
             fi
           environment:
             <<: *github_team_name_slug
