@@ -214,7 +214,7 @@ jobs:
             REPONAME: grc-app
   deploy_image_to_live:
     requires:
-      - build
+      -  build_image
     docker: *ref_0
     parameters:
       env_name:
