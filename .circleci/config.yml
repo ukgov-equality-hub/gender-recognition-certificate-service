@@ -189,23 +189,24 @@ jobs:
             export BUILD_DATE=$(date -Is) >> $BASH_ENV
             source $BASH_ENV
             docker build \
+              -f dashboard.Dockerfile \
+              -t grc-dashboard \
               --label build.git.sha=${CIRCLE_SHA1} \
               --label build.git.branch=${CIRCLE_BRANCH} \
               --label build.date=${BUILD_DATE} \
               --build-arg APP_BUILD_DATE=${BUILD_DATE} \
               --build-arg APP_BUILD_TAG=${CIRCLE_BRANCH} \
               --build-arg APP_GIT_COMMIT=${CIRCLE_SHA1} \
-              -f dashboard.Dockerfile
-              -t grc-dashboard
+              .
       - run:
           name: push dashboard image
           command: |
             login="$(aws ecr get-login-password --region eu-west-2)"
             echo ${login} | docker login --username AWS --password-stdin 754256621582.dkr.ecr.eu-west-2.amazonaws.com
-            docker tag grc-app "${ECR_ENDPOINT_PREPROD}:latest"
+            docker tag grc-dashboard "${ECR_ENDPOINT_PREPROD}:latest"
             docker push "${ECR_ENDPOINT_PREPROD}:latest"
             if [ "${CIRCLE_BRANCH}" == "main" ]; then
-            docker tag grc-app "${ECR_ENDPOINT_PREPROD}:latest"
+            docker tag grc-dashboard "${ECR_ENDPOINT_PREPROD}:latest"
             docker push "${ECR_ENDPOINT_PREPROD}:latest"
             fi
           environment:
