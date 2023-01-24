@@ -144,9 +144,7 @@ jobs:
             docker tag grc-admin "${ECR_ENDPOINT_PREPROD}:app-latest"
             docker push "${ECR_ENDPOINT_PREPROD}:app-latest"
             fi
-          environment:
-            <<: *github_team_name_slug
-            REPONAME: grc-app
+          
         #  if [ "${CIRCLE_BRANCH}" == "main" ]; then
          #   docker tag grc-app "${ECR_ENDPOINT_PREPROD}:latest"
           #  docker push "${ECR_ENDPOINT_PREPROD}:latest"
