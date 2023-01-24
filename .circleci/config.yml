@@ -175,8 +175,6 @@ jobs:
             docker tag grc-admin "${ECR_ENDPOINT_PREPROD}:admin-latest"
             docker push "${ECR_ENDPOINT_PREPROD}:admin-latest"
             fi
-          environment:
-            <<: *github_team_name_slug
             REPONAME: grc-app
       - run:
           name: build dashboard image
