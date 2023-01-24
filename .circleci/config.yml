@@ -222,16 +222,16 @@ jobs:
       - run:
           name: Authenticate to LIVE cluster
           command: >
-            echo -n ${KUBE_ENV_LIVE_STAGING_CACERT} | base64 -d > ./ca.crt
-            kubectl config set-cluster ${KUBE_ENV_LIVE_STAGING_NAME}
+            echo -n ${K8S_CLUSTER_CERT_PREPROD} | base64 -d > ./ca.crt
+            kubectl config set-cluster ${K8S_NAMESPACE_PREPROD}
             --certificate-authority=./ca.crt
-            --server=https://${KUBE_ENV_LIVE_STAGING_NAME}
+            --server=https://${K8S_NAMESPACE_PREPROD}
             kubectl config set-credentials circleci
-            --token=${KUBE_ENV_LIVE_STAGING_TOKEN}
-            kubectl config set-context ${KUBE_ENV_LIVE_STAGING_NAME}
-            --cluster=${KUBE_ENV_LIVE_STAGING_NAME} --user=circleci
-            --namespace=${KUBE_ENV_LIVE_STAGING_NAMESPACE}
-            kubectl config use-context ${KUBE_ENV_LIVE_STAGING_NAME}
+            --token=${K8S_TOKEN_PREPROD}
+            kubectl config set-context ${K8S_NAMESPACE_PREPROD}
+            --cluster=${K8S_NAMESPACE_PREPROD} --user=circleci
+            --namespace=${K8S_NAMESPACE_PREPROD}
+            kubectl config use-context ${K8S_NAMESPACE_PREPROD}
       - deploy:
           name: rolling update image
           command: |
@@ -239,31 +239,31 @@ jobs:
             source $BASH_ENV
             kubectl set image -n grc-app-<< parameters.env_name >> \
                     deployment/grc-app-deployment-<< parameters.env_name >> \
-                    webapp="${ECR_ENDPOINT}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}"
+                    webapp="${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}"
             kubectl set image -n grc-app-<< parameters.env_name >> \
                     deployment/grc-app-sidekiq-<< parameters.env_name >> \
-                    sidekiq="${ECR_ENDPOINT}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}"
+                    sidekiq="${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}"
             kubectl annotate -n grc-app-<< parameters.env_name >> \
                     deployment/grc-app-deployment-<< parameters.env_name >> \
-                    kubernetes.io/change-cause="${BUILD_DATE} set image ${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1} via CircleCI"
+                    kubernetes.io/change-cause="${BUILD_DATE} set image ${REPONAME}:${CIRCLE_SHA1} via CircleCI"
             kubectl set image -n grc-admin-<< parameters.env_name >> \
                     deployment/grc-admin-deployment-<< parameters.env_name >> \
-                    webapp="${ECR_ENDPOINT}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}"
+                    webapp="${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}"
             kubectl set image -n grc-admin-<< parameters.env_name >> \
                     deployment/grc-admin-sidekiq-<< parameters.env_name >> \
-                    sidekiq="${ECR_ENDPOINT}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}"
+                    sidekiq="${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}"
             kubectl annotate -n grc-admin-<< parameters.env_name >> \
                     deployment/grc-admin-deployment-<< parameters.env_name >> \
-                    kubernetes.io/change-cause="${BUILD_DATE} set image ${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1} via CircleCI"
+                    kubernetes.io/change-cause="${BUILD_DATE} set image ${REPONAME}:${CIRCLE_SHA1} via CircleCI"
             kubectl set image -n grc-dashboard-<< parameters.env_name >> \
                     deployment/grc-dashboard-deployment-<< parameters.env_name >> \
-                    webapp="${ECR_ENDPOINT}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}"
+                    webapp="${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}"
             kubectl set image -n grc-dashboard-<< parameters.env_name >> \
                     deployment/grc-dashboard-sidekiq-<< parameters.env_name >> \
-                    sidekiq="${ECR_ENDPOINT}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}"
+                    sidekiq="${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}"
             kubectl annotate -n grc-dashboard-<< parameters.env_name >> \
                     deployment/grc-dashboard-deployment-<< parameters.env_name >> \
-                    kubernetes.io/change-cause="${BUILD_DATE} set image ${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1} via CircleCI"
+                    kubernetes.io/change-cause="${BUILD_DATE} set image ${REPONAME}:${CIRCLE_SHA1} via CircleCI"
   tag_production:
     steps:
       - checkout
@@ -277,10 +277,10 @@ jobs:
           command: |
             login="$(aws ecr get-login --region ${AWS_DEFAULT_REGION} --no-include-email)"
             ${login}
-            docker pull "${ECR_ENDPOINT}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}"
-            docker tag "${ECR_ENDPOINT}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}" \
-                       "${ECR_ENDPOINT}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:production.latest"
-            docker push "${ECR_ENDPOINT}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:production.latest"
+            docker pull "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}"
+            docker tag "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}" \
+                       "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:production.latest"
+            docker push "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:production.latest"
 workflows:
   test-build-deploy:
     jobs:
