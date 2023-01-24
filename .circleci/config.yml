@@ -212,7 +212,9 @@ jobs:
       - run:
           name: Authenticate to LIVE cluster
           command: |
+            echo "Creating ca.crt file..."
             echo "${K8S_CLUSTER_CERT_PREPROD}" > ./ca.crt
+            echo "ca.crt created successfully at ./ca.crt"
             kubectl config set-cluster "${K8S_NAMESPACE_PREPROD}"
             --certificate-authority=./ca.crt
             --server=https://"${K8S_NAMESPACE_PREPROD}"
