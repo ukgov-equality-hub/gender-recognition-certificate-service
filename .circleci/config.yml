@@ -28,6 +28,7 @@ jobs:
           aws-secret-access-key: ${AWS_SECRET_ACCESS_KEY_PREPROD}
           aws-region: ${AWS_REGION_NAME}
   build:
+    <<: *cloud_container 
     parameters:
       env_name:
         type: string
