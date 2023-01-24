@@ -212,6 +212,7 @@ jobs:
           environment:
             <<: *github_team_name_slug
             REPONAME: grc-app
+  
   deploy_image_to_live:
     parameters:
       env_name:
