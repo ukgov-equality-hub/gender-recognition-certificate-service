@@ -138,13 +138,9 @@ jobs:
       - run:
           name: push app image
           command: |
-            login="$(aws ecr get-login-password --region eu-west-2)"
-            echo $ECR_ENDPOINT_PREPROD
-            echo $GITHUB_TEAM_NAME_SLUG
-            echo $REPONAME
-            echo $CIRCLE_SHA1
+            login="$(aws ecr get-login-password --region eu-west-2)"            
             echo ${login} | docker login --username AWS --password-stdin 754256621582.dkr.ecr.eu-west-2.amazonaws.com
-            docker tag app "${ECR_ENDPOINT_PREPROD}:latest"
+            docker tag grc-app "${ECR_ENDPOINT_PREPROD}:latest"
             docker push "${ECR_ENDPOINT_PREPROD}:latest"
             if [ "${CIRCLE_BRANCH}" == "main" ]; then
             docker tag grc-app "${ECR_ENDPOINT_PREPROD}:latest"
@@ -169,18 +165,18 @@ jobs:
               --build-arg APP_BUILD_DATE=${BUILD_DATE} \
               --build-arg APP_BUILD_TAG=${CIRCLE_BRANCH} \
               --build-arg APP_GIT_COMMIT=${CIRCLE_SHA1} \
-              -f admin.Dockerfile .
-              -t grc-admin .
+              -f admin.Dockerfile
+              -t grc-admin
       - run:
           name: push admin image
           command: |
             login="$(aws ecr get-login-password --region eu-west-2)"
             echo ${login} | docker login --username AWS --password-stdin 754256621582.dkr.ecr.eu-west-2.amazonaws.com
-            docker tag app "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}"
-            docker push "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}"
+            docker tag grc-app "${ECR_ENDPOINT_PREPROD}:latest"
+            docker push "${ECR_ENDPOINT_PREPROD}:latest"
             if [ "${CIRCLE_BRANCH}" == "main" ]; then
-            docker tag app "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:latest"
-            docker push "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:latest"
+            docker tag grc-app "${ECR_ENDPOINT_PREPROD}:latest"
+            docker push "${ECR_ENDPOINT_PREPROD}:latest""
             fi
           environment:
             <<: *github_team_name_slug
@@ -197,18 +193,18 @@ jobs:
               --build-arg APP_BUILD_DATE=${BUILD_DATE} \
               --build-arg APP_BUILD_TAG=${CIRCLE_BRANCH} \
               --build-arg APP_GIT_COMMIT=${CIRCLE_SHA1} \
-              -f dashboard.Dockerfile .
-              -t grc-dashboard . 
+              -f dashboard.Dockerfile
+              -t grc-dashboard
       - run:
           name: push dashboard image
           command: |
             login="$(aws ecr get-login-password --region eu-west-2)"
             echo ${login} | docker login --username AWS --password-stdin 754256621582.dkr.ecr.eu-west-2.amazonaws.com
-            docker tag app "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}"
-            docker push "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}"
+            docker tag grc-app "${ECR_ENDPOINT_PREPROD}:latest"
+            docker push "${ECR_ENDPOINT_PREPROD}:latest"
             if [ "${CIRCLE_BRANCH}" == "main" ]; then
-            docker tag app "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:latest"
-            docker push "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:latest"
+            docker tag grc-app "${ECR_ENDPOINT_PREPROD}:latest"
+            docker push "${ECR_ENDPOINT_PREPROD}:latest"
             fi
           environment:
             <<: *github_team_name_slug
