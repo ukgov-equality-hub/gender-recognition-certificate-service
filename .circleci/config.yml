@@ -1,3 +1,74 @@
+version: 2.1
+orbs: 
+  browser-tools: circleci/browser-tools@1.4.0
+  aws-cli: circleci/aws-cli@2.0.6
+references:
+  github_team_name_slug: &github_team_name_slug
+    GITHUB_TEAM_NAME_SLUG: pet
+  app_containers: &app_containers
+    docker:
+      - image: 'circleci/postgres:10.4'
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_DB: grc-application-test
+          POSTGRES_PORT: 5432
+          POSTGRES_PASSWORD: password
+  cloud_container: &cloud_container
+    docker:
+      - image: 'ministryofjustice/cloud-platform-tools:1.24'
+        environment:
+          GITHUB_TEAM_NAME_SLUG: pet
+          REPO_NAME: grc-app
+jobs:
+  aws-cli-cred-setup:
+    executor: aws-cli/default
+    steps:
+      - aws-cli/setup:
+          aws-access-key-id: ${AWS_ACCESS_KEY_ID_PREPROD}
+          aws-secret-access-key: ${AWS_SECRET_ACCESS_KEY_PREPROD}
+          aws-region: ${AWS_REGION_NAME}
+  build:
+    parameters:
+      env_name:
+        type: string
+        default: development
+    docker:
+      - image: 'circleci/python:3.8'
+        environment:
+          DATABASE_URL: 'postgresql://postgres:password@localhost:5432/grc'
+          FLASK_ENV: production
+          FLASK_DEBUG: 1
+          FLASK_APP: grc
+          LOG_LEVEL: DEBUG
+          TEST_URL: 'http://localhost:8080'
+          SECRET_KEY: ef987sd9fwkjefosf9we0svs9q3evsd0
+          SQLALCHEMY_DATABASE_URI: 'postgresql://postgres:password@localhost:5432/grc'
+          SQLALCHEMY_TRACK_MODIFICATION: false
+          DEFAULT_ADMIN_USER: grc-service-account@cabinetoffice.gov.uk
+          NOTIFY_API: '${TEST_NOTIFY_API}'
+          NOTIFY_OVERRIDE_EMAIL: test@example.com
+          BUCKET_NAME: '${AUTOMATED_TEST_BUCKET_NAME}'
+          AWS_ACCESS_KEY_ID: '${AUTOMATED_TEST_AWS_ACCESS_KEY_ID}'
+          AWS_SECRET_ACCESS_KEY: '${AUTOMATED_TEST_AWS_SECRET_ACCESS_KEY}'
+          AWS_REGION: eu-west-2
+          GOVUK_PAY_API: 'https://publicapi.payments.service.gov.uk/'
+          GOVUK_PAY_API_KEY: '${AUTOMATED_TEST_GOVUK_PAY_API_KEY}'
+      - image: 'circleci/postgres:10.4'
+        environment:
+          POSTGRES_HOST: localhost
+          POSTGRES_USER: postgres
+          POSTGRES_DB: grc-application-test
+          POSTGRES_PORT: 5432
+          POSTGRES_PASSWORD: password          
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 20.10.11
+          docker_layer_caching: true
+      - run:
+          name: Install dependencies
+          command: |
+            python -m venv venv
             . venv/bin/activate
             pip install -r requirements.txt
       - run:
@@ -97,6 +168,7 @@
               --build-arg APP_BUILD_TAG=${CIRCLE_BRANCH} \
               --build-arg APP_GIT_COMMIT=${CIRCLE_SHA1} \
               .
+
       - run:
           name: push admin image
           command: |
@@ -150,16 +222,16 @@
       - run:
           name: Authenticate to LIVE cluster
           command: >
-            echo -n ${K8S_CLUSTER_CERT_PREPROD} | base64 -d > ./ca.crt
-            kubectl config set-cluster ${K8S_NAMESPACE_PREPROD}
+            echo -n ${KUBE_ENV_LIVE_STAGING_CACERT} | base64 -d > ./ca.crt
+            kubectl config set-cluster ${KUBE_ENV_LIVE_STAGING_NAME}
             --certificate-authority=./ca.crt
-            --server=https://${K8S_NAMESPACE_PREPROD}
+            --server=https://${KUBE_ENV_LIVE_STAGING_NAME}
             kubectl config set-credentials circleci
-            --token=${K8S_TOKEN_PREPROD}
-            kubectl config set-context ${K8S_NAMESPACE_PREPROD}
-            --cluster=${K8S_NAMESPACE_PREPROD} --user=circleci
-            --namespace=${K8S_NAMESPACE_PREPROD}
-            kubectl config use-context ${K8S_NAMESPACE_PREPROD}
+            --token=${KUBE_ENV_LIVE_STAGING_TOKEN}
+            kubectl config set-context ${KUBE_ENV_LIVE_STAGING_NAME}
+            --cluster=${KUBE_ENV_LIVE_STAGING_NAME} --user=circleci
+            --namespace=${KUBE_ENV_LIVE_STAGING_NAMESPACE}
+            kubectl config use-context ${KUBE_ENV_LIVE_STAGING_NAME}
       - deploy:
           name: rolling update image
           command: |
@@ -167,31 +239,31 @@
             source $BASH_ENV
             kubectl set image -n grc-app-<< parameters.env_name >> \
                     deployment/grc-app-deployment-<< parameters.env_name >> \
-                    webapp="${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}"
+                    webapp="${ECR_ENDPOINT}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}"
             kubectl set image -n grc-app-<< parameters.env_name >> \
                     deployment/grc-app-sidekiq-<< parameters.env_name >> \
-                    sidekiq="${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}"
+                    sidekiq="${ECR_ENDPOINT}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}"
             kubectl annotate -n grc-app-<< parameters.env_name >> \
                     deployment/grc-app-deployment-<< parameters.env_name >> \
-                    kubernetes.io/change-cause="${BUILD_DATE} set image ${REPONAME}:${CIRCLE_SHA1} via CircleCI"
+                    kubernetes.io/change-cause="${BUILD_DATE} set image ${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1} via CircleCI"
             kubectl set image -n grc-admin-<< parameters.env_name >> \
                     deployment/grc-admin-deployment-<< parameters.env_name >> \
-                    webapp="${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}"
+                    webapp="${ECR_ENDPOINT}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}"
             kubectl set image -n grc-admin-<< parameters.env_name >> \
                     deployment/grc-admin-sidekiq-<< parameters.env_name >> \
-                    sidekiq="${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}"
+                    sidekiq="${ECR_ENDPOINT}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}"
             kubectl annotate -n grc-admin-<< parameters.env_name >> \
                     deployment/grc-admin-deployment-<< parameters.env_name >> \
-                    kubernetes.io/change-cause="${BUILD_DATE} set image ${REPONAME}:${CIRCLE_SHA1} via CircleCI"
+                    kubernetes.io/change-cause="${BUILD_DATE} set image ${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1} via CircleCI"
             kubectl set image -n grc-dashboard-<< parameters.env_name >> \
                     deployment/grc-dashboard-deployment-<< parameters.env_name >> \
-                    webapp="${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}"
+                    webapp="${ECR_ENDPOINT}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}"
             kubectl set image -n grc-dashboard-<< parameters.env_name >> \
                     deployment/grc-dashboard-sidekiq-<< parameters.env_name >> \
-                    sidekiq="${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}"
+                    sidekiq="${ECR_ENDPOINT}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}"
             kubectl annotate -n grc-dashboard-<< parameters.env_name >> \
                     deployment/grc-dashboard-deployment-<< parameters.env_name >> \
-                    kubernetes.io/change-cause="${BUILD_DATE} set image ${REPONAME}:${CIRCLE_SHA1} via CircleCI"
+                    kubernetes.io/change-cause="${BUILD_DATE} set image ${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1} via CircleCI"
   tag_production:
     steps:
       - checkout
@@ -205,10 +277,10 @@
           command: |
             login="$(aws ecr get-login --region ${AWS_DEFAULT_REGION} --no-include-email)"
             ${login}
-            docker pull "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}"
-            docker tag "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}" \
-                       "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:production.latest"
-            docker push "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:production.latest"
+            docker pull "${ECR_ENDPOINT}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}"
+            docker tag "${ECR_ENDPOINT}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}" \
+                       "${ECR_ENDPOINT}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:production.latest"
+            docker push "${ECR_ENDPOINT}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:production.latest"
 workflows:
   test-build-deploy:
     jobs:
