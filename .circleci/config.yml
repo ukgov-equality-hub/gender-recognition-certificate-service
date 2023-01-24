@@ -202,9 +202,6 @@ jobs:
             docker tag grc-dashboard "${ECR_ENDPOINT_PREPROD}:dashboard-latest"
             docker push "${ECR_ENDPOINT_PREPROD}:dashboard-latest"
             fi
-          environment:
-            <<: *github_team_name_slug
-            REPONAME: grc-app
   
   deploy_image_to_live:
     parameters:
