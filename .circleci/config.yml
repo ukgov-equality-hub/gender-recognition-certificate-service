@@ -28,7 +28,6 @@ jobs:
           aws-secret-access-key: ${AWS_SECRET_ACCESS_KEY_PREPROD}
           aws-region: ${AWS_REGION_NAME}
   build:
-    <<: *cloud_container 
     parameters:
       env_name:
         type: string
@@ -214,7 +213,6 @@ jobs:
             <<: *github_team_name_slug
             REPONAME: grc-app
   deploy_image_to_live:
-    docker: *ref_0
     parameters:
       env_name:
         type: string
