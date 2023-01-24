@@ -212,7 +212,7 @@ jobs:
       - run:
           name: Authenticate to LIVE cluster
           command: >
-            echo -n ${K8S_CLUSTER_CERT_PREPROD} | base64 -d > ./ca.crt
+            echo -n "${K8S_CLUSTER_CERT_PREPROD}" | base64 -d > ./ca.crt
             kubectl config set-cluster "${K8S_NAMESPACE_PREPROD}"
             --certificate-authority=./ca.crt
             --server=https://"${K8S_NAMESPACE_PREPROD}"
