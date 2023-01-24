@@ -174,11 +174,11 @@ jobs:
           command: |
             login="$(aws ecr get-login-password --region eu-west-2)"
             echo ${login} | docker login --username AWS --password-stdin 754256621582.dkr.ecr.eu-west-2.amazonaws.com
-            docker tag grc-admin "${ECR_ENDPOINT_PREPROD}:${CIRCLE_SHA1}"
-            docker push "${ECR_ENDPOINT_PREPROD}:${CIRCLE_SHA1}"
+            docker tag grc-admin "${ECR_ENDPOINT_PREPROD}:${CIRCLE_SHA1}/admin"
+            docker push "${ECR_ENDPOINT_PREPROD}:${CIRCLE_SHA1}/admin"
             if [ "${CIRCLE_BRANCH}" == "main" ]; then
-            docker tag grc-admin "${ECR_ENDPOINT_PREPROD}:latest"
-            docker push "${ECR_ENDPOINT_PREPROD}:latest""
+            docker tag grc-admin "${ECR_ENDPOINT_PREPROD}:latest/admin"
+            docker push "${ECR_ENDPOINT_PREPROD}:latest/admin""
             fi
           environment:
             <<: *github_team_name_slug
@@ -203,11 +203,11 @@ jobs:
           command: |
             login="$(aws ecr get-login-password --region eu-west-2)"
             echo ${login} | docker login --username AWS --password-stdin 754256621582.dkr.ecr.eu-west-2.amazonaws.com
-            docker tag grc-dashboard "${ECR_ENDPOINT_PREPROD}:${CIRCLE_SHA1}"
-            docker push "${ECR_ENDPOINT_PREPROD}:${CIRCLE_SHA1}"
+            docker tag grc-dashboard "${ECR_ENDPOINT_PREPROD}:${CIRCLE_SHA1}/dashboard"
+            docker push "${ECR_ENDPOINT_PREPROD}:${CIRCLE_SHA1}/dashboard"
             if [ "${CIRCLE_BRANCH}" == "main" ]; then
-            docker tag grc-dashboard "${ECR_ENDPOINT_PREPROD}:latest"
-            docker push "${ECR_ENDPOINT_PREPROD}:latest"
+            docker tag grc-dashboard "${ECR_ENDPOINT_PREPROD}:latest/dashboard"
+            docker push "${ECR_ENDPOINT_PREPROD}:latest/dashboard"
             fi
           environment:
             <<: *github_team_name_slug
