@@ -88,16 +88,12 @@ jobs:
             flask db stamp head
             flask db migrate
             flask db upgrade
-      - run:
-          name: Start site
+     - run:
+          name: Start site and test with pytest
           command: |
             . venv/bin/activate
             waitress-serve --call --port=8080 'grc:create_app' &
-     # - run:
-     #    name: Test with pytest
-     #     command: |
-     #       . venv/bin/activate
-     #       pytest -s --show-capture=all
+            pytest -s --show-capture=all
       - run:
           name: Set up aws
           command: |
