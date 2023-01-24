@@ -140,8 +140,8 @@ jobs:
           command: |
             login="$(aws ecr get-login-password --region eu-west-2)"            
             echo ${login} | docker login --username AWS --password-stdin 754256621582.dkr.ecr.eu-west-2.amazonaws.com
-            docker tag grc-app "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}"
-            docker push "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}"
+            docker tag grc-app "${ECR_ENDPOINT_PREPROD}:${CIRCLE_SHA1}"
+            docker push "${ECR_ENDPOINT_PREPROD}:${CIRCLE_SHA1}"
             if [ "${CIRCLE_BRANCH}" == "main" ]; then
             docker tag grc-app "${ECR_ENDPOINT_PREPROD}:latest"
             docker push "${ECR_ENDPOINT_PREPROD}:latest"
@@ -174,8 +174,8 @@ jobs:
           command: |
             login="$(aws ecr get-login-password --region eu-west-2)"
             echo ${login} | docker login --username AWS --password-stdin 754256621582.dkr.ecr.eu-west-2.amazonaws.com
-            docker tag grc-admin "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}"
-            docker push "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}""
+            docker tag grc-admin "${ECR_ENDPOINT_PREPROD}:${CIRCLE_SHA1}"
+            docker push "${ECR_ENDPOINT_PREPROD}:${CIRCLE_SHA1}"
             if [ "${CIRCLE_BRANCH}" == "main" ]; then
             docker tag grc-admin "${ECR_ENDPOINT_PREPROD}:latest"
             docker push "${ECR_ENDPOINT_PREPROD}:latest""
@@ -203,8 +203,8 @@ jobs:
           command: |
             login="$(aws ecr get-login-password --region eu-west-2)"
             echo ${login} | docker login --username AWS --password-stdin 754256621582.dkr.ecr.eu-west-2.amazonaws.com
-            docker tag grc-dashboard "${ECR_ENDPOINT_PREPROD}:latest"
-            docker push "${ECR_ENDPOINT_PREPROD}:latest"
+            docker tag grc-dashboard "${ECR_ENDPOINT_PREPROD}:${CIRCLE_SHA1}"
+            docker push "${ECR_ENDPOINT_PREPROD}:${CIRCLE_SHA1}"
             if [ "${CIRCLE_BRANCH}" == "main" ]; then
             docker tag grc-dashboard "${ECR_ENDPOINT_PREPROD}:latest"
             docker push "${ECR_ENDPOINT_PREPROD}:latest"
