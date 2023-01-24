@@ -107,6 +107,7 @@ jobs:
           name: Test with pytest
           command: |
             . venv/bin/activate
+            waitress-serve --listen=[::1]:8080
             pytest -s --show-capture=all
       - run:
           name: build app image
