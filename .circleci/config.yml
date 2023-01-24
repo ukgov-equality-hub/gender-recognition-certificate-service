@@ -204,6 +204,7 @@ jobs:
             fi
   
   deploy_image_to_live:
+    <<: *cloud_container 
     parameters:
       env_name:
         type: string
