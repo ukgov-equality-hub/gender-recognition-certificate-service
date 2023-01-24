@@ -144,11 +144,11 @@ jobs:
             echo $REPONAME
             echo $CIRCLE_SHA1
             echo ${login} | docker login --username AWS --password-stdin 754256621582.dkr.ecr.eu-west-2.amazonaws.com
-            docker tag app "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:latest"
-            docker push "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:latest"
+            docker tag app "${ECR_ENDPOINT_PREPROD}:latest"
+            docker push "${ECR_ENDPOINT_PREPROD}:latest"
             if [ "${CIRCLE_BRANCH}" == "main" ]; then
-            docker tag grc-app "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:latest"
-            docker push "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:latest"
+            docker tag grc-app "${ECR_ENDPOINT_PREPROD}:latest"
+            docker push "${ECR_ENDPOINT_PREPROD}:latest"
             fi
           environment:
             <<: *github_team_name_slug
