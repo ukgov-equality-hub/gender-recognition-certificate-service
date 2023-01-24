@@ -48,18 +48,18 @@ jobs:
           FLASK_APP: grc
           LOG_LEVEL: DEBUG
           TEST_URL: 'http://localhost:8080'
-          SECRET_KEY: '${SECRET_KEY}'
+          SECRET_KEY: ${SECRET_KEY}
           SQLALCHEMY_DATABASE_URI: 'postgresql://postgres:password@localhost:5432/grc'
           SQLALCHEMY_TRACK_MODIFICATION: false
           DEFAULT_ADMIN_USER: grc-service-account@cabinetoffice.gov.uk
-          NOTIFY_API: '${NOTIFY_API}'
+          NOTIFY_API: ${NOTIFY_API}
           NOTIFY_OVERRIDE_EMAIL: ivan.touloumbadjian@hmcts.net
-          BUCKET_NAME: '${AUTOMATED_TEST_BUCKET_NAME}'
-          AWS_ACCESS_KEY_ID: '${AUTOMATED_TEST_AWS_ACCESS_KEY_ID}'
-          AWS_SECRET_ACCESS_KEY: '${AUTOMATED_TEST_AWS_SECRET_ACCESS_KEY}'
+          BUCKET_NAME: ${AUTOMATED_TEST_BUCKET_NAME}
+          AWS_ACCESS_KEY_ID: ${AUTOMATED_TEST_AWS_ACCESS_KEY_ID}
+          AWS_SECRET_ACCESS_KEY: ${AUTOMATED_TEST_AWS_SECRET_ACCESS_KEY}
           AWS_REGION: eu-west-2
           GOVUK_PAY_API: 'https://publicapi.payments.service.gov.uk/'
-          GOVUK_PAY_API_KEY: '${GOVUK_PAY_API_KEY}'
+          GOVUK_PAY_API_KEY: ${GOVUK_PAY_API_KEY}
       - image: 'circleci/postgres:10.4'
         environment:
           POSTGRES_HOST: localhost
