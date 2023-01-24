@@ -215,7 +215,6 @@ jobs:
   deploy_image_to_live:
     requires:
       -  build_image
-    docker: *ref_0
     parameters:
       env_name:
         type: string
