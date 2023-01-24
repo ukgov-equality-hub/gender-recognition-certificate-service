@@ -159,14 +159,16 @@ jobs:
             export BUILD_DATE=$(date -Is) >> $BASH_ENV
             source $BASH_ENV
             docker build \
-              -f admin.Dockerfile
-              -t grc-admin .
+              -f admin.Dockerfile \
+              -t grc-admin \
               --label build.git.sha=${CIRCLE_SHA1} \
               --label build.git.branch=${CIRCLE_BRANCH} \
               --label build.date=${BUILD_DATE} \
               --build-arg APP_BUILD_DATE=${BUILD_DATE} \
               --build-arg APP_BUILD_TAG=${CIRCLE_BRANCH} \
-              --build-arg APP_GIT_COMMIT=${CIRCLE_SHA1}
+              --build-arg APP_GIT_COMMIT=${CIRCLE_SHA1} \
+  .
+
       - run:
           name: push admin image
           command: |
