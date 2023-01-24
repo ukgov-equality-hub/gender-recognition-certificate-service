@@ -27,7 +27,7 @@ jobs:
           aws-access-key-id: ${AWS_ACCESS_KEY_ID_PREPROD}
           aws-secret-access-key: ${AWS_SECRET_ACCESS_KEY_PREPROD}
           aws-region: ${AWS_REGION_NAME}
-  build:
+  build_image:
     parameters:
       env_name:
         type: string
@@ -267,12 +267,92 @@ jobs:
                     deployment/grc-dashboard-deployment-<< parameters.env_name >> \
                     kubernetes.io/change-cause="${BUILD_DATE} set image ${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1} via CircleCI"
   deploy_image_to_live_prod:
-    docker: *ref_0
+    <<: *cloud_container
     parameters:
       env_name:
         type: string
     steps:
       - checkout
+
       - run:
           name: Authenticate to LIVE cluster
-          command: ''
+          command: |
+            echo -n ${KUBE_ENV_LIVE_PRODUCTION_CACERT} | base64 -d > ./ca.crt
+            kubectl config set-cluster ${KUBE_ENV_LIVE_PRODUCTION_NAME} --certificate-authority=./ca.crt --server=https://${KUBE_ENV_LIVE_PRODUCTION_NAME}
+            kubectl config set-credentials circleci --token=${KUBE_ENV_LIVE_PRODUCTION_TOKEN}
+            kubectl config set-context ${KUBE_ENV_LIVE_PRODUCTION_NAME} --cluster=${KUBE_ENV_LIVE_PRODUCTION_NAME} --user=circleci --namespace=${KUBE_ENV_LIVE_PRODUCTION_NAMESPACE}
+            kubectl config use-context ${KUBE_ENV_LIVE_PRODUCTION_NAME}
+      - deploy:
+          name: rolling update image
+          command: |
+            export BUILD_DATE=$(date -Is) >> $BASH_ENV
+            source $BASH_ENV
+            kubectl set image -n c100-application-<< parameters.env_name >> \
+                    deployment/c100-application-deployment-<< parameters.env_name >> \
+                    webapp="${ECR_ENDPOINT}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}"
+            kubectl set image -n c100-application-<< parameters.env_name >> \
+                    deployment/c100-application-sidekiq-<< parameters.env_name >> \
+                    sidekiq="${ECR_ENDPOINT}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}"
+            kubectl annotate -n c100-application-<< parameters.env_name >> \
+                    deployment/c100-application-deployment-<< parameters.env_name >> \
+                    kubernetes.io/change-cause="${BUILD_DATE} set image ${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1} via CircleCI"                   
+  tag_production:
+    <<: *cloud_container
+    steps:
+      - checkout
+
+      - setup_remote_docker:
+          version: 20.10.11
+          docker_layer_caching: true
+
+      - run:
+          name: promote staging image to production
+          command: |
+            login="$(aws ecr get-login --region ${AWS_DEFAULT_REGION} --no-include-email)"
+            ${login}
+            docker pull "${ECR_ENDPOINT}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}"
+            docker tag "${ECR_ENDPOINT}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}" \
+                       "${ECR_ENDPOINT}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:production.latest"
+            docker push "${ECR_ENDPOINT}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:production.latest"
+workflows:
+  test-build-deploy:
+    jobs:
+      - test
+      ### staging ###
+      - build_image:
+          name: build-staging
+          env_name: staging
+          requires:
+            - test
+          
+      - deploy_image_to_live:
+          name: deploy-staging-live
+          env_name: staging
+          requires:
+            - build-staging
+      ### production ###
+      - approve_production:
+          type: approval
+          requires:
+            - deploy-staging-live
+      - tag_production:
+          requires:
+            - approve_production
+      - deploy_image_to_live_prod:
+          name: deploy-production-live
+          env_name: production
+          requires:
+            - tag_production
+
+#  smoke-tests:
+#    jobs:
+#      - test:
+#          name: smoke-tests
+#          test_command: bundle exec cucumber -p smoke
+#    triggers:
+#      - schedule:
+#          cron: "0 6 * * *"
+#          filters:
+#            branches:
+#              only:
+#                - master
