@@ -166,7 +166,7 @@ jobs:
               --build-arg APP_BUILD_TAG=${CIRCLE_BRANCH} \
               --build-arg APP_GIT_COMMIT=${CIRCLE_SHA1} \
               -f admin.Dockerfile
-              -t grc-admin
+              -t grc-admin.
       - run:
           name: push admin image
           command: |
