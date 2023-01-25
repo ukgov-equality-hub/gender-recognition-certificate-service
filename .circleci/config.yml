@@ -324,7 +324,7 @@ workflows:
           env_name: preprod
       - deploy_image_to_live:
           name: deploy-staging-live
-          env_name: prod
+          env_name: preprod
           requires:
             - build-staging
       ### production ###
