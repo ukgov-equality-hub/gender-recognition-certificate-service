@@ -321,10 +321,10 @@ workflows:
     jobs:
       - build:
           name: build-staging
-          env_name: staging
+          env_name: preprod
       - deploy_image_to_live:
           name: deploy-staging-live
-          env_name: staging
+          env_name: prod
           requires:
             - build-staging
       ### production ###
