@@ -217,8 +217,9 @@ jobs:
             echo "${K8S_CLUSTER_CERT_PREPROD}" > ./ca.crt
             ls -la ./ca.crt
             echo "ca.crt created successfully at ./ca.crt"
+            cat ./ca.crt
             kubectl config set-cluster "${K8S_NAMESPACE_PREPROD}"
-            --certificate-authority=/root/project/ca.crt
+            --certificate-authority=./ca.crt
             --server=https://"${K8S_NAMESPACE_PREPROD}"
             kubectl config set-credentials circleci
             --token="${K8S_TOKEN_PREPROD}"
