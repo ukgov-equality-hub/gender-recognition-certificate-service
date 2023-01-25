@@ -22,6 +22,7 @@ async def check_gov_uk_pay(page: Page, asserts: AssertHelpers, helpers: PageHelp
     # ---- Gov.UK Pay - Card Details page
     # ------------------------------------------------
     await asserts.url_matches_regex('/card_details/[a-z0-9]*')
+    print("FIRING PRE")
     page.set_default_timeout(data.DEFAULT_TIMEOUT)
     await asserts.h1('Enter card details')
 
@@ -35,7 +36,7 @@ async def check_gov_uk_pay(page: Page, asserts: AssertHelpers, helpers: PageHelp
     await helpers.fill_textbox(field='addressCity', value=data.TEST_CARD_ADDRESS_CITY)
     await helpers.fill_textbox(field='addressPostcode', value=data.TEST_CARD_ADDRESS_POSTCODE)
     await helpers.fill_textbox(field='email', value=data.EMAIL_ADDRESS)
-
+    print("FIIRING POST")
     # Click "Continue"
     await helpers.click_button('Continue')
 
