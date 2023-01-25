@@ -33,7 +33,6 @@ async def check_gov_uk_pay(page: Page, asserts: AssertHelpers, helpers: PageHelp
     await helpers.fill_textbox(field='addressLine1', value=data.TEST_CARD_ADDRESS_LINE_1)
     await helpers.fill_textbox(field='addressLine2', value=data.TEST_CARD_ADDRESS_LINE_2)
     await helpers.fill_textbox(field='addressCity', value=data.TEST_CARD_ADDRESS_CITY)
-    await helpers.fill_textbox(field='addressCountry', value=data.TEST_CARD_ADDRESS_COUNTRY)
     await helpers.fill_textbox(field='addressPostcode', value=data.TEST_CARD_ADDRESS_POSTCODE)
     await helpers.fill_textbox(field='email', value=data.EMAIL_ADDRESS)
 
