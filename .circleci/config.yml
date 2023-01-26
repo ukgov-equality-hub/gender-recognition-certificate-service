@@ -224,7 +224,6 @@ jobs:
             sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/staging/app-deployment.yaml
             sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/staging/admin-deployment.yaml
             sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/staging/dashboard-deployment.yaml
-            sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/staging/migration-job.yaml
             kubectl apply --record=false -f ./deploy/staging
                     
   deploy_image_to_live_prod:
@@ -248,8 +247,6 @@ jobs:
             sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/production/app-deployment.yaml
             sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/production/admin-deployment.yaml
             sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/production/dashboard-deployment.yaml
-            sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/production/deployment.yaml
-            sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/production/migration-job.yaml
             kubectl apply --record=false -f ./deploy/production
                              
   tag_production:
