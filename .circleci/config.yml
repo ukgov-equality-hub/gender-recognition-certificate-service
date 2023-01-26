@@ -223,31 +223,31 @@ jobs:
           command: |
             export BUILD_DATE=$(date -Is) >> $BASH_ENV
             source $BASH_ENV
-            kubectl set image -n grc-app-<< parameters.env_name >> \
+            kubectl set image -n grc-<< parameters.env_name >> \
                     deployment/grc-app-deployment-<< parameters.env_name >> \
                     webapp="${ECR_ENDPOINT_PREPROD}:grc-app-${CIRCLE_SHA1}"
-            kubectl set image -n grc-app-<< parameters.env_name >> \
-                    deployment/grc-app-sidekiq-<< parameters.env_name >> \
+            kubectl set image -n grc-<< parameters.env_name >> \
+                    deployment/grc-sidekiq-<< parameters.env_name >> \
                     sidekiq="${ECR_ENDPOINT_PREPROD}:grc-app-${CIRCLE_SHA1}"
-            kubectl annotate -n grc-app-<< parameters.env_name >> \
-                    deployment/grc-app-deployment-<< parameters.env_name >> \
+            kubectl annotate -n grc-<< parameters.env_name >> \
+                    deployment/grc-deployment-<< parameters.env_name >> \
                     kubernetes.io/change-cause="${BUILD_DATE} set image ${ECR_ENDPOINT_PREPROD}:grc-app-${CIRCLE_SHA1} via CircleCI"
-            kubectl set image -n grc-admin-<< parameters.env_name >> \
+            kubectl set image -n grc-<< parameters.env_name >> \
                     deployment/grc-admin-deployment-<< parameters.env_name >> \
                     webapp="${ECR_ENDPOINT_PREPROD}:grc-admin-${CIRCLE_SHA1}"
-            kubectl set image -n grc-admin-<< parameters.env_name >> \
+            kubectl set image -n grc-<< parameters.env_name >> \
                     deployment/grc-admin-sidekiq-<< parameters.env_name >> \
                     sidekiq="${ECR_ENDPOINT_PREPROD}:grc-admin-${CIRCLE_SHA1}"
-            kubectl annotate -n grc-admin-<< parameters.env_name >> \
+            kubectl annotate -n grc-<< parameters.env_name >> \
                     deployment/grc-admin-deployment-<< parameters.env_name >> \
                     kubernetes.io/change-cause="${BUILD_DATE} set image${ECR_ENDPOINT_PREPROD}:grc-admin-${CIRCLE_SHA1} via CircleCI"
-            kubectl set image -n grc-dashboard-<< parameters.env_name >> \
+            kubectl set image -n grc-<< parameters.env_name >> \
                     deployment/grc-dashboard-deployment-<< parameters.env_name >> \
                     webapp="${ECR_ENDPOINT_PREPROD}:grc-dashboard-${CIRCLE_SHA1}"
-            kubectl set image -n grc-dashboard-<< parameters.env_name >> \
+            kubectl set image -n grc-<< parameters.env_name >> \
                     deployment/grc-dashboard-sidekiq-<< parameters.env_name >> \
                     sidekiq="${ECR_ENDPOINT_PREPROD}:grc-dashboard-${CIRCLE_SHA1}"
-            kubectl annotate -n grc-dashboard-<< parameters.env_name >> \
+            kubectl annotate -n grc-<< parameters.env_name >> \
                     deployment/grc-dashboard-deployment-<< parameters.env_name >> \
                     kubernetes.io/change-cause="${BUILD_DATE} set image ${ECR_ENDPOINT_PREPROD}:grc-dashboard-${CIRCLE_SHA1}via CircleCI"
                     
