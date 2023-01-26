@@ -24,14 +24,14 @@ ingress:
 postgresql:
   enabled: true
   existingSecret: container-postgres-secrets
-  postgresqlDatabase: multi_container_demo_app
+  postgresqlDatabase: grc-app
   persistence:
     enabled: false
 
 contentapi:
   replicaCount: 1
   image:
-    repository: ministryofjustice/cloud-platform-multi-container-demo-app
+    repository: ministryofjustice/grc-app
     tag: content-api-1.6
     pullPolicy: IfNotPresent
   containerPort: 4567
@@ -43,10 +43,10 @@ contentapi:
     port: 4567
     targetPort: 4567
 
-railsapp:
+pythonapp:
   replicaCount: 1
   image:
-    repository: ministryofjustice/cloud-platform-multi-container-demo-app
+    repository: ministryofjustice/grc-app
     tag: rails-app-1.6
     pullPolicy: IfNotPresent
   containerPort: 3000
@@ -64,7 +64,7 @@ railsapp:
 worker:
   replicaCount: 1
   image:
-    repository: ministryofjustice/cloud-platform-multi-container-demo-app
+    repository: ministryofjustice/grc-app
     tag: worker-1.6
     pullPolicy: IfNotPresent
   containerPort: 4567

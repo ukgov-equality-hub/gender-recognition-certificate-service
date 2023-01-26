@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: grc-dashboard
 spec:
-  replicas: {{ .Values.grcdashboard.replicaCount }}
+  replicas: {{ .Values.grc-dashboard.replicaCount }}
   selector:
     matchLabels:
       app: grc-dashboard
@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: grc-dashboard
-          image: "{{ .Values.grcdashboard.image.repository }}:{{ .Values.grcdashboard.image.tag }}"
-          imagePullPolicy: {{ .Values.grcdashboard.image.pullPolicy }}
+          image: "{{ .Values.grcdashboard.image.repository }}:{{ .Values.grc-dashboard.image.tag }}"
+          imagePullPolicy: {{ .Values.grc-dashboard.image.pullPolicy }}
           ports:
-          - containerPort: {{ .Values.grcdashboard.containerPort }}
+          - containerPort: {{ .Values.grc-dashboard.containerPort }}
