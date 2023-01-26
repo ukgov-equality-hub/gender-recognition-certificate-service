@@ -31,6 +31,7 @@ async def check_gov_uk_pay(page: Page, asserts: AssertHelpers, helpers: PageHelp
     await helpers.fill_textbox(field='expiryYear', value=data.TEST_CARD_EXPIRY_YEAR)
     await helpers.fill_textbox(field='cardholderName', value=data.TEST_CARDHOLDER_NAME)
     await helpers.fill_textbox(field='cvc', value=data.TEST_CARD_CVC)
+    await helpers.fill_textbox_byid(field='address-country', value=data.TEST_CARD_COUNTRY)
     await helpers.fill_textbox(field='addressLine1', value=data.TEST_CARD_ADDRESS_LINE_1)
     await helpers.fill_textbox(field='addressLine2', value=data.TEST_CARD_ADDRESS_LINE_2)
     await helpers.fill_textbox(field='addressCity', value=data.TEST_CARD_ADDRESS_CITY)
