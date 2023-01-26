@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: python-migrations
+spec:
+  backoffLimit: 4
+  template:
+    spec:
+      containers:
+      - name: python-app
+        image: <image-name-with-python-runtime>
+        command: [ "python", "<path-to-migration-script>", "run" ]
+        env:
+          - name: DATABASE_URL
+            valueFrom:
+              secretKeyRef:
+                name: <secret-name>
+                key: <key-name>
+      restartPolicy: OnFailure

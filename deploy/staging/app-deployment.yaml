@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grc-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grc-app
+  template:
+    metadata:
+      labels:
+        app: grc-app
+    spec:
+      containers:
+      - name: grc-app
+        image: 754256621582.dkr.ecr.eu-west-2.amazonaws.com/pet/grc-preprod-ecr:grc-app-1.6
+        ports:
+        - containerPort: 3000
+        env:
+          - name: DATABASE_URL
+            valueFrom:
+              secretKeyRef:
+                name: rds-instance-multi-container-demo-dev
+                key: url
+          - name: CONTENT_API_URL
+            value: "http://content-api-service:4567/image_url.json"
