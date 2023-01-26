@@ -221,10 +221,10 @@ jobs:
       - deploy:
           name: rolling update image
           command: |
-            sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/production/deployment.yaml
-            sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/production/cronjob.yaml
-            sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/production/migration-job.yaml
-            kubectl apply --record=false -f ./deploy/production
+            sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/staging/deployment.yaml
+            sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/staging/cronjob.yaml
+            sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/staging/migration-job.yaml
+            kubectl apply --record=false -f ./deploy/staging
                     
   deploy_image_to_live_prod:
     <<: *cloud_container
@@ -244,10 +244,10 @@ jobs:
       - deploy:
           name: rolling update image
           command: |
-            sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/staging/deployment.yaml
-            sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/staging/cronjob.yaml
-            sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/staging/migration-job.yaml
-            kubectl apply --record=false -f ./deploy/staging
+            sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/production/deployment.yaml
+            sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/production/cronjob.yaml
+            sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/production/migration-job.yaml
+            kubectl apply --record=false -f ./deploy/production
                              
   tag_production:
     <<: *cloud_container 
