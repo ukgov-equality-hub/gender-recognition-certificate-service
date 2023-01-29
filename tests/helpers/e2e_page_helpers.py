@@ -48,6 +48,10 @@ class PageHelpers:
         selector = f"input[type=\"text\"][name=\"{field}\"], input[type=\"tel\"][name=\"{field}\"], input[type=\"email\"][name=\"{field}\"], textarea[name=\"{field}\"]"
         await self.page.fill(selector, value)
 
+    async def fill_textbox_byid(self, field, value):
+        selector = f"input[type=\"text\"][id=\"{field}\"], input[type=\"tel\"][id=\"{field}\"], input[type=\"email\"][id=\"{field}\"], textarea[id=\"{field}\"]"
+        await self.page.fill(selector, value)
+
     async def upload_file_invalid_file_type(self, field):
         file_content = '{ "message": "Hello World" }'
         files = [{

@@ -3,8 +3,8 @@ DEFAULT_TIMEOUT = 3 * 1000  # Wait a maximum of 3 seconds
 TIMEOUT_FOR_SLOW_OPERATIONS = 30 * 1000  # For slow operations, wait a maximum of 30 seconds
 
 
-EMAIL_ADDRESS = 'test@example.com'
-DIFFERENT_EMAIL_ADDRESS = 'different@example.com'
+EMAIL_ADDRESS = 'ivan.touloumbadjian@hmcts.net'
+DIFFERENT_EMAIL_ADDRESS = 'grc-service-account@cabinetoffice.gov.uk'
 
 TITLE = 'Mr'
 FIRST_NAME = 'Joseph'

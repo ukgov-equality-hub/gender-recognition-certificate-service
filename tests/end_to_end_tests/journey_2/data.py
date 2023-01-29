@@ -3,7 +3,7 @@ DEFAULT_TIMEOUT = 3 * 1000  # Wait a maximum of 3 seconds
 TIMEOUT_FOR_SLOW_OPERATIONS = 30 * 1000  # For slow operations, wait a maximum of 30 seconds
 
 
-EMAIL_ADDRESS = 'test@example.com'
+EMAIL_ADDRESS = 'ivan.touloumbadjian@hmcts.net'
 
 TITLE = 'Mr'
 FIRST_NAME = 'Joseph'
@@ -46,6 +46,7 @@ TEST_CARD_EXPIRY_MONTH = '01'
 TEST_CARD_EXPIRY_YEAR = '2025'
 TEST_CARDHOLDER_NAME = 'Joseph Bloggs'
 TEST_CARD_CVC = '123'
+TEST_CARD_COUNTRY = 'United Kingdom'
 TEST_CARD_ADDRESS_LINE_1 = '16-20'
 TEST_CARD_ADDRESS_LINE_2 = 'Great Smith Street'
 TEST_CARD_ADDRESS_CITY = 'London'
