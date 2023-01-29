@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: grc-app
-        image: 754256621582.dkr.ecr.eu-west-2.amazonaws.com/pet/grc-preprod-ecr:grc-app-1.6
+        image: 754256621582.dkr.ecr.eu-west-2.amazonaws.com/pet/grc-preprod-ecr:grc-app-latest
         ports:
         - containerPort: 3000
         env:

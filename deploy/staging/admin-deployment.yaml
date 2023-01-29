@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: grc-admin
-        image: 754256621582.dkr.ecr.eu-west-2.amazonaws.com/pet/grc-preprod-ecr:grc-admin-1.6
+        image: 754256621582.dkr.ecr.eu-west-2.amazonaws.com/pet/grc-preprod-ecr:grc-admin-latest
         ports:
         - containerPort: 3000
         env:
