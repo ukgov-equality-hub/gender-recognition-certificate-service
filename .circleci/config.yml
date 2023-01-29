@@ -295,9 +295,9 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            python -m venv venv
-            . venv/bin/activate
-            pip install -r requirements.txt
+            sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/production/app-deployment.yaml
+            sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/production/admin-deployment.yaml
+            sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/production/dashboard-deployment.yaml
       - run:
           name: Install Playwright and browsers
           command: |
