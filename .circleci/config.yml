@@ -1,104 +1,54 @@
-version: 2.1
-references:
-  app_containers:
-    docker:
-      - image: 'circleci/postgres:10.4'
-        environment:
-          POSTGRES_USER: postgres
-          POSTGRES_DB: grc-application-test
-          POSTGRES_PORT: 5432
-          POSTGRES_PASSWORD: password
-  cloud_container:
-    docker: &ref_0
-      - image: 'ministryofjustice/cloud-platform-tools:1.24'
-        environment:
-          GITHUB_TEAM_NAME_SLUG: pet
-          REPO_NAME: grc-app
-jobs:
-  build:
-    environment:
-      FLASK_ENV: production
-      FLASK_DEBUG: 1
-      FLASK_APP: grc
-      LOG_LEVEL: DEBUG
-      TEST_URL: 'http://localhost:8080'
-      SECRET_KEY: ef987sd9fwkjefosf9we0svs9q3evsd0
-      SQLALCHEMY_DATABASE_URI: 'postgresql://postgres:password@localhost:5432/grc'
-      SQLALCHEMY_TRACK_MODIFICATION: false
-      DEFAULT_ADMIN_USER: grc-service-account@cabinetoffice.gov.uk
-      NOTIFY_API: '${TEST_NOTIFY_API}'
-      NOTIFY_OVERRIDE_EMAIL: test@example.com
-      BUCKET_NAME: '${AUTOMATED_TEST_BUCKET_NAME}'
-      AWS_ACCESS_KEY_ID: '${AUTOMATED_TEST_AWS_ACCESS_KEY_ID}'
-      AWS_SECRET_ACCESS_KEY: '${AUTOMATED_TEST_AWS_SECRET_ACCESS_KEY}'
-      AWS_REGION: eu-west-2
-      GOVUK_PAY_API: 'https://publicapi.payments.service.gov.uk/'
-      GOVUK_PAY_API_KEY: '${AUTOMATED_TEST_GOVUK_PAY_API_KEY}'
-    parameters:
-      env_name:
-        type: string
-        default: development
-    docker:
-      - image: 'circleci/python:3.8'
-    steps:
-      - checkout
-      - setup_remote_docker:
-          version: 20.10.11
-          docker_layer_caching: true
       - run:
           name: Install dependencies
           command: |
             python -m venv venv
             . venv/bin/activate
             pip install -r requirements.txt
-            
       - run:
           name: Install Playwright and browsers
           command: |
+            . venv/bin/activate
             pip install playwright pytest-playwright asyncio
             pip install -e .
             python -m playwright install --with-deps
       - run:
           name: Database init
           command: |
-            pip install psycopg2
-            pip install psycopg2-binary==2.9.3
+            . venv/bin/activate
             python setup-db.py
       - run:
           name: Database migration
           command: |
-            pip install psycopg2
-            pip install psycopg2-binary==2.9.3
+            . venv/bin/activate
             flask db stamp head
             flask db migrate
             flask db upgrade
       - run:
           name: Start site
           command: |
-            waitress-serve --call 'grc:create_app' &
+            . venv/bin/activate
+            waitress-serve --call --port=8080 'grc:create_app' &
+     # - run:
+     #    name: Test with pytest
+     #     command: |
+     #       . venv/bin/activate
+     #       pytest -s --show-capture=all
       - run:
-          name: Test with pytest
+          name: Set up aws
           command: |
-            pip install sqlalchemy_utils
-            pip install flask_migrate
-            pip install colorama
-            pip install flask_uuid
-            pip install jsonpickle
-            pip install wtforms
-            pip install boto3
-            pip install pyAesCrypt
-            pip install aiozipstream==0.4
-            pip install python-dateutil --upgrade
-            pip install notifications_python_client
-            pip install fitz
-            pip install pymupdf 
-            pip install frontend
-            pip install xhtml2pdf
-            pip install psycopg2
-            pip install psycopg2-binary==2.9.3
-            pip install flask_wtf 
-            pip install email-validator
-            pytest -s --show-capture=all
+            sudo apt-get update
+            sudo apt-get --assume-yes install python3-pip
+            sudo pip3 install awscli
+      
+      - aws-cli/setup:
+          aws-access-key-id: AWS_ACCESS_KEY_ID_PREPROD
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY_PREPROD
+          aws-region: AWS_REGION_NAME
+
+      - run:
+          name: List AWS CLI Configuration
+          command: aws configure list
+     
       - run:
           name: build app image
           command: |
@@ -116,99 +66,79 @@ jobs:
               --build-arg APP_BUILD_DATE=${BUILD_DATE} \
               --build-arg APP_BUILD_TAG=${CIRCLE_BRANCH} \
               --build-arg APP_GIT_COMMIT=${CIRCLE_SHA1} \
-              -t app .
+              -t grc-app .          
               
       - run:
           name: push app image
-          command: >
-            pip install awscli
-
-            login="$(AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION} AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID_PREPROD} AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY_PREPROD} aws ecr get-login --no-include-email)"
-            ${login}
-           
-
-            docker tag grc-app:latest "${ECR_ENDPOINT_PREPROD}/test:latest"
-            docker push  "${ECR_ENDPOINT_PREPROD}/test:latest"
+          command: |
+            login="$(aws ecr get-login-password --region eu-west-2)"            
+            echo ${login} | docker login --username AWS --password-stdin 754256621582.dkr.ecr.eu-west-2.amazonaws.com
+            docker tag grc-app "${ECR_ENDPOINT_PREPROD}:grc-app-${CIRCLE_SHA1}"
+            docker push "${ECR_ENDPOINT_PREPROD}:grc-app-${CIRCLE_SHA1}"
+            if [ "${CIRCLE_BRANCH}" == "main" ]; then
+            docker tag grc-app "${ECR_ENDPOINT_PREPROD}:grc-app-latest"
+            docker push "${ECR_ENDPOINT_PREPROD}:grc-app-latest"
+            fi
+          
         #  if [ "${CIRCLE_BRANCH}" == "main" ]; then
          #   docker tag grc-app "${ECR_ENDPOINT_PREPROD}:latest"
           #  docker push "${ECR_ENDPOINT_PREPROD}:latest"
           #fi
-      - run:
+      - run: 
           name: build admin image
           command: |
             export BUILD_DATE=$(date -Is) >> $BASH_ENV
             source $BASH_ENV
             docker build \
+              -f admin.Dockerfile \
+              -t grc-admin \
               --label build.git.sha=${CIRCLE_SHA1} \
               --label build.git.branch=${CIRCLE_BRANCH} \
               --label build.date=${BUILD_DATE} \
               --build-arg APP_BUILD_DATE=${BUILD_DATE} \
               --build-arg APP_BUILD_TAG=${CIRCLE_BRANCH} \
               --build-arg APP_GIT_COMMIT=${CIRCLE_SHA1} \
-              -f admin.Dockerfile .
-              -t grc-admin .
+              .
       - run:
           name: push admin image
-          command: >
-            pip install awscli
-
-            login="$(aws ecr get-login --region ${AWS_DEFAULT_REGION}
-            --no-include-email)"
-
-            ${login}
-
-            docker tag grc-admin
-            "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}"
-
-            docker push
-            "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}"
-
-            docker tag grc-admin
-            "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:<<
-            parameters.env_name >>.latest"
-
-            docker push
-            "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:<<
-            parameters.env_name >>.latest"
+          command: |
+            login="$(aws ecr get-login-password --region eu-west-2)"
+            echo ${login} | docker login --username AWS --password-stdin 754256621582.dkr.ecr.eu-west-2.amazonaws.com
+            docker tag grc-admin "${ECR_ENDPOINT_PREPROD}:grc-admin-${CIRCLE_SHA1}"
+            docker push "${ECR_ENDPOINT_PREPROD}:grc-admin-${CIRCLE_SHA1}"
+            if [ "${CIRCLE_BRANCH}" == "main" ]; then
+            docker tag grc-admin "${ECR_ENDPOINT_PREPROD}:grc-admin-latest"
+            docker push "${ECR_ENDPOINT_PREPROD}:grc-admin-latest"
+            fi
       - run:
           name: build dashboard image
           command: |
             export BUILD_DATE=$(date -Is) >> $BASH_ENV
             source $BASH_ENV
             docker build \
+              -f dashboard.Dockerfile \
+              -t grc-dashboard \
               --label build.git.sha=${CIRCLE_SHA1} \
               --label build.git.branch=${CIRCLE_BRANCH} \
               --label build.date=${BUILD_DATE} \
               --build-arg APP_BUILD_DATE=${BUILD_DATE} \
               --build-arg APP_BUILD_TAG=${CIRCLE_BRANCH} \
               --build-arg APP_GIT_COMMIT=${CIRCLE_SHA1} \
-              -f dashboard.Dockerfile .
-              -t grc-dashboard . 
+              .
       - run:
           name: push dashboard image
-          command: >
-            pip install awscli
-
-            login="$(aws ecr get-login --region ${AWS_DEFAULT_REGION}
-            --no-include-email)"
-
-            ${login}
-
-            docker tag grc-dashboard
-            "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}"
-
-            docker push
-            "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}"
-
-            docker tag grc-dashboard
-            "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:<<
-            parameters.env_name >>.latest"
-
-            docker push
-            "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:<<
-            parameters.env_name >>.latest"
+          command: |
+            login="$(aws ecr get-login-password --region eu-west-2)"
+            echo ${login} | docker login --username AWS --password-stdin 754256621582.dkr.ecr.eu-west-2.amazonaws.com
+            docker tag grc-dashboard "${ECR_ENDPOINT_PREPROD}:grc-dashboard-${CIRCLE_SHA1}"
+            docker push "${ECR_ENDPOINT_PREPROD}:grc-dashboard-${CIRCLE_SHA1}"
+            if [ "${CIRCLE_BRANCH}" == "main" ]; then
+            docker tag grc-dashboard "${ECR_ENDPOINT_PREPROD}:grc-dashboard-latest"
+            docker push "${ECR_ENDPOINT_PREPROD}:grc-dashboard-latest"
+            fi
+  
   deploy_image_to_live:
-    docker: *ref_0
+    <<: *cloud_container 
     parameters:
       env_name:
         type: string
@@ -216,55 +146,22 @@ jobs:
       - checkout
       - run:
           name: Authenticate to LIVE cluster
-          command: >
-            echo -n ${KUBE_ENV_LIVE_STAGING_CACERT} | base64 -d > ./ca.crt
-
-            kubectl config set-cluster ${KUBE_ENV_LIVE_STAGING_NAME}
-            --certificate-authority=./ca.crt
-            --server=https://${KUBE_ENV_LIVE_STAGING_NAME}
-
-            kubectl config set-credentials circleci
-            --token=${KUBE_ENV_LIVE_STAGING_TOKEN}
-
-            kubectl config set-context ${KUBE_ENV_LIVE_STAGING_NAME}
-            --cluster=${KUBE_ENV_LIVE_STAGING_NAME} --user=circleci
-            --namespace=${KUBE_ENV_LIVE_STAGING_NAMESPACE}
-
-            kubectl config use-context ${KUBE_ENV_LIVE_STAGING_NAME}
+          command: |
+            echo -n ${K8S_CLUSTER_CERT_PREPROD} | base64 -d > ./ca.crt
+            kubectl config set-cluster ${K8S_CLUSTER_NAME} --certificate-authority=./ca.crt --server=https://${K8S_CLUSTER_NAME}
+            kubectl config set-credentials circleci --token=${K8S_TOKEN_PREPROD}
+            kubectl config set-context ${K8S_CLUSTER_NAME} --cluster=${K8S_CLUSTER_NAME} --user=circleci--namespace=${K8S_NAMESPACE_PREPROD}
+            kubectl config use-context ${K8S_CLUSTER_NAME}
       - deploy:
           name: rolling update image
           command: |
-            export BUILD_DATE=$(date -Is) >> $BASH_ENV
-            source $BASH_ENV
-            kubectl set image -n grc-app-<< parameters.env_name >> \
-                    deployment/grc-app-deployment-<< parameters.env_name >> \
-                    webapp="${ECR_ENDPOINT}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}"
-            kubectl set image -n grc-app-<< parameters.env_name >> \
-                    deployment/grc-app-sidekiq-<< parameters.env_name >> \
-                    sidekiq="${ECR_ENDPOINT}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}"
-            kubectl annotate -n grc-app-<< parameters.env_name >> \
-                    deployment/grc-app-deployment-<< parameters.env_name >> \
-                    kubernetes.io/change-cause="${BUILD_DATE} set image ${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1} via CircleCI"
-            kubectl set image -n grc-admin-<< parameters.env_name >> \
-                    deployment/grc-admin-deployment-<< parameters.env_name >> \
-                    webapp="${ECR_ENDPOINT}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}"
-            kubectl set image -n grc-admin-<< parameters.env_name >> \
-                    deployment/grc-admin-sidekiq-<< parameters.env_name >> \
-                    sidekiq="${ECR_ENDPOINT}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}"
-            kubectl annotate -n grc-admin-<< parameters.env_name >> \
-                    deployment/grc-admin-deployment-<< parameters.env_name >> \
-                    kubernetes.io/change-cause="${BUILD_DATE} set image ${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1} via CircleCI"
-            kubectl set image -n grc-dashboard-<< parameters.env_name >> \
-                    deployment/grc-dashboard-deployment-<< parameters.env_name >> \
-                    webapp="${ECR_ENDPOINT}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}"
-            kubectl set image -n grc-dashboard-<< parameters.env_name >> \
-                    deployment/grc-dashboard-sidekiq-<< parameters.env_name >> \
-                    sidekiq="${ECR_ENDPOINT}/${GITHUB_TEAM_NAME_SLUG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}"
-            kubectl annotate -n grc-dashboard-<< parameters.env_name >> \
-                    deployment/grc-dashboard-deployment-<< parameters.env_name >> \
-                    kubernetes.io/change-cause="${BUILD_DATE} set image ${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1} via CircleCI"
+            sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/staging/app-deployment.yaml
+            sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/staging/admin-deployment.yaml
+            sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/staging/dashboard-deployment.yaml
+            kubectl apply --record=false -f ./deploy/staging
+                    
   deploy_image_to_live_prod:
-    docker: *ref_0
+    <<: *cloud_container
     parameters:
       env_name:
         type: string
@@ -272,4 +169,72 @@ jobs:
       - checkout
       - run:
           name: Authenticate to LIVE cluster
-          command: ''
+          command: >
+            echo -n ${K8S_CLUSTER_CERT_PROD} | base64 -d > ./ca.crt
+            kubectl config set-cluster ${K8S_CLUSTER_NAME} --certificate-authority=./ca.crt --server=https://${K8S_CLUSTER_NAME}
+            kubectl config set-credentials circleci --token=${K8S_TOKEN_PROD}
+            kubectl config set-context ${K8S_CLUSTER_NAME} --cluster=${K8S_CLUSTER_NAME} --user=circleci--namespace=${K8S_NAMESPACE_PROD}
+            kubectl config use-context ${K8S_CLUSTER_NAME}
+      - deploy:
+          name: rolling update image
+          command: |
+            sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/production/app-deployment.yaml
+            sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/production/admin-deployment.yaml
+            sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/production/dashboard-deployment.yaml
+            kubectl apply --record=false -f ./deploy/production
+                             
+  tag_production:
+    <<: *cloud_container 
+    steps:
+      - checkout
+
+      - setup_remote_docker:
+          version: 20.10.11
+          docker_layer_caching: true
+
+      - run:
+          name: promote staging image to production
+          command: |
+            login="$(aws ecr get-login --region ${AWS_DEFAULT_REGION} --no-include-email)"
+            ${login}
+            docker pull "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}"
+            docker tag "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}" \
+                       "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:production.latest"
+            docker push "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:production.latest"
+workflows:
+  test-build-deploy:
+    jobs:
+      - build:
+          name: build-staging
+          env_name: preprod
+      - deploy_image_to_live:
+          name: deploy-staging-live
+          env_name: preprod
+          requires:
+            - build-staging
+      ### production ###
+      - approve_production:
+          type: approval
+          requires:
+            - deploy-staging-live
+      - tag_production:
+          requires:
+            - approve_production
+      - deploy_image_to_live_prod:
+          name: deploy-production-live
+          env_name: prod
+          requires:
+            - tag_production
+
+#  smoke-tests:
+#    jobs:
+#      - test:
+#          name: smoke-tests
+#          test_command: bundle exec cucumber -p smoke
+#    triggers:
+#      - schedule:
+#          cron: "0 6 * * *"
+#          filters:
+#            branches:
+#              only:
+#                - master
