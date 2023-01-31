@@ -215,7 +215,7 @@ jobs:
             echo -n ${K8S_CLUSTER_CERT_PREPROD} | base64 -d > ./ca.crt  
             kubectl config set-cluster ${K8S_CLUSTER_NAME} --certificate-authority=./ca.crt --server=https://${K8S_CLUSTER_NAME}
             kubectl config set-credentials circleci --token=${K8S_TOKEN_PREPROD}
-            kubectl config set-context ${K8S_CLUSTER_NAME} --cluster=${K8S_CLUSTER_NAME} --user=circleci--namespace=${K8S_NAMESPACE_PREPROD}
+            kubectl config set-context ${K8S_CLUSTER_NAME} --cluster=${K8S_CLUSTER_NAME} --user=circleci --namespace=${K8S_NAMESPACE_PREPROD}
             kubectl config use-context ${K8S_CLUSTER_NAME}
       - deploy:
           name: rolling update image
@@ -239,7 +239,7 @@ jobs:
             echo -n ${K8S_CLUSTER_CERT_PROD} | base64 -d > ./ca.crt
             kubectl config set-cluster ${K8S_CLUSTER_NAME} --certificate-authority=./ca.crt --server=https://${K8S_CLUSTER_NAME}
             kubectl config set-credentials circleci --token=${K8S_TOKEN_PROD}
-            kubectl config set-context ${K8S_CLUSTER_NAME} --cluster=${K8S_CLUSTER_NAME} --user=circleci--namespace=${K8S_NAMESPACE_PROD}
+            kubectl config set-context ${K8S_CLUSTER_NAME} --cluster=${K8S_CLUSTER_NAME} --user=circleci --namespace=${K8S_NAMESPACE_PROD}
             kubectl config use-context ${K8S_CLUSTER_NAME}
       - deploy:
           name: rolling update image
