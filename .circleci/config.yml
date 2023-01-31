@@ -212,14 +212,10 @@ jobs:
       - run:
           name: Authenticate to LIVE cluster
           command: |
-            echo -n ${K8S_CLUSTER_CERT_PREPROD} | base64 -d > ./ca.crt
-            cat ./ca.crt
-            kubectl version
-            kubectl config get-contexts
-            kubectl config current-context
+            echo -n ${K8S_CLUSTER_CERT_PREPROD} | base64 -d > ./ca.crt  
             kubectl config set-cluster ${K8S_CLUSTER_NAME} --certificate-authority=./ca.crt --server=https://${K8S_CLUSTER_NAME}
             kubectl config set-credentials circleci --token=${K8S_TOKEN_PREPROD}
-            kubectl config set-context ${K8S_CLUSTER_NAME} --cluster=${K8S_CLUSTER_NAME} --user=circleci--namespace=${K8S_NAMESPACE_PREPROD}
+            kubectl config set-context ${K8S_CLUSTER_NAME} --cluster=${K8S_CLUSTER_NAME} --user=circleci --namespace=${K8S_NAMESPACE_PREPROD}
             kubectl config use-context ${K8S_CLUSTER_NAME}
       - deploy:
           name: rolling update image
@@ -227,7 +223,8 @@ jobs:
             sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/staging/app-deployment.yaml
             sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/staging/admin-deployment.yaml
             sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/staging/dashboard-deployment.yaml
-            kubectl apply --record=false -f ./deploy/staging
+            kubectl config current-context
+            kubectl apply -n grc-preprod --record=false -f ./deploy/staging
                     
   deploy_image_to_live_prod:
     <<: *cloud_container
@@ -242,7 +239,7 @@ jobs:
             echo -n ${K8S_CLUSTER_CERT_PROD} | base64 -d > ./ca.crt
             kubectl config set-cluster ${K8S_CLUSTER_NAME} --certificate-authority=./ca.crt --server=https://${K8S_CLUSTER_NAME}
             kubectl config set-credentials circleci --token=${K8S_TOKEN_PROD}
-            kubectl config set-context ${K8S_CLUSTER_NAME} --cluster=${K8S_CLUSTER_NAME} --user=circleci--namespace=${K8S_NAMESPACE_PROD}
+            kubectl config set-context ${K8S_CLUSTER_NAME} --cluster=${K8S_CLUSTER_NAME} --user=circleci --namespace=${K8S_NAMESPACE_PROD}
             kubectl config use-context ${K8S_CLUSTER_NAME}
       - deploy:
           name: rolling update image
