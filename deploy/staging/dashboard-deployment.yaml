@@ -14,6 +14,14 @@ spec:
     spec:
       containers:
       - name: grc-dashboard
-         image: 754256621582.dkr.ecr.eu-west-2.amazonaws.com/pet/grc-preprod-ecr:grc-dashboard-latest
+        image: 754256621582.dkr.ecr.eu-west-2.amazonaws.com/pet/grc-preprod-ecr:grc-dashboard-1.6
         ports:
         - containerPort: 4567
+        env:
+          - name: DATABASE_URL
+            valueFrom:
+              secretKeyRef:
+                name: rds-instance-multi-container-demo-dev
+                key: url
+          - name: CONTENT_API_URL
+            value: "http://content-api-service:4567/image_url.json"
