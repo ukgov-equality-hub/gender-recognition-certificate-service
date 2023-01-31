@@ -11,9 +11,9 @@ spec:
   ingressClassName: default
   tls:
   - hosts:
-    - gender-recognition-service-staging.apps.live.cloud-platform.service.justice.gov.uk
+    - gender-recognition-service-preprod.apps.live.cloud-platform.service.justice.gov.uk
   rules:
-  - host: gender-recognition-service-staging.apps.live.cloud-platform.service.justice.gov.uk
+  - host: gender-recognition-service-preprod.apps.live.cloud-platform.service.justice.gov.uk
     http:
       paths:
           - path: /
