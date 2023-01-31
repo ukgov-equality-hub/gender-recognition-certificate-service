@@ -5,15 +5,15 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/auth-type: basic
     nginx.ingress.kubernetes.io/auth-secret: basic-auth
-    external-dns.alpha.kubernetes.io/set-identifier: gender-recognition-service-prod-green
+    external-dns.alpha.kubernetes.io/set-identifier: gender-recognition-service-staging-green
     external-dns.alpha.kubernetes.io/aws-weight: "100"
 spec:
   ingressClassName: default
   tls:
   - hosts:
-    - gender-recognition-service.live.cloud-platform.service.justice.gov.uk
+    - gender-recognition-service-staging.apps.live.cloud-platform.service.justice.gov.uk
   rules:
-  - host: gender-recognition-service.live.cloud-platform.service.justice.gov.uk
+  - host: gender-recognition-service-staging.apps.live.cloud-platform.service.justice.gov.uk
     http:
       paths:
           - path: /
