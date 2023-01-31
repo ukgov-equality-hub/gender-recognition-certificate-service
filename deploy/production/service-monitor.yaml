@@ -1,15 +1,15 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: grc-preprod
-  namespace: grc-preprod
+  name: grc-prod
+  namespace: grc-prod
 spec:
   selector:
     matchLabels:
-      app: grc-preprod
+      app: grc-prod
   namespaceSelector:
     matchNames:
-    - grc-preprod
+    - grc-prod
   endpoints:
   - port: metrics
     interval: 15s
