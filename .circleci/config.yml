@@ -141,7 +141,7 @@ jobs:
             docker tag grc-app "${ECR_ENDPOINT_PREPROD}:grc-app-${CIRCLE_SHA1}"
             docker push "${ECR_ENDPOINT_PREPROD}:grc-app-${CIRCLE_SHA1}"
             if [ "${CIRCLE_BRANCH}" == "main" ]; then
-            docker tag grc-admin "${ECR_ENDPOINT_PREPROD}:app-latest"
+            docker tag grc-app "${ECR_ENDPOINT_PREPROD}:app-latest"
             docker push "${ECR_ENDPOINT_PREPROD}:app-latest"
             fi
           
@@ -263,10 +263,17 @@ jobs:
           command: |
             login="$(aws ecr get-login --region ${AWS_DEFAULT_REGION} --no-include-email)"
             ${login}
-            docker pull "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}"
-            docker tag "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:${CIRCLE_SHA1}" \
-                       "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:production.latest"
-            docker push "${ECR_ENDPOINT_PREPROD}/${GITHUB_TEAM_NAME_SLUG}/${REPONAME}:production.latest"
+            docker pull "${ECR_ENDPOINT_PREPROD}:grc-dashboard-${CIRCLE_SHA1}"
+            docker tag "${ECR_ENDPOINT_PROD}:grc-dashboard-${CIRCLE_SHA1}" \
+            docker push "${ECR_ENDPOINT_PROD}:grc-dashboard-${CIRCLE_SHA1}:production.latest"
+
+            docker pull "${ECR_ENDPOINT_PREPROD}:grc-admin-${CIRCLE_SHA1}"
+            docker tag "${ECR_ENDPOINT_PROD}:grc-admin-${CIRCLE_SHA1}" \
+            docker push "${ECR_ENDPOINT_PROD}:grc-admin-${CIRCLE_SHA1}:production.latest"
+
+            docker pull "${ECR_ENDPOINT_PREPROD}:grc-app-${CIRCLE_SHA1}"
+            docker tag "${ECR_ENDPOINT_PROD}:grc-app-${CIRCLE_SHA1}" \
+            docker push "${ECR_ENDPOINT_PROD}:grc-app-${CIRCLE_SHA1}:production.latest"
 workflows:
   test-build-deploy:
     jobs:
