@@ -44,7 +44,7 @@ jobs:
           SQLALCHEMY_TRACK_MODIFICATION: false
           DEFAULT_ADMIN_USER: grc-service-account@cabinetoffice.gov.uk
           NOTIFY_API: '${NOTIFY_API}'
-          NOTIFY_OVERRIDE_EMAIL: test@example.com
+          NOTIFY_OVERRIDE_EMAIL: ivan.touloumbadjian@hmcts.net
           BUCKET_NAME: '${AUTOMATED_TEST_BUCKET_NAME}'
           AWS_ACCESS_KEY_ID: '${AUTOMATED_TEST_AWS_ACCESS_KEY_ID}'
           AWS_SECRET_ACCESS_KEY: '${AUTOMATED_TEST_AWS_SECRET_ACCESS_KEY}'
