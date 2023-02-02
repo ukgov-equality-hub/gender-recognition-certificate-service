@@ -260,15 +260,15 @@ jobs:
             login="$(aws ecr get-login --region ${AWS_DEFAULT_REGION} --no-include-email)"
             ${login}
             docker pull "${ECR_ENDPOINT_PREPROD}:grc-dashboard-${CIRCLE_SHA1}"
-            docker tag grc-dashboard "${ECR_ENDPOINT_PROD}:grc-dashboard-${CIRCLE_SHA1}" \
+            docker tag grc-dashboard "${ECR_ENDPOINT_PREPROD}:grc-dashboard-${CIRCLE_SHA1}"
             docker push "${ECR_ENDPOINT_PROD}:grc-dashboard-${CIRCLE_SHA1}:production.latest"
 
             docker pull "${ECR_ENDPOINT_PREPROD}:grc-admin-${CIRCLE_SHA1}"
-            docker tag grc-admin "${ECR_ENDPOINT_PROD}:grc-admin-${CIRCLE_SHA1}" \
+            docker tag grc-admin "${ECR_ENDPOINT_PREPROD}:grc-admin-${CIRCLE_SHA1}"
             docker push "${ECR_ENDPOINT_PROD}:grc-admin-${CIRCLE_SHA1}:production.latest"
 
             docker pull "${ECR_ENDPOINT_PREPROD}:grc-app-${CIRCLE_SHA1}"
-            docker tag grc-app "${ECR_ENDPOINT_PROD}:grc-app-${CIRCLE_SHA1}" \
+            docker tag grc-app "${ECR_ENDPOINT_PREPROD}:grc-app-${CIRCLE_SHA1}"
             docker push "${ECR_ENDPOINT_PROD}:grc-app-${CIRCLE_SHA1}:production.latest"
 workflows:
   test-build-deploy:
