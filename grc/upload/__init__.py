@@ -106,6 +106,7 @@ def resize_image(document):
     try:
         img = Image.open(document)
         file_name = document.filename
+        img = rotate_image_to_match_exif_orientation_flag(img)
 
         width, height = img.size
         ratio = 1.
@@ -135,6 +136,25 @@ def resize_image(document):
         logger.log(LogLevel.ERROR, f"Could not resize image ({file_name}). Error was {e}")
 
     return False, document
+
+
+def rotate_image_to_match_exif_orientation_flag(image: Image):
+    try:
+        exif_data = image.getexif()
+        orientation_flag = exif_data.get(274)  # 274 (0x0112) is the Orientation flag: https://exiftool.org/TagNames/EXIF.html
+
+        # Rotate as needed: https://jdhao.github.io/2019/07/31/image_rotation_exif_info/
+        if orientation_flag == 8:
+            image = image.transpose(Image.ROTATE_90)
+        if orientation_flag == 3:
+            image = image.transpose(Image.ROTATE_180)
+        if orientation_flag == 6:
+            image = image.transpose(Image.ROTATE_270)
+
+        return image
+
+    except Exception as e:
+        return image
 
 
 @upload.route('/upload/<section_url>', methods=['GET', 'POST'])
