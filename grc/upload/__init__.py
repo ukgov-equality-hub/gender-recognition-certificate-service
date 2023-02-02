@@ -128,9 +128,6 @@ def resize_image(document):
             bytes_buffer = io.BytesIO()
             img.save(bytes_buffer, image_type)
             bytes_buffer.seek(0)
-            #import pathlib
-            #new_file_name = f'{pathlib.Path(__file__).parent.absolute()}/RESIZED__{file_name}'
-            #img.save(new_file_name, image_type)
 
             return True, bytes_buffer
 
