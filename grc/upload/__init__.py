@@ -105,34 +105,31 @@ def delete_password_protected_files(section, application_data):
 def resize_image(document):
     try:
         img = Image.open(document)
-        file_name = document.filename
         img = rotate_image_to_match_exif_orientation_flag(img)
 
         width, height = img.size
         ratio = 1.
         if height >= width:
-            if width > 1000:
-                ratio = 1000 / width
-            elif height > 1500:
-                ratio = 1500 / height
+            if width > 1400:
+                ratio = 1400 / width
+            elif height > 2100:
+                ratio = 2100 / height
         else:
-            if width > 1500:
-                ratio = 1500 / width
-            elif height > 1000:
-                ratio = 1000 / height
+            if width > 2100:
+                ratio = 2100 / width
+            elif height > 1400:
+                ratio = 1400 / height
         if ratio != 1.:
             img = img.resize((int(width * ratio), int(height * ratio)), Image.ANTIALIAS)
-            image_type = file_name[file_name.rindex('.') + 1:].lower()
-            if image_type == 'tif': image_type = 'tiff'
-            if image_type == 'jpg': image_type = 'jpeg'
 
-            bytes_buffer = io.BytesIO()
-            img.save(bytes_buffer, image_type)
-            bytes_buffer.seek(0)
+        bytes_buffer = io.BytesIO()
+        img.save(bytes_buffer, format='JPEG', quality=50)
+        bytes_buffer.seek(0)
 
-            return True, bytes_buffer
+        return True, bytes_buffer
 
     except Exception as e:
+        file_name = document.filename
         logger.log(LogLevel.ERROR, f"Could not resize image ({file_name}). Error was {e}")
 
     return False, document
@@ -155,6 +152,7 @@ def rotate_image_to_match_exif_orientation_flag(image: Image):
 
     except Exception as e:
         return image
+
 
 
 @upload.route('/upload/<section_url>', methods=['GET', 'POST'])
