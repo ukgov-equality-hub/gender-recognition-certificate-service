@@ -43,14 +43,14 @@ jobs:
           SQLALCHEMY_DATABASE_URI: 'postgresql://postgres:password@localhost:5432/grc'
           SQLALCHEMY_TRACK_MODIFICATION: false
           DEFAULT_ADMIN_USER: grc-service-account@cabinetoffice.gov.uk
-          NOTIFY_API: '${TEST_NOTIFY_API}'
-          NOTIFY_OVERRIDE_EMAIL: test@example.com
+          NOTIFY_API: '${NOTIFY_API}'
+          NOTIFY_OVERRIDE_EMAIL: ivan.touloumbadjian@hmcts.net
           BUCKET_NAME: '${AUTOMATED_TEST_BUCKET_NAME}'
           AWS_ACCESS_KEY_ID: '${AUTOMATED_TEST_AWS_ACCESS_KEY_ID}'
           AWS_SECRET_ACCESS_KEY: '${AUTOMATED_TEST_AWS_SECRET_ACCESS_KEY}'
           AWS_REGION: eu-west-2
           GOVUK_PAY_API: 'https://publicapi.payments.service.gov.uk/'
-          GOVUK_PAY_API_KEY: '${AUTOMATED_TEST_GOVUK_PAY_API_KEY}'
+          GOVUK_PAY_API_KEY: '${GOVUK_PAY_API_KEY}'
       - image: 'circleci/postgres:10.4'
         environment:
           POSTGRES_HOST: localhost
@@ -93,7 +93,7 @@ jobs:
           command: |
             . venv/bin/activate
             waitress-serve --call --port=8080 'grc:create_app' &
-            # pytest -s --show-capture=all
+            pytest -s --show-capture=all
       - run:
           name: Set up aws
           command: |
@@ -219,7 +219,6 @@ jobs:
             sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/staging/app-deployment.yaml
             sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/staging/admin-deployment.yaml
             sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/staging/dashboard-deployment.yaml
-            kubectl config current-context
             kubectl apply -n grc-preprod --record=false -f ./deploy/staging
                     
   deploy_image_to_live_prod:
@@ -232,7 +231,7 @@ jobs:
       - run:
           name: Authenticate to LIVE cluster
           command: >
-            echo -n ${K8S_CLUSTER_CERT_PROD} | base64 -d > ./ca.crt
+            echo -n ${K8S_CLUSTER_CERT_PROD} | base64 -d > ./ca.crt  
             kubectl config set-cluster ${K8S_CLUSTER_NAME} --certificate-authority=./ca.crt --server=https://${K8S_CLUSTER_NAME}
             kubectl config set-credentials circleci --token=${K8S_TOKEN_PROD}
             kubectl config set-context ${K8S_CLUSTER_NAME} --cluster=${K8S_CLUSTER_NAME} --user=circleci --namespace=${K8S_NAMESPACE_PROD}
@@ -243,7 +242,7 @@ jobs:
             sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/production/app-deployment.yaml
             sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/production/admin-deployment.yaml
             sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/production/dashboard-deployment.yaml
-            kubectl apply --record=false -f ./deploy/production
+            kubectl apply -n grc-prod --record=false -f ./deploy/production
                              
   tag_production:
     <<: *cloud_container 
@@ -260,16 +259,16 @@ jobs:
             login="$(aws ecr get-login --region ${AWS_DEFAULT_REGION} --no-include-email)"
             ${login}
             docker pull "${ECR_ENDPOINT_PREPROD}:grc-dashboard-${CIRCLE_SHA1}"
-            docker tag grc-dashboard "${ECR_ENDPOINT_PROD}:grc-dashboard-${CIRCLE_SHA1}" \
-            docker push "${ECR_ENDPOINT_PROD}:grc-dashboard-${CIRCLE_SHA1}:production.latest"
+            docker tag grc-dashboard "${ECR_ENDPOINT_PROD}:grc-dashboard-${CIRCLE_SHA1}"
+            docker push "${ECR_ENDPOINT_PROD}:grc-dashboard-${CIRCLE_SHA1}"
 
             docker pull "${ECR_ENDPOINT_PREPROD}:grc-admin-${CIRCLE_SHA1}"
-            docker tag grc-admin "${ECR_ENDPOINT_PROD}:grc-admin-${CIRCLE_SHA1}" \
-            docker push "${ECR_ENDPOINT_PROD}:grc-admin-${CIRCLE_SHA1}:production.latest"
+            docker tag grc-admin "${ECR_ENDPOINT_PROD}:grc-admin-${CIRCLE_SHA1}"
+            docker push "${ECR_ENDPOINT_PROD}:grc-admin-${CIRCLE_SHA1}"
 
             docker pull "${ECR_ENDPOINT_PREPROD}:grc-app-${CIRCLE_SHA1}"
-            docker tag grc-app "${ECR_ENDPOINT_PROD}:grc-app-${CIRCLE_SHA1}" \
-            docker push "${ECR_ENDPOINT_PROD}:grc-app-${CIRCLE_SHA1}:production.latest"
+            docker tag grc-app "${ECR_ENDPOINT_PROD}:grc-app-${CIRCLE_SHA1}"
+            docker push "${ECR_ENDPOINT_PROD}:grc-app-${CIRCLE_SHA1}"
 workflows:
   test-build-deploy:
     jobs:
