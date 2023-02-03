@@ -12,9 +12,9 @@ spec:
   ingressClassName: default
   tls:
   - hosts:
-    - gender-recognition-service-preprod.apps.live.cloud-platform.service.justice.gov.uk
+    - preprod.gender-recognition.service.justice.gov.uk
   rules:
-  - host: gender-recognition-service-preprod.apps.live.cloud-platform.service.justice.gov.uk
+  - host: preprod.gender-recognition.service.justice.gov.uk
     http:
       paths:
           - path: /
@@ -24,3 +24,25 @@ spec:
                 name: grc-app-service
                 port: 
                   number: 3000
+
+  - host: preprod.admin.gender-recognition.service.justice.gov.uk
+    http:
+      paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: grc-admin-service
+                port: 
+                  number: 3001
+   
+  - host: preprod.dashboard.gender-recognition.service.justice.gov.uk
+    http:
+      paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: grc-dashboard-service
+                port: 
+                  number: 3002

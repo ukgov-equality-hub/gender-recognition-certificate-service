@@ -16,7 +16,7 @@ spec:
       - name: grc-dashboard
         image: 754256621582.dkr.ecr.eu-west-2.amazonaws.com/pet/grc-prod-ecr:grc-dashboard-1.6
         ports:
-        - containerPort: 4567
+        - containerPort: 3002
         env:
           - name: DATABASE_URL
             valueFrom:

@@ -6,8 +6,8 @@ metadata:
     app: grc-dashboard-service
 spec:
   ports:
-  - port: 4567
+  - port: 3002
     name: http
-    targetPort: 4567
+    targetPort: 3002
   selector:
     app: grc-dashboard
