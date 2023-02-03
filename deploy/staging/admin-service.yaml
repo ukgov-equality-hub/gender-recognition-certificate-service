@@ -6,8 +6,8 @@ metadata:
     app: grc-admin-service
 spec:
   ports:
-  - port: 3000
+  - port: 3001
     name: http
-    targetPort: 3000
+    targetPort: 3001
   selector:
     app: grc-admin
