@@ -230,7 +230,7 @@ jobs:
       - checkout
       - run:
           name: Authenticate to LIVE cluster
-          command: >
+          command: |
             echo -n ${K8S_CLUSTER_CERT_PROD} | base64 -d > ./ca.crt  
             kubectl config set-cluster ${K8S_CLUSTER_NAME} --certificate-authority=./ca.crt --server=https://${K8S_CLUSTER_NAME}
             kubectl config set-credentials circleci --token=${K8S_TOKEN_PROD}
