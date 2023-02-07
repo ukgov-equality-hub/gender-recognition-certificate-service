@@ -60,14 +60,27 @@ def search():
             else:
                 data = application.application_data()
                 try:
-                    data = iter(data)
-                    if 'personal_details_data' in data:
-                        if 'first_name' in data.personal_details_data and search in data.personal_details_data.first_name.lower():
-                            applications.append(application)
-                        elif 'middle_names_or_empty_string' in data.personal_details_data and search in data.personal_details_data.middle_names_or_empty_string.lower():
-                            applications.append(application)
-                        elif 'last_name' in data.personal_details_data and search in data.personal_details_data.last_name.lower():
-                            applications.append(application)
+                    add_application = False
+
+                    if hasattr(data, 'personal_details_data'):
+                        if hasattr(data.personal_details_data, 'first_name') and search in data.personal_details_data.first_name.lower():
+                            add_application = True
+                        elif hasattr(data.personal_details_data, 'middle_names_or_empty_string') and search in data.personal_details_data.middle_names_or_empty_string.lower():
+                            add_application = True
+                        elif hasattr(data.personal_details_data, 'last_name') and search in data.personal_details_data.last_name.lower():
+                            add_application = True
+
+                    if hasattr(data, 'birth_registration_data'):
+                        if hasattr(data.birth_registration_data,'first_name' ) and search in data.birth_registration_data.first_name.lower():
+                            add_application = True
+                        elif hasattr(data.birth_registration_data, 'middle_names') and search in data.birth_registration_data.middle_names.lower():
+                            add_application = True
+                        elif hasattr(data.birth_registration_data, 'last_name') and search in data.birth_registration_data.last_name.lower():
+                            add_application = True
+
+                    if add_application:
+                        applications.append(application)
+
                 except TypeError as e:
                     pass
 
