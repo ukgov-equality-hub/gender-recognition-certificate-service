@@ -46,9 +46,14 @@ def delete_file(application_data, file_name, section):
         logger.log(LogLevel.ERROR, f"Could not delete file ({file_name}). Error was {e}")
         # We could not delete the file. Perhaps it doesn't exist.
         pass
+
     files = section.file_list(application_data.uploads_data)
     file_to_remove = next(filter(lambda file: file.aws_file_name == file_name, files), None)
-    files.remove(file_to_remove)
+    try:
+        files.remove(file_to_remove)
+    except:
+        pass
+
     return application_data
 
 
