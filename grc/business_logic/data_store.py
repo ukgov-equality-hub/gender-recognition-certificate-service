@@ -69,7 +69,10 @@ class DataStore:
             reference_number=reference_number
         ).first()
 
-        application_record.number_sessions += 1
+        number_sessions = application_record.number_sessions
+        if number_sessions is None: number_sessions = 0
+        number_sessions += 1
+        application_record.number_sessions = number_sessions
         db.session.commit()
 
 
