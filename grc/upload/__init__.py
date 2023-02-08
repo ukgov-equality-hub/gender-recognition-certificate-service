@@ -195,14 +195,20 @@ def uploadInfoPage(section_url: str):
 
                 elif file_type in ['jpg', 'jpeg', 'png', 'tif', 'tiff', 'bmp']:
                     resized, resized_document = resize_image(document)
-                    AwsS3Client().upload_fileobj(resized_document, object_name)
                     if resized:
                         file_ext = ''
                         original_object_name = object_name
                         if '.' in original_object_name:
                             file_ext = original_object_name[original_object_name.rindex('.'):]
                             original_object_name = original_object_name[0: original_object_name.rindex('.')]
-                        AwsS3Client().upload_fileobj(document, f'{original_object_name}_original{file_ext}')
+
+                        aws_file_name = f'{original_object_name}_original{file_ext}'
+                        AwsS3Client().upload_fileobj(document, aws_file_name)
+
+                        # If an image has been resized, it will be saved as a JPG
+                        object_name = f'{original_object_name}.jpg'
+
+                    AwsS3Client().upload_fileobj(resized_document, object_name)
 
                 else:
                     AwsS3Client().upload_fileobj(document, object_name)
