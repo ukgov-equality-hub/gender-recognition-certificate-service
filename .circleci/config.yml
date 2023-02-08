@@ -136,10 +136,8 @@ jobs:
             echo ${login} | docker login --username AWS --password-stdin 754256621582.dkr.ecr.eu-west-2.amazonaws.com
             docker tag grc-app "${ECR_ENDPOINT_PREPROD}:grc-app-${CIRCLE_SHA1}"
             docker push "${ECR_ENDPOINT_PREPROD}:grc-app-${CIRCLE_SHA1}"
-            if [ "${CIRCLE_BRANCH}" == "main" ]; then
             docker tag grc-app "${ECR_ENDPOINT_PREPROD}:app-latest"
             docker push "${ECR_ENDPOINT_PREPROD}:app-latest"
-            fi
 
         #  if [ "${CIRCLE_BRANCH}" == "main" ]; then
          #   docker tag grc-app "${ECR_ENDPOINT_PREPROD}:latest"
@@ -167,10 +165,8 @@ jobs:
             echo ${login} | docker login --username AWS --password-stdin 754256621582.dkr.ecr.eu-west-2.amazonaws.com
             docker tag grc-admin "${ECR_ENDPOINT_PREPROD}:grc-admin-${CIRCLE_SHA1}"
             docker push "${ECR_ENDPOINT_PREPROD}:grc-admin-${CIRCLE_SHA1}"
-            if [ "${CIRCLE_BRANCH}" == "main" ]; then
             docker tag grc-admin "${ECR_ENDPOINT_PREPROD}:grc-admin-latest"
             docker push "${ECR_ENDPOINT_PREPROD}:grc-admin-latest"
-            fi
       - run:
           name: build dashboard image
           command: |
@@ -193,10 +189,8 @@ jobs:
             echo ${login} | docker login --username AWS --password-stdin 754256621582.dkr.ecr.eu-west-2.amazonaws.com
             docker tag grc-dashboard "${ECR_ENDPOINT_PREPROD}:grc-dashboard-${CIRCLE_SHA1}"
             docker push "${ECR_ENDPOINT_PREPROD}:grc-dashboard-${CIRCLE_SHA1}"
-            if [ "${CIRCLE_BRANCH}" == "main" ]; then
             docker tag grc-dashboard "${ECR_ENDPOINT_PREPROD}:grc-dashboard-latest"
             docker push "${ECR_ENDPOINT_PREPROD}:grc-dashboard-latest"
-            fi
 
   deploy_image_to_live:
     <<: *cloud_container 
