@@ -45,6 +45,7 @@
                         <tr class="govuk-table__row">
                             <th scope="col" class="govuk-table__header">Reference number</th>
                             <th scope="col" class="govuk-table__header">Applicant name</th>
+                            <th scope="col" class="govuk-table__header">Birth name</th>
                             <th scope="col" class="govuk-table__header">Status</th>
                             <th scope="col" class="govuk-table__header">Created</th>
                             <th scope="col" class="govuk-table__header">Last update</th>
@@ -68,6 +69,13 @@
                                         <span style="text-decoration: underline;">{{ application_data.personal_details_data.last_name }}</span>
                                     {% else %}
                                         {{ application.email }}
+                                    {% endif %}
+                                </td>
+                                <td class="govuk-table__cell">
+                                    {% if application_data.birth_registration_data.first_name %}
+                                        {{ application_data.birth_registration_data.first_name }}
+                                        {{ application_data.birth_registration_data.middle_names }}
+                                        <span style="text-decoration: underline;">{{ application_data.birth_registration_data.last_name }}</span>
                                     {% endif %}
                                 </td>
                                 <td class="govuk-table__cell">
@@ -105,7 +113,7 @@
                             </tr>
                             {% else %}
                             <tr class="govuk-table__row">
-                                <td colspan="5" class="govuk-table__cell">
+                                <td colspan="6" class="govuk-table__cell">
                                     <p class="govuk-body" style="margin: 10px 0; color: #ccc;">
                                         Valid data not found for application {{ application.reference_number }} - {{ application.email }}
                                         <!-- created: {{ application.created | format_date }} -->
