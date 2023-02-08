@@ -26,6 +26,9 @@ COPY . .
 RUN npm install
 RUN npm run build
 
+# Don't run as root user
+USER 1000
+
 #RUN rm /app/grc -r
 RUN chmod 777 /app/run_admin.sh
 CMD /app/run_admin.sh

@@ -26,6 +26,9 @@ COPY . .
 RUN npm install
 RUN npm run build
 
+# Don't run as root user
+USER 1000
+
 #RUN rm /app/admin -r
 CMD /app/run.sh
 # CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0"]
