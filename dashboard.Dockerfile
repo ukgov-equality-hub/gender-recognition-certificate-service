@@ -26,10 +26,10 @@ COPY . .
 RUN npm install
 RUN npm run build
 
-# Don't run as root user
-USER 1000
-
 #RUN rm /app/grc -r
 RUN chmod 777 /app/run_dashboard.sh
+
+# Don't run as root user
+USER 1000
 CMD /app/run_dashboard.sh
 # CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0" "--port=5001"]
