@@ -1,9 +1,10 @@
 #!/bin/bash
 
-env
+echo "In run.sh...."
+pwd
 find . -name "*.py"
 
-export FLASK_APP=grc/__init__.py
+export FLASK_APP=grc:create_app
 flask db init
 flask db migrate
 flask db upgrade
