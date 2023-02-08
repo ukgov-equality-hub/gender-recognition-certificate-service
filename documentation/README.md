@@ -32,9 +32,12 @@ How-to:
 # Miscellaneous documentation
 **Note: If we have time, we could put the following documentation into other sub-files.**
 
-```
-cf push grc-production -m 1G
-```
+### Technical diagnostic pages
+
+The Admin portal contains some technical diagnostic pages.  
+You will need to have an account on the Admin portal and have your IP address added to the allow list.  
+Once you have access, you can [find the diagnostic pages here](admin.apply-gender-recognition-certificate.service.gov.uk/diagnostics)
+
 
 ## Help Section
 . venv/bin/activate
