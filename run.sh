@@ -1,5 +1,8 @@
 #!/bin/bash
 
+env
+find . -name "*.py"
+
 export FLASK_APP=grc/__init__.py
 flask db init
 flask db migrate
