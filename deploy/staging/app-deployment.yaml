@@ -30,13 +30,3 @@ spec:
             value: grc
           - name: SQLALCHEMY_DATABASE_URI
             value: "postgresql://postgres:password@localhost:5432/grc"
-          - name: SQLALCHEMY_TRACK_MODIFICATION
-            value: false
-          - name: DEFAULT_ADMIN_USER
-            value: grc-service-account@cabinetoffice.gov.uk
-          - name: NOTIFY_OVERRIDE_EMAIL
-            value: ivan.touloumbadjian@hmcts.net
-          - name: AWS_REGION
-            value: eu-west-2
-          - name: GOVUK_PAY_API
-            value: "https://publicapi.payments.service.gov.uk/"
