@@ -30,3 +30,5 @@ spec:
             value: grc
           - name: SQLALCHEMY_DATABASE_URI
             value: "postgresql://postgres:password@localhost:5432/grc"
+          - name: SQLALCHEMY_TRACK_MODIFICATION
+            value: false
