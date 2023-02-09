@@ -28,3 +28,27 @@ spec:
             value: "http://content-api-service:4567/image_url.json"
           - name: FLASK_APP
             value: grc
+          - name: SECRET_KEY
+            value: <SECRETKEY>
+          - name: SQLALCHEMY_DATABASE_URI
+            value: 'postgresql://postgres:password@localhost:5432/grc'
+          - name: SQLALCHEMY_TRACK_MODIFICATION
+            value: false
+          - name: DEFAULT_ADMIN_USER
+            value: grc-service-account@cabinetoffice.gov.uk
+          - name: NOTIFY_API
+            value: <NOTIFYAPI>
+          - name: NOTIFY_OVERRIDE_EMAIL
+            value: ivan.touloumbadjian@hmcts.net
+          - name: BUCKET_NAME
+            value: <BUCKETNAME>
+          - name: AWS_ACCESS_KEY_ID
+            value: <AWSACCESSKEY>
+          - name: AWS_SECRET_ACCESS_KEY
+            value: <AWSSECRETACCESSKEY>
+          - name: AWS_REGION
+            value: eu-west-2
+          - name: GOVUK_PAY_API
+            value: 'https://publicapi.payments.service.gov.uk/'
+          - name: GOVUK_PAY_API_KEY
+            value: <GOVUK_PAY_API_KEY>
