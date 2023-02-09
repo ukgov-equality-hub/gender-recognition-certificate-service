@@ -1,8 +1,8 @@
 #!/bin/bash
 
-echo "In run.sh...."
+echo "DATABASE_URL is <${DATABASE_URL}>"
+echo "FLASK_APP is >${FLASK_APP}>"
 
-export FLASK_APP=grc
 export FLASK_ENV=production
 export FLASK_DEBUG=1
 
@@ -11,8 +11,3 @@ flask db migrate
 flask db upgrade
 
 flask run --host=0.0.0.0
-
-#while true
-#do
-#  sleep 30
-#done

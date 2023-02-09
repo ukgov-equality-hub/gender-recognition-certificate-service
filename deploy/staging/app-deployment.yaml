@@ -26,3 +26,5 @@ spec:
                 key: auth
           - name: CONTENT_API_URL
             value: "http://content-api-service:4567/image_url.json"
+          - name: FLASK_APP
+            value: grc
