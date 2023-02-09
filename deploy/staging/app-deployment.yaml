@@ -29,7 +29,10 @@ spec:
           - name: FLASK_APP
             value: grc
           - name: SQLALCHEMY_DATABASE_URI
-            value: "postgresql://postgres:password@localhost:5432/grc"
+            valueFrom:
+              secretKeyRef:
+                name: dps-rds-instance-output
+                key: url
           - name: DEFAULT_ADMIN_USER
             value: grc-service-account@cabinetoffice.gov.uk
           - name: NOTIFY_OVERRIDE_EMAIL
