@@ -19,24 +19,43 @@ spec:
         ports:
         - containerPort: 3000
         env:
+          - name: AWS_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                name: s3-bucket-output
+                key: access_key_id
+          - name: AWS_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: s3-bucket-output
+                key: secret_access_key
+          - name: AWS_REGION
+            value: eu-west-2
+          - name: BUCKET_NAME
+            valueFrom:
+              secretKeyRef:
+                name: s3-bucket-output
+                key: bucket_name
+          - name: CONTENT_API_URL
+            value: "http://content-api-service:4567/image_url.json"
           - name: DATABASE_URL
             valueFrom:
               secretKeyRef:
                 name: dps-rds-instance-output
                 key: url
-          - name: CONTENT_API_URL
-            value: "http://content-api-service:4567/image_url.json"
+          - name: DEFAULT_ADMIN_USER
+            value: grc-service-account@cabinetoffice.gov.uk
           - name: FLASK_APP
             value: grc
           - name: FLASK_ENV
-            value: development
-          - name: SQLALCHEMY_DATABASE_URI
-            value: "postgresql://cpodXL33DA:Jm4fxF4A4DRIJYYo@cloud-platform-5e7c8a16ebe2c21b.cdwm328dlye6.eu-west-2.rds.amazonaws.com:5432/db5e7c8a16ebe2c21b"
-          - name: DEFAULT_ADMIN_USER
-            value: grc-service-account@cabinetoffice.gov.uk
-          - name: NOTIFY_OVERRIDE_EMAIL
-            value: ivan.touloumbadjian@hmcts.net
-          - name: AWS_REGION
-            value: eu-west-2
+            value: production
           - name: GOVUK_PAY_API
             value: "https://publicapi.payments.service.gov.uk/"
+          - name: LOG_LEVEL
+            value: DEBUG
+          - name: NOTIFY_OVERRIDE_EMAIL
+            value: ivan.touloumbadjian@hmcts.net
+          - name: NOTIFY_API
+            value: '${NOTIFY_API}'
+          - name: SQLALCHEMY_DATABASE_URI
+            value: "postgresql://cpodXL33DA:Jm4fxF4A4DRIJYYo@cloud-platform-5e7c8a16ebe2c21b.cdwm328dlye6.eu-west-2.rds.amazonaws.com:5432/db5e7c8a16ebe2c21b"
