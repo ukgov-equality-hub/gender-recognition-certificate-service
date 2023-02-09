@@ -31,7 +31,7 @@ spec:
           - name: SECRET_KEY
             value: <SECRETKEY>
           - name: SQLALCHEMY_DATABASE_URI
-            value: 'postgresql://postgres:password@localhost:5432/grc'
+            value: "postgresql://postgres:password@localhost:5432/grc"
           - name: SQLALCHEMY_TRACK_MODIFICATION
             value: false
           - name: DEFAULT_ADMIN_USER
@@ -49,6 +49,6 @@ spec:
           - name: AWS_REGION
             value: eu-west-2
           - name: GOVUK_PAY_API
-            value: 'https://publicapi.payments.service.gov.uk/'
+            value: "https://publicapi.payments.service.gov.uk/"
           - name: GOVUK_PAY_API_KEY
             value: <GOVUK_PAY_API_KEY>
