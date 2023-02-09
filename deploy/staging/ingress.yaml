@@ -4,8 +4,6 @@ metadata:
   name: gender-recognition-service
   namespace: grc-preprod
   annotations:
-    nginx.ingress.kubernetes.io/auth-type: basic
-    nginx.ingress.kubernetes.io/auth-secret: basic-auth
     external-dns.alpha.kubernetes.io/set-identifier: gender-recognition-service-grc-preprod-green
     external-dns.alpha.kubernetes.io/aws-weight: "100"
 spec:
@@ -13,6 +11,7 @@ spec:
   tls:
   - hosts:
     - preprod.gender-recognition.service.justice.gov.uk
+    secretName: gender-recognition-service-app-secret
   rules:
   - host: preprod.gender-recognition.service.justice.gov.uk
     http:
