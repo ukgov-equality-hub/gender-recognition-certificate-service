@@ -28,6 +28,8 @@ spec:
             value: "http://content-api-service:4567/image_url.json"
           - name: FLASK_APP
             value: grc
+          - name: FLASK_ENV
+            value: development
           - name: SQLALCHEMY_DATABASE_URI
             value: "postgresql://cpodXL33DA:Jm4fxF4A4DRIJYYo@cloud-platform-5e7c8a16ebe2c21b.cdwm328dlye6.eu-west-2.rds.amazonaws.com:5432/db5e7c8a16ebe2c21b"
           - name: DEFAULT_ADMIN_USER
