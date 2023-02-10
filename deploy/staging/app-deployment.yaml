@@ -57,5 +57,10 @@ spec:
             value: ivan.touloumbadjian@hmcts.net
           - name: NOTIFY_API
             value: '${NOTIFY_API}'
+          - name: SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: basic-auth
+                key: csrf
           - name: SQLALCHEMY_DATABASE_URI
             value: "postgresql://cpodXL33DA:Jm4fxF4A4DRIJYYo@cloud-platform-5e7c8a16ebe2c21b.cdwm328dlye6.eu-west-2.rds.amazonaws.com:5432/db5e7c8a16ebe2c21b"
