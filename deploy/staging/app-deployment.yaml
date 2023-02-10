@@ -56,7 +56,22 @@ spec:
           - name: NOTIFY_OVERRIDE_EMAIL
             value: ivan.touloumbadjian@hmcts.net
           - name: NOTIFY_API
-            value: '${NOTIFY_API}'
+            valueFrom:
+              secretKeyRef:
+                name: basic-auth
+                key: notifyapi
+          - name: NOTIFY_SECURITY_CODE_EMAIL_TEMPLATE_ID
+            value: "d93108b9-4a5b-4268-91ee-2bb59686e702"
+          - name: NOTIFY_UNFINISHED_APPLICATION_EMAIL_TEMPLATE_ID
+            value: "151fce32-1f66-4efd-a875-28026e8d8d70"
+          - name: NOTIFY_COMPLETED_APPLICATION_EMAIL_TEMPLATE_ID
+            value: "d3a252f7-5580-4299-8889-01ac235e8de7"
+          - name: NOTIFY_ADMIN_LOGIN_TEMPLATE_ID
+            value: "ddfa69ca-e89d-49d1-8311-b487732860ec"
+          - name: NOTIFY_ADMIN_FORGOT_PASSWORD_TEMPLATE_ID
+            value: "7e2ed682-d120-4937-9154-1966976e0144"
+          - name: NOTIFY_ADMIN_NEW_USER_TEMPLATE_ID
+            value: "0ff48a4c-601e-4cc1-b6c6-30bac012c259"
           - name: SECRET_KEY
             valueFrom:
               secretKeyRef:
