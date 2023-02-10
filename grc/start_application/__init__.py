@@ -19,6 +19,7 @@ logger = Logger()
 @startApplication.route('/', methods=['GET', 'POST'])
 @Unauthorized
 def index():
+    logger.log(LogLevel.INFO, "FIRING logging index")
     form = EmailAddressForm()
 
     if form.validate_on_submit():
