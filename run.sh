@@ -9,4 +9,4 @@ echo "flask db commands commented out to bypass db migration"
 #flask db migrate
 #flask db upgrade
 
-flask run --host=0.0.0.0
+flask run --host=0.0.0.0 -p 3000
