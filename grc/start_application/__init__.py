@@ -20,7 +20,10 @@ logger = Logger()
 @Unauthorized
 def index():
     logger.log(LogLevel.INFO, "FIRING logging index")
-    form = EmailAddressForm()
+    try:
+        form = EmailAddressForm()
+    except Exception as e:
+        logger.log(LogLevel.ERROR, f"error message => {e}")
     logger.log(LogLevel.INFO, f"got email address form => {form}")
 
     if form.validate_on_submit():
