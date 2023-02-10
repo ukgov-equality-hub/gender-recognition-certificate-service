@@ -21,8 +21,10 @@ logger = Logger()
 def index():
     logger.log(LogLevel.INFO, "FIRING logging index")
     form = EmailAddressForm()
+    logger.log(LogLevel.INFO, f"got email address form => {form}")
 
     if form.validate_on_submit():
+        logger.log(LogLevel.INFO, "POST form submitted")
         session.clear()
         session['email'] = form.email.data
         try:
@@ -31,7 +33,7 @@ def index():
         except BaseException as err:
             error = err.args[0].json()
             flash(error['errors'][0]['message'], 'error')
-
+    logger.log(LogLevel.INFO, "about to render template")
     return render_template(
         'start-application/email-address.html',
         form=form
