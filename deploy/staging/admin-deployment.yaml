@@ -53,8 +53,6 @@ spec:
             value: DEBUG
           - name: MAINTENANCE_MODE
             value: "OFF"
-          - name: NOTIFY_OVERRIDE_EMAIL
-            value: ivan.touloumbadjian@hmcts.net
           - name: NOTIFY_API
             valueFrom:
               secretKeyRef:
