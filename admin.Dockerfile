@@ -10,7 +10,7 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
 RUN curl -sL https://deb.nodesource.com/setup_16.x | bash - \
     && apt-get install -y nodejs
 
-EXPOSE 5001
+EXPOSE 3001
 
 RUN mkdir -p /app/
 WORKDIR /app
