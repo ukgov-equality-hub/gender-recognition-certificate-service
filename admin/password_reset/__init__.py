@@ -14,7 +14,8 @@ logger = Logger()
 @password_reset.route('/password_reset', methods=['GET', 'POST'])
 def index():
 
-    logger.log(LogLevel.INFO,f"Session items <{session.items.len()}>")
+    num_items = len(session.items)
+    logger.log(LogLevel.INFO,f"Session items <{num_items}>")
     for key, value in session.items():
             logger.log(LogLevel.INFO, f"Session entry: {key} = {value}")
 
