@@ -26,3 +26,17 @@ spec:
                 key: auth
           - name: CONTENT_API_URL
             value: "http://content-api-service:4567/image_url.json"
+          - name: FLASK_APP
+            value: dashboard
+          - name: FLASK_ENV
+            value: production
+          - name: SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: basic-auth
+                key: csrf
+          - name: SQLALCHEMY_KEY
+            valueFrom:
+              secretKeyRef:
+                name: basic-auth
+                key: alchemy-key
