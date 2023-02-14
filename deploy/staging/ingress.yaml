@@ -11,8 +11,14 @@ spec:
   tls:
   - hosts:
     - preprod.gender-recognition.service.justice.gov.uk
-    - preprod.admin.gender-recognition.service.justice.gov.uk
     secretName: gender-recognition-service-app-secret
+  - hosts:
+    - preprod.admin.gender-recognition.service.justice.gov.uk
+    secretName: gender-recognition-service-admin-secret
+  - hosts:
+    - preprod.dashboard.gender-recognition.service.justice.gov.uk
+    secretName: gender-recognition-dashboard-secret
+
   rules:
   - host: preprod.gender-recognition.service.justice.gov.uk
     http:
