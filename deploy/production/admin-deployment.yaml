@@ -47,8 +47,6 @@ spec:
             value: admin
           - name: FLASK_ENV
             value: production
-          - name: GOVUK_PAY_API
-            value: "https://publicapi.payments.service.gov.uk/"
           - name: LOG_LEVEL
             value: DEBUG
           - name: MAINTENANCE_MODE
@@ -76,7 +74,7 @@ spec:
                 name: basic-auth
                 key: csrf
           - name: SQLALCHEMY_DATABASE_URI
-            value: "postgresql://cpodXL33DA:Jm4fxF4A4DRIJYYo@cloud-platform-5e7c8a16ebe2c21b.cdwm328dlye6.eu-west-2.rds.amazonaws.com:5432/db5e7c8a16ebe2c21b"
+            value: "postgresql://cpekG0K0Wt:enMaxyNcX31stzL5@cloud-platform-65702f469da5c06e.cdwm328dlye6.eu-west-2.rds.amazonaws.com:5432/db65702f469da5c06e"
           - name: SQLALCHEMY_KEY
             valueFrom:
               secretKeyRef:
