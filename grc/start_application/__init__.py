@@ -28,14 +28,20 @@ def index():
 
     if form.validate_on_submit():
         logger.log(LogLevel.INFO, "POST form submitted")
-        session.clear()
-        session['email'] = form.email.data
+        try:
+            session.clear()
+            session['email'] = form.email.data
+        except Exception as err:
+            logger.log(LogLevel.ERROR, f"error message => {err}")
         try:
             send_security_code(form.email.data)
             return local_redirect(url_for('startApplication.securityCode'))
+        except Exception as err:
+            logger.log(LogLevel.ERROR, f"error message => {err}")
         except BaseException as err:
             error = err.args[0].json()
             flash(error['errors'][0]['message'], 'error')
+            logger.log(LogLevel.ERROR, f"error message => {err}")
     logger.log(LogLevel.INFO, "about to render template")
     return render_template(
         'start-application/email-address.html',

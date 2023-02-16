@@ -19,10 +19,71 @@ spec:
         ports:
         - containerPort: 3001
         env:
+          - name: AWS_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                name: s3-bucket-output
+                key: access_key_id
+          - name: AWS_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: s3-bucket-output
+                key: secret_access_key
+          - name: AWS_REGION
+            value: eu-west-2
+          - name: BUCKET_NAME
+            valueFrom:
+              secretKeyRef:
+                name: s3-bucket-output
+                key: bucket_name
           - name: DATABASE_URL
             valueFrom:
               secretKeyRef:
                 name: dps-rds-instance-output
                 key: url
-          - name: CONTENT_API_URL
-            value: "http://content-api-service:4567/image_url.json"
+          - name: DEFAULT_ADMIN_USER
+            value: mark.butler@HMCTS.net
+          - name: FLASK_APP
+            value: admin
+          - name: FLASK_ENV
+            value: production
+          - name: LOG_LEVEL
+            value: DEBUG
+          - name: MAINTENANCE_MODE
+            value: "OFF"
+          - name: NOTIFY_API
+            valueFrom:
+              secretKeyRef:
+                name: basic-auth
+                key: notifyapi
+          - name: NOTIFY_SECURITY_CODE_EMAIL_TEMPLATE_ID
+            value: "d93108b9-4a5b-4268-91ee-2bb59686e702"
+          - name: NOTIFY_UNFINISHED_APPLICATION_EMAIL_TEMPLATE_ID
+            value: "151fce32-1f66-4efd-a875-28026e8d8d70"
+          - name: NOTIFY_COMPLETED_APPLICATION_EMAIL_TEMPLATE_ID
+            value: "d3a252f7-5580-4299-8889-01ac235e8de7"
+          - name: NOTIFY_ADMIN_LOGIN_TEMPLATE_ID
+            value: "ddfa69ca-e89d-49d1-8311-b487732860ec"
+          - name: NOTIFY_ADMIN_FORGOT_PASSWORD_TEMPLATE_ID
+            value: "7e2ed682-d120-4937-9154-1966976e0144"
+          - name: NOTIFY_ADMIN_NEW_USER_TEMPLATE_ID
+            value: "0ff48a4c-601e-4cc1-b6c6-30bac012c259"
+          - name: SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: basic-auth
+                key: csrf
+          - name: SQLALCHEMY_DATABASE_URI
+            value: "postgresql://cpekG0K0Wt:enMaxyNcX31stzL5@cloud-platform-65702f469da5c06e.cdwm328dlye6.eu-west-2.rds.amazonaws.com:5432/db65702f469da5c06e"
+          - name: SQLALCHEMY_KEY
+            valueFrom:
+              secretKeyRef:
+                name: basic-auth
+                key: alchemy-key
+          - name: GOVUK_PAY_API
+            value: "https://publicapi.payments.service.gov.uk/"
+          - name: GOVUK_PAY_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: basic-auth
+                key: govuk-pay-api-key
