@@ -36,6 +36,7 @@ def index():
         except BaseException as err:
             error = err.args[0].json()
             flash(error['errors'][0]['message'], 'error')
+            logger.log(LogLevel.ERROR, f"error message => {err}")
     logger.log(LogLevel.INFO, "about to render template")
     return render_template(
         'start-application/email-address.html',
