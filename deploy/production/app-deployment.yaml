@@ -14,14 +14,14 @@ spec:
     spec:
       containers:
       - name: grc-app
-        image: 754256621582.dkr.ecr.eu-west-2.amazonaws.com/pet/grc-preprod-ecr:grc-app-latest
+        image: 754256621582.dkr.ecr.eu-west-2.amazonaws.com/pet/grc-prod-ecr:grc-app-latest
         ports:
         - containerPort: 3000
         env:
           - name: DATABASE_URL
             valueFrom:
               secretKeyRef:
-                name: basic-auth
-                key: auth
+                name: dps-rds-instance-output
+                key: url
           - name: CONTENT_API_URL
             value: "http://content-api-service:4567/image_url.json"
