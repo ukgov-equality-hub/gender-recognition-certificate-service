@@ -49,8 +49,6 @@ spec:
             value: grc
           - name: FLASK_ENV
             value: production
-          - name: GOVUK_PAY_API
-            value: "https://publicapi.payments.service.gov.uk/"
           - name: LOG_LEVEL
             value: DEBUG
           - name: NOTIFY_OVERRIDE_EMAIL
