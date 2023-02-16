@@ -53,7 +53,7 @@ SQLAlchemy-Utils==0.38.2
 toml==0.10.2
 urllib3==1.26.14
 waitress==2.1.2
-Werkzeug==2.1.1
+Werkzeug==2.2.3
 WTForms==3.0.0
 xhtml2pdf==0.2.6
 Pillow==9.3.0
