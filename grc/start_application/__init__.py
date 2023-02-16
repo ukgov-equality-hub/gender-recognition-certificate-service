@@ -31,11 +31,13 @@ def index():
         try:
             session.clear()
             session['email'] = form.email.data
-        except BaseException as err:
+        except Exception as err:
             logger.log(LogLevel.ERROR, f"error message => {err}")
         try:
             send_security_code(form.email.data)
             return local_redirect(url_for('startApplication.securityCode'))
+        except Exception as err:
+            logger.log(LogLevel.ERROR, f"error message => {err}")
         except BaseException as err:
             error = err.args[0].json()
             flash(error['errors'][0]['message'], 'error')
