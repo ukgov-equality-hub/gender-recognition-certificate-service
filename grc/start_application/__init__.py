@@ -28,8 +28,11 @@ def index():
 
     if form.validate_on_submit():
         logger.log(LogLevel.INFO, "POST form submitted")
-        session.clear()
-        session['email'] = form.email.data
+        try:
+            session.clear()
+            session['email'] = form.email.data
+        except BaseException as err:
+            logger.log(LogLevel.ERROR, f"error message => {err}")
         try:
             send_security_code(form.email.data)
             return local_redirect(url_for('startApplication.securityCode'))
