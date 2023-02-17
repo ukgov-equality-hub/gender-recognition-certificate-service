@@ -1,6 +1,6 @@
 from datetime import datetime
 from flask import Blueprint, abort, render_template, url_for, session, make_response, request
-from admin.applications.forms import ReferenceNumberForm
+from admin.applications.forms import SearchForm, ReferenceNumberForm
 from grc.business_logic.data_store import DataStore
 from grc.utils.decorators import AdminViewerRequired, AdminRequired
 from grc.models import db, Application, ApplicationStatus
@@ -38,6 +38,58 @@ def index():
         newApplications=newApplications,
         downloadedApplications=downloadedApplications,
         completedApplications=completedApplications
+    )
+
+
+@applications.route('/applications/search', methods=['GET', 'POST'])
+@AdminViewerRequired
+def search():
+    form = SearchForm()
+    message = ""
+    search = ""
+    applications = []
+
+    if request.method == 'POST' and form.search.data:
+        search = form.search.data.lower()
+        all_applications = db.session.query(Application).all()
+        for application in all_applications:
+            if search in application.reference_number.lower():
+                applications.append(application)
+            elif search in application.email.lower():
+                applications.append(application)
+            else:
+                data = application.application_data()
+                try:
+                    add_application = False
+
+                    if hasattr(data, 'personal_details_data'):
+                        if hasattr(data.personal_details_data, 'first_name') and search in data.personal_details_data.first_name.lower():
+                            add_application = True
+                        elif hasattr(data.personal_details_data, 'middle_names_or_empty_string') and search in data.personal_details_data.middle_names_or_empty_string.lower():
+                            add_application = True
+                        elif hasattr(data.personal_details_data, 'last_name') and search in data.personal_details_data.last_name.lower():
+                            add_application = True
+
+                    if hasattr(data, 'birth_registration_data'):
+                        if hasattr(data.birth_registration_data,'first_name' ) and search in data.birth_registration_data.first_name.lower():
+                            add_application = True
+                        elif hasattr(data.birth_registration_data, 'middle_names') and search in data.birth_registration_data.middle_names.lower():
+                            add_application = True
+                        elif hasattr(data.birth_registration_data, 'last_name') and search in data.birth_registration_data.last_name.lower():
+                            add_application = True
+
+                    if add_application:
+                        applications.append(application)
+
+                except TypeError as e:
+                    pass
+
+    return render_template(
+        'applications/search.html',
+        form=form,
+        message=message,
+        search=search,
+        applications=applications
     )
 
 

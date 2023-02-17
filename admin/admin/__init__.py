@@ -17,6 +17,7 @@ logger = Logger()
 @admin.route('/', methods=['GET', 'POST'])
 def index():
     form = LoginForm()
+
     if 'signedIn' in session:
         return local_redirect(url_for('applications.index'))
 
@@ -92,7 +93,8 @@ def sign_in_with_token():
                     logger.log(LogLevel.WARN, f"Expired login link used for {logger.mask_email_address(login_token['email'])}")
                 else:
                     user = AdminUser.query.filter_by(
-                        id=login_token['id'], email=login_token['email']
+                        id=login_token['id'],
+                        email=login_token['email']
                     ).first()
                     if user is None:
                         message = "We could not find your user details for this login link. Please try logging in again"

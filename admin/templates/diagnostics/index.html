@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Technical Diagnostic pages{% endblock %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <h1 class="govuk-heading-l">
+                Technical Diagnostic pages
+            </h1>
+
+            <ul class="govuk-list govuk-list--bullet">
+                <li>
+                    <a href="{{ url_for('diagnostics.all_applications') }}"
+                       class="govuk-link">
+                        All applications
+                    </a>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% import "govuk-design-system-templates/error-summary.html" as error_summary %}
+{% import "govuk-design-system-templates/text-input.html" as textInput %}
+
+{% block title %}GRC search applications{% endblock %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+
+            <h1 class="govuk-heading-l">
+                Search GRC applications
+            </h1>
+
+            {% if message != "" %}
+                <div class="govuk-inset-text">{{ message }}</div>
+            {% endif %}
+
+            {{ error_summary.renderFor(form) }}
+
+            <form method="POST" action="{{ url_for('applications.search') }}">
+                {{ form.csrf_token }}
+
+                {{ textInput.renderFor(
+                    form,
+                    fieldName='search',
+                    textInputForOptions={
+                        'labelOptions': { 'htmlOrText': 'Search by reference number, email address or name' },
+                        'classes': 'govuk-input--width-20',
+                        'type': 'text',
+                        'value': '{{ search }}'
+                    }
+                ) }}
+
+                <div class="govuk-button-group">
+                    <button class="govuk-button" data-module="govuk-button">
+                        Go
+                    </button>
+                </div>
+            </form>
+
+            {% if applications %}
+                <table class="govuk-table new-table">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header">Reference number</th>
+                            <th scope="col" class="govuk-table__header">Applicant name</th>
+                            <th scope="col" class="govuk-table__header">Birth name</th>
+                            <th scope="col" class="govuk-table__header">Status</th>
+                            <th scope="col" class="govuk-table__header">Created</th>
+                            <th scope="col" class="govuk-table__header">Last update</th>
+                            <th scope="col" class="govuk-table__header"><span class="govuk-visually-hidden">Actions</span></th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        {% for application in applications %}
+                            {% set application_data = application.application_data() %}
+                            {% if application_data %}
+                            <tr class="govuk-table__row">
+                                <th scope="row" class="govuk-table__header">
+                                    {{ application_data.reference_number_formatted }}
+                                    <!-- {{ application.user_input | safe }} -->
+                                </th>
+                                <td class="govuk-table__cell">
+                                    {% if application_data.personal_details_data.first_name %}
+                                        {{ application_data.personal_details_data.title }}
+                                        {{ application_data.personal_details_data.first_name }}
+                                        {{ application_data.personal_details_data.middle_names_or_empty_string }}
+                                        <span style="text-decoration: underline;">{{ application_data.personal_details_data.last_name }}</span>
+                                    {% else %}
+                                        {{ application.email }}
+                                    {% endif %}
+                                </td>
+                                <td class="govuk-table__cell">
+                                    {% if application_data.birth_registration_data.first_name %}
+                                        {{ application_data.birth_registration_data.first_name }}
+                                        {{ application_data.birth_registration_data.middle_names }}
+                                        <span style="text-decoration: underline;">{{ application_data.birth_registration_data.last_name }}</span>
+                                    {% endif %}
+                                </td>
+                                <td class="govuk-table__cell">
+                                    {{ application.status | application_status }}
+                                </td>
+                                <td class="govuk-table__cell">
+                                    {{ application.created | format_date }}
+                                </td>
+                                <td class="govuk-table__cell">
+                                    {{ application.updated | format_date }}
+                                </td>
+                                <td class="govuk-table__cell">
+                                    <ul class="govuk-list">
+                                        {% if application.status | application_status != 'STARTED' %}
+                                        <li>
+                                            <a href="{{ url_for('applications.view', reference_number=application.reference_number) }}"
+                                                class="govuk-link">
+                                                View application
+                                                <span class="govuk-visually-hidden">
+                                                    for
+                                                    {% if application_data.personal_details_data.first_name %}
+                                                        {{ application_data.personal_details_data.title }}
+                                                        {{ application_data.personal_details_data.first_name }}
+                                                        {{ application_data.personal_details_data.middle_names_or_empty_string }}
+                                                        {{ application_data.personal_details_data.last_name }}
+                                                    {% else %}
+                                                        {{ application.email }}
+                                                    {% endif %}
+                                                </span>
+                                            </a>
+                                        </li>
+                                        {% endif %}
+                                    </ul>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr class="govuk-table__row">
+                                <td colspan="6" class="govuk-table__cell">
+                                    <p class="govuk-body" style="margin: 10px 0; color: #ccc;">
+                                        Valid data not found for application {{ application.reference_number }} - {{ application.email }}
+                                        <!-- created: {{ application.created | format_date }} -->
+                                        <!-- updated: {{ application.updated | format_date }} -->
+                                        <!-- status: {{ application.status }} -->
+                                        <!-- last_page: {{ application.last_page }} -->
+                                        <!-- {{ application.user_input | safe }} -->
+                                    </p>
+                                </td>
+                            </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% elif search != '' %}
+                <p class="govuk-body">No applications matching your search</p>
+            {% endif %}
+
+        </div>
+    </div>
+{% endblock %}

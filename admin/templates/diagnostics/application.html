@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% block title %}Application {{ application_id }}{% endblock %}
+
+{% block backLink %}
+    <div class="govuk-breadcrumbs">
+        <ol class="govuk-breadcrumbs__list">
+            <li class="govuk-breadcrumbs__list-item">
+                <a href="{{ url_for('admin.index') }}" class="govuk-breadcrumbs__link">
+                    Download GRC applications
+                </a>
+            </li>
+            <li class="govuk-breadcrumbs__list-item">
+                <a href="{{ url_for('diagnostics.index') }}" class="govuk-breadcrumbs__link">
+                    Technical diagnostics
+                </a>
+            </li>
+            <li class="govuk-breadcrumbs__list-item">
+                <a href="{{ url_for('diagnostics.all_applications') }}" class="govuk-breadcrumbs__link">
+                    All Applications
+                </a>
+            </li>
+            <li class="govuk-breadcrumbs__list-item">
+                Application {{ application_id }}
+            </li>
+        </ol>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+
+            <h1 class="govuk-heading-l">
+                Application {{ application_id }}
+            </h1>
+
+            <table class="govuk-table">
+                <tbody class="govuk-table__body">
+                    <tr class="govuk-table__row">
+                        <th scope="row" class="govuk-table__header">DB id</th>
+                        <td class="govuk-table__cell">{{ application_row.id }}</td>
+                    </tr>
+
+                    <tr class="govuk-table__row">
+                        <th scope="row" class="govuk-table__header">Reference</th>
+                        <td class="govuk-table__cell">{{ application_row.reference_number }}</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <th scope="row" class="govuk-table__header">Email</th>
+                        <td class="govuk-table__cell">{{ application_row.email }}</td>
+                    </tr>
+
+                    <tr class="govuk-table__row">
+                        <th scope="row" class="govuk-table__header">Status</th>
+                        <td class="govuk-table__cell">{{ application_row.status }}</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <th scope="row" class="govuk-table__header">Created</th>
+                        <td class="govuk-table__cell">{{ application_row.created }}</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <th scope="row" class="govuk-table__header">Updated</th>
+                        <td class="govuk-table__cell">{{ application_row.updated }}</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <th scope="row" class="govuk-table__header">Downloaded</th>
+                        <td class="govuk-table__cell">{{ application_row.downloaded }}</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <th scope="row" class="govuk-table__header">Downloaded By</th>
+                        <td class="govuk-table__cell">{{ application_row.downloadedBy }}</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <th scope="row" class="govuk-table__header">Completed</th>
+                        <td class="govuk-table__cell">{{ application_row.completed }}</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <th scope="row" class="govuk-table__header">Completed By</th>
+                        <td class="govuk-table__cell">{{ application_row.completedBy }}</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <th scope="row" class="govuk-table__header">Files Created</th>
+                        <td class="govuk-table__cell">{{ application_row.filesCreated }}</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <th scope="row" class="govuk-table__header">Number of Sessions</th>
+                        <td class="govuk-table__cell">{{ application_row.number_sessions }}</td>
+                    </tr>
+
+                    <tr class="govuk-table__row">
+                        <th scope="row" class="govuk-table__header">User Input</th>
+                        <td class="govuk-table__cell">{{ application_row.user_input }}</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <th scope="row" class="govuk-table__header">User Input (prettified)</th>
+                        <td class="govuk-table__cell" style="white-space: pre-wrap">{{ application_row.user_input_prettified }}</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <th scope="row" class="govuk-table__header">Application Data</th>
+                        <td class="govuk-table__cell">{{ application_row.application_data }}</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <th scope="row" class="govuk-table__header">Application Data (prettified)</th>
+                        <td class="govuk-table__cell" style="white-space: pre-wrap">{{ application_row.application_data_prettified }}</td>
+                    </tr>
+
+                    <tr class="govuk-table__row">
+                        <th scope="row" class="govuk-table__header">Error</th>
+                        <td class="govuk-table__cell">{{ application_row.error }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+{% endblock %}

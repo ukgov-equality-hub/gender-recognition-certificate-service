@@ -100,6 +100,10 @@ def create_app(test_config=None):
     from admin.tools import tools
     app.register_blueprint(tools)
 
+    # Tech Diagnostic pages
+    from admin.diagnostics import diagnostics
+    app.register_blueprint(diagnostics)
+
     # Health Check
     from admin.health_check import health_check
     app.register_blueprint(health_check)

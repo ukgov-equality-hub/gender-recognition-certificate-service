@@ -218,13 +218,9 @@ def zip_encrypt_and_save_to_external_aws(files, chunk_number: int, timestamp: da
 @JobTokenRequired
 def application_notifications():
     days_between_last_update_and_deletion = 183  # approximately 6 months
-
     abandon_application_after_period_of_inactivity(days_between_last_update_and_deletion)
-
     send_reminder_emails_before_application_deletion(days_between_last_update_and_deletion)
-
     delete_completed_applications()
-
     delete_expired_security_codes()
 
     return ('', 200)
@@ -236,7 +232,7 @@ def abandon_application_after_period_of_inactivity(days_between_last_update_and_
 
     applications_to_anonymise = Application.query.filter(
         Application.status == ApplicationStatus.STARTED,
-         Application.updated < earliest_allowed_inactive_application_updated_date
+        Application.updated < earliest_allowed_inactive_application_updated_date
     )
 
     for application_to_anonymise in applications_to_anonymise:
@@ -271,11 +267,16 @@ def send_reminder_emails_before_application_deletion(days_between_last_update_an
         )
 
         for application_to_remind in applications_to_remind:
-            GovUkNotify().send_email_unfinished_application(
-                email_address=application_to_remind.email,
-                expiry_days=period_of_time_until_deletion_phrase,
-                grc_return_link=request.host_url
-            )
+            existing_application = Application.query.filter(
+                Application.email == application_to_remind.email,
+                ((Application.status == ApplicationStatus.SUBMITTED) | (Application.status == ApplicationStatus.DOWNLOADED) | (Application.status == ApplicationStatus.COMPLETED))
+            ).first()
+            if existing_application is None:
+                GovUkNotify().send_email_unfinished_application(
+                    email_address=application_to_remind.email,
+                    expiry_days=period_of_time_until_deletion_phrase,
+                    grc_return_link='https://apply-gender-recognition-certificate.service.gov.uk/'
+                )
 
 
 def calculate_last_updated_date(today, days_to_send_reminder_before_deletion, days_between_last_update_and_deletion):
@@ -352,8 +353,10 @@ def application_status(status):
         return 'STARTED'
     elif status == ApplicationStatus.SUBMITTED:
         return 'SUBMITTED'
-    elif status == ApplicationStatus. DOWNLOADED:
+    elif status == ApplicationStatus.DOWNLOADED:
         return 'DOWNLOADED'
+    elif status == ApplicationStatus.ABANDONED:
+        return 'ABANDONED'
 
     if status == 'COMPLETED':
         return ApplicationStatus.COMPLETED
@@ -364,6 +367,8 @@ def application_status(status):
     elif status == 'SUBMITTED':
         return ApplicationStatus.SUBMITTED
     elif status == 'DOWNLOADED':
-        return ApplicationStatus. DOWNLOADED
+        return ApplicationStatus.DOWNLOADED
+    elif status == 'ABANDONED':
+        return ApplicationStatus.ABANDONED
 
     return ''
