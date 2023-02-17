@@ -2,7 +2,7 @@ import random
 import string
 import datetime
 import jsonpickle
-from flask import session
+from flask import session, request
 from grc.models import Application, db
 from grc.business_logic.data_structures.application_data import ApplicationData
 
@@ -59,6 +59,7 @@ class DataStore:
 
         application_record.user_input = user_input
         application_record.updated = datetime.datetime.now()
+        application_record.last_page = request.full_path
         db.session.commit()
 
 
@@ -68,7 +69,10 @@ class DataStore:
             reference_number=reference_number
         ).first()
 
-        application_record.number_sessions += 1
+        number_sessions = application_record.number_sessions
+        if number_sessions is None: number_sessions = 0
+        number_sessions += 1
+        application_record.number_sessions = number_sessions
         db.session.commit()
 
 

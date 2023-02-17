@@ -102,7 +102,12 @@ def checkYourAnswers():
             return local_redirect(url_for('submitAndPay.confirmation'))
         else:
             random_uuid = str(uuid.uuid4())
-            return_link = request.url_root if os.getenv('TEST_URL', '') != '' or os.getenv('FLASK_ENV', '') == 'development' else str(request.url_root).replace('http://', 'https://')
+            return_link = request.url_root #if os.getenv('TEST_URL', '') != '' or os.getenv('FLASK_ENV', '') == 'development' else str(request.url_root).replace('http://', 'https://')
+            if '127.0.0.1' in return_link or 'localhost' in return_link:
+                pass
+            else:
+                return_link = return_link.replace('http:', 'https:')
+
             data = {
                 'amount': 500,
                 'reference': application_data.reference_number,
@@ -148,8 +153,6 @@ def checkYourAnswers():
 @submitAndPay.route('/submit-and-pay/download', methods=['GET'])
 @LoginRequired
 def download():
-    from grc.utils.application_files import ApplicationFiles
-
     application_data = DataStore.load_application_by_session_reference_number()
 
     bytes, file_name = ApplicationFiles().create_or_download_pdf(
@@ -204,7 +207,6 @@ def confirmation():
 
     @copy_current_request_context
     def create_files(reference_number, application_data):
-        from grc.utils.application_files import ApplicationFiles
         ApplicationFiles().create_or_download_attachments(
             reference_number,
             application_data,
@@ -280,7 +282,8 @@ def get_previous_page(application_data: ApplicationData, previous_page_in_journe
         previous_page_in_journey=previous_page_in_journey,
         section_check_your_answers_page=None,
         section_status=application_data.section_status_submit_and_pay_data,
-        application_data=application_data)
+        application_data=application_data
+    )
 
 
 def anonymise_application(application_to_anonymise):

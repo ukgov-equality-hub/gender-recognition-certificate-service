@@ -31,6 +31,7 @@ class Application(db.Model):
     )
     created = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     updated = db.Column(db.DateTime)
+    last_page = db.Column(db.String(500))
     downloaded = db.Column(db.DateTime)
     downloadedBy = db.Column(db.String(180))
     completed = db.Column(db.DateTime)
@@ -39,9 +40,14 @@ class Application(db.Model):
     number_sessions = db.Column(db.Integer, default=0)
 
     def application_data(self) -> ApplicationData:
-        application_data: ApplicationData = jsonpickle.decode(self.user_input)
-        application_data.updated = self.updated
-        return application_data
+        try:
+            application_data: ApplicationData = jsonpickle.decode(self.user_input)
+            application_data.updated = self.updated
+            return application_data
+        except Exception as e:
+            print(f"model error: {e}", flush=True)
+            print(f"reference_number: {self.reference_number}, created: {self.created}, updated: {self.updated}", flush=True)
+            print(f"data: {self.user_input}", flush=True)
 
 
 class SecurityCode(db.Model):

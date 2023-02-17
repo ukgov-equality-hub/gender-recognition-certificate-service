@@ -30,8 +30,10 @@ def application_status_filter(context, status):
         return 'STARTED'
     elif status == ApplicationStatus.SUBMITTED:
         return 'SUBMITTED'
-    elif status == ApplicationStatus. DOWNLOADED:
+    elif status == ApplicationStatus.DOWNLOADED:
         return 'DOWNLOADED'
+    elif status == ApplicationStatus.ABANDONED:
+        return 'ABANDONED'
 
 
 @jinja2.pass_context

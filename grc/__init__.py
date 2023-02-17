@@ -30,6 +30,7 @@ def create_app(test_config=None):
     app.config.from_object(config_object)
 
     if os.environ['FLASK_ENV'] != 'development':
+        app.config['PROPAGATE_EXCEPTIONS'] = True
         CustomErrorHandlers(app)
 
     # Show "Service unavailable" page if the config setting it set

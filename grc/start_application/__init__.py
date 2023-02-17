@@ -46,6 +46,14 @@ def securityCode():
     if request.method == 'POST':
         email = session['email']
         if form.validate_on_submit():
+            #existing_application = Application.query.filter(
+            #    Application.email == email.lower(),
+            #    ((Application.status == ApplicationStatus.SUBMITTED) | (Application.status == ApplicationStatus.DOWNLOADED) | (Application.status == ApplicationStatus.COMPLETED)),
+            #    # (DATE REJECTED?????)
+            #).first()
+            #if existing_application is not None:
+            #    form.security_code.errors.append("You have already submitted an application, please contact the admin team if you require an update")
+            #else:
             session.clear()  # Clear out session['email']
             session['validatedEmail'] = email
             return local_redirect(url_for('startApplication.isFirstVisit'))

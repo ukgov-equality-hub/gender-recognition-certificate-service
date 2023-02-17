@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %}All application IDs{% endblock %}
+
+{% block backLink %}
+    <div class="govuk-breadcrumbs">
+        <ol class="govuk-breadcrumbs__list">
+            <li class="govuk-breadcrumbs__list-item">
+                <a href="{{ url_for('admin.index') }}" class="govuk-breadcrumbs__link">
+                    Download GRC applications
+                </a>
+            </li>
+            <li class="govuk-breadcrumbs__list-item">
+                <a href="{{ url_for('diagnostics.index') }}" class="govuk-breadcrumbs__link">
+                    Technical diagnostics
+                </a>
+            </li>
+            <li class="govuk-breadcrumbs__list-item">
+                All application IDs
+            </li>
+        </ol>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+
+            <h1 class="govuk-heading-l">
+                All application IDs
+            </h1>
+
+            <p class="govuk-body">
+                Number of applications: <b>{{ number_of_results }}</b>
+            </p>
+
+            <table class="govuk-table">
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th scope="col" class="govuk-table__header">DB id</th>
+                        <th scope="col" class="govuk-table__header">Reference</th>
+                        <th scope="col" class="govuk-table__header">Email</th>
+                        <th scope="col" class="govuk-table__header">Status</th>
+                        <th scope="col" class="govuk-table__header">Created</th>
+                        <th scope="col" class="govuk-table__header">Updated</th>
+                        <th scope="col" class="govuk-table__header">Downloaded</th>
+                        <th scope="col" class="govuk-table__header">Downloaded By</th>
+                        <th scope="col" class="govuk-table__header">Completed</th>
+                        <th scope="col" class="govuk-table__header">Completed By</th>
+                        <th scope="col" class="govuk-table__header">Files Created</th>
+                        <th scope="col" class="govuk-table__header">Number of Sessions</th>
+                        <th scope="col" class="govuk-table__header">Error</th>
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+                    {% for row in application_rows %}
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__header">
+                                <a href="{{ url_for('diagnostics.application_by_id', id=row.id) }}"
+                                   class="govuk-link">
+                                    {{ row.id }}
+                                </a>
+                            </th>
+                            <td class="govuk-table__cell">
+                                {% if row.reference_number %}
+                                    <a href="{{ url_for('applications.view', reference_number=row.reference_number) }}"
+                                       class="govuk-link">
+                                        {{ row.reference_number }}
+                                    </a>
+                                {% else %}
+                                    Error
+                                {% endif %}
+                            </td>
+                            <td class="govuk-table__cell">
+                                {% if row.email %}
+                                    {{ row.email }}
+                                {% else %}
+                                    Error
+                                {% endif %}
+                            </td>
+                            <td class="govuk-table__cell">{{ row.status }}</td>
+                            <td class="govuk-table__cell">{{ row.created }}</td>
+                            <td class="govuk-table__cell">{{ row.updated }}</td>
+                            <td class="govuk-table__cell">{{ row.downloaded }}</td>
+                            <td class="govuk-table__cell">{{ row.downloadedBy }}</td>
+                            <td class="govuk-table__cell">{{ row.completed }}</td>
+                            <td class="govuk-table__cell">{{ row.completedBy }}</td>
+                            <td class="govuk-table__cell">{{ row.filesCreated }}</td>
+                            <td class="govuk-table__cell">{{ row.number_sessions }}</td>
+                            <td class="govuk-table__cell">{{ row.error }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+{% endblock %}

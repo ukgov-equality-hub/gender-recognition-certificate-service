@@ -31,6 +31,9 @@
                         Go
                     </button>
                 </div>
+                <p class="govuk-body" style="margin-top: 20px;">
+                    <a href="/applications/search" class="govuk-link" style="color: #ccc;">Advanced search</a>
+                </p>
             </form>
 
             <h2 class="govuk-visually-hidden">
@@ -76,9 +79,11 @@
                             <tbody class="govuk-table__body">
                                 {% for application in newApplications %}
                                     {% set application_data = application.application_data() %}
+                                    {% if application_data %}
                                     <tr class="govuk-table__row">
                                         <th scope="row" class="govuk-table__header">
                                             {{ application_data.reference_number_formatted }}
+                                            <!--- {{ application.user_input | safe }} -->
                                         </th>
                                         <td class="govuk-table__cell">
                                             {{ application_data.personal_details_data.title }}
@@ -107,6 +112,16 @@
                                             </ul>
                                         </td>
                                     </tr>
+                                    {% else %}
+                                    <tr class="govuk-table__row">
+                                        <td colspan="5" class="govuk-table__cell">
+                                            <p class="govuk-body" style="margin: 10px 0; color: #ccc;">
+                                                Valid data not found for application {{ application.reference_number }} - {{ application.email }}
+                                                <!--- {{ application.user_input | safe }} -->
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    {% endif %}
                                 {% endfor %}
                             </tbody>
                         </table>
@@ -135,6 +150,7 @@
                             <tbody class="govuk-table__body">
                                 {% for application in downloadedApplications %}
                                     {% set application_data = application.application_data() %}
+                                    {% if application_data %}
                                     <tr class="govuk-table__row">
                                         <th scope="row" class="govuk-table__header">
                                             {{ application_data.personal_details_data.title }}
@@ -184,7 +200,16 @@
                                             </ul>
                                         </td>
                                     </tr>
-
+                                    {% else %}
+                                    <tr class="govuk-table__row">
+                                        <td colspan="5" class="govuk-table__cell">
+                                            <p class="govuk-body" style="margin: 10px 0; color: #ccc;">
+                                                Valid data not found for application {{ application.reference_number }} - {{ application.email }}
+                                                <!--- {{ application.user_input | safe }} -->
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    {% endif %}
                                 {% endfor %}
                             </tbody>
                         </table>
@@ -214,6 +239,7 @@
                             <tbody class="govuk-table__body">
                                 {% for application in completedApplications %}
                                     {% set application_data = application.application_data() %}
+                                    {% if application_data %}
                                     <tr class="govuk-table__row">
                                         <th scope="row" class="govuk-table__header">
                                             {{ application_data.personal_details_data.title }}
@@ -244,6 +270,16 @@
                                             </a>
                                         </td>
                                     </tr>
+                                    {% else %}
+                                    <tr class="govuk-table__row">
+                                        <td colspan="5" class="govuk-table__cell">
+                                            <p class="govuk-body" style="margin: 10px 0; color: #ccc;">
+                                                Valid data not found for application {{ application.reference_number }} - {{ application.email }}
+                                                <!--- {{ application.user_input | safe }} -->
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    {% endif %}
                                 {% endfor %}
                             </tbody>
                         </table>
