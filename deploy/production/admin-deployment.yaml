@@ -47,6 +47,13 @@ spec:
             value: admin
           - name: FLASK_ENV
             value: production
+          - name: GOVUK_PAY_API
+            value: "https://publicapi.payments.service.gov.uk/"
+          - name: GOVUK_PAY_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: basic-auth
+                key: govuk-pay-api-key
           - name: LOG_LEVEL
             value: DEBUG
           - name: MAINTENANCE_MODE
@@ -80,10 +87,3 @@ spec:
               secretKeyRef:
                 name: basic-auth
                 key: alchemy-key
-          - name: GOVUK_PAY_API
-            value: "https://publicapi.payments.service.gov.uk/"
-          - name: GOVUK_PAY_API_KEY
-            valueFrom:
-              secretKeyRef:
-                name: basic-auth
-                key: govuk-pay-api-key
