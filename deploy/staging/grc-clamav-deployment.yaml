@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: grc-clamav
-        image: clamav/clamav:latest
+        image: docker.io/clamav/clamav:stable
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
