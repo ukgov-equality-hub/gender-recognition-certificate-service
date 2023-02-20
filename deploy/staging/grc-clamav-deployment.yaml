@@ -12,11 +12,13 @@ spec:
       labels:
         app: grc-clamav
     spec:
+      securityContext:
+        runAsUser: 100
       containers:
       - name: grc-clamav
         image: docker.io/clamav/clamav:stable
         imagePullPolicy: Always
         ports:
-        - containerPort: 8080
+        - containerPort: 3310
       imagePullSecrets:
         - name: docker-hub-creds
