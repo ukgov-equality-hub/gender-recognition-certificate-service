@@ -14,6 +14,8 @@ spec:
     spec:
       securityContext:
         runAsUser: 100
+        runAsGroup: 100
+        fsGroup: 100
       containers:
       - name: grc-clamav
         image: docker.io/clamav/clamav:stable
