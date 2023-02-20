@@ -32,7 +32,7 @@ def index():
                     GovUkNotify().send_email_admin_forgot_password(
                         email_address=user.email,
                         expires=expires,
-                        reset_link=reset_link.replace('http://', 'https://')
+                        reset_link=reset_link
                     )
                     logger.log(LogLevel.INFO, f"Password reset link sent to {email_address}")
 

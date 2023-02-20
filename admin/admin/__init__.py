@@ -45,7 +45,7 @@ def index():
                             GovUkNotify().send_email_admin_login_link(
                                 email_address=user.email,
                                 expires=expires,
-                                login_link=login_link.replace('http://', 'https://')
+                                login_link=login_link
                             )
                             logger.log(LogLevel.INFO, f"login link sent to {logger.mask_email_address(user.email)}")
 
