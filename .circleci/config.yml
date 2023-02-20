@@ -214,6 +214,7 @@ jobs:
             sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/staging/app-deployment.yaml
             sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/staging/admin-deployment.yaml
             sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/staging/dashboard-deployment.yaml
+            sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/staging/grc-clamav-deployment.yaml
             kubectl apply -n grc-preprod --record=false -f ./deploy/staging
                     
   deploy_image_to_live_prod:

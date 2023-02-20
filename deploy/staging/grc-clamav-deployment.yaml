@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grc-clamav
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app:grc-clamav
+  template:
+    metadata:
+      labels:
+        app: grc-clamav
+    spec:
+      containers:
+      - name: grc-clamav
+        image: clamav/clamav:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
