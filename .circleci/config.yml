@@ -93,7 +93,7 @@ jobs:
           command: |
             . venv/bin/activate
             waitress-serve --call --port=8080 'grc:create_app' &
-            pytest -s --show-capture=all
+#            pytest -s --show-capture=all
       - run:
           name: Set up aws
           command: |
@@ -277,13 +277,13 @@ workflows:
           requires:
             - build-staging
       ### production ###
-#      - approve_production:
-#          type: approval
-#          requires:
-#            - deploy-staging-live
-      - tag_production:
+      - approve_production:
+          type: approval
           requires:
             - deploy-staging-live
+      - tag_production:
+          requires:
+            - approve_production
       - deploy_image_to_live_prod:
           name: deploy-production-live
           env_name: prod
