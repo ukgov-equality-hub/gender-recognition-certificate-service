@@ -6,7 +6,7 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app:grc-clamav
+      app: grc-clamav
   template:
     metadata:
       labels:
