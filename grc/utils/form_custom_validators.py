@@ -118,8 +118,10 @@ def validateReferenceNumber(form, field):
 
 def validateGovUkEmailAddress(form, field):
     email_address: str = field.data
-    if not email_address.endswith('.gov.uk'):
-        raise ValidationError('Enter a .gov.uk email address')
+    if email_address.endswith('@hmcts.net') or email_address.endswith('.gov.uk'):
+        pass
+    else:
+        raise ValidationError('Enter a .gov.uk or hmcts.net email address')
 
 
 def validatePasswordStrength(form, field):
