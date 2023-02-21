@@ -13,12 +13,12 @@ spec:
         app: grc-clamav
     spec:
       securityContext:
-        runAsUser: 100
-        runAsGroup: 100
-        fsGroup: 100
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
       containers:
       - name: grc-clamav
-        image: docker.io/clamav/clamav:clamav-0.105.2
+        image: quay.io/ukhomeofficedigital/clamav:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 3310
