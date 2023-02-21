@@ -28,7 +28,6 @@ def create_app(test_config=None):
         config_object = TestConfig
 
     app.config.from_object(config_object)
-    app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024
 
     if os.environ['FLASK_ENV'] != 'development':
         app.config['PROPAGATE_EXCEPTIONS'] = True
