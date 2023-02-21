@@ -18,7 +18,7 @@ spec:
         fsGroup: 1000
       containers:
       - name: grc-clamav
-        image: quay.io/ukhomeofficedigital/clamav:latest
+        image: quay.io/ukhomeofficedigital/clamav:b1ccfa00da3810a205b4d7721030396e516118aa
         imagePullPolicy: Always
         ports:
         - containerPort: 3310
