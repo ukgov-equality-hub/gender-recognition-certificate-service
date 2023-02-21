@@ -22,5 +22,3 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 3310
-      imagePullSecrets:
-        - name: docker-hub-creds
