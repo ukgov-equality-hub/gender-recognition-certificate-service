@@ -300,8 +300,8 @@ def fileVirusScan(form, field):
     print(f"URL => {url}")
     url = url.replace('http://', '')
     url = url.replace('https://', '')
-    if url.index(':'):
-        url = url[: url.index(':')]
+    # if url.index(':'):
+    #     url = url[: url.index(':')]
     print(f"URL=> {url}")
     print(f"init clamav socket")
     cd = ClamdNetworkSocket(host=url, port=3310, timeout=None)
