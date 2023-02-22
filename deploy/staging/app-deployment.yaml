@@ -20,7 +20,7 @@ spec:
         - containerPort: 3000
         env:
           - name: AV_API
-            value: 172.20.79.161
+            value: grc-clamav-service.grc-preprod.svc.cluster.local
           - name: AWS_ACCESS_KEY_ID
             valueFrom:
               secretKeyRef:
