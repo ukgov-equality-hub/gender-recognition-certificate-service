@@ -10,6 +10,9 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
 RUN curl -sL https://deb.nodesource.com/setup_16.x | bash - \
     && apt-get install -y nodejs
 
+# Add network connectivity debugging tools
+RUN apt-get update && apt-get install -y telnet iputils-ping net-tools curl
+
 EXPOSE 3000
 
 RUN mkdir -p /app/
