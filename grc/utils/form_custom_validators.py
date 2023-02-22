@@ -291,21 +291,27 @@ def fileVirusScan(form, field):
     print('Scanning %s' % current_app.config['AV_API'], flush=True)
     from pyclamd import ClamdNetworkSocket
 
+    print("getting uploaded file name")
     uploaded = request.files[field.name]
+    print("point to beginning of file")
     uploaded.stream.seek(0)
 
     url = current_app.config['AV_API']
+    print(f"URL => {url}")
     url = url.replace('http://', '')
     url = url.replace('https://', '')
     if url.index(':'):
         url = url[: url.index(':')]
-
+    print(f"URL=> {url}")
+    print(f"init clamav socket")
     cd = ClamdNetworkSocket(host=url, port=3310, timeout=None)
+    print(f"cd => {cd}")
     if not cd.ping():
         print('Unable to communicate with virus scanner', flush=True)
         return
-
+    print("cd pinged")
     results = cd.scan_stream(uploaded.stream.read())
+    print(f"results => {results}")
     if results is None:
         uploaded.stream.seek(0)
         return
