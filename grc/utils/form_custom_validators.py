@@ -270,9 +270,12 @@ class MultiFileAllowed(object):
 def fileSizeLimit(max_size_in_mb):
     max_bytes = max_size_in_mb*1024*1024
 
+    print('in fileSizeLimit.....')
     def file_length_check(form, field):
         for data in field.data:
+            print("File size is <{data.content_length}>")
             file_size = data.read()
+            print("got past data.read")
             data.seek(0)
             if len(file_size) == 0:
                 raise ValidationError('The selected file is empty. Check that the file you are uploading has the content you expect')
