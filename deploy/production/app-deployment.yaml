@@ -19,8 +19,8 @@ spec:
         ports:
         - containerPort: 3000
         env:
-          - name: AV_API
-            value: grc-clamav-service.grc-prod.svc.cluster.live.cloud-platform.service.justice.gov.uk
+          - - name: AV_API
+              value: grc-clamav-service.grc-prod.svc.cluster.local
           - name: AWS_ACCESS_KEY_ID
             valueFrom:
               secretKeyRef:

@@ -266,6 +266,9 @@ class MultiFileAllowed(object):
                     'File does not have an approved extension.'
                 ))
 
+def testValidator():
+    print('in testValidator.....')
+    return true
 
 def fileSizeLimit(max_size_in_mb):
     max_bytes = max_size_in_mb*1024*1024
