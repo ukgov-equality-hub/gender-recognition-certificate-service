@@ -169,9 +169,6 @@ def uploadInfoPage(section_url: str):
         application_data = DataStore.load_application_by_session_reference_number()
         files = section.file_list(application_data.uploads_data)
 
-        for file in files:
-            print("file content_length: ", file.content_length)
-
         if form.validate_on_submit():
             if form.button_clicked.data.startswith('Upload '):
                 has_password = False
