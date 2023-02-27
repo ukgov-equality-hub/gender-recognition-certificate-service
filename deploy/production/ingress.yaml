@@ -41,7 +41,7 @@ spec:
                 port: 
                   number: 3001
    
-  - host: dashboard.apply-gender-recognition-certificate.service.gov.uk
+  - host: dashboard.gender-recognition.service.justice.gov.uk
     http:
       paths:
           - path: /
