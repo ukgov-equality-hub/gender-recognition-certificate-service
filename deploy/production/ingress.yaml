@@ -30,7 +30,7 @@ spec:
                 name: maintenance-page-svc
                 port: 
                   number: 8080
-  - host: admin.gender-recognition.service.justice.gov.uk
+  - host: admin.apply-gender-recognition-certificate.service.gov.uk
     http:
       paths:
           - path: /
