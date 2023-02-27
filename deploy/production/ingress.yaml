@@ -29,7 +29,7 @@ spec:
               service:
                 name: maintenance-page-svc
                 port: 
-                  number: 3000
+                  number: 8080
   - host: admin.gender-recognition.service.justice.gov.uk
     http:
       paths:
@@ -37,7 +37,7 @@ spec:
             pathType: ImplementationSpecific
             backend:
               service:
-                name: maintenance-page-svc
+                name: grc-admin-service
                 port: 
                   number: 3001
    
