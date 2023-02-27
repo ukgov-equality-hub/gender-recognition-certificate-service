@@ -16,8 +16,8 @@ spec:
       - admin.gender-recognition.service.justice.gov.uk
     secretName: gender-recognition-service-admin-secret
   - hosts:
-      - dashboard.gender-recognition.service.justice.gov.uk
-    secretName: gender-recognition-dashboard-secret
+      - dashboard.apply-gender-recognition-certificate.service.gov.uk
+    secretName: apply-gender-recognition-dashboard-secret
 
   rules:
   - host: gender-recognition.service.justice.gov.uk
@@ -41,7 +41,7 @@ spec:
                 port: 
                   number: 3001
    
-  - host: dashboard.gender-recognition.service.justice.gov.uk
+  - host: dashboard.apply-gender-recognition-certificate.service.gov.uk
     http:
       paths:
           - path: /
