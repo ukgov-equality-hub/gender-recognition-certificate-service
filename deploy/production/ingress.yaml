@@ -27,9 +27,9 @@ spec:
             pathType: ImplementationSpecific
             backend:
               service:
-                name: maintenance-page-svc
+                name: grc-app-service
                 port: 
-                  number: 8080
+                  number: 3000
   - host: admin.apply-gender-recognition-certificate.service.gov.uk
     http:
       paths:
