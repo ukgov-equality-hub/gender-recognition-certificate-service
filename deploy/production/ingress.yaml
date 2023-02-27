@@ -16,8 +16,8 @@ spec:
       - admin.gender-recognition.service.justice.gov.uk
     secretName: gender-recognition-service-admin-secret
   - hosts:
-      - dashboard.apply-gender-recognition-certificate.service.gov.uk
-    secretName: apply-gender-recognition-dashboard-secret
+      - dashboard.gender-recognition.service.justice.gov.uk
+    secretName: gender-recognition-service-dashboard-secret
 
   rules:
   - host: gender-recognition.service.justice.gov.uk
