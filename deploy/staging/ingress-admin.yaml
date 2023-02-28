@@ -27,12 +27,3 @@ spec:
                 name: grc-admin-service
                 port: 
                   number: 3001
----
-
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: nginx-config
-  namespace: nginx-ingress
-  data:
-    default-server-return: 403 "Sorry\nThe resource is protected\n\n"
