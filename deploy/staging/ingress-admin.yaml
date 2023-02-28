@@ -5,7 +5,7 @@ metadata:
   namespace: grc-preprod
   annotations:
     nginx.ingress.kubernetes.io/whitelist-source-range: 81.134.202.29/32
-    external-dns.alpha.kubernetes.io/set-identifier: gender-recognition-service-grc-preprod-green
+    external-dns.alpha.kubernetes.io/set-identifier: gender-recognition-service-admin-grc-preprod-green
     external-dns.alpha.kubernetes.io/aws-weight: "100"
 spec:
   ingressClassName: default
