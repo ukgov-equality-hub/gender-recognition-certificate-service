@@ -5,9 +5,10 @@ metadata:
   namespace: grc-preprod
   annotations:
     nginx.ingress.kubernetes.io/whitelist-source-range: 81.134.202.29/32
-    nginx.ingress.kubernetes.io/server-snippet: |
-      if (return 403) {
-        return 403 "{\"msg\":\"pth-auth service is unavailable\"}";
+    nginx.ingress.kubernetes.io/custom-http-errors: |
+      error_page 403 /403.html;
+      location /403.html{
+          return 403 '{"error": {"status_code": 403,"status": "Not allowed buddy"}}';
       }
     external-dns.alpha.kubernetes.io/set-identifier: gender-recognition-service-admin-grc-preprod-green
     external-dns.alpha.kubernetes.io/aws-weight: "100"
