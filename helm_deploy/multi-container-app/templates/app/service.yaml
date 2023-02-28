@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: grc-app-service
+  labels:
+    app: grc-app-service
+spec:
+  type: {{ .Values.grcapp.service.type }}
+  ports:
+  - port: {{ .Values.grcapp.service.port }}
+    targetPort: {{ .Values.grcapp.service.targetPort }}
+    protocol: TCP
+    name: http
+  selector:
+    app: grc-app

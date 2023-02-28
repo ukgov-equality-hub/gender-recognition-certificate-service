@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: grc-admin-service
+  labels:
+    app: grc-admin-service
+spec:
+  type: {{ .Values.grcadmin.service.type }}
+  ports:
+  - port: {{ .Values.grcadmin.service.port }}
+    targetPort: {{ .Values.grcadmin.service.targetPort }}
+    protocol: TCP
+    name: http
+  selector:
+    app: grc-admin

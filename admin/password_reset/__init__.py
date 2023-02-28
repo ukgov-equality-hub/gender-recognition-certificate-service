@@ -13,6 +13,11 @@ logger = Logger()
 
 @password_reset.route('/password_reset', methods=['GET', 'POST'])
 def index():
+
+    print(session)
+    for key, value in session.items():
+            logger.log(LogLevel.INFO, f"Session entry: {key} = {value}")
+
     if 'emailAddress' not in session:
         logger.log(LogLevel.WARN, f"Forgotten password accessed for no user")
         return local_redirect(url_for('forgot_password.index'))

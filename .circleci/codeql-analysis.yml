@@ -1,0 +1,28 @@
+version: 2.1
+
+jobs:
+  analyze:
+    executor: ubuntu-latest
+    steps:
+    - checkout
+    - run:
+        name: Initialize CodeQL
+        command: |
+          # Install the CodeQL CLI and the necessary language extensions
+          sudo apt-get update
+          curl --silent --location https://github.com/github/codeql/releases/latest/download/codeql_2.4.0_amd64.deb --output codeql.deb
+          sudo apt install ./codeql.deb
+          codeql version
+          codeql database create --language python --name my-project-codeql
+          codeql database list
+    - run:
+        name: Autobuild
+        command: |
+          # Run your build command here
+          # e.g. make bootstrap
+          #      make release
+    - run:
+        name: Perform CodeQL Analysis
+        command: |
+          # Perform the analysis
+          codeql database analyze my-project-codeql --format json --output-file results.json

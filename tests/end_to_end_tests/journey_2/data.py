@@ -3,7 +3,7 @@ DEFAULT_TIMEOUT = 3 * 1000  # Wait a maximum of 3 seconds
 TIMEOUT_FOR_SLOW_OPERATIONS = 30 * 1000  # For slow operations, wait a maximum of 30 seconds
 
 
-EMAIL_ADDRESS = 'test@example.com'
+EMAIL_ADDRESS = 'ivan.touloumbadjian@hmcts.net'
 
 TITLE = 'Mr'
 FIRST_NAME = 'Joseph'

@@ -1,0 +1,18 @@
+name: Run GRC daily jobs
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  deploy:
+    name: Create Aplication PDF & Zip Files, send notifications
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Create Files
+        run: |
+          curl https://grc-production-admin.london.cloudapps.digital/jobs/create-files?token=${{ secrets.JOB_TOKEN }} --fail
+      - name: Send notifications
+        run: |
+          curl https://grc-production-admin.london.cloudapps.digital/jobs/application-notifications?token=${{ secrets.JOB_TOKEN }} --fail

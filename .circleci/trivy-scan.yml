@@ -1,0 +1,23 @@
+version: 2.1
+
+jobs:
+  scan:
+    executor: ubuntu-18.04
+    steps:
+      - checkout
+      - run:
+          name: Run Trivy vulnerability scanner in repo mode
+          command: |
+            # Install Trivy
+            wget -qO- "https://github.com/aquasecurity/trivy/releases/download/v0.15.0/trivy_0.15.0_Linux-64bit.tar.gz" | tar xz
+            sudo mv trivy /usr/local/bin/
+            trivy --version
+
+            # Run the scanner in repo mode
+            trivy fs --ignore-unfixed --format sarif --output trivy-results.sarif --severity CRITICAL --vuln-type library --security-checks vuln,config
+
+      - run:
+          name: Upload Trivy scan results to GitHub Security tab
+          command: |
+            #Upload the results to the GitHub security tab
+            curl -H "Authorization: token ${GITHUB_TOKEN}" -H "Accept: application/vnd.github+json" -H "Content-Type: application/vnd.github+json" --data @trivy-results.sarif https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/import/sarif

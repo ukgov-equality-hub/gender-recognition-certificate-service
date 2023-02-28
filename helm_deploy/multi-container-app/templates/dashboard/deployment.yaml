@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grc-dashboard
+spec:
+  replicas: {{ .Values.grc-dashboard.replicaCount }}
+  selector:
+    matchLabels:
+      app: grc-dashboard
+  template:
+    metadata:
+      labels:
+        app: grc-dashboard
+    spec:
+      containers:
+        - name: grc-dashboard
+          image: "{{ .Values.grcdashboard.image.repository }}:{{ .Values.grc-dashboard.image.tag }}"
+          imagePullPolicy: {{ .Values.grc-dashboard.image.pullPolicy }}
+          ports:
+          - containerPort: {{ .Values.grc-dashboard.containerPort }}

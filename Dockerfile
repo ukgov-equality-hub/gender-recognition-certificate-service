@@ -10,7 +10,10 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
 RUN curl -sL https://deb.nodesource.com/setup_16.x | bash - \
     && apt-get install -y nodejs
 
-EXPOSE 5000
+# Add network connectivity debugging tools
+RUN apt-get update && apt-get install -y telnet iputils-ping net-tools curl
+
+EXPOSE 3000
 
 RUN mkdir -p /app/
 WORKDIR /app
@@ -27,5 +30,8 @@ RUN npm install
 RUN npm run build
 
 #RUN rm /app/admin -r
+
+# Don't run as root user
+USER 1000
 CMD /app/run.sh
 # CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0"]

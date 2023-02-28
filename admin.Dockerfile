@@ -10,7 +10,7 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
 RUN curl -sL https://deb.nodesource.com/setup_16.x | bash - \
     && apt-get install -y nodejs
 
-EXPOSE 5001
+EXPOSE 3001
 
 RUN mkdir -p /app/
 WORKDIR /app
@@ -28,5 +28,8 @@ RUN npm run build
 
 #RUN rm /app/grc -r
 RUN chmod 777 /app/run_admin.sh
+
+# Don't run as root user
+USER 1000
 CMD /app/run_admin.sh
 # CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0" "--port=5001"]

@@ -1,7 +1,12 @@
 #!/bin/bash
 
-#flask db init
-flask db migrate
-flask db upgrade
+while true
+do
+  sleep 30
+done
 
-waitress-serve --call 'grc:create_app'
+#flask db init
+#flask db migrate
+#flask db upgrade
+
+#waitress-serve --call 'grc:create_app'

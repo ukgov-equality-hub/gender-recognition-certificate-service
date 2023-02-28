@@ -1,0 +1,54 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: gender-recognition-service
+  namespace: grc-prod
+  annotations:
+    external-dns.alpha.kubernetes.io/set-identifier: gender-recognition-service-grc-prod-green
+    external-dns.alpha.kubernetes.io/aws-weight: "100"
+spec:
+  ingressClassName: default
+  tls:
+  - hosts:
+    - apply-gender-recognition-certificate.service.gov.uk
+    secretName: apply-gender-recognition-service-app-secret
+  - hosts:
+      - admin.apply-gender-recognition-certificate.service.gov.uk
+    secretName: apply-gender-recognition-service-admin-secret
+  - hosts:
+      - dashboard.apply-gender-recognition-certificate.service.gov.uk
+    secretName: apply-gender-recognition-dashboard-secret
+
+  rules:
+  - host: apply-gender-recognition-certificate.service.gov.uk
+    http:
+      paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: grc-app-service
+                port: 
+                  number: 3000
+  - host: admin.apply-gender-recognition-certificate.service.gov.uk
+    http:
+      paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: grc-admin-service
+                port: 
+                  number: 3001
+   
+  - host: dashboard.apply-gender-recognition-certificate.service.gov.uk
+    http:
+      paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: grc-dashboard-service
+                port: 
+                  number: 3002
+
