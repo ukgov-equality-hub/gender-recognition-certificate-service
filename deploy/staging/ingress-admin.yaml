@@ -5,11 +5,16 @@ metadata:
   namespace: grc-preprod
   annotations:
     nginx.ingress.kubernetes.io/whitelist-source-range: 81.134.202.29/32
-    nginx.ingress.kubernetes.io/custom-http-errors: |
-      error_page 403 /403.html;
-      location /403.html{
-          return 403 '{"error": {"status_code": 403,"status": "Not allowed buddy"}}';
+    nginx.ingress.kubernetes.io/server-snippet: |
+      location @custom_403 {
+        return 403 "<html> <head> <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'> <style>...</style> </head> <body> <div class='container'> <div class='content'> <div class='title'> We apologise for the inconvenience. </div><div class='title'> Please try again in 10 minutes. </div><div> <p> We work hard to make xx the world's best xx software. Occasionally, downtime is required to deliver new features and improvements to you. </p></div></div></div></body></html>";
       }
+      error_page 403 @custom_403;
+    #nginx.ingress.kubernetes.io/custom-http-errors: "403" |
+    #  error_page 403 /403.html;
+    #  location /403.html {
+    #      return 403 '{"error": {"status_code": 403,"status": "Not allowed buddy"}}';
+    #  }
     external-dns.alpha.kubernetes.io/set-identifier: gender-recognition-service-admin-grc-preprod-green
     external-dns.alpha.kubernetes.io/aws-weight: "100"
 spec:
