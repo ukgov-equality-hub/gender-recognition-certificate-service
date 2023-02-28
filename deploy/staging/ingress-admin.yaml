@@ -6,7 +6,9 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/whitelist-source-range: 81.134.202.29/32
     nginx.ingress.kubernetes.io/server-snippet: |
+      if (return 403) {
         return 403 "{\"msg\":\"pth-auth service is unavailable\"}";
+      }
     external-dns.alpha.kubernetes.io/set-identifier: gender-recognition-service-admin-grc-preprod-green
     external-dns.alpha.kubernetes.io/aws-weight: "100"
 spec:
