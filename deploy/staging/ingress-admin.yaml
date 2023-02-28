@@ -5,6 +5,8 @@ metadata:
   namespace: grc-preprod
   annotations:
     nginx.ingress.kubernetes.io/whitelist-source-range: 81.134.202.29/32
+    nginx.ingress.kubernetes.io/server-snippet: |
+        return 403 "{\"msg\":\"pth-auth service is unavailable\"}";
     external-dns.alpha.kubernetes.io/set-identifier: gender-recognition-service-admin-grc-preprod-green
     external-dns.alpha.kubernetes.io/aws-weight: "100"
 spec:
@@ -25,3 +27,12 @@ spec:
                 name: grc-admin-service
                 port: 
                   number: 3001
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+  namespace: nginx-ingress
+  data:
+    default-server-return: 403 "Sorry\nThe resource is protected\n\n"
