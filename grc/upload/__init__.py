@@ -170,53 +170,56 @@ def uploadInfoPage(section_url: str):
     if form.validate_on_submit():
         if form.button_clicked.data.startswith('Upload '):
             has_password = False
-            for document in request.files.getlist('documents'):
-                original_file_name = document.filename
-                object_name = create_aws_file_name(application_data.reference_number, section.data_section, original_file_name)
-                password_required = False
-                file_type = ''
-                if '.' in original_file_name:
-                    file_type = original_file_name[original_file_name.rindex('.') + 1:].lower()
+            try:
+                for document in request.files.getlist('documents'):
+                    original_file_name = document.filename
+                    object_name = create_aws_file_name(application_data.reference_number, section.data_section, original_file_name)
+                    password_required = False
+                    file_type = ''
+                    if '.' in original_file_name:
+                        file_type = original_file_name[original_file_name.rindex('.') + 1:].lower()
 
-                if file_type == 'pdf':
-                    try:
-                        data = io.BytesIO(document.read())
-                        if PDFUtils().is_pdf_form(data):
-                            document = PDFUtils().flatten_form_pdf_stream(data)
+                    if file_type == 'pdf':
+                        try:
+                            data = io.BytesIO(document.read())
+                            if PDFUtils().is_pdf_form(data):
+                                document = PDFUtils().flatten_form_pdf_stream(data)
 
-                        if PDFUtils().is_pdf_password_protected(data):
-                            password_required = True
-                            has_password = True
+                            if PDFUtils().is_pdf_password_protected(data):
+                                password_required = True
+                                has_password = True
 
+                            AwsS3Client().upload_fileobj(document, object_name)
+                        except:
+                            logger.log(LogLevel.ERROR, f"User uploaded PDF attachment ({object_name}) which could not be opened")
+
+                    elif file_type in ['jpg', 'jpeg', 'png', 'tif', 'tiff', 'bmp']:
+                        resized, resized_document = resize_image(document)
+                        if resized:
+                            file_ext = ''
+                            original_object_name = object_name
+                            if '.' in original_object_name:
+                                file_ext = original_object_name[original_object_name.rindex('.'):]
+                                original_object_name = original_object_name[0: original_object_name.rindex('.')]
+
+                            aws_file_name = f'{original_object_name}_original{file_ext}'
+                            AwsS3Client().upload_fileobj(document, aws_file_name)
+
+                            # If an image has been resized, it will be saved as a JPG
+                            object_name = f'{original_object_name}.jpg'
+
+                        AwsS3Client().upload_fileobj(resized_document, object_name)
+
+                    else:
                         AwsS3Client().upload_fileobj(document, object_name)
-                    except:
-                        logger.log(LogLevel.ERROR, f"User uploaded PDF attachment ({object_name}) which could not be opened")
 
-                elif file_type in ['jpg', 'jpeg', 'png', 'tif', 'tiff', 'bmp']:
-                    resized, resized_document = resize_image(document)
-                    if resized:
-                        file_ext = ''
-                        original_object_name = object_name
-                        if '.' in original_object_name:
-                            file_ext = original_object_name[original_object_name.rindex('.'):]
-                            original_object_name = original_object_name[0: original_object_name.rindex('.')]
-
-                        aws_file_name = f'{original_object_name}_original{file_ext}'
-                        AwsS3Client().upload_fileobj(document, aws_file_name)
-
-                        # If an image has been resized, it will be saved as a JPG
-                        object_name = f'{original_object_name}.jpg'
-
-                    AwsS3Client().upload_fileobj(resized_document, object_name)
-
-                else:
-                    AwsS3Client().upload_fileobj(document, object_name)
-
-                new_evidence_file = EvidenceFile()
-                new_evidence_file.original_file_name = original_file_name
-                new_evidence_file.aws_file_name = object_name
-                new_evidence_file.password_required = password_required
-                files.append(new_evidence_file)
+                    new_evidence_file = EvidenceFile()
+                    new_evidence_file.original_file_name = original_file_name
+                    new_evidence_file.aws_file_name = object_name
+                    new_evidence_file.password_required = password_required
+                    files.append(new_evidence_file)
+            except Exception as e:
+                logger.log(LogLevel.ERROR, message=f"Error uploading file: {e}")
 
             DataStore.save_application(application_data)
 
