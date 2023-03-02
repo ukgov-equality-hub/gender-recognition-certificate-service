@@ -204,6 +204,20 @@ jobs:
           command: |
             echo "Setting up a build on a development feature branch ${CIRCLE_BRANCH}"
       - run:
+          name: tag and push dev images
+          command: |
+            login="$(aws ecr get-login-password --region eu-west-2)"
+            echo ${login} | docker login --username AWS --password-stdin 754256621582.dkr.ecr.eu-west-2.amazonaws.com
+ 
+            docker tag grc-admin "${ECR_ENDPOINT_DEV}:grc-admin-${CIRCLE_SHA1}" "${ECR_ENDPOINT_DEV}:grc-admin-dev-latest"
+            docker tag grc-app "${ECR_ENDPOINT_DEV}:grc-app-${CIRCLE_SHA1}" "${ECR_ENDPOINT_DEV}:grc-app-dev-latest"
+            docker tag grc-dashboard "${ECR_ENDPOINT_DEV}:grc-dashboard-${CIRCLE_SHA1}" "${ECR_ENDPOINT_DEV}:grc-dashboard-dev-latest"
+
+            docker push --all-tags "${ECR_ENDPOINT_DEV}:grc-admin-${CIRCLE_SHA1}"
+            docker push --all-tags "${ECR_ENDPOINT_DEV}:grc-app-${CIRCLE_SHA1}"
+            docker push --all-tags "${ECR_ENDPOINT_DEV}:grc-admin-${CIRCLE_SHA1}"
+
+      - run:
           name: Authenticate to LIVE cluster
           command: |
             echo -n ${K8S_CLUSTER_CERT_DEV} | base64 -d > ./ca.crt  
