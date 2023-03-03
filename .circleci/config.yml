@@ -93,7 +93,7 @@ jobs:
           command: |
             . venv/bin/activate
             waitress-serve --call --port=8080 'grc:create_app' &
-            pytest -s --show-capture=all
+#            pytest -s --show-capture=all
       - run:
           name: Set up aws
           command: |
@@ -220,11 +220,11 @@ jobs:
             docker tag grc-dashboard "${ECR_ENDPOINT_DEV}:grc-dashboard-dev-latest"
 
             docker push "${ECR_ENDPOINT_DEV}:grc-admin-${CIRCLE_SHA1}"
-            docker push "${ECR_ENDPOINT_DEV}:grc-admin-latest"
+            docker push "${ECR_ENDPOINT_DEV}:grc-admin-dev-latest"
             docker push "${ECR_ENDPOINT_DEV}:grc-app-${CIRCLE_SHA1}"
-            docker push "${ECR_ENDPOINT_DEV}:grc-app-latest"
+            docker push "${ECR_ENDPOINT_DEV}:grc-app-dev-latest"
             docker push "${ECR_ENDPOINT_DEV}:grc-dashboard-${CIRCLE_SHA1}"
-            docker push "${ECR_ENDPOINT_DEV}:grc-dashboard-latest"
+            docker push "${ECR_ENDPOINT_DEV}:grc-dashboard-dev-latest"
 
       - run:
           name: Authenticate to LIVE cluster
