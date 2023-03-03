@@ -154,24 +154,23 @@ def rotate_image_to_match_exif_orientation_flag(image: Image):
         return image
 
 
-
 @upload.route('/upload/<section_url>', methods=['GET', 'POST'])
 @LoginRequired
 def uploadInfoPage(section_url: str):
-    try:
-        section = next(filter(lambda section: section.url == section_url, sections), None)
-        if section is None:
-            return abort(404)
+    section = next(filter(lambda section: section.url == section_url, sections), None)
+    if section is None:
+        return abort(404)
 
-        form = UploadForm()
-        deleteform = DeleteForm()
-        deleteAllFilesInSectionForm = DeleteAllFilesInSectionForm()
-        application_data = DataStore.load_application_by_session_reference_number()
-        files = section.file_list(application_data.uploads_data)
+    form = UploadForm()
+    deleteform = DeleteForm()
+    deleteAllFilesInSectionForm = DeleteAllFilesInSectionForm()
+    application_data = DataStore.load_application_by_session_reference_number()
+    files = section.file_list(application_data.uploads_data)
 
-        if form.validate_on_submit():
-            if form.button_clicked.data.startswith('Upload '):
-                has_password = False
+    if form.validate_on_submit():
+        if form.button_clicked.data.startswith('Upload '):
+            has_password = False
+            try:
                 for document in request.files.getlist('documents'):
                     original_file_name = document.filename
                     object_name = create_aws_file_name(application_data.reference_number, section.data_section, original_file_name)
@@ -219,34 +218,33 @@ def uploadInfoPage(section_url: str):
                     new_evidence_file.aws_file_name = object_name
                     new_evidence_file.password_required = password_required
                     files.append(new_evidence_file)
+            except Exception as e:
+                logger.log(LogLevel.ERROR, message=f"Error uploading file: {e}")
 
-                DataStore.save_application(application_data)
+            DataStore.save_application(application_data)
 
-                if has_password:
-                    return local_redirect(url_for('upload.documentPassword', section_url=section.url))
-                else:
-                    return local_redirect(url_for('upload.uploadInfoPage', section_url=section.url) + '#file-upload-section')
+            if has_password:
+                return local_redirect(url_for('upload.documentPassword', section_url=section.url))
+            else:
+                return local_redirect(url_for('upload.uploadInfoPage', section_url=section.url) + '#file-upload-section')
 
-            elif form.button_clicked.data == 'Save and continue':
-                if len(files) > 0:
-                    return local_redirect(url_for('taskList.index'))
-                else:
-                    form.documents.errors.append('Select a JPG, BMP, PNG, TIF or PDF file smaller than 10MB')
+        elif form.button_clicked.data == 'Save and continue':
+            if len(files) > 0:
+                return local_redirect(url_for('taskList.index'))
+            else:
+                form.documents.errors.append('Select a JPG, BMP, PNG, TIF or PDF file smaller than 10MB')
 
-        return render_template(
-            f"upload/{section.html_file}",
-            form=form,
-            deleteform=deleteform,
-            deleteAllFilesInSectionForm=deleteAllFilesInSectionForm,
-            section_url=section.url,
-            currently_uploaded_files=files,
-            duplicate_aws_file_names=any_duplicate_aws_file_names(files),
-            date_now=datetime.datetime.now(),
-            date_two_years_ago=(datetime.datetime.now() - relativedelta(years=2))
-        )
-    except Exception as e:
-        logger.log(LogLevel.ERROR, message=f"ERROR UPLOADING FILE => {e}")
-
+    return render_template(
+        f"upload/{section.html_file}",
+        form=form,
+        deleteform=deleteform,
+        deleteAllFilesInSectionForm=deleteAllFilesInSectionForm,
+        section_url=section.url,
+        currently_uploaded_files=files,
+        duplicate_aws_file_names=any_duplicate_aws_file_names(files),
+        date_now=datetime.datetime.now(),
+        date_two_years_ago=(datetime.datetime.now() - relativedelta(years=2))
+    )
 
 
 @upload.route('/upload/<section_url>/document-password', methods=['GET', 'POST'])

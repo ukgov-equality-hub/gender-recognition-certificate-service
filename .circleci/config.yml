@@ -1,5 +1,5 @@
 version: 2.1
-orbs: 
+orbs:
   browser-tools: circleci/browser-tools@1.4.0
   aws-cli: circleci/aws-cli@2.0.6
 references:
@@ -57,7 +57,7 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_DB: grc-application-test
           POSTGRES_PORT: 5432
-          POSTGRES_PASSWORD: password          
+          POSTGRES_PASSWORD: password
     steps:
       - checkout
       - setup_remote_docker:
@@ -100,7 +100,7 @@ jobs:
             sudo apt-get update
             sudo apt-get --assume-yes install python3-pip
             sudo pip3 install awscli
-      
+
       - aws-cli/setup:
           aws-access-key-id: AWS_ACCESS_KEY_ID_PREPROD
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY_PREPROD
@@ -109,7 +109,7 @@ jobs:
       - run:
           name: List AWS CLI Configuration
           command: aws configure list
-     
+
       - run:
           name: build app image
           command: |
@@ -128,7 +128,7 @@ jobs:
               --build-arg APP_BUILD_TAG=${CIRCLE_BRANCH} \
               --build-arg APP_GIT_COMMIT=${CIRCLE_SHA1} \
               -t grc-app .          
-              
+
       - run:
           name: push app image
           command: |
@@ -139,11 +139,11 @@ jobs:
             docker tag grc-app "${ECR_ENDPOINT_PREPROD}:grc-app-latest"
             docker push "${ECR_ENDPOINT_PREPROD}:grc-app-latest"
 
-        #  if [ "${CIRCLE_BRANCH}" == "main" ]; then
-         #   docker tag grc-app "${ECR_ENDPOINT_PREPROD}:latest"
+          #  if [ "${CIRCLE_BRANCH}" == "main" ]; then
+          #   docker tag grc-app "${ECR_ENDPOINT_PREPROD}:latest"
           #  docker push "${ECR_ENDPOINT_PREPROD}:latest"
           #fi
-      - run: 
+      - run:
           name: build admin image
           command: |
             export BUILD_DATE=$(date -Is) >> $BASH_ENV
@@ -192,8 +192,61 @@ jobs:
             docker tag grc-dashboard "${ECR_ENDPOINT_PREPROD}:grc-dashboard-latest"
             docker push "${ECR_ENDPOINT_PREPROD}:grc-dashboard-latest"
 
-  deploy_image_to_live:
-    <<: *cloud_container 
+  deploy_image_to_dev:
+    <<: *cloud_container
+    parameters:
+      env_name:
+        type: string
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 20.10.11
+          docker_layer_caching: true
+      - run:
+          name: Setup dev build
+          command: |
+            echo "Setting up a build on a development feature branch ${CIRCLE_BRANCH}"
+      - run:
+          name: tag and push dev images
+          command: |
+            login="$(aws ecr get-login-password --region eu-west-2)"
+            echo ${login} | docker login --username AWS --password-stdin 754256621582.dkr.ecr.eu-west-2.amazonaws.com
+ 
+            docker tag grc-admin "${ECR_ENDPOINT_DEV}:grc-admin-${CIRCLE_SHA1}"
+            docker tag grc-admin "${ECR_ENDPOINT_DEV}:grc-admin-dev-latest"
+            docker tag grc-app "${ECR_ENDPOINT_DEV}:grc-app-${CIRCLE_SHA1}"
+            docker tag grc-app "${ECR_ENDPOINT_DEV}:grc-app-dev-latest"
+            docker tag grc-dashboard "${ECR_ENDPOINT_DEV}:grc-dashboard-${CIRCLE_SHA1}"
+            docker tag grc-dashboard "${ECR_ENDPOINT_DEV}:grc-dashboard-dev-latest"
+
+            docker push "${ECR_ENDPOINT_DEV}:grc-admin-${CIRCLE_SHA1}"
+            docker push "${ECR_ENDPOINT_DEV}:grc-admin-dev-latest"
+            docker push "${ECR_ENDPOINT_DEV}:grc-app-${CIRCLE_SHA1}"
+            docker push "${ECR_ENDPOINT_DEV}:grc-app-dev-latest"
+            docker push "${ECR_ENDPOINT_DEV}:grc-dashboard-${CIRCLE_SHA1}"
+            docker push "${ECR_ENDPOINT_DEV}:grc-dashboard-dev-latest"
+
+      - run:
+          name: Authenticate to LIVE cluster
+          command: |
+            echo -n ${K8S_CLUSTER_CERT_DEV} | base64 -d > ./ca.crt  
+            cat ./ca.crt
+            kubectl config set-cluster ${K8S_CLUSTER_NAME} --certificate-authority=./ca.crt --server=https://${K8S_CLUSTER_NAME}
+            kubectl config set-credentials circleci --token=${K8S_TOKEN_DEV}
+            kubectl config set-context ${K8S_CLUSTER_NAME} --cluster=${K8S_CLUSTER_NAME} --user=circleci --namespace=${K8S_NAMESPACE_DEV}
+            kubectl config use-context ${K8S_CLUSTER_NAME}
+
+      - deploy:
+          name: rolling update image
+          command: |
+            sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/development/app-deployment.yaml
+            sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/development/admin-deployment.yaml
+            sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/development/dashboard-deployment.yaml
+            sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/development/grc-clamav-deployment.yaml
+            kubectl apply -n grc-dev --record=false -f ./deploy/development
+
+  deploy_image_to_preprod:
+    <<: *cloud_container
     parameters:
       env_name:
         type: string
@@ -216,8 +269,8 @@ jobs:
             sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/staging/dashboard-deployment.yaml
             sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/staging/grc-clamav-deployment.yaml
             kubectl apply -n grc-preprod --record=false -f ./deploy/staging
-                    
-  deploy_image_to_live_prod:
+
+  deploy_image_to_production:
     <<: *cloud_container
     parameters:
       env_name:
@@ -239,9 +292,9 @@ jobs:
             sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/production/admin-deployment.yaml
             sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/production/dashboard-deployment.yaml
             kubectl apply -n grc-prod --record=false -f ./deploy/production
-                             
+
   tag_production:
-    <<: *cloud_container 
+    <<: *cloud_container
     steps:
       - checkout
 
@@ -269,24 +322,44 @@ workflows:
   test-build-deploy:
     jobs:
       - build:
-          name: build-staging
+          name: build-containers
           env_name: preprod
-      - deploy_image_to_live:
+      - deploy_image_to_dev:
+          name: build-dev
+          env_name: dev
+          filters:
+            branches:
+              only: /^RST-.*/
+          requires:
+            - build-containers
+      - deploy_image_to_preprod:
           name: deploy-staging-live
           env_name: preprod
+          filters:
+            branches:
+              only: /^staging$/
           requires:
-            - build-staging
+            - build-containers
       ### production ###
       - approve_production:
           type: approval
           requires:
-            - deploy-staging-live
+            - build-containers
+          filters:
+            branches:
+              only: /^master$/
       - tag_production:
+          filters:
+            branches:
+              only: /^master$/
           requires:
             - approve_production
-      - deploy_image_to_live_prod:
+      - deploy_image_to_production:
           name: deploy-production-live
           env_name: prod
+          filters:
+            branches:
+              only: /^master$/
           requires:
             - tag_production
 
