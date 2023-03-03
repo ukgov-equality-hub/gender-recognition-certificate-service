@@ -43,7 +43,7 @@ spec:
           - name: DATABASE_URL
             valueFrom:
               secretKeyRef:
-                name: dps-rds-instance-output
+                name: rds-postgresql-instance-output
                 key: url
           - name: DEFAULT_ADMIN_USER
             value: grc-service-account@cabinetoffice.gov.uk
