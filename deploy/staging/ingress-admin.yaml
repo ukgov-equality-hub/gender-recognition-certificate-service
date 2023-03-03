@@ -5,34 +5,6 @@ metadata:
   namespace: grc-preprod
   annotations:
     nginx.ingress.kubernetes.io/whitelist-source-range: "194.33.196.0/24, 81.134.202.29/32"
-    nginx.ingress.kubernetes.io/server-snippet: |
-      location @custom_403 {
-        return 403 "
-      <html> 
-        <head> <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'> 
-          <style>...</style> 
-        </head> 
-        <body> 
-          <div class='container'> 
-            <div class='content'> 
-              <div class='title'> Your IP address is restricted from accessing this site</div>
-              <div class='title'> Please use the contact details below if you feel this is incorrect</div>
-              <div>
-                  <p>
-                    <a href="mailto:GRPenquiries@justice.gov.uk">
-                    GRPenquiries@justice.gov.uk
-                    </a><br>Telephone: 020 3936 8968<br>Monday to Friday, 9am to 5pm<br>
-                    <a href=https://www.gov.uk/call-charges" target="_blank">
-                    Find out about call charges (opens in a new tab)
-                    </a>
-                  </p>
-              </div>
-            </div>
-          </div>
-        </body>
-      </html>";
-      }
-      error_page 403 @custom_403;
     #nginx.ingress.kubernetes.io/custom-http-errors: "403" |
     #  error_page 403 /403.html;
     #  location /403.html {
