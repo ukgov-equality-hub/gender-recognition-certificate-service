@@ -199,6 +199,9 @@ jobs:
         type: string
     steps:
       - checkout
+      - setup_remote_docker:
+          version: 20.10.11
+          docker_layer_caching: true
       - run:
           name: Setup dev build
           command: |
@@ -216,12 +219,9 @@ jobs:
             docker tag grc-dashboard "${ECR_ENDPOINT_DEV}:grc-dashboard-${CIRCLE_SHA1}"
             docker tag grc-dashboard "${ECR_ENDPOINT_DEV}:grc-dashboard-dev-latest"
 
-            docker push "${ECR_ENDPOINT_DEV}:grc-admin-${CIRCLE_SHA1}"
-            docker push "${ECR_ENDPOINT_DEV}:grc-admin-latest"
-            docker push "${ECR_ENDPOINT_DEV}:grc-app-${CIRCLE_SHA1}"
-            docker push "${ECR_ENDPOINT_DEV}:grc-app-latest"
-            docker push "${ECR_ENDPOINT_DEV}:grc-admin-${CIRCLE_SHA1}"
-            docker push "${ECR_ENDPOINT_DEV}:grc-admin-latest"
+            docker push --all-tags "${ECR_ENDPOINT_DEV}:grc-admin-${CIRCLE_SHA1}"
+            docker push --all-tags "${ECR_ENDPOINT_DEV}:grc-app-${CIRCLE_SHA1}"
+            docker push --all-tags "${ECR_ENDPOINT_DEV}:grc-admin-${CIRCLE_SHA1}"
 
       - run:
           name: Authenticate to LIVE cluster
