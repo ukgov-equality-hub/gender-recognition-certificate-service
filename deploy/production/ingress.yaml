@@ -6,8 +6,11 @@ metadata:
   annotations:
     external-dns.alpha.kubernetes.io/set-identifier: gender-recognition-service-grc-prod-green
     external-dns.alpha.kubernetes.io/aws-weight: "100"
+    nginx.ingress.kubernetes.io/enable-modsecurity: "true"
+    nginx.ingress.kubernetes.io/modsecurity-snippet: |
+      Detection Only Mode
 spec:
-  ingressClassName: default
+  ingressClassName: modesec
   tls:
   - hosts:
     - apply-gender-recognition-certificate.service.gov.uk
