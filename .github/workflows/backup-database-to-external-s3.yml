@@ -1,8 +1,8 @@
 name: Backup databases hourly to external-to-Gov.UK-PaaS S3 bucket
 
-on:
-  schedule:
-    - cron: '0 * * * *'
+#on:
+#  schedule:
+#    - cron: '0 * * * *'
 
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.EXTERNAL_S3_AWS_ACCESS_KEY_ID }}
