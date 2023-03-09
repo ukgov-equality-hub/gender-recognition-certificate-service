@@ -31,9 +31,9 @@ spec:
             pathType: ImplementationSpecific
             backend:
               service:
-                name: maintenance-page-svc
+                name: grc-app-service
                 port: 
-                  number: 8080
+                  number: 3000
 
   - host: preprod.admin.gender-recognition.service.justice.gov.uk
     http:
