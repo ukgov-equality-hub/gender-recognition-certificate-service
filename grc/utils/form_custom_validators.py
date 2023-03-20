@@ -241,6 +241,13 @@ def validateNationalInsuranceNumber(form, field):
             raise ValidationError('Enter a valid National Insurance number')
 
 
+def validatePhoneNumber(form, field):
+    if not(field.data is None or field.data == ''):
+        match = re.search('^[0-9]+$', field.data)
+        if match is None:
+            raise ValidationError('Enter a valid phone number')
+
+
 class MultiFileAllowed(object):
     def __init__(self, upload_set, message=None):
         self.upload_set = upload_set

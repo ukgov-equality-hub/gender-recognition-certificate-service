@@ -594,6 +594,17 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(1)
     await asserts.error(field='email', message="Enter a valid email address")
 
+    # Enter an invalid phone number
+    await helpers.check_checkbox(field='contact_options', value='PHONE')
+    await helpers.fill_textbox(field='phone', value='+44 123 456 7890')
+    await helpers.uncheck_checkbox(field='contact_options', value='EMAIL')
+    await helpers.click_button('Save and continue')
+    await asserts.url('/personal-details/contact-preferences')
+    await asserts.accessibility()
+    await asserts.h1('How would you like to be contacted if we have any questions about your application?')
+    await asserts.number_of_errors(1)
+    await asserts.error(field='email', message="Enter a valid phone number")
+
     # Choose all the options and enter a valid email address and phone number
     await helpers.check_checkbox(field='contact_options', value='EMAIL')
     await helpers.fill_textbox(field='email', value=data.EMAIL_ADDRESS)

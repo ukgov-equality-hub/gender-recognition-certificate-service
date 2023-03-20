@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import EmailField, StringField, RadioField, TelField, SelectField, SelectMultipleField
 from wtforms.validators import DataRequired, Email
-from grc.utils.form_custom_validators import StrictRequiredIf, validateNationalInsuranceNumber, validatePostcode, validateDateOfTransiton, validateStatutoryDeclarationDate, Integer
+from grc.utils.form_custom_validators import StrictRequiredIf, validateNationalInsuranceNumber, validatePostcode, validateDateOfTransiton, validatePhoneNumber, validateStatutoryDeclarationDate, Integer
 from grc.business_logic.data_structures.personal_details_data import AffirmedGender
 
 
@@ -316,7 +316,8 @@ class ContactPreferencesForm(FlaskForm):
     )
 
     phone = TelField(
-        validators=[StrictRequiredIf('contact_options', 'PHONE', message='Enter your phone number')]
+        validators=[StrictRequiredIf('contact_options', 'PHONE', message='Enter your phone number',
+                                     validators=[validatePhoneNumber])]
     )
 
 
