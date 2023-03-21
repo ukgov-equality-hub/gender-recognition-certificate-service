@@ -72,7 +72,7 @@ def create_app(test_config=None):
                                                         "img-src 'self'; " \
                                                         "font-src 'self'; " \
                                                         "connect-src 'self' https://*.google-analytics.com; " \
-                                                        "form-action 'self' https://www.payments.service.gov.uk;"
+                                                        "form-action 'self' https://card.payments.service.gov.uk;"
 
         return response
 
