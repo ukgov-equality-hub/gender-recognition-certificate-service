@@ -176,7 +176,7 @@ def validateDateOfTransiton(form, field):
             raise ValidationError('Enter a valid year')
     
         earliest_date_of_transition_years = 2
-        earliest_date_of_transition = date.today() - relativedelta(years=earliest_date_of_transition_years)
+        earliest_date_of_transition = date.today() - relativedelta(years=earliest_date_of_transition_years, months=1)
 
         if date_of_transition < earliest_date_of_transition:
             raise ValidationError(f'Enter a date within the last {earliest_date_of_transition_years} years')
