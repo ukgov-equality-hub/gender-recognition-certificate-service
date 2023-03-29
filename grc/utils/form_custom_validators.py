@@ -175,7 +175,7 @@ def validateDateOfTransiton(form, field):
         except Exception as e:
             raise ValidationError('Enter a valid year')
     
-        earliest_date_of_transition_years = 100
+        earliest_date_of_transition_years = 2
         earliest_date_of_transition = date.today() - relativedelta(years=earliest_date_of_transition_years)
 
         if date_of_transition < earliest_date_of_transition:
