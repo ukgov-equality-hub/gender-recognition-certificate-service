@@ -241,7 +241,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
 
     # Enter a valid date that is more than 2 years' ago
     await helpers.fill_textbox(field='transition_date_month', value='1')
-    await helpers.fill_textbox(field='transition_date_year', value=data.TRANSITION_DATE_YEAR_INVALID.year)
+    await helpers.fill_textbox(field='transition_date_year', value=data.TRANSITION_DATE_YEAR_INVALID)
     await helpers.click_button('Save and continue')
     await asserts.url('/personal-details/transition-date')
     await asserts.accessibility()
@@ -251,7 +251,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
 
     # Enter a valid date
     await helpers.fill_textbox(field='transition_date_month', value=data.TRANSITION_DATE_MONTH)
-    await helpers.fill_textbox(field='transition_date_year', value=data.TRANSITION_DATE_YEAR.year)
+    await helpers.fill_textbox(field='transition_date_year', value=data.TRANSITION_DATE_YEAR)
     await helpers.click_button('Save and continue')
 
     # ------------------------------------------------
@@ -275,7 +275,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
 
     # The fields should be pre-populated with the values we just entered
     await asserts.field_value(field='transition_date_month', expected_value=data.TRANSITION_DATE_MONTH)
-    await asserts.field_value(field='transition_date_year', expected_value=data.TRANSITION_DATE_YEAR.year)
+    await asserts.field_value(field='transition_date_year', expected_value=data.TRANSITION_DATE_YEAR)
 
     # Click Save and continue to return to Statutory Declaration Date page
     await helpers.click_button('Save and continue')
