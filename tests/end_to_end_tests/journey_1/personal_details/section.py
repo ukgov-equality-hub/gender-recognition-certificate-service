@@ -241,7 +241,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
 
     # Enter a valid date that is more than 2 years' ago
     await helpers.fill_textbox(field='transition_date_month', value='1')
-    await helpers.fill_textbox(field='transition_date_year', value='2020')
+    await helpers.fill_textbox(field='transition_date_year', value=data.TRANSITION_DATE_YEAR_INVALID)
     await helpers.click_button('Save and continue')
     await asserts.url('/personal-details/transition-date')
     await asserts.accessibility()
