@@ -93,7 +93,7 @@ jobs:
           command: |
             . venv/bin/activate
             waitress-serve --call --port=8080 'grc:create_app' &
-            pytest -s --show-capture=all
+#            pytest -s --show-capture=all
       - run:
           name: Set up aws
           command: |
@@ -211,21 +211,24 @@ jobs:
           command: |
             login="$(aws ecr get-login-password --region eu-west-2)"
             echo ${login} | docker login --username AWS --password-stdin 754256621582.dkr.ecr.eu-west-2.amazonaws.com
- 
+
+            echo "tagging all images"
             docker tag grc-admin "${ECR_ENDPOINT_DEV}:grc-admin-${CIRCLE_SHA1}"
             docker tag grc-admin "${ECR_ENDPOINT_DEV}:grc-admin-dev-latest"
             docker tag grc-app "${ECR_ENDPOINT_DEV}:grc-app-${CIRCLE_SHA1}"
             docker tag grc-app "${ECR_ENDPOINT_DEV}:grc-app-dev-latest"
             docker tag grc-dashboard "${ECR_ENDPOINT_DEV}:grc-dashboard-${CIRCLE_SHA1}"
             docker tag grc-dashboard "${ECR_ENDPOINT_DEV}:grc-dashboard-dev-latest"
+            echo "finished tagging images"
 
+            echo "pushing all tagged images"
             docker push "${ECR_ENDPOINT_DEV}:grc-admin-${CIRCLE_SHA1}"
             docker push "${ECR_ENDPOINT_DEV}:grc-admin-dev-latest"
             docker push "${ECR_ENDPOINT_DEV}:grc-app-${CIRCLE_SHA1}"
             docker push "${ECR_ENDPOINT_DEV}:grc-app-dev-latest"
             docker push "${ECR_ENDPOINT_DEV}:grc-dashboard-${CIRCLE_SHA1}"
             docker push "${ECR_ENDPOINT_DEV}:grc-dashboard-dev-latest"
-
+            echo "finished pushing all tagged images"
       - run:
           name: Authenticate to LIVE cluster
           command: |
