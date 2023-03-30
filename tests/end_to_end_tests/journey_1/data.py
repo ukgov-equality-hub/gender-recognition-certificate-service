@@ -20,8 +20,11 @@ POSTCODE = 'SW1P 3BT'
 
 TRANSITION_DATE_MONTH = '3'
 TRANSITION_DATE_YEAR = str((date.today() - relativedelta(years=3)).year)
-TRANSITION_DATE_MONTH_INVALID = str((date.today() + relativedelta(months=1)).month)
-TRANSITION_DATE_YEAR_INVALID = str((date.today() - relativedelta(years=2)).year)
+
+# These 2 ensure invalid date is created for this journey
+TRANSITION_DATE_MONTH_PLUS_ONE = str((date.today() + relativedelta(months=1)).month)
+TRANSITION_DATE_YEAR_MINUS_TWO = str((date.today() - relativedelta(years=2)).year)
+
 TRANSITION_DATE_FORMATTED = f'March {TRANSITION_DATE_YEAR}'
 
 STATUTORY_DECLARATION_DATE_DAY = '5'
