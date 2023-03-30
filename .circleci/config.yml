@@ -225,6 +225,7 @@ jobs:
             docker push "${ECR_ENDPOINT_DEV}:grc-app-dev-latest"
             docker push "${ECR_ENDPOINT_DEV}:grc-dashboard-${CIRCLE_SHA1}"
             docker push "${ECR_ENDPOINT_DEV}:grc-dashboard-dev-latest"
+
       - run:
           name: Authenticate to LIVE cluster
           command: |
