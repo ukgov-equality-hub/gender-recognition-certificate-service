@@ -249,6 +249,16 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(1)
     await asserts.error(field='transition_date_year', message='Enter a date within the last 100 years')
 
+    # Enter a valid date that is not 2 years prior to application created date
+    await helpers.fill_textbox(field='transition_date_month', value=data.TRANSITION_DATE_MONTH_PLUS_ONE)
+    await helpers.fill_textbox(field='transition_date_year', value=data.TRANSITION_DATE_YEAR_MINUS_TWO)
+    await helpers.click_button('Save and continue')
+    await asserts.url('/personal-details/transition-date')
+    await asserts.accessibility()
+    await asserts.h1('When did you transition?')
+    await asserts.number_of_errors(1)
+    await asserts.error(field='transition_date_year', message='Enter a date at least 2 years before your application')
+
     # Enter a valid date
     await helpers.fill_textbox(field='transition_date_month', value=data.TRANSITION_DATE_MONTH)
     await helpers.fill_textbox(field='transition_date_year', value=data.TRANSITION_DATE_YEAR)
