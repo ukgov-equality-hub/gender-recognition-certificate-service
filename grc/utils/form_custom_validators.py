@@ -178,7 +178,7 @@ def validateDateOfTransiton(form, field):
     
         earliest_date_of_transition_years = 100
         earliest_date_of_transition = date.today() - relativedelta(years=earliest_date_of_transition_years)
-        print("FIRIING !!!!!!!!!!!!!!!!!!!")
+
         application_record = db.session.query(Application).filter_by(
             reference_number=session['reference_number']
         ).first()
