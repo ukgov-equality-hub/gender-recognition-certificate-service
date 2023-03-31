@@ -256,10 +256,10 @@ def validateNationalInsuranceNumber(form, field):
 
 def validateHWFReferenceNumber(form, field):
     if not (field.data is None or field.data == ''):
-        data = field.data.replace(' ', '').upper()
+        data = field.data.replace(' ', '').replace('-', '').upper()
         match = re.search('^(?=^HWF)(?=[A-Z0-9]{9}$).*$', data)
         if match is None:
-            raise ValidationError('Enter a valid National Insurance number')
+            raise ValidationError(f'Enter a valid \'Help with fees\' reference number')
 
 
 
