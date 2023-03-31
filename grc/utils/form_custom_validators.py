@@ -193,13 +193,11 @@ def validateDateOfTransiton(form, field):
         if date_of_transition < earliest_date_of_transition:
             raise ValidationError(f'Enter a date within the last {earliest_date_of_transition_years} years')
 
+        if date_of_transition > date.today():
+            raise ValidationError('Enter a date in the past')
+
         if date_of_transition > latest_transition_date:
             raise ValidationError(f'Enter a date at least {latest_transition_years} years before your application')
-
-        latest_date_of_transition = date.today()
-
-        if date_of_transition > latest_date_of_transition:
-            raise ValidationError('Enter a date in the past')
 
 
 def validateStatutoryDeclarationDate(form, field):
