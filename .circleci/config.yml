@@ -93,7 +93,7 @@ jobs:
           command: |
             . venv/bin/activate
             waitress-serve --call --port=8080 'grc:create_app' &
-#            pytest -s --show-capture=all
+            pytest -s --show-capture=all
       - run:
           name: Set up aws
           command: |
@@ -115,11 +115,11 @@ jobs:
           command: |
             pip install flask_migrate
             export BUILD_DATE=$(date -Is) >> $BASH_ENV
-            source $BASH_ENV             
+            source $BASH_ENV
             echo "${AWS_DEFAULT_REGION}"
             echo "${AWS_ACCESS_KEY_ID_PREPROD}"
             echo "${AWS_SECRET_ACCESS_KEY_PREPROD}"
-            
+
             docker build \
               --label build.git.sha=${CIRCLE_SHA1} \
               --label build.git.branch=${CIRCLE_BRANCH} \
@@ -127,12 +127,12 @@ jobs:
               --build-arg APP_BUILD_DATE=${BUILD_DATE} \
               --build-arg APP_BUILD_TAG=${CIRCLE_BRANCH} \
               --build-arg APP_GIT_COMMIT=${CIRCLE_SHA1} \
-              -t grc-app .          
+              -t grc-app .
 
       - run:
           name: push app image
           command: |
-            login="$(aws ecr get-login-password --region eu-west-2)"            
+            login="$(aws ecr get-login-password --region eu-west-2)"
             echo ${login} | docker login --username AWS --password-stdin 754256621582.dkr.ecr.eu-west-2.amazonaws.com
             docker tag grc-app "${ECR_ENDPOINT_PREPROD}:grc-app-${CIRCLE_SHA1}"
             docker push "${ECR_ENDPOINT_PREPROD}:grc-app-${CIRCLE_SHA1}"

@@ -240,6 +240,14 @@ def validateNationalInsuranceNumber(form, field):
         if match is None:
             raise ValidationError('Enter a valid National Insurance number')
 
+def validateHWFReferenceNumber(form, field):
+    if not (field.data is None or field.data == ''):
+        data = field.data.replace(' ', '').upper()
+        match = re.search('^(?!HWF)(?:[[a-zA-Z0-9]{6,}])$', data)
+        if match is None:
+            raise ValidationError('Enter a valid National Insurance number')
+
+
 
 class MultiFileAllowed(object):
     def __init__(self, upload_set, message=None):

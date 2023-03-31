@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, RadioField, BooleanField
 from wtforms.validators import DataRequired
 from grc.business_logic.data_structures.submit_and_pay_data import HelpWithFeesType
-from grc.utils.form_custom_validators import StrictRequiredIf
+from grc.utils.form_custom_validators import StrictRequiredIf, validateHWFReferenceNumber
 
 
 class MethodCheckForm(FlaskForm):
@@ -25,7 +25,14 @@ class HelpTypeForm(FlaskForm):
     )
 
     help_with_fees_reference_number = StringField(
-        validators=[StrictRequiredIf('how_applying_for_fees', HelpWithFeesType.USING_ONLINE_SERVICE.name, message='Enter your Help with Fees reference number')]
+        validators=[
+            StrictRequiredIf(
+                'how_applying_for_fees',
+                HelpWithFeesType.USING_ONLINE_SERVICE.name,
+                message='Enter your Help with Fees reference number'
+            ),
+            validateHWFReferenceNumber
+        ]
     )
 
 
