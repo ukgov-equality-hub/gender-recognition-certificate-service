@@ -134,10 +134,10 @@ jobs:
           command: |
             login="$(aws ecr get-login-password --region eu-west-2)"            
             echo ${login} | docker login --username AWS --password-stdin 754256621582.dkr.ecr.eu-west-2.amazonaws.com
-            docker tag grc-app "${ECR_ENDPOINT_PREPROD}:grc-app-${CIRCLE_SHA1}"
-            docker push "${ECR_ENDPOINT_PREPROD}:grc-app-${CIRCLE_SHA1}"
-            docker tag grc-app "${ECR_ENDPOINT_PREPROD}:grc-app-latest"
-            docker push "${ECR_ENDPOINT_PREPROD}:grc-app-latest"
+            docker tag grc-app "${ECR_ENDPOINT_DEV}:grc-app-${CIRCLE_SHA1}"
+            docker push "${ECR_ENDPOINT_DEV}:grc-app-${CIRCLE_SHA1}"
+            docker tag grc-app "${ECR_ENDPOINT_DEV}:grc-app-latest"
+            docker push "${ECR_ENDPOINT_DEV}:grc-app-latest"
 
           #  if [ "${CIRCLE_BRANCH}" == "main" ]; then
           #   docker tag grc-app "${ECR_ENDPOINT_PREPROD}:latest"
@@ -163,10 +163,10 @@ jobs:
           command: |
             login="$(aws ecr get-login-password --region eu-west-2)"
             echo ${login} | docker login --username AWS --password-stdin 754256621582.dkr.ecr.eu-west-2.amazonaws.com
-            docker tag grc-admin "${ECR_ENDPOINT_PREPROD}:grc-admin-${CIRCLE_SHA1}"
-            docker push "${ECR_ENDPOINT_PREPROD}:grc-admin-${CIRCLE_SHA1}"
-            docker tag grc-admin "${ECR_ENDPOINT_PREPROD}:grc-admin-latest"
-            docker push "${ECR_ENDPOINT_PREPROD}:grc-admin-latest"
+            docker tag grc-admin "${ECR_ENDPOINT_DEV}:grc-admin-${CIRCLE_SHA1}"
+            docker push "${ECR_ENDPOINT_DEV}:grc-admin-${CIRCLE_SHA1}"
+            docker tag grc-admin "${ECR_ENDPOINT_DEV}:grc-admin-latest"
+            docker push "${ECR_ENDPOINT_DEV}:grc-admin-latest"
       - run:
           name: build dashboard image
           command: |
@@ -187,10 +187,10 @@ jobs:
           command: |
             login="$(aws ecr get-login-password --region eu-west-2)"
             echo ${login} | docker login --username AWS --password-stdin 754256621582.dkr.ecr.eu-west-2.amazonaws.com
-            docker tag grc-dashboard "${ECR_ENDPOINT_PREPROD}:grc-dashboard-${CIRCLE_SHA1}"
-            docker push "${ECR_ENDPOINT_PREPROD}:grc-dashboard-${CIRCLE_SHA1}"
-            docker tag grc-dashboard "${ECR_ENDPOINT_PREPROD}:grc-dashboard-latest"
-            docker push "${ECR_ENDPOINT_PREPROD}:grc-dashboard-latest"
+            docker tag grc-dashboard "${ECR_ENDPOINT_DEV}:grc-dashboard-${CIRCLE_SHA1}"
+            docker push "${ECR_ENDPOINT_DEV}:grc-dashboard-${CIRCLE_SHA1}"
+            docker tag grc-dashboard "${ECR_ENDPOINT_DEV}:grc-dashboard-latest"
+            docker push "${ECR_ENDPOINT_DEV}:grc-dashboard-latest"
 
   deploy_image_to_dev:
     <<: *cloud_container
@@ -206,24 +206,18 @@ jobs:
           name: Setup dev build
           command: |
             echo "Setting up a build on a development feature branch ${CIRCLE_BRANCH}"
-      - run:
-          name: tag and push dev images
-          command: |
-            login="$(aws ecr get-login-password --region eu-west-2)"
-            echo ${login} | docker login --username AWS --password-stdin 754256621582.dkr.ecr.eu-west-2.amazonaws.com
-
-            docker tag grc-admin "${ECR_ENDPOINT_DEV}:grc-admin-${CIRCLE_SHA1}"
-            docker tag grc-admin "${ECR_ENDPOINT_DEV}:grc-admin-dev-latest"
-            docker tag grc-app "${ECR_ENDPOINT_DEV}:grc-app-${CIRCLE_SHA1}"
-            docker tag grc-app "${ECR_ENDPOINT_DEV}:grc-app-dev-latest"
-            docker tag grc-dashboard "${ECR_ENDPOINT_DEV}:grc-dashboard-${CIRCLE_SHA1}"
-            docker tag grc-dashboard "${ECR_ENDPOINT_DEV}:grc-dashboard-dev-latest"
-            docker push "${ECR_ENDPOINT_DEV}:grc-admin-${CIRCLE_SHA1}"
-            docker push "${ECR_ENDPOINT_DEV}:grc-admin-dev-latest"
-            docker push "${ECR_ENDPOINT_DEV}:grc-app-${CIRCLE_SHA1}"
-            docker push "${ECR_ENDPOINT_DEV}:grc-app-dev-latest"
-            docker push "${ECR_ENDPOINT_DEV}:grc-dashboard-${CIRCLE_SHA1}"
-            docker push "${ECR_ENDPOINT_DEV}:grc-dashboard-dev-latest"
+#      - run:
+#          name: tag and push dev images
+#          command: |
+#            login="$(aws ecr get-login-password --region eu-west-2)"
+#            echo ${login} | docker login --username AWS --password-stdin 754256621582.dkr.ecr.eu-west-2.amazonaws.com
+#
+#            docker push "${ECR_ENDPOINT_DEV}:grc-admin-${CIRCLE_SHA1}"
+#            docker push "${ECR_ENDPOINT_DEV}:grc-admin-dev-latest"
+#            docker push "${ECR_ENDPOINT_DEV}:grc-app-${CIRCLE_SHA1}"
+#            docker push "${ECR_ENDPOINT_DEV}:grc-app-dev-latest"
+#            docker push "${ECR_ENDPOINT_DEV}:grc-dashboard-${CIRCLE_SHA1}"
+#            docker push "${ECR_ENDPOINT_DEV}:grc-dashboard-dev-latest"
 
       - run:
           name: Authenticate to LIVE cluster
