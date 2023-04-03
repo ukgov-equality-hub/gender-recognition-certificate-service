@@ -326,7 +326,7 @@ workflows:
       ### PRODUCTION ###
       - build:
           name: build-containers-prod
-          env_name: PREPROD
+          env_name: PROD
           ecr_endpoint: ${ECR_ENDPOINT_PROD}
           filters:
             branches:
