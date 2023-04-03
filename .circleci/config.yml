@@ -307,7 +307,7 @@ workflows:
             branches:
               only: /^RST-.*/
           requires:
-            - build-containers
+            - build-containers-dev
       ### STAGING ###
       - build:
           name: build-containers-preprod
