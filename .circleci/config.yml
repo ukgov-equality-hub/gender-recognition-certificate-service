@@ -168,6 +168,7 @@ jobs:
       ecr_endpoint:
         type: string
     steps:
+      - checkout
       - setup_remote_docker:
           version: 20.10.11
           docker_layer_caching: true
@@ -276,9 +277,9 @@ commands:
         ecr_endpoint:
           type: string
       steps:
-        - run: |
-            echo "Tag and push images to << parameters.env_name >> repo"
-        - run: |
+        - run:
+          name: Tag and push images to << parameters.env_name >> repo
+          command: |
             login="$(aws ecr get-login-password --region eu-west-2)"
             echo ${login} | docker login --username AWS --password-stdin 754256621582.dkr.ecr.eu-west-2.amazonaws.com
 
@@ -313,7 +314,8 @@ workflows:
             - build-containers
       - deploy_image_to_preprod:
           name: deploy-staging-live
-          env_name: preprod
+          env_name: PREPROD
+            ecr_endpoint: ${ECR_ENDPOINT_DEV}
           filters:
             branches:
               only: /^staging$/
