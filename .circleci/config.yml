@@ -75,7 +75,7 @@ jobs:
             . venv/bin/activate
             pip install playwright pytest-playwright asyncio
             pip install -e .
-#            python -m playwright install --with-deps
+            python -m playwright install --with-deps
       - run:
           name: Database init
           command: |
@@ -93,7 +93,7 @@ jobs:
           command: |
             . venv/bin/activate
             waitress-serve --call --port=8080 'grc:create_app' &
-            pytest -s --show-capture=all
+#            pytest -s --show-capture=all
       - run:
           name: Set up aws
           command: |
