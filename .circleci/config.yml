@@ -315,7 +315,7 @@ workflows:
       - deploy_image_to_preprod:
           name: deploy-staging-live
           env_name: PREPROD
-            ecr_endpoint: ${ECR_ENDPOINT_DEV}
+          ecr_endpoint: ${ECR_ENDPOINT_PREPROD}
           filters:
             branches:
               only: /^staging$/
