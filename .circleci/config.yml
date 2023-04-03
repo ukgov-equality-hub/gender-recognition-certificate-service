@@ -172,9 +172,9 @@ jobs:
       - setup_remote_docker:
           version: 20.10.11
           docker_layer_caching: true
-      - run:
-          name: Tag and push images to << parameters.env_name >> repo
-          command: tag_and_push_images
+      - tag_and_push_images:
+          env_name: << parameters.env_name >>
+          ecr_endpoint: << parameters.ecr_endpoint >>
       - run:
           name: Authenticate to LIVE cluster
           command: |
@@ -279,23 +279,25 @@ commands:
         ecr_endpoint:
           type: string
       steps:
-        - run: |
-            login="$(aws ecr get-login-password --region eu-west-2)"
-            echo ${login} | docker login --username AWS --password-stdin 754256621582.dkr.ecr.eu-west-2.amazonaws.com
+        - run:
+            name: Tag and push images to << parameters.ecr_endpoint >> repo
+            command: |
+              login="$(aws ecr get-login-password --region eu-west-2)"
+              echo ${login} | docker login --username AWS --password-stdin 754256621582.dkr.ecr.eu-west-2.amazonaws.com
 
-            docker tag grc-admin "<< parameters.ecr_endpoint >>:grc-admin-${CIRCLE_SHA1}"
-            docker tag grc-admin "<< parameters.ecr_endpoint >>:grc-admin-latest"
-            docker tag grc-app "<< parameters.ecr_endpoint >>:grc-app-${CIRCLE_SHA1}"
-            docker tag grc-app "<< parameters.ecr_endpoint >>:grc-app-latest"
-            docker tag grc-dashboard "<< parameters.ecr_endpoint >>:grc-dashboard-${CIRCLE_SHA1}"
-            docker tag grc-dashboard "<< parameters.ecr_endpoint >>:grc-dashboard-latest"
+              docker tag grc-admin "<< parameters.ecr_endpoint >>:grc-admin-${CIRCLE_SHA1}"
+              docker tag grc-admin "<< parameters.ecr_endpoint >>:grc-admin-latest"
+              docker tag grc-app "<< parameters.ecr_endpoint >>:grc-app-${CIRCLE_SHA1}"
+              docker tag grc-app "<< parameters.ecr_endpoint >>:grc-app-latest"
+              docker tag grc-dashboard "<< parameters.ecr_endpoint >>:grc-dashboard-${CIRCLE_SHA1}"
+              docker tag grc-dashboard "<< parameters.ecr_endpoint >>:grc-dashboard-latest"
 
-            docker push "<< parameters.ecr_endpoint >>:grc-admin-${CIRCLE_SHA1}"
-            docker push "<< parameters.ecr_endpoint >>:grc-admin-latest"
-            docker push "<< parameters.ecr_endpoint >>:grc-app-${CIRCLE_SHA1}"
-            docker push "<< parameters.ecr_endpoint >>:grc-app-latest"
-            docker push "<< parameters.ecr_endpoint >>:grc-dashboard-${CIRCLE_SHA1}"
-            docker push "<< parameters.ecr_endpoint >>:grc-dashboard-latest"
+              docker push "<< parameters.ecr_endpoint >>:grc-admin-${CIRCLE_SHA1}"
+              docker push "<< parameters.ecr_endpoint >>:grc-admin-latest"
+              docker push "<< parameters.ecr_endpoint >>:grc-app-${CIRCLE_SHA1}"
+              docker push "<< parameters.ecr_endpoint >>:grc-app-latest"
+              docker push "<< parameters.ecr_endpoint >>:grc-dashboard-${CIRCLE_SHA1}"
+              docker push "<< parameters.ecr_endpoint >>:grc-dashboard-latest"
 
 workflows:
   test-build-deploy:
