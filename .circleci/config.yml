@@ -75,7 +75,7 @@ jobs:
             . venv/bin/activate
             pip install playwright pytest-playwright asyncio
             pip install -e .
-            python -m playwright install --with-deps
+#            python -m playwright install --with-deps
       - run:
           name: Database init
           command: |
