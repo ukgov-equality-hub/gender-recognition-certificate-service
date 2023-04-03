@@ -280,7 +280,7 @@ commands:
           type: string
       steps:
         - run:
-            name: Tag and push images to << parameters.ecr_endpoint >> repo
+            name: Tag and push images to << parameters.env_name >> repo
             command: |
               login="$(aws ecr get-login-password --region eu-west-2)"
               echo ${login} | docker login --username AWS --password-stdin 754256621582.dkr.ecr.eu-west-2.amazonaws.com
