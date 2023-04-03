@@ -94,7 +94,7 @@ jobs:
           command: |
             . venv/bin/activate
             waitress-serve --call --port=8080 'grc:create_app' &
-#            pytest -s --show-capture=all
+            pytest -s --show-capture=all
       - run:
           name: Set up aws
           command: |
