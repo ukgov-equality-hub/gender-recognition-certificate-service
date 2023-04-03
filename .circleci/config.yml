@@ -214,9 +214,6 @@ jobs:
 #            name: Tag and push dashboard image to relative endpoint
 #            command: echo << parameters.ecr_endpoint >>
 
-  commands:
-    deploy_image_to_dev:
-
   deploy_image_to_dev:
     <<: *cloud_container
     parameters:
