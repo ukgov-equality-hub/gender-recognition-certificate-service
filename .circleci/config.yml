@@ -293,20 +293,14 @@ commands:
 workflows:
   test-build-deploy:
     jobs:
+      ### DEV ###
       - build:
-          name: build-containers
+          name: build-containers-dev
           env_name: DEV
           ecr_endpoint: ${ECR_ENDPOINT_DEV}
           filters:
             branches:
               only: /^RST-.*/
-      - build:
-          name: build-containers
-          env_name: PREPROD
-          ecr_endpoint: ${ECR_ENDPOINT_PREPROD}
-          filters:
-            branches:
-              only: /^staging$/
       - deploy_image_to_dev:
           name: build-dev
           filters:
@@ -314,18 +308,26 @@ workflows:
               only: /^RST-.*/
           requires:
             - build-containers
+      ### STAGING ###
+      - build:
+          name: build-containers-preprod
+          env_name: PREPROD
+          ecr_endpoint: ${ECR_ENDPOINT_PREPROD}
+          filters:
+            branches:
+              only: /^staging$/
       - deploy_image_to_preprod:
           name: deploy-staging-live
           filters:
             branches:
               only: /^staging$/
           requires:
-            - build-containers
-      ### production ###
-      - approve_production:
-          type: approval
-          requires:
-            - build-containers
+            - build-containers-preprod
+      ### PRODUCTION ###
+      - build:
+          name: build-containers-prod
+          env_name: PREPROD
+          ecr_endpoint: ${ECR_ENDPOINT_PROD}
           filters:
             branches:
               only: /^master$/
@@ -333,8 +335,6 @@ workflows:
           filters:
             branches:
               only: /^master$/
-          requires:
-            - approve_production
       - deploy_image_to_production:
           name: deploy-production-live
           env_name: prod
