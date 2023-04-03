@@ -192,11 +192,6 @@ jobs:
 
   deploy_image_to_preprod:
     <<: *cloud_container
-    parameters:
-      env_name:
-        type: string
-      ecr_endpoint:
-        type: string
     steps:
       - checkout
       - run:
