@@ -219,7 +219,7 @@ jobs:
     parameters:
       env_name:
         type: string
-      ecr_enpoint:
+      ecr_endpoint:
         type: string
     steps:
       - setup_remote_docker:
@@ -360,7 +360,6 @@ workflows:
       - deploy_image_to_preprod:
           name: deploy-staging-live
           env_name: preprod
-          ecr_endpoint: ${ECR_ENDPOINT_PREPROD}
           filters:
             branches:
               only: /^staging$/
@@ -383,7 +382,6 @@ workflows:
       - deploy_image_to_production:
           name: deploy-production-live
           env_name: prod
-          ecr_endpoint: ${ECR_ENDPOINT_PROD}
           filters:
             branches:
               only: /^master$/
