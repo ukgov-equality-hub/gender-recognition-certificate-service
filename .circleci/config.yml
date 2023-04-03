@@ -174,10 +174,9 @@ jobs:
           docker_layer_caching: true
       - run:
           name: Tag and push images to << parameters.env_name >> repo
-          command:
-            - tag_and_push_images:
-                env_name: << parameters.env_name >>
-                ecr_endpoint: << parameters.ecr_endpoint >>
+          - tag_and_push_images:
+              env_name: << parameters.env_name >>
+              ecr_endpoint: << parameters.ecr_endpoint >>
       - run:
           name: Authenticate to LIVE cluster
           command: |
