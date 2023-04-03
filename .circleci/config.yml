@@ -199,6 +199,8 @@ jobs:
     parameters:
       env_name:
         type: string
+      ecr_endpoint:
+        type: string
     steps:
       - checkout
       - run:
