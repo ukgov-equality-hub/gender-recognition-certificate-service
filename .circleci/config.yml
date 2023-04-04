@@ -29,7 +29,8 @@ jobs:
     parameters:
       env_name:
         type: string
-        default: development
+      ecr_endpoint:
+        type: string
     docker:
       - image: 'circleci/python:3.8'
         environment:
@@ -130,20 +131,6 @@ jobs:
               -t grc-app .
 
       - run:
-          name: push app image
-          command: |
-            login="$(aws ecr get-login-password --region eu-west-2)"
-            echo ${login} | docker login --username AWS --password-stdin 754256621582.dkr.ecr.eu-west-2.amazonaws.com
-            docker tag grc-app "${ECR_ENDPOINT_PREPROD}:grc-app-${CIRCLE_SHA1}"
-            docker push "${ECR_ENDPOINT_PREPROD}:grc-app-${CIRCLE_SHA1}"
-            docker tag grc-app "${ECR_ENDPOINT_PREPROD}:grc-app-latest"
-            docker push "${ECR_ENDPOINT_PREPROD}:grc-app-latest"
-
-          #  if [ "${CIRCLE_BRANCH}" == "main" ]; then
-          #   docker tag grc-app "${ECR_ENDPOINT_PREPROD}:latest"
-          #  docker push "${ECR_ENDPOINT_PREPROD}:latest"
-          #fi
-      - run:
           name: build admin image
           command: |
             export BUILD_DATE=$(date -Is) >> $BASH_ENV
@@ -159,15 +146,6 @@ jobs:
               --build-arg APP_GIT_COMMIT=${CIRCLE_SHA1} \
               .
       - run:
-          name: push admin image
-          command: |
-            login="$(aws ecr get-login-password --region eu-west-2)"
-            echo ${login} | docker login --username AWS --password-stdin 754256621582.dkr.ecr.eu-west-2.amazonaws.com
-            docker tag grc-admin "${ECR_ENDPOINT_PREPROD}:grc-admin-${CIRCLE_SHA1}"
-            docker push "${ECR_ENDPOINT_PREPROD}:grc-admin-${CIRCLE_SHA1}"
-            docker tag grc-admin "${ECR_ENDPOINT_PREPROD}:grc-admin-latest"
-            docker push "${ECR_ENDPOINT_PREPROD}:grc-admin-latest"
-      - run:
           name: build dashboard image
           command: |
             export BUILD_DATE=$(date -Is) >> $BASH_ENV
@@ -182,50 +160,17 @@ jobs:
               --build-arg APP_BUILD_TAG=${CIRCLE_BRANCH} \
               --build-arg APP_GIT_COMMIT=${CIRCLE_SHA1} \
               .
-      - run:
-          name: push dashboard image
-          command: |
-            login="$(aws ecr get-login-password --region eu-west-2)"
-            echo ${login} | docker login --username AWS --password-stdin 754256621582.dkr.ecr.eu-west-2.amazonaws.com
-            docker tag grc-dashboard "${ECR_ENDPOINT_PREPROD}:grc-dashboard-${CIRCLE_SHA1}"
-            docker push "${ECR_ENDPOINT_PREPROD}:grc-dashboard-${CIRCLE_SHA1}"
-            docker tag grc-dashboard "${ECR_ENDPOINT_PREPROD}:grc-dashboard-latest"
-            docker push "${ECR_ENDPOINT_PREPROD}:grc-dashboard-latest"
+      - tag_and_push_images:
+          env_name: << parameters.env_name >>
+          ecr_endpoint: << parameters.ecr_endpoint >>
 
   deploy_image_to_dev:
     <<: *cloud_container
-    parameters:
-      env_name:
-        type: string
     steps:
       - checkout
       - setup_remote_docker:
           version: 20.10.11
           docker_layer_caching: true
-      - run:
-          name: Setup dev build
-          command: |
-            echo "Setting up a build on a development feature branch ${CIRCLE_BRANCH}"
-      - run:
-          name: tag and push dev images
-          command: |
-            login="$(aws ecr get-login-password --region eu-west-2)"
-            echo ${login} | docker login --username AWS --password-stdin 754256621582.dkr.ecr.eu-west-2.amazonaws.com
- 
-            docker tag grc-admin "${ECR_ENDPOINT_DEV}:grc-admin-${CIRCLE_SHA1}"
-            docker tag grc-admin "${ECR_ENDPOINT_DEV}:grc-admin-dev-latest"
-            docker tag grc-app "${ECR_ENDPOINT_DEV}:grc-app-${CIRCLE_SHA1}"
-            docker tag grc-app "${ECR_ENDPOINT_DEV}:grc-app-dev-latest"
-            docker tag grc-dashboard "${ECR_ENDPOINT_DEV}:grc-dashboard-${CIRCLE_SHA1}"
-            docker tag grc-dashboard "${ECR_ENDPOINT_DEV}:grc-dashboard-dev-latest"
-
-            docker push "${ECR_ENDPOINT_DEV}:grc-admin-${CIRCLE_SHA1}"
-            docker push "${ECR_ENDPOINT_DEV}:grc-admin-dev-latest"
-            docker push "${ECR_ENDPOINT_DEV}:grc-app-${CIRCLE_SHA1}"
-            docker push "${ECR_ENDPOINT_DEV}:grc-app-dev-latest"
-            docker push "${ECR_ENDPOINT_DEV}:grc-dashboard-${CIRCLE_SHA1}"
-            docker push "${ECR_ENDPOINT_DEV}:grc-dashboard-dev-latest"
-
       - run:
           name: Authenticate to LIVE cluster
           command: |
@@ -247,9 +192,6 @@ jobs:
 
   deploy_image_to_preprod:
     <<: *cloud_container
-    parameters:
-      env_name:
-        type: string
     steps:
       - checkout
       - run:
@@ -318,33 +260,74 @@ jobs:
             docker pull "${ECR_ENDPOINT_PREPROD}:grc-app-${CIRCLE_SHA1}"
             docker tag grc-app "${ECR_ENDPOINT_PROD}:grc-app-latest"
             docker push "${ECR_ENDPOINT_PROD}:grc-app-latest"
+
+commands:
+    tag_and_push_images:
+      description: Tag and push images to relative ecr endpoint
+      parameters:
+        env_name:
+          type: string
+        ecr_endpoint:
+          type: string
+      steps:
+        - run:
+            name: Tag and push images to << parameters.env_name >> repo
+            command: |
+              login="$(aws ecr get-login-password --region eu-west-2)"
+              echo ${login} | docker login --username AWS --password-stdin 754256621582.dkr.ecr.eu-west-2.amazonaws.com
+
+              docker tag grc-admin "<< parameters.ecr_endpoint >>:grc-admin-${CIRCLE_SHA1}"
+              docker tag grc-admin "<< parameters.ecr_endpoint >>:grc-admin-latest"
+              docker tag grc-app "<< parameters.ecr_endpoint >>:grc-app-${CIRCLE_SHA1}"
+              docker tag grc-app "<< parameters.ecr_endpoint >>:grc-app-latest"
+              docker tag grc-dashboard "<< parameters.ecr_endpoint >>:grc-dashboard-${CIRCLE_SHA1}"
+              docker tag grc-dashboard "<< parameters.ecr_endpoint >>:grc-dashboard-latest"
+
+              docker push "<< parameters.ecr_endpoint >>:grc-admin-${CIRCLE_SHA1}"
+              docker push "<< parameters.ecr_endpoint >>:grc-admin-latest"
+              docker push "<< parameters.ecr_endpoint >>:grc-app-${CIRCLE_SHA1}"
+              docker push "<< parameters.ecr_endpoint >>:grc-app-latest"
+              docker push "<< parameters.ecr_endpoint >>:grc-dashboard-${CIRCLE_SHA1}"
+              docker push "<< parameters.ecr_endpoint >>:grc-dashboard-latest"
+
 workflows:
   test-build-deploy:
     jobs:
+      ### DEV ###
       - build:
-          name: build-containers
-          env_name: preprod
+          name: build-containers-dev
+          env_name: DEV
+          ecr_endpoint: ${ECR_ENDPOINT_DEV}
+          filters:
+            branches:
+              only: /^RST-.*/
       - deploy_image_to_dev:
           name: build-dev
-          env_name: dev
           filters:
             branches:
               only: /^RST-.*/
           requires:
-            - build-containers
+            - build-containers-dev
+      ### STAGING ###
+      - build:
+          name: build-containers-preprod
+          env_name: PREPROD
+          ecr_endpoint: ${ECR_ENDPOINT_PREPROD}
+          filters:
+            branches:
+              only: /^staging$/
       - deploy_image_to_preprod:
           name: deploy-staging-live
-          env_name: preprod
           filters:
             branches:
               only: /^staging$/
           requires:
-            - build-containers
-      ### production ###
-      - approve_production:
-          type: approval
-          requires:
-            - build-containers
+            - build-containers-preprod
+      ### PRODUCTION ###
+      - build:
+          name: build-containers-prod
+          env_name: PROD
+          ecr_endpoint: ${ECR_ENDPOINT_PROD}
           filters:
             branches:
               only: /^master$/
@@ -352,8 +335,6 @@ workflows:
           filters:
             branches:
               only: /^master$/
-          requires:
-            - approve_production
       - deploy_image_to_production:
           name: deploy-production-live
           env_name: prod
