@@ -382,7 +382,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.accessibility()
     await asserts.h1('When did you sign your statutory declaration?')
     await asserts.number_of_errors(1)
-    await asserts.error(field='statutory_declaration_date_year', message='Enter a date that does not precede your transition date')
+    await asserts.error(field='statutory_declaration_date_year', message='Enter a date that ERROR does not precede your transition date')
 
     # Enter a valid date
     await helpers.fill_textbox(field='statutory_declaration_date_day', value=data.STATUTORY_DECLARATION_DATE_DAY)
