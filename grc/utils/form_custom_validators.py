@@ -8,6 +8,7 @@ from collections.abc import Iterable
 from datetime import datetime, date
 from grc.utils.security_code import validate_security_code
 from grc.utils.reference_number import validate_reference_number
+from grc.models import db, Application
 
 
 class RequiredIf(DataRequired):
@@ -178,13 +179,25 @@ def validateDateOfTransiton(form, field):
         earliest_date_of_transition_years = 100
         earliest_date_of_transition = date.today() - relativedelta(years=earliest_date_of_transition_years)
 
+        application_record = db.session.query(Application).filter_by(
+            reference_number=session['reference_number']
+        ).first()
+        latest_transition_years = 2
+        application_created_date = date(
+            application_record.created.year,
+            application_record.created.month,
+            application_record.created.day
+        )
+        latest_transition_date = application_created_date - relativedelta(years=latest_transition_years)
+
         if date_of_transition < earliest_date_of_transition:
             raise ValidationError(f'Enter a date within the last {earliest_date_of_transition_years} years')
 
-        latest_date_of_transition = date.today()
-
-        if date_of_transition > latest_date_of_transition:
+        if date_of_transition > date.today():
             raise ValidationError('Enter a date in the past')
+
+        if date_of_transition > latest_transition_date:
+            raise ValidationError(f'Enter a date at least {latest_transition_years} years before your application')
 
 
 def validateStatutoryDeclarationDate(form, field):
@@ -246,6 +259,21 @@ def validatePhoneNumber(form, field):
         match = re.search('^[0-9]+$', field.data)
         if match is None:
             raise ValidationError('Enter a valid phone number')
+
+
+def validateHWFReferenceNumber(form, field):
+    if not (field.data is None or field.data == ''):
+        """
+        Regex to validate HWF reference number separated into 2 parts by an OR '|':
+        1. 11 chars long in the format of HWF-123-ABC
+        2. 9 chars long in format of HWF123ABC
+        """
+        match = re.search(
+            '^(((?=.{11}$)(?=HWF-)+([a-zA-Z0-9])+((-[a-zA-Z0-9]{3})+))|((?=.{9}$)(?=^HWF)(?=[a-zA-Z0-9]).*))+$',
+            field.data
+        )
+        if match is None:
+            raise ValidationError(f'Enter a valid \'Help with fees\' reference number')
 
 
 class MultiFileAllowed(object):

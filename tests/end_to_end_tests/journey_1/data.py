@@ -1,3 +1,5 @@
+from datetime import date
+from dateutil.relativedelta import relativedelta
 
 DEFAULT_TIMEOUT = 3 * 1000  # Wait a maximum of 3 seconds
 TIMEOUT_FOR_SLOW_OPERATIONS = 30 * 1000  # For slow operations, wait a maximum of 30 seconds
@@ -17,8 +19,13 @@ TOWN = 'London'
 POSTCODE = 'SW1P 3BT'
 
 TRANSITION_DATE_MONTH = '3'
-TRANSITION_DATE_YEAR = '2000'
-TRANSITION_DATE_FORMATTED = 'March 2000'
+TRANSITION_DATE_YEAR = str((date.today() - relativedelta(years=3)).year)
+
+# These 2 ensure invalid date is created for this journey
+TRANSITION_DATE_MONTH_PLUS_ONE = str((date.today() + relativedelta(months=1)).month)
+TRANSITION_DATE_YEAR_MINUS_TWO = str((date.today() - relativedelta(years=2)).year)
+
+TRANSITION_DATE_FORMATTED = f'March {TRANSITION_DATE_YEAR}'
 
 STATUTORY_DECLARATION_DATE_DAY = '5'
 STATUTORY_DECLARATION_DATE_MONTH = '3'
@@ -55,4 +62,4 @@ PARTNER_FIRST_NAME = 'Sam'
 PARTNER_LAST_NAME = 'Jones'
 PARTNER_POSTAL_ADDRESS = '10 Victoria Street\nLondon\nSW1H 0NB'
 
-HELP_WITH_FEES_REFERENCE_NUMBER = 'ABC-123'
+HELP_WITH_FEES_REFERENCE_NUMBER = 'HWF-123-ABC'
