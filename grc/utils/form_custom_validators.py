@@ -254,6 +254,21 @@ def validateNationalInsuranceNumber(form, field):
             raise ValidationError('Enter a valid National Insurance number')
 
 
+def validateHWFReferenceNumber(form, field):
+    if not (field.data is None or field.data == ''):
+        """
+        Regex to validate HWF reference number separated into 2 parts by an OR '|':
+        1. 11 chars long in the format of HWF-123-ABC
+        2. 9 chars long in format of HWF123ABC
+        """
+        match = re.search(
+            '^(((?=.{11}$)(?=HWF-)+([a-zA-Z0-9])+((-[a-zA-Z0-9]{3})+))|((?=.{9}$)(?=^HWF)(?=[a-zA-Z0-9]).*))+$',
+            field.data
+        )
+        if match is None:
+            raise ValidationError(f'Enter a valid \'Help with fees\' reference number')
+
+
 class MultiFileAllowed(object):
     def __init__(self, upload_set, message=None):
         self.upload_set = upload_set
