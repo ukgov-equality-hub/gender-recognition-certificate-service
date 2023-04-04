@@ -261,8 +261,9 @@ def validateHWFReferenceNumber(form, field):
         1. 11 chars long in the format of HWF-123-ABC
         2. 9 chars long in format of HWF123ABC
         """
-        match = re.search('^(((?=.{11}$)(?=HWF-)+([A-Z0-9])+((-[A-Z0-9]{3})+))|((?=.{9}$)(?=^HWF)(?=[A-Z0-9]).*))+$',
-                          field.data)
+        match = re.search(
+            '^(((?=.{11}$)(?=HWF-)+([a-zA-Z0-9])+((-[A-Z0-9]{3})+))|((?=.{9}$)(?=^HWF)(?=[a-zA-Z0-9]).*))+$', field.data
+        )
         if match is None:
             raise ValidationError(f'Enter a valid \'Help with fees\' reference number')
 
