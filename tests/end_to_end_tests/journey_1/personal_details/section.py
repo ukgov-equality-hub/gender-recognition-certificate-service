@@ -376,7 +376,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     # Enter a valid date that is before transition date
     await helpers.fill_textbox(field='statutory_declaration_date_day', value=data.STATUTORY_DECLARATION_DATE_DAY)
     await helpers.fill_textbox(field='statutory_declaration_date_month', value=data.TRANSITION_DATE_MONTH_MINUS_ONE)
-    await helpers.fill_textbox(field='statutory_declaration_date_year', value=data.TRANSITION_DATE_YEAR_MINUS_TWO)
+    await helpers.fill_textbox(field='statutory_declaration_date_year', value=data.TRANSITION_DATE_YEAR)
     await helpers.click_button('Save and continue')
     await asserts.url('/personal-details/statutory-declaration-date')
     await asserts.accessibility()
