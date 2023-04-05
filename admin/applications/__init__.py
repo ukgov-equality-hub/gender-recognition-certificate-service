@@ -8,6 +8,7 @@ from grc.external_services.aws_s3_client import AwsS3Client
 from grc.utils.redirect import local_redirect
 from grc.utils.logger import LogLevel, Logger
 from grc.utils.reference_number import validate_reference_number
+from sqlalchemy import or_
 
 applications = Blueprint('applications', __name__)
 logger = Logger()
@@ -51,7 +52,10 @@ def search():
 
     if request.method == 'POST' and form.search.data:
         search = form.search.data.lower()
-        all_applications = db.session.query(Application).all()
+        all_applications = db.session.query(Application).filter(or_(
+            Application.status == ApplicationStatus.COMPLETED, Application.status == ApplicationStatus.SUBMITTED,
+            Application.status == ApplicationStatus.DOWNLOADED
+        ))
         for application in all_applications:
             if search in application.reference_number.lower():
                 applications.append(application)
