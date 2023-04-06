@@ -210,6 +210,14 @@ def validateStatutoryDeclarationDate(form, field):
         except Exception as e:
             raise ValidationError('Enter a valid year')
 
+        application_record = db.session.query(Application).filter_by(
+            reference_number=session['reference_number']
+        ).first()
+        transition_date = date(
+            application_record.application_data().personal_details_data.transition_date.year,
+            application_record.application_data().personal_details_data.transition_date.month,
+            application_record.application_data().personal_details_data.transition_date.day
+        )
         earliest_statutory_declaration_date_years = 100
         earliest_statutory_declaration_date = date.today() - relativedelta(years=earliest_statutory_declaration_date_years)
 
@@ -220,6 +228,9 @@ def validateStatutoryDeclarationDate(form, field):
 
         if statutory_declaration_date > latest_statutory_declaration_date:
             raise ValidationError('Enter a date in the past')
+
+        if statutory_declaration_date < transition_date:
+            raise ValidationError('Enter a date that does not precede your transition date')
 
 
 def validateDateRange(form, field):
