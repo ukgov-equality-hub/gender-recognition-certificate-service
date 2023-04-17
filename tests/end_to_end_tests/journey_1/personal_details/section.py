@@ -703,10 +703,9 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await helpers.fill_textbox(field='national_insurance_number', value='INVALID-NI')
     await helpers.check_radio(field='tell_hmrc', value='False')
     await helpers.click_button('Save and continue')
-    await asserts.url('/personal-details/hmrc')
-    await asserts.accessibility()
-    await asserts.h1('Notifying HMRC')
     await asserts.number_of_errors(0)
+    await asserts.url('/personal-details/check-your-answers')
+    await asserts.accessibility()
     await helpers.click_button('Back')
 
     # Enter a valid National Insurance number
