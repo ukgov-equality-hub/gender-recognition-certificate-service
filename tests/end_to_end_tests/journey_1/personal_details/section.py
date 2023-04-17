@@ -698,6 +698,17 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(1)
     await asserts.error(field='national_insurance_number', message='Enter a valid National Insurance number')
 
+    # Choose "No" option AND enter an invalid NI number
+    await helpers.check_radio(field='tell_hmrc', value='True')
+    await helpers.fill_textbox(field='national_insurance_number', value='INVALID-NI')
+    await helpers.check_radio(field='tell_hmrc', value='False')
+    await helpers.click_button('Save and continue')
+    await asserts.url('/personal-details/hmrc')
+    await asserts.accessibility()
+    await asserts.h1('Notifying HMRC')
+    await asserts.number_of_errors(0)
+    await helpers.click_button('Back')
+
     # Enter a valid National Insurance number
     await helpers.check_radio(field='tell_hmrc', value='True')
     await helpers.fill_textbox(field='national_insurance_number', value=data.NATIONAL_INSURANCE_NUMBER)
