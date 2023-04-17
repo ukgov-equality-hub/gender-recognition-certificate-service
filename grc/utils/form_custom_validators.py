@@ -136,6 +136,14 @@ def validatePasswordStrength(form, field):
         raise ValidationError('Your password needs to contain 8 or more characters, a lower case letter, an upper case letter, a number and a special character')
 
 
+def validateAddressField(form, field):
+    if not (field.data is None or field.data == ''):
+        data = field.data
+        match = re.search('^[a-zA-Z0-9- ]*$', data)
+        if match is None:
+            raise ValidationError(f'Enter a valid {field.name}')
+
+
 def validatePostcode(form, field):
     # https://stackoverflow.com/questions/164979/regex-for-matching-uk-postcodes
     if not (field.data is None or field.data == ''):

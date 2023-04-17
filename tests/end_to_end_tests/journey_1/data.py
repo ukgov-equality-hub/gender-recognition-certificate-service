@@ -14,6 +14,7 @@ MIDDLE_NAMES = 'Adam Brian'
 LAST_NAME = 'Bloggs'
 
 ADDRESS_LINE_ONE = '16-20'
+ADDRESS_LINE_ONE_INVALID = '16-20$'
 ADDRESS_LINE_TWO = 'Great Smith Street'
 TOWN = 'London'
 POSTCODE = 'SW1P 3BT'
