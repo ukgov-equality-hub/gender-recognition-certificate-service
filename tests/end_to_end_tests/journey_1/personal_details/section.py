@@ -485,6 +485,18 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.error(field='town', message='Enter your town or city')
     await asserts.error(field='postcode', message='Enter your postcode')
 
+    # Enter invalid address line one value, click Save and continue
+    await helpers.fill_textbox(field='address_line_one', value=data.ADDRESS_LINE_ONE_INVALID)
+    await helpers.fill_textbox(field='address_line_two', value=data.ADDRESS_LINE_TWO)
+    await helpers.fill_textbox(field='town', value=data.TOWN)
+    await helpers.fill_textbox(field='postcode', value=data.POSTCODE)
+    await helpers.click_button('Save and continue')
+    await asserts.url('/personal-details/address')
+    await asserts.accessibility()
+    await asserts.h1('What is your address?')
+    await asserts.number_of_errors(1)
+    await asserts.error(field='address_line_one', message='Enter a valid address line one')
+
     # Enter valid values, click Save and continue
     await helpers.fill_textbox(field='address_line_one', value=data.ADDRESS_LINE_ONE)
     await helpers.fill_textbox(field='address_line_two', value=data.ADDRESS_LINE_TWO)
