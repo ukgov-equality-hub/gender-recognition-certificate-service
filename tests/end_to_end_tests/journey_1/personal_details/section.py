@@ -495,7 +495,7 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.accessibility()
     await asserts.h1('What is your address?')
     await asserts.number_of_errors(1)
-    await asserts.error(field='address_line_one', message='Enter a valid address line one')
+    await asserts.error(field='address_line_one', message='Enter a valid Address line one')
 
     # Enter valid values, click Save and continue
     await helpers.fill_textbox(field='address_line_one', value=data.ADDRESS_LINE_ONE)
