@@ -345,7 +345,7 @@ class HmrcForm(FlaskForm):
     )
 
     national_insurance_number = StringField(
-        validators=[StrictRequiredIf('tell_hmrc', True, message='Enter your National Insurance number'), validateNationalInsuranceNumber]
+        validators=[StrictRequiredIf('tell_hmrc', True, message='Enter your National Insurance number', validators=[validateNationalInsuranceNumber])]
     )
 
 
