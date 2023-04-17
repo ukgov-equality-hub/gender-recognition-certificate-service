@@ -141,7 +141,7 @@ def validateAddressField(form, field):
         data = field.data
         match = re.search('^[a-zA-Z0-9- ]*$', data)
         if match is None:
-            raise ValidationError(f'Enter a valid {field.name.replace("_", " ").title()}')
+            raise ValidationError(f'Enter a valid {field.name.replace("_", " ")}')
 
 
 def validatePostcode(form, field):
