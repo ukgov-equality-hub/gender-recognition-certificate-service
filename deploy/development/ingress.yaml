@@ -6,8 +6,44 @@ metadata:
   annotations:
     external-dns.alpha.kubernetes.io/set-identifier: gender-recognition-service-grc-dev-green
     external-dns.alpha.kubernetes.io/aws-weight: "100"
+    nginx.ingress.kubernetes.io/enable-modsecurity: "true"
+    nginx.ingress.kubernetes.io/modsecurity-snippet: |
+      SecRuleEngine On
+    nginx.ingress.kubernetes.io/server-snippet: |
+      location @custom_403 {
+        return 403 "<div class="govuk-grid-row">
+                      <div class="govuk-grid-column-two-thirds">
+
+                          <h1 class="govuk-heading-l">
+                              Sorry, there is a problem with the service
+                          </h1>
+                          <p class="govuk-body">
+                              Please try again later.
+                          </p>
+                          <p class="govuk-body">
+                              We have saved your answers. They will be available for 6 months.
+                          </p>
+                          <p class="govuk-body">
+                              Contact the admin team if you need help with your application.
+                          </p>
+                          <p class="govuk-body">
+                              <a href="mailto:GRPenquiries@justice.gov.uk" class="govuk-link">
+                                  GRPenquiries@justice.gov.uk
+                              </a><br>
+                              Telephone: 020 3936 8968<br>
+                              Monday to Friday, 9am to 5pm<br>
+                              <a href=https://www.gov.uk/call-charges"
+                                 target="_blank" class="govuk-link">
+                                  Find out about call charges (opens in a new tab)
+                              </a>
+                          </p>
+
+                      </div>
+                    </div>";
+      }
+      error_page 403 @custom_403;
 spec:
-  ingressClassName: default
+  ingressClassName: modsec
   tls:
   - hosts:
     - dev.gender-recognition.service.justice.gov.uk
