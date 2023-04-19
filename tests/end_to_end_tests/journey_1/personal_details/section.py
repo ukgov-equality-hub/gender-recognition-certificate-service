@@ -249,6 +249,16 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(1)
     await asserts.error(field='transition_date_year', message='Enter a date within the last 100 years')
 
+    # Enter a valid date that is not 2 years prior to application created date
+    await helpers.fill_textbox(field='transition_date_month', value=data.TRANSITION_DATE_MONTH_PLUS_ONE)
+    await helpers.fill_textbox(field='transition_date_year', value=data.TRANSITION_DATE_YEAR_MINUS_TWO)
+    await helpers.click_button('Save and continue')
+    await asserts.url('/personal-details/transition-date')
+    await asserts.accessibility()
+    await asserts.h1('When did you transition?')
+    await asserts.number_of_errors(1)
+    await asserts.error(field='transition_date_year', message='Enter a date at least 2 years before your application')
+
     # Enter a valid date
     await helpers.fill_textbox(field='transition_date_month', value=data.TRANSITION_DATE_MONTH)
     await helpers.fill_textbox(field='transition_date_year', value=data.TRANSITION_DATE_YEAR)
@@ -363,6 +373,17 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(1)
     await asserts.error(field='statutory_declaration_date_year', message='Enter a date within the last 100 years')
 
+    # Enter a valid date that is before transition date
+    await helpers.fill_textbox(field='statutory_declaration_date_day', value=data.STATUTORY_DECLARATION_DATE_DAY)
+    await helpers.fill_textbox(field='statutory_declaration_date_month', value=data.TRANSITION_DATE_MONTH_MINUS_ONE)
+    await helpers.fill_textbox(field='statutory_declaration_date_year', value=data.TRANSITION_DATE_YEAR)
+    await helpers.click_button('Save and continue')
+    await asserts.url('/personal-details/statutory-declaration-date')
+    await asserts.accessibility()
+    await asserts.h1('When did you sign your statutory declaration?')
+    await asserts.number_of_errors(1)
+    await asserts.error(field='statutory_declaration_date_year', message='Enter a date that does not precede your transition date')
+
     # Enter a valid date
     await helpers.fill_textbox(field='statutory_declaration_date_day', value=data.STATUTORY_DECLARATION_DATE_DAY)
     await helpers.fill_textbox(field='statutory_declaration_date_month', value=data.STATUTORY_DECLARATION_DATE_MONTH)
@@ -463,6 +484,18 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.error(field='address_line_one', message='Enter your address')
     await asserts.error(field='town', message='Enter your town or city')
     await asserts.error(field='postcode', message='Enter your postcode')
+
+    # Enter invalid address line one value, click Save and continue
+    await helpers.fill_textbox(field='address_line_one', value=data.ADDRESS_LINE_ONE_INVALID)
+    await helpers.fill_textbox(field='address_line_two', value=data.ADDRESS_LINE_TWO)
+    await helpers.fill_textbox(field='town', value=data.TOWN)
+    await helpers.fill_textbox(field='postcode', value=data.POSTCODE)
+    await helpers.click_button('Save and continue')
+    await asserts.url('/personal-details/address')
+    await asserts.accessibility()
+    await asserts.h1('What is your address?')
+    await asserts.number_of_errors(1)
+    await asserts.error(field='address_line_one', message='Enter a valid address line one')
 
     # Enter valid values, click Save and continue
     await helpers.fill_textbox(field='address_line_one', value=data.ADDRESS_LINE_ONE)
@@ -594,6 +627,17 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(1)
     await asserts.error(field='email', message="Enter a valid email address")
 
+    # Enter an invalid phone number
+    await helpers.check_checkbox(field='contact_options', value='PHONE')
+    await helpers.fill_textbox(field='phone', value='+44 123 456 7890')
+    await helpers.uncheck_checkbox(field='contact_options', value='EMAIL')
+    await helpers.click_button('Save and continue')
+    await asserts.url('/personal-details/contact-preferences')
+    await asserts.accessibility()
+    await asserts.h1('How would you like to be contacted if we have any questions about your application?')
+    await asserts.number_of_errors(1)
+    await asserts.error(field='phone', message="Enter a valid phone number")
+
     # Choose all the options and enter a valid email address and phone number
     await helpers.check_checkbox(field='contact_options', value='EMAIL')
     await helpers.fill_textbox(field='email', value=data.EMAIL_ADDRESS)
@@ -665,6 +709,16 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.h1('Notifying HMRC')
     await asserts.number_of_errors(1)
     await asserts.error(field='national_insurance_number', message='Enter a valid National Insurance number')
+
+    # Choose "No" option AND enter an invalid NI number
+    await helpers.check_radio(field='tell_hmrc', value='True')
+    await helpers.fill_textbox(field='national_insurance_number', value='INVALID-NI')
+    await helpers.check_radio(field='tell_hmrc', value='False')
+    await helpers.click_button('Save and continue')
+    await asserts.number_of_errors(0)
+    await asserts.url('/personal-details/check-your-answers')
+    await asserts.accessibility()
+    await helpers.click_button('Back')
 
     # Enter a valid National Insurance number
     await helpers.check_radio(field='tell_hmrc', value='True')
