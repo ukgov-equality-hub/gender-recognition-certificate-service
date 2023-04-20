@@ -15,7 +15,6 @@ spec:
       containers:
       - name: grc-app
         image: 754256621582.dkr.ecr.eu-west-2.amazonaws.com/pet/grc-dev-ecr:grc-app-latest
-        imagePullPolicy: Always
         ports:
         - containerPort: 3000
         env:
