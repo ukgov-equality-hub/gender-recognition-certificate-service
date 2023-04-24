@@ -9,7 +9,7 @@ function load_plot() {
     loadresource('https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6', 'js', 'script_plot', load_htl)
 }
 function load_htl() {
-    loadresource('https://cdn.jsdelivr.net/npm/htl@0.3.1/dist/htl.min.js', 'js', 'script_htl', rendercharts)
+    loadresource('https://cdn.jsdelivr.net/npm/htl@0.3.1/dist/htl.min.js', 'js', 'script_htl', setTimeout(rendercharts, 1000))
 }
 load_d3()
 

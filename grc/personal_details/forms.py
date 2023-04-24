@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import EmailField, StringField, RadioField, TelField, SelectField, SelectMultipleField
 from wtforms.validators import DataRequired, Email
-from grc.utils.form_custom_validators import StrictRequiredIf, validateNationalInsuranceNumber, validatePostcode, validateDateOfTransiton, validateStatutoryDeclarationDate, Integer
+from grc.utils.form_custom_validators import StrictRequiredIf, validateNationalInsuranceNumber, validateAddressField, validatePostcode, validateDateOfTransiton, validatePhoneNumber, validateStatutoryDeclarationDate, Integer
 from grc.business_logic.data_structures.personal_details_data import AffirmedGender
 
 
@@ -83,13 +83,13 @@ class PreviousNamesCheck(FlaskForm):
 
 class AddressForm(FlaskForm):
     address_line_one = StringField(
-        validators=[DataRequired(message='Enter your address')]
+        validators=[DataRequired(message='Enter your address'), validateAddressField]
     )
 
-    address_line_two = StringField()  # This field is optional, so has no validators
+    address_line_two = StringField(validators=[validateAddressField])
 
     town = StringField(
-        validators=[DataRequired(message='Enter your town or city')]
+        validators=[DataRequired(message='Enter your town or city'), validateAddressField]
     )
 
     country = SelectField(
@@ -316,7 +316,8 @@ class ContactPreferencesForm(FlaskForm):
     )
 
     phone = TelField(
-        validators=[StrictRequiredIf('contact_options', 'PHONE', message='Enter your phone number')]
+        validators=[StrictRequiredIf('contact_options', 'PHONE', message='Enter your phone number',
+                                     validators=[validatePhoneNumber])]
     )
 
 
@@ -344,7 +345,7 @@ class HmrcForm(FlaskForm):
     )
 
     national_insurance_number = StringField(
-        validators=[StrictRequiredIf('tell_hmrc', True, message='Enter your National Insurance number'), validateNationalInsuranceNumber]
+        validators=[StrictRequiredIf('tell_hmrc', True, message='Enter your National Insurance number', validators=[validateNationalInsuranceNumber])]
     )
 
 

@@ -1,3 +1,5 @@
+from datetime import date
+from dateutil.relativedelta import relativedelta
 
 DEFAULT_TIMEOUT = 3 * 1000  # Wait a maximum of 3 seconds
 TIMEOUT_FOR_SLOW_OPERATIONS = 30 * 1000  # For slow operations, wait a maximum of 30 seconds
@@ -16,13 +18,13 @@ TOWN = 'London'
 POSTCODE = 'SW1P 3BT'
 
 TRANSITION_DATE_MONTH = '3'
-TRANSITION_DATE_YEAR = '2000'
-TRANSITION_DATE_FORMATTED = 'March 2000'
+TRANSITION_DATE_YEAR = str((date.today() - relativedelta(years=3)).year)
+TRANSITION_DATE_FORMATTED = f'March {TRANSITION_DATE_YEAR}'
 
 STATUTORY_DECLARATION_DATE_DAY = '5'
 STATUTORY_DECLARATION_DATE_MONTH = '3'
-STATUTORY_DECLARATION_DATE_YEAR = '2000'
-STATUTORY_DECLARATION_DATE_FORMATTED = '05 March 2000'
+STATUTORY_DECLARATION_DATE_YEAR = str((date.today() - relativedelta(years=2)).year)
+STATUTORY_DECLARATION_DATE_FORMATTED = f'05 March {STATUTORY_DECLARATION_DATE_YEAR}'
 
 DATES_TO_AVOID = '1st June - 2nd July\n3rd August - 4th September'
 

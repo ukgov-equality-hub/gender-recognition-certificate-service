@@ -2,9 +2,9 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: gender-recognition-service
-  namespace: grc-preprod
+  namespace: grc-dev
   annotations:
-    external-dns.alpha.kubernetes.io/set-identifier: gender-recognition-service-grc-preprod-green
+    external-dns.alpha.kubernetes.io/set-identifier: gender-recognition-service-grc-dev-green
     external-dns.alpha.kubernetes.io/aws-weight: "100"
     nginx.ingress.kubernetes.io/enable-modsecurity: "true"
     nginx.ingress.kubernetes.io/modsecurity-snippet: |
@@ -14,19 +14,21 @@ metadata:
         return 403 "<h1>There is a problem:</h1><br><h3>Go back to the previous page using the back arrow and enter valid content</h3>";
       }
       error_page 403 @custom_403;
-
 spec:
   ingressClassName: modsec
   tls:
   - hosts:
-    - preprod.gender-recognition.service.justice.gov.uk
+    - dev.gender-recognition.service.justice.gov.uk
     secretName: gender-recognition-service-app-secret
   - hosts:
-    - preprod.dashboard.gender-recognition.service.justice.gov.uk
+    - dev.admin.gender-recognition.service.justice.gov.uk
+    secretName: gender-recognition-service-admin-secret
+  - hosts:
+    - dev.dashboard.gender-recognition.service.justice.gov.uk
     secretName: gender-recognition-dashboard-secret
 
   rules:
-  - host: preprod.gender-recognition.service.justice.gov.uk
+  - host: dev.gender-recognition.service.justice.gov.uk
     http:
       paths:
           - path: /
@@ -37,7 +39,18 @@ spec:
                 port: 
                   number: 3000
 
-  - host: preprod.dashboard.gender-recognition.service.justice.gov.uk
+  - host: dev.admin.gender-recognition.service.justice.gov.uk
+    http:
+      paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: grc-admin-service
+                port: 
+                  number: 3001
+   
+  - host: dev.dashboard.gender-recognition.service.justice.gov.uk
     http:
       paths:
           - path: /
