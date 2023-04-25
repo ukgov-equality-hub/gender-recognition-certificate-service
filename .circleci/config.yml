@@ -232,32 +232,6 @@ jobs:
             sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/production/dashboard-deployment.yaml
             kubectl apply -n grc-prod --record=false -f ./deploy/production
 
-  tag_production:
-    <<: *cloud_container
-    steps:
-      - checkout
-
-      - setup_remote_docker:
-          version: 20.10.11
-          docker_layer_caching: true
-
-      - run:
-          name: promote staging image to production
-          command: |
-            login="$(aws ecr get-login --region ${AWS_DEFAULT_REGION} --no-include-email)"
-            ${login}
-            docker pull "${ECR_ENDPOINT_PREPROD}:grc-dashboard-${CIRCLE_SHA1}"
-            docker tag grc-dashboard "${ECR_ENDPOINT_PROD}:grc-dashboard-latest"
-            docker push "${ECR_ENDPOINT_PROD}:grc-dashboard-latest"
-
-            docker pull "${ECR_ENDPOINT_PREPROD}:grc-admin-${CIRCLE_SHA1}"
-            docker tag grc-admin "${ECR_ENDPOINT_PROD}:grc-admin-latest"
-            docker push "${ECR_ENDPOINT_PROD}:grc-admin-latest"
-
-            docker pull "${ECR_ENDPOINT_PREPROD}:grc-app-${CIRCLE_SHA1}"
-            docker tag grc-app "${ECR_ENDPOINT_PROD}:grc-app-latest"
-            docker push "${ECR_ENDPOINT_PROD}:grc-app-latest"
-
 commands:
     tag_and_push_images:
       description: Tag and push images to relative ecr endpoint
