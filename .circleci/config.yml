@@ -331,10 +331,6 @@ workflows:
           filters:
             branches:
               only: /^master$/
-      - tag_production:
-          filters:
-            branches:
-              only: /^master$/
       - deploy_image_to_production:
           name: deploy-production-live
           env_name: prod
@@ -342,7 +338,7 @@ workflows:
             branches:
               only: /^master$/
           requires:
-            - tag_production
+            - build-containers-prod
 
 #  smoke-tests:
 #    jobs:
