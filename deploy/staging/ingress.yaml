@@ -10,7 +10,7 @@ metadata:
       nginx.ingress.kubernetes.io/modsecurity-snippet: |
         Detection Only Mode
 spec:
-  ingressClassName: modsec
+  ingressClassName: modesec
   tls:
   - hosts:
     - preprod.gender-recognition.service.justice.gov.uk
