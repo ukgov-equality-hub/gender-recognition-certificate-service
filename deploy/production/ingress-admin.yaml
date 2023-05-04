@@ -14,9 +14,10 @@ metadata:
     external-dns.alpha.kubernetes.io/aws-weight: "100"
 spec:
   ingressClassName: default
-    - hosts:
-        - admin.apply-gender-recognition-certificate.service.gov.uk
-      secretName: apply-gender-recognition-service-admin-secret
+  tls:
+  - hosts:
+    - admin.apply-gender-recognition-certificate.service.gov.uk
+    secretName: apply-gender-recognition-service-admin-secret
 
   rules:
     - host: admin.apply-gender-recognition-certificate.service.gov.uk
