@@ -287,6 +287,10 @@ workflows:
           filters:
             branches:
               only: /^staging$/
+      - approve_staging:
+          type: approval
+          requires:
+            - build-containers-preprod
       - deploy_image_to_preprod:
           name: deploy-staging-live
           filters:
@@ -302,6 +306,10 @@ workflows:
           filters:
             branches:
               only: /^master$/
+      - approve_production:
+          type: approval
+          requires:
+            - build-containers-prod
       - deploy_image_to_production:
           name: deploy-production-live
           filters:
