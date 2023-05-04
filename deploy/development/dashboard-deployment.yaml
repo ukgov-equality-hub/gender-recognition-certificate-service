@@ -36,7 +36,10 @@ spec:
                 name: basic-auth
                 key: csrf
           - name: SQLALCHEMY_DATABASE_URI
-            value: "postgresql://cpSbWIchMw:ZRdIpsBIBbWnaLcF@cloud-platform-0a18229a29ea004e.cdwm328dlye6.eu-west-2.rds.amazonaws.com:5432/db0a18229a29ea004e"
+            valueFrom:
+              secretKeyRef:
+                name: rds-postgresql-instance-output
+                key: sql_alchemy_url
           - name: SQLALCHEMY_KEY
             valueFrom:
               secretKeyRef:
