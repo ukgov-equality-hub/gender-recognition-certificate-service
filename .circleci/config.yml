@@ -297,7 +297,7 @@ workflows:
             branches:
               only: /^staging$/
           requires:
-            - build-containers-preprod
+            - approve_staging
       ### PRODUCTION ###
       - build:
           name: build-containers-prod
@@ -316,7 +316,7 @@ workflows:
             branches:
               only: /^master$/
           requires:
-            - build-containers-prod
+            - approve_production
 
 #  smoke-tests:
 #    jobs:
