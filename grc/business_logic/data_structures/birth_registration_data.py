@@ -11,28 +11,29 @@ class AdoptedInTheUkEnum(GrcEnum):
 
 
 class BirthRegistrationData:
-    first_name: str = None
-    middle_names: str = None
-    last_name: str = None
+    def __init__(self):
+        self.first_name: str = None
+        self.middle_names: str = None
+        self.last_name: str = None
 
-    date_of_birth: datetime.date = None
+        self.date_of_birth: datetime.date = None
 
-    birth_registered_in_uk: bool = None
-    country_of_birth: str = None
-    town_city_of_birth: str = None
+        self.birth_registered_in_uk: bool = None
+        self.country_of_birth: str = None
+        self.town_city_of_birth: str = None
 
-    mothers_first_name: str = None
-    mothers_last_name: str = None
-    mothers_maiden_name: str = None
+        self.mothers_first_name: str = None
+        self.mothers_last_name: str = None
+        self.mothers_maiden_name: str = None
 
-    fathers_name_on_birth_certificate: bool = None
-    fathers_first_name: str = None
-    fathers_last_name: str = None
+        self.fathers_name_on_birth_certificate: bool = None
+        self.fathers_first_name: str = None
+        self.fathers_last_name: str = None
 
-    adopted: bool = None
-    adopted_in_the_uk: AdoptedInTheUkEnum = None
+        self.adopted: bool = None
+        self.adopted_in_the_uk: AdoptedInTheUkEnum = None
 
-    forces_registration: bool = None
+        self.forces_registration: bool = None
 
     @property
     def full_name(self) -> str:

@@ -20,24 +20,16 @@ def any_duplicate_aws_file_names(uploads_files: List[EvidenceFile]):
 
 
 class ApplicationData:
-    reference_number: str = None
-    email_address: str = None
-    updated: datetime = None
-
-    confirmation_data: ConfirmationData
-    personal_details_data: PersonalDetailsData
-    birth_registration_data: BirthRegistrationData
-    partnership_details_data: PartnershipDetailsData
-    uploads_data: UploadsData
-    submit_and_pay_data: SubmitAndPayData
-
     def __init__(self):
-        self.confirmation_data = ConfirmationData()
-        self.personal_details_data = PersonalDetailsData()
-        self.birth_registration_data = BirthRegistrationData()
-        self.partnership_details_data = PartnershipDetailsData()
-        self.uploads_data = UploadsData()
-        self.submit_and_pay_data = SubmitAndPayData()
+        self.reference_number: str = None
+        self.email_address: str = None
+        self.updated: datetime = None
+        self.confirmation_data: ConfirmationData = ConfirmationData()
+        self.personal_details_data: PersonalDetailsData = PersonalDetailsData()
+        self.birth_registration_data: BirthRegistrationData = BirthRegistrationData()
+        self.partnership_details_data: PartnershipDetailsData = PartnershipDetailsData()
+        self.uploads_data: UploadsData = UploadsData()
+        self.submit_and_pay_data: SubmitAndPayData = SubmitAndPayData()
 
     def _upload_section_status(self, section):
         if len(section) == 0:

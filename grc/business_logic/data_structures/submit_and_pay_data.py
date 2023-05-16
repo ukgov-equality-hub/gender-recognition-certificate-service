@@ -8,18 +8,19 @@ class HelpWithFeesType(GrcEnum):
 
 
 class SubmitAndPayData:
-    applying_for_help_with_fee: bool = None
+    def __init__(self):
+        self.applying_for_help_with_fee: bool = None
 
-    how_applying_for_help_with_fees: HelpWithFeesType = None
-    help_with_fees_reference_number: str = None
+        self.how_applying_for_help_with_fees: HelpWithFeesType = None
+        self.help_with_fees_reference_number: str = None
 
-    declaration: bool = None
+        self.declaration: bool = None
 
-    gov_pay_payment_id: str = None
-    gov_pay_uuid: str = None
-    gov_pay_payment_details: str = None
+        self.gov_pay_payment_id: str = None
+        self.gov_pay_uuid: str = None
+        self.gov_pay_payment_details: str = None
 
-    is_submitted: bool = False
+        self.is_submitted: bool = False
 
     @property
     def applying_for_help_with_fee_formatted(self) -> str:

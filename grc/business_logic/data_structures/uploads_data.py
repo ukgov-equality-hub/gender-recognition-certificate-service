@@ -2,23 +2,17 @@ from typing import List
 
 
 class EvidenceFile:
-    original_file_name: str
-    aws_file_name: str
-    password_required: bool = False
+    def __init__(self):
+        self.original_file_name: str = None
+        self.aws_file_name: str = None
+        self.password_required: bool = False
 
 
 class UploadsData:
-    medical_reports: List[EvidenceFile] = []
-    evidence_of_living_in_gender: List[EvidenceFile] = []
-    name_change_documents: List[EvidenceFile] = []
-    partnership_documents: List[EvidenceFile] = []
-    overseas_documents: List[EvidenceFile] = []
-    statutory_declarations: List[EvidenceFile] = []
-
     def __init__(self):
-        self.medical_reports = []
-        self.evidence_of_living_in_gender = []
-        self.name_change_documents = []
-        self.partnership_documents = []
-        self.overseas_documents = []
-        self.statutory_declarations = []
+        self.medical_reports: List[EvidenceFile] = []
+        self.evidence_of_living_in_gender: List[EvidenceFile] = []
+        self.name_change_documents: List[EvidenceFile] = []
+        self.partnership_documents: List[EvidenceFile] = []
+        self.overseas_documents: List[EvidenceFile] = []
+        self.statutory_declarations: List[EvidenceFile] = []

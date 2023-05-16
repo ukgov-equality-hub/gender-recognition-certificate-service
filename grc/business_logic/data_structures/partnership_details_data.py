@@ -10,19 +10,20 @@ class CurrentlyInAPartnershipEnum(GrcEnum):
 
 
 class PartnershipDetailsData:
-    currently_in_a_partnership: CurrentlyInAPartnershipEnum = None
+    def __init__(self):
+        self.currently_in_a_partnership: CurrentlyInAPartnershipEnum = None
 
-    plan_to_remain_in_a_partnership: bool = None
-    partner_agrees: bool = None
-    confirm_understood_interim_certificate: bool = None
+        self.plan_to_remain_in_a_partnership: bool = None
+        self.partner_agrees: bool = None
+        self.confirm_understood_interim_certificate: bool = None
 
-    partner_title: str = None
-    partner_first_name: str = None
-    partner_last_name: str = None
-    partner_postal_address: str = None
+        self.partner_title: str = None
+        self.partner_first_name: str = None
+        self.partner_last_name: str = None
+        self.partner_postal_address: str = None
 
-    previous_partnership_partner_died: bool = None
-    previous_partnership_ended: bool = None
+        self.previous_partnership_partner_died: bool = None
+        self.previous_partnership_ended: bool = None
 
     @property
     def is_married(self) -> bool:
