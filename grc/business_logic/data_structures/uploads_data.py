@@ -36,3 +36,4 @@ class UploadsData:
         self.partnership_documents: List[EvidenceFile] = []
         self.overseas_documents: List[EvidenceFile] = []
         self.statutory_declarations: List[EvidenceFile] = []
+        self.birth_or_adoption_certificates: List[EvidenceFile] = []

@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% import "govuk-design-system-templates/error-summary.html" as error_summary %}
+{% import "upload/_upload-files-section.html" as upload_files_section %}
+
+{% block title %}Upload your medical reports{% endblock %}
+
+{% block backLink %}
+    <a href="{{ url_for('taskList.index') }}" class="govuk-back-link">Back</a>
+{% endblock %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            {{ error_summary.renderFor(form) }}
+
+            <h1 class="govuk-heading-l">
+                Upload your birth or adoption certificate
+            </h1>
+            <p class="govuk-body">
+                You must upload a scan or good quality photograph of the whole birth or adoption certificate.
+                If the certificate is longer than one page, you must upload every page.
+            </p>
+            <div class="govuk-warning-text govuk-!-margin-bottom-4 govuk-!-padding-0">
+                <span class="govuk-warning-text__icon govuk-!-margin-top-1" aria-hidden="true">!</span>
+                <strong class="govuk-warning-text__text">
+                    <span class="govuk-warning-text__assistive">Warning</span>
+                    We will only accept clear images of full pages.
+                    If you take a photograph, please make sure all 4 corners of each page are visible.
+                </strong>
+            </div>
+            <p class="govuk-body">
+                We process and protect all documents you upload in accordance with our
+                <a href="{{ url_for('policies.privacy_policy') }}"
+                   target="_blank" class="govuk-link">
+                    privacy policy (opens in a new tab)</a>.
+            </p>
+
+            {% macro extra_upload_hint() %}
+                <p class="govuk-body">
+                    Please upload the files in page order if you can.
+                </p>
+            {%- endmacro %}
+
+            {{ upload_files_section.render(
+                form,
+                deleteform,
+                deleteAllFilesInSectionForm,
+                currently_uploaded_files=currently_uploaded_files,
+                section_url=section_url,
+                duplicate_aws_file_names=duplicate_aws_file_names,
+                extra_upload_hint=extra_upload_hint)
+            }}
+
+        </div>
+    </div>
+{% endblock %}

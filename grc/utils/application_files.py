@@ -13,8 +13,8 @@ logger = Logger()
 
 
 class ApplicationFiles():
-    sections = ['medicalReports', 'genderEvidence', 'nameChange', 'marriageDocuments', 'overseasCertificate', 'statutoryDeclarations']
-    section_names = ['Medical Reports', 'Gender Evidence', 'Name Change', 'Marriage Documents', 'Overseas Certificate', 'Statutory Declarations']
+    sections = ['medicalReports', 'genderEvidence', 'nameChange', 'marriageDocuments', 'overseasCertificate', 'statutoryDeclarations', 'birthOrAdoptionCertificate']
+    section_names = ['Medical Reports', 'Gender Evidence', 'Name Change', 'Marriage Documents', 'Overseas Certificate', 'Statutory Declarations', 'Birth or adoption certificate']
     section_files:  Dict[str, Callable[[UploadsData], List[EvidenceFile]]] = {
         'medicalReports': (lambda u: u.medical_reports),
         'genderEvidence': (lambda u: u.evidence_of_living_in_gender),
@@ -22,6 +22,7 @@ class ApplicationFiles():
         'marriageDocuments': (lambda u: u.partnership_documents),
         'overseasCertificate': (lambda u: u.overseas_documents),
         'statutoryDeclarations': (lambda u: u.statutory_declarations),
+        'birthOrAdoptionCertificate': (lambda u: u.birth_or_adoption_certificates),
     }
 
 

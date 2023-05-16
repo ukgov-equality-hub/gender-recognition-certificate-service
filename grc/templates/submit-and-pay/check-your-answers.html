@@ -415,6 +415,13 @@
                     changeLinkUrl=url_for('upload.uploadInfoPage', section_url='statutory-declarations'),
                     value=(uploadedDocumentsList(application_data.uploads_data.statutory_declarations, 'statutoryDeclarations'))
                 ) }}
+
+                {{ summary_list_item.render(
+                    title='Birth or adoption certificate',
+                    changeLinkHiddenText='the birth or adoption certificates you have uploaded',
+                    changeLinkUrl=url_for('upload.uploadInfoPage', section_url='birth-or-adoption-certificate'),
+                    value=(uploadedDocumentsList(application_data.uploads_data.birth_or_adoption_certificates, 'birthOrAdoptionCertificate'))
+                ) }}
             </dl>
 
             <h2 class="govuk-heading-m">
