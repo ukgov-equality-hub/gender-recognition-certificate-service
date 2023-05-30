@@ -8,18 +8,26 @@ class HelpWithFeesType(GrcEnum):
 
 
 class SubmitAndPayData:
-    applying_for_help_with_fee: bool = None
+    def __new__(cls, *args, **kwargs):
+        # This method has been added to address a limitation of jsonpickle.decode
+        # We use the jsonpickle library to convert these python classes to/from JSON to store in the database
+        # The instance-level fields are declared in the __init__ method
+        # When jsonpickle.decode re-creates a class, it calls __new__, but it does not call __init__
+        # We need it to call __init__ to make sure we have set up all the instance-level fields, so we call __init__ here manually
+        new_instance = super().__new__(cls)
+        new_instance.__init__()
+        return new_instance
 
-    how_applying_for_help_with_fees: HelpWithFeesType = None
-    help_with_fees_reference_number: str = None
+    def __init__(self):
+        self.applying_for_help_with_fee: bool = None
 
-    declaration: bool = None
-
-    gov_pay_payment_id: str = None
-    gov_pay_uuid: str = None
-    gov_pay_payment_details: str = None
-
-    is_submitted: bool = False
+        self.how_applying_for_help_with_fees: HelpWithFeesType = None
+        self.help_with_fees_reference_number: str = None
+        self.declaration: bool = None
+        self.gov_pay_payment_id: str = None
+        self.gov_pay_uuid: str = None
+        self.gov_pay_payment_details: str = None
+        self.is_submitted: bool = False
 
     @property
     def applying_for_help_with_fee_formatted(self) -> str:
