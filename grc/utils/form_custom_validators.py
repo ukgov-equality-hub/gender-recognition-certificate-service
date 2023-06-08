@@ -6,10 +6,10 @@ from wtforms.validators import DataRequired, ValidationError, StopValidation
 from werkzeug.datastructures import FileStorage
 from collections.abc import Iterable
 from datetime import datetime, date
+from grc.business_logic.data_store import DataStore
 from grc.utils.security_code import validate_security_code
 from grc.utils.reference_number import validate_reference_number
 from grc.models import db, Application
-
 
 class RequiredIf(DataRequired):
     """Validator which makes a field required if another field is set and has a truthy value.
@@ -189,9 +189,12 @@ def validateDateOfTransiton(form, field):
         earliest_date_of_transition_years = 100
         earliest_date_of_transition = date.today() - relativedelta(years=earliest_date_of_transition_years)
 
+        reference_number = session['reference_number']
         application_record = db.session.query(Application).filter_by(
-            reference_number=session['reference_number']
+            reference_number=reference_number
         ).first()
+        application_data = DataStore.load_application(reference_number)
+
         latest_transition_years = 2
         application_created_date = date(
             application_record.created.year,
@@ -206,7 +209,8 @@ def validateDateOfTransiton(form, field):
         if date_of_transition > date.today():
             raise ValidationError('Enter a date in the past')
 
-        if date_of_transition > latest_transition_date:
+        if date_of_transition > latest_transition_date \
+                and not application_data.confirmation_data.gender_recognition_outside_uk:
             raise ValidationError(f'Enter a date at least {latest_transition_years} years before your application')
 
 
