@@ -50,6 +50,7 @@ class StrictRequiredIf(DataRequired):
         self.validators = validators
 
     def __call__(self, form, field):
+
         other_field = form[self.other_field_name]
 
         if other_field is None:
@@ -72,6 +73,7 @@ class Integer(DataRequired):
         self.validators = validators
 
     def __call__(self, form, field):
+
         string_value: str = field.data
 
         try:
@@ -293,6 +295,94 @@ def validateHWFReferenceNumber(form, field):
         )
         if match is None:
             raise ValidationError(f'Enter a valid \'Help with fees\' reference number')
+
+
+def validate_single_date(form, field):
+    if not form['day'].errors and not form['month'].errors:
+        try:
+            day = int(form['day'].data)
+            month = int(form['month'].data)
+            year = int(form['year'].data)
+            date_entered = date(year, month, day)
+        except Exception as e:
+            print(f"ERROR => {e}", flush=True)
+            raise ValidationError('Enter a valid date')
+
+        if date_entered < date.today():
+            raise ValidationError('Enter a date in the future')
+
+
+def validate_date_range_form(date_ranges_form):
+    form_errors = dict()
+    from_date_day_entered = True
+    from_date_month_entered = True
+    from_date_year_entered = True
+    to_date_day_entered = True
+    to_date_month_entered = True
+    to_date_year_entered = True
+
+    if not date_ranges_form.from_date_day.data:
+        form_errors['from_date_day'] = 'Enter a day'
+        from_date_day_entered = False
+
+    if not date_ranges_form.from_date_month.data:
+        form_errors['from_date_month'] = 'Enter a month'
+        from_date_month_entered = False
+
+    if not date_ranges_form.from_date_year.data:
+        form_errors['from_date_year'] = 'Enter a year'
+        from_date_year_entered = False
+
+    if not date_ranges_form.to_date_day.data:
+        form_errors['to_date_day'] = 'Enter a day'
+        to_date_day_entered = False
+
+    if not date_ranges_form.to_date_month.data:
+        form_errors['to_date_month'] = 'Enter a month'
+        to_date_month_entered = False
+
+    if not date_ranges_form.to_date_year.data:
+        form_errors['to_date_year'] = 'Enter a year'
+        to_date_year_entered = False
+
+    if from_date_day_entered and (int(date_ranges_form.from_date_day.data) < 1 or
+                                  int(date_ranges_form.from_date_day.data) > 31):
+        form_errors['from_date_day'] = 'Enter a day as a number between 1 and 31'
+
+    if to_date_day_entered and (int(date_ranges_form.to_date_day.data) < 1 or
+                                int(date_ranges_form.to_date_day.data) > 31):
+        form_errors['to_date_day'] = 'Enter a day as a number between 1 and 31'
+
+    if from_date_month_entered and (int(date_ranges_form.from_date_month.data) < 1 or
+                                    int(date_ranges_form.from_date_month.data) > 12):
+        form_errors['from_date_month'] = 'Enter a month as a number between 1 and 12'
+
+    if to_date_month_entered and (int(date_ranges_form.to_date_month.data) < 1 or
+                                  int(date_ranges_form.to_date_month.data) > 12):
+        form_errors['to_date_month'] = 'Enter a month as a number between 1 and 12'
+
+    if from_date_year_entered and int(date_ranges_form.from_date_year.data) < 1000:
+        form_errors['from_date_year'] = 'Enter a year as a 4-digit number, like 2000'
+
+    if to_date_year_entered and int(date_ranges_form.to_date_year.data) < 1000:
+        form_errors['to_date_year'] = 'Enter a year as a 4-digit number, like 2000'
+
+    return form_errors
+
+
+def validate_date_ranges(from_date, to_date):
+    form_errors = dict()
+
+    if from_date < date.today():
+        form_errors['from_date_year'] = '\'From\' date is in the past'
+
+    if to_date < date.today():
+        form_errors['to_date_year'] = '\'To\' date is in the past'
+
+    if from_date > to_date:
+        form_errors['to_date_year'] = '\'From\' date is after the \'To\' date'
+
+    return form_errors
 
 
 class MultiFileAllowed(object):
