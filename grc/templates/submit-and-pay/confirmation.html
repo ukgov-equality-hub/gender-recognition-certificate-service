@@ -11,27 +11,17 @@
                     Application submitted
                 </h1>
                 <div class="govuk-panel__body">
-                    You should post all remaining documents to us as soon as possible
+                    We have sent you a confirmation email.
                 </div>
             </div>
-
-            <p class="govuk-body">
-                We have sent you a confirmation email.
-            </p>
 
             <h2 class="govuk-heading-m">
                 What you need to do next
             </h2>
-            <p class="govuk-body">
-                Post your birth or adoption certificate to us as soon as possible – include your name, address and application
-                reference number so we can match it to your application. Send either an original or a
-                <a href="https://www.gov.uk/certifying-a-document" rel="external" target="_blank" class="govuk-link">certified copy (opens in a new tab)</a>
-                – it will be posted back to you.
-            </p>
 
             {% if application_data.submit_and_pay_data.is_using_ex160_form %}
-                <p class="govuk-body">
-                    You also need to post an
+                <p class="govuk-body govuk-!-margin-bottom-2">
+                    If you are not paying your application fee online, you will need to post an
                     <a href="https://www.gov.uk/government/publications/apply-for-help-with-court-and-tribunal-fees"
                         rel="external" target="_blank" class="govuk-link">
                         EX160 form (opens in new tab)
@@ -39,6 +29,17 @@
                 </p>
             {% endif %}
 
+            <div class="govuk-warning-text">
+                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                <strong class="govuk-warning-text__text">
+                    <span class="govuk-warning-text__assistive">Warning</span>
+                    Do not send us any other documents unless we ask you to.
+                </strong>
+            </div>
+
+            <h3 class="govuk-heading-s govuk-!-font-weight-regular">
+                Sending your documents by Royal Mail
+            </h3>
             <p class="govuk-body govuk-!-margin-bottom-2">
                 If you are sending documents by Royal Mail (including tracked, special delivery, signed for, and Parcelforce), send to:
             </p>
@@ -48,8 +49,12 @@
                 Leicester<br>
                 LE1 8DJ
             </div>
+
+            <h3 class="govuk-heading-s govuk-!-font-weight-regular">
+                Sending your documents by courier
+            </h3>
             <p class="govuk-inset-text">
-                If you are sending documents by courier (for example, DPD, Evri, Fedex), please contact us first (details below).
+                If you are sending documents by courier (for example, DPD, Evri or Fedex), please contact us first (details below).
             </p>
 
             <p class="govuk-body">
@@ -70,21 +75,13 @@
                     getting certificates in Northern Ireland (opens in a new tab)</a>.
             </p>
 
-            <div class="govuk-warning-text">
-                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                <strong class="govuk-warning-text__text">
-                    <span class="govuk-warning-text__assistive">Warning</span>
-                    Do not send us any other documents unless we ask you to.
-                </strong>
-            </div>
-
             <h2 class="govuk-heading-m">
                 What happens next with your application
             </h2>
 
             <p class="govuk-body">
-                Once you’ve sent your documents, your application will be reviewed by the Gender Recognition Panel.
-                This usually happens within 22 weeks of you applying.
+                Your application will be reviewed by the Gender Recognition Panel.
+                This usually happens within 30 weeks of you applying.
             </p>
             <p class="govuk-body">
                 We will let you know if your application has any errors or missing documents, or if the Panel needs any
