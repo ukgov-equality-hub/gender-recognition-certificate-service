@@ -27,6 +27,8 @@ def index():
         status=ApplicationStatus.DOWNLOADED
     ).order_by(Application.updated.desc())
 
+    downloaded_apps_references = [application.reference_number for application in downloadedApplications]
+
     completedApplications = Application.query.filter_by(
         status=ApplicationStatus.COMPLETED
     ).order_by(Application.updated.desc())
@@ -38,6 +40,7 @@ def index():
         message=message,
         newApplications=newApplications,
         downloadedApplications=downloadedApplications,
+        downloaded_apps_references=downloaded_apps_references,
         completedApplications=completedApplications
     )
 
@@ -195,29 +198,29 @@ def download(reference_number):
     return local_redirect(url_for('applications.index', _anchor='downloaded'))
 
 
-@applications.route('/applications/<reference_number>/completed', methods=['GET'])
+@applications.route('/applications/completed', methods=['POST'])
 @AdminRequired
-def completed(reference_number):
-    message = ""
+def completed():
+    if request.form:
+        references = [reference for reference in request.form]
+        applications_to_mark_as_completed = db.session.query(Application).filter(
+            Application.reference_number.in_(references)).all()
 
-    application = Application.query.filter_by(
-        reference_number=reference_number
-    ).first()
+        if applications_to_mark_as_completed:
+            for application in applications_to_mark_as_completed:
+                application.status = ApplicationStatus.COMPLETED
+                application.completed = datetime.now()
+                application.completedBy = session['signedIn']
+                db.session.commit()
+                message = "application updated"
+                logger.log(LogLevel.INFO,
+                           f"{logger.mask_email_address(session['signedIn'])}"
+                           f" completed application {application.reference_number}")
+                session['message'] = message
+            return local_redirect(url_for('applications.index', _anchor='completed'))
 
-    if application is None:
-        message = "An application with that reference number cannot be found"
-        logger.log(LogLevel.INFO, f"{logger.mask_email_address(session['signedIn'])} attempted to complete application {reference_number} which cannot be found")
-    else:
-        application.status = ApplicationStatus.COMPLETED
-        application.completed = datetime.now()
-        application.completedBy = session['signedIn']
-        db.session.commit()
-        message = "application updated"
-
-        logger.log(LogLevel.INFO, f"{logger.mask_email_address(session['signedIn'])} completed application {reference_number}")
-
-    session['message'] = message
-    return local_redirect(url_for('applications.index', _anchor='completed'))
+    print('No applications to mark as completed', flush=True)
+    return local_redirect(url_for('applications.index', _anchor='downloaded'))
 
 
 @applications.route('/applications/<reference_number>/attachments', methods=['GET'])
