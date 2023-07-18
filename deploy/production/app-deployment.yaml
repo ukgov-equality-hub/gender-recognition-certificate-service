@@ -70,7 +70,7 @@ spec:
           - name: NOTIFY_UNFINISHED_APPLICATION_EMAIL_TEMPLATE_ID
             value: "151fce32-1f66-4efd-a875-28026e8d8d70"
           - name: NOTIFY_COMPLETED_APPLICATION_EMAIL_TEMPLATE_ID
-            value: "46a95e27-cec1-4b94-a065-4061d38546b6"
+            value: "77007bae-b688-4dbb-bc84-334b0f5d3aef"
           - name: NOTIFY_ADMIN_LOGIN_TEMPLATE_ID
             value: "ddfa69ca-e89d-49d1-8311-b487732860ec"
           - name: NOTIFY_ADMIN_FORGOT_PASSWORD_TEMPLATE_ID
