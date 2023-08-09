@@ -6,17 +6,8 @@ metadata:
   annotations:
     external-dns.alpha.kubernetes.io/set-identifier: gender-recognition-service-grc-preprod-green
     external-dns.alpha.kubernetes.io/aws-weight: "100"
-    nginx.ingress.kubernetes.io/enable-modsecurity: "true"
-    nginx.ingress.kubernetes.io/modsecurity-snippet: |
-      SecRuleEngine On
-    nginx.ingress.kubernetes.io/server-snippet: |
-      location @custom_403 {
-        return 403 "<h1>There is a problem:</h1><br><h3>Go back to the previous page using the back arrow and enter valid content</h3>";
-      }
-      error_page 403 @custom_403;
-
 spec:
-  ingressClassName: modsec
+  ingressClassName: default
   tls:
   - hosts:
     - preprod.gender-recognition.service.justice.gov.uk
