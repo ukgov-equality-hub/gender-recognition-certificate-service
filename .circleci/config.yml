@@ -94,7 +94,7 @@ jobs:
           command: |
             . venv/bin/activate
             waitress-serve --call --port=8080 'grc:create_app' &
-            pytest --show-capture=all -v --html=report.html
+            pytest -s --show-capture=all -v --html=report.html --capture=tee-sys
       - store_artifacts:
           path: report.html
       - run:
