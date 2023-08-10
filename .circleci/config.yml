@@ -74,7 +74,7 @@ jobs:
           name: Install Playwright and browsers
           command: |
             . venv/bin/activate
-            pip install playwright pytest-playwright asyncio
+            pip install playwright pytest-playwright asyncio pytest-html
             pip install -e .
             python -m playwright install --with-deps
       - run:
@@ -94,7 +94,9 @@ jobs:
           command: |
             . venv/bin/activate
             waitress-serve --call --port=8080 'grc:create_app' &
-            pytest -s --show-capture=all
+            pytest -s --show-capture=all -v --html=report.html
+      - store_artifacts:
+          path: report.html
       - run:
           name: Set up aws
           command: |
