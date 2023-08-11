@@ -342,26 +342,27 @@ def fileVirusScan(form, field):
         return
 
     print('Scanning %s' % current_app.config['AV_API'], flush=True)
+
     from pyclamd import ClamdNetworkSocket
-
-    uploaded = request.files[field.name]
-    uploaded.stream.seek(0)
-
     url = current_app.config['AV_API']
     url = url.replace('http://', '')
     url = url.replace('https://', '')
-
     cd = ClamdNetworkSocket(host=url, port=3310, timeout=None)
-    if not cd.ping():
-        print('Unable to communicate with virus scanner', flush=True)
-        return
-    results = cd.scan_stream(uploaded.stream.read())
-    if results is None:
-        uploaded.stream.seek(0)
-        return
-    else:
-        res_type, res_msg = results['stream']
-        if res_type == 'FOUND':
-            raise ValidationError('The selected file contains a virus')
+    uploaded_files = request.files.getlist(field.name)
+
+    for uploaded_file in uploaded_files:
+        uploaded_file.stream.seek(0)
+
+        if not cd.ping():
+            print('Unable to communicate with virus scanner', flush=True)
+            return
+
+        results = cd.scan_stream(uploaded_file.stream.read())
+        if results is None:
+            uploaded_file.stream.seek(0)
         else:
-            print('Error scanning uploaded file', flush=True)
+            res_type, res_msg = results['stream']
+            if res_type == 'FOUND':
+                raise ValidationError('The selected file contains a virus')
+            else:
+                print('Error scanning uploaded file', flush=True)
