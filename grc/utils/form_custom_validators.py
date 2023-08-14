@@ -354,8 +354,7 @@ def fileVirusScan(form, field):
         uploaded_file.stream.seek(0)
 
         if not cd.ping():
-            print('Unable to communicate with virus scanner', flush=True)
-            return
+            raise ValidationError('Unable to communicate with virus scanner')
 
         results = cd.scan_stream(uploaded_file.stream.read())
         if results is None:
