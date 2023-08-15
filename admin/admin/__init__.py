@@ -92,7 +92,7 @@ def sign_in_with_security_code():
 
             if user is None:
                 message = "We could not find your user details for this login link. Please try logging in again"
-                return render_template('login/login-link-sent.html', message=message)
+                return render_template('login/login-link-error.html', message=message)
 
             local = datetime.now().replace(tzinfo=tz.gettz('UTC')).astimezone(tz.gettz('Europe/London'))
             user.dateLastLogin = datetime.strftime(local, '%d/%m/%Y %H:%M:%S')
