@@ -9,6 +9,8 @@ from grc.external_services.gov_uk_notify import GovUkNotify
 from grc.models import db, AdminUser
 from grc.utils.redirect import local_redirect
 from grc.utils.logger import LogLevel, Logger
+from grc.utils.security_code import security_code_generator
+from grc.start_application.forms import SecurityCodeForm
 
 admin = Blueprint('admin', __name__)
 logger = Logger()
@@ -31,8 +33,9 @@ def index():
 
             if user is not None:
                 if check_password_hash(user.password, form.password.data):
+                    print(f'\nemail address logging in = {email_address}\n', flush=True)
+                    session['email'] = email_address
                     if user.passwordResetRequired:
-                        session['emailAddress'] = email_address
                         logger.log(LogLevel.INFO, f"{logger.mask_email_address(email_address)} password reset required")
 
                         return local_redirect(url_for('password_reset.index'))
@@ -41,15 +44,15 @@ def index():
                         try:
                             local = datetime.now().replace(tzinfo=tz.gettz('UTC')).astimezone(tz.gettz('Europe/London'))
                             expires = datetime.strftime(local + timedelta(hours=24), '%H:%M on %d %b %Y')
-                            login_link = request.host_url[:-1] + url_for('admin.sign_in_with_token') + '?token=' + jwt.encode({'id': user.id, 'email': user.email, 'expires': datetime.strftime(datetime.now() + timedelta(hours=24), '%d/%m/%Y %H:%M:%S')}, current_app.config['SECRET_KEY'], algorithm='HS256')
-                            GovUkNotify().send_email_admin_login_link(
+                            security_code = security_code_generator(email_address)
+                            GovUkNotify().send_email_admin_login_security_code(
                                 email_address=user.email,
                                 expires=expires,
-                                login_link=login_link
+                                security_code=security_code
                             )
                             logger.log(LogLevel.INFO, f"login link sent to {logger.mask_email_address(user.email)}")
 
-                            return render_template('login/login-link-sent.html', email_address=user.email)
+                            return local_redirect(url_for('admin.sign_in_with_security_code'))
 
                         except Exception as e:
                             print(e, flush=True)
@@ -61,7 +64,7 @@ def index():
             else:
                 form.email_address.errors.append("A user with this email address was not found")
                 session.pop('signedIn', None)
-                session.pop('emailAddress', None)
+                session.pop('email', None)
                 session.pop('userType', None)
                 logger.log(LogLevel.WARN, f"User {logger.mask_email_address(email_address)} not found")
 
@@ -74,55 +77,38 @@ def index():
     )
 
 
-@admin.route('/sign-in-with-token', methods=['GET'])
-def sign_in_with_token():
-    message = ""
+@admin.route('/sign-in-with-security_code', methods=['GET', 'POST'])
+def sign_in_with_security_code():
+    form = SecurityCodeForm()
+    email_address = session['email']
 
     # 2FA link
-    token = request.args.get('token')
-    if token is not None:
-        try:
-            login_token = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=['HS256'])
-            if 'id' in login_token and 'email' in login_token and 'expires' in login_token:
-                dt = datetime.strptime(login_token['expires'], '%d/%m/%Y %H:%M:%S')
-                if datetime.now() > dt:
-                    message = "Your login link has expired. Please try logging in again"
-                    session.pop('signedIn', None)
-                    session.pop('emailAddress', None)
-                    session.pop('userType', None)
-                    logger.log(LogLevel.WARN, f"Expired login link used for {logger.mask_email_address(login_token['email'])}")
-                else:
-                    user = AdminUser.query.filter_by(
-                        id=login_token['id'],
-                        email=login_token['email']
-                    ).first()
-                    if user is None:
-                        message = "We could not find your user details for this login link. Please try logging in again"
-                        session.pop('signedIn', None)
-                        session.pop('emailAddress', None)
-                        session.pop('userType', None)
-                        logger.log(LogLevel.WARN, f"Login link user {logger.mask_email_address(login_token['email'])} not found in the database")
-                    else:
-                        signedIn = login_token['email']
-                        local = datetime.now().replace(tzinfo=tz.gettz('UTC')).astimezone(tz.gettz('Europe/London'))
-                        user.dateLastLogin = datetime.strftime(local, '%d/%m/%Y %H:%M:%S')
-                        db.session.commit()
+    if request.method == 'POST':
+        if form.validate_on_submit():
 
-                        session['signedIn'] = signedIn
-                        session['userType'] = user.userType
-                        logger.log(LogLevel.INFO, f"User {logger.mask_email_address(signedIn)} logged in via link")
+            user = AdminUser.query.filter_by(
+                email=email_address
+            ).first()
 
-                        return local_redirect(url_for('applications.index'))
-            else:
-                message = "The login link was incorrect. If you pasted the web address, check you copied the entire address."
-                logger.log(LogLevel.WARN, "Incorrect login link attempted")
+            if user is None:
+                message = "We could not find your user details for this login link. Please try logging in again"
+                return render_template('login/login-link-sent.html', message=message)
 
-        except Exception as e:
-            print(e, flush=True)
+            local = datetime.now().replace(tzinfo=tz.gettz('UTC')).astimezone(tz.gettz('Europe/London'))
+            user.dateLastLogin = datetime.strftime(local, '%d/%m/%Y %H:%M:%S')
+            db.session.commit()
+
+            session['signedIn'] = email_address
+            session['userType'] = user.userType
+
+            logger.log(LogLevel.INFO, f"User {logger.mask_email_address(email_address)} logged in with security code")
+
+            return local_redirect(url_for('applications.index'))
 
     return render_template(
-        'login/login-link-error.html',
-        message=message
+        'login/login-link-sent.html',
+        email_address=email_address,
+        form=form
     )
 
 

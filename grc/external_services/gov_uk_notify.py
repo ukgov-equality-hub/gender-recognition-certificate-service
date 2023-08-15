@@ -121,15 +121,15 @@ class GovUkNotify:
         )
 
 
-    def send_email_admin_login_link(self, email_address: str, expires: str, login_link: str):
+    def send_email_admin_login_security_code(self, email_address: str, expires: str, security_code: str):
         personalisation = {
             'expires': expires,
-            'login_link': login_link,
+            'security_code': security_code,
         }
 
         return self.send_email(
             email_address=email_address,
-            template_id='ddfa69ca-e89d-49d1-8311-b487732860ec',
+            template_id='fde1def2-bf10-45d2-8c38-2837a0a79399',
             personalisation=personalisation
         )
 
