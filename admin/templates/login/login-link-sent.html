@@ -20,6 +20,11 @@
                 Please enter the security code
             </p>
 
+            <p class="govuk-body govuk-!-margin-bottom-8">
+                If it's still not there, we can
+                <a href="{{ url_for('admin.sign_in_with_security_code') }}?resend=true" class="govuk-link govuk-link--no-visited-state">resend the email</a>.
+            </p>
+
             <form method="POST">
                 {{ form.csrf_token }}
 

@@ -2,14 +2,14 @@ import jwt
 import random, string
 from datetime import datetime, timedelta
 from dateutil import tz
-from flask import Blueprint, render_template, request, url_for, current_app, session
+from flask import Blueprint, render_template, request, url_for, current_app, session, flash
 from werkzeug.security import check_password_hash, generate_password_hash
 from admin.admin.forms import LoginForm
 from grc.external_services.gov_uk_notify import GovUkNotify
 from grc.models import db, AdminUser
 from grc.utils.redirect import local_redirect
 from grc.utils.logger import LogLevel, Logger
-from grc.utils.security_code import security_code_generator
+from grc.utils.security_code import security_code_generator, send_security_code_admin
 from grc.start_application.forms import SecurityCodeForm
 
 admin = Blueprint('admin', __name__)
@@ -104,6 +104,14 @@ def sign_in_with_security_code():
             logger.log(LogLevel.INFO, f"User {logger.mask_email_address(email_address)} logged in with security code")
 
             return local_redirect(url_for('applications.index'))
+
+    if request.method == 'GET' and request.args.get('resend') == 'true':
+        try:
+            send_security_code_admin(session['email'])
+            flash('We’ve resent you a security code. This can take a few minutes to arrive.', 'email')
+        except BaseException as err:
+            error = err.args[0].json()
+            flash(error['errors'][0]['message'], 'error')
 
     return render_template(
         'login/login-link-sent.html',
