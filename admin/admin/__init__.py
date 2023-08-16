@@ -33,7 +33,6 @@ def index():
 
             if user is not None:
                 if check_password_hash(user.password, form.password.data):
-                    print(f'\nemail address logging in = {email_address}\n', flush=True)
                     session['email'] = email_address
                     if user.passwordResetRequired:
                         logger.log(LogLevel.INFO, f"{logger.mask_email_address(email_address)} password reset required")
