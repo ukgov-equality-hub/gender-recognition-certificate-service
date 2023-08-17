@@ -36,7 +36,7 @@ services:
       context: .
       dockerfile: admin.Dockerfile
     ports:
-      - 5001:5001
+      - 3001:3001
     env_file: .admin.env
     volumes:
       - ./:/admin
