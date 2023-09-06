@@ -73,6 +73,28 @@ jobs:
                 name: Login to DEV ECR
                 command: |
                   aws ecr get-login-password --region $ECR_REGION_DEV | docker login --username AWS --password-stdin ${AWS_ECR_REGISTRY_ID_DEV}.dkr.ecr.${ECR_REGION_DEV}.amazonaws.com
+      - when:
+          condition:
+            equal: [ PREPROD, << parameters.env_name >> ]
+          steps:
+            - aws-cli/setup:
+                role_arn: $ECR_ROLE_TO_ASSUME_PREPROD # this will use the env var
+                region: $ECR_REGION_PREPROD # this will use the env var
+            - run:
+                name: Login to PREPROD ECR
+                command: |
+                  aws ecr get-login-password --region $ECR_REGION_PREPROD | docker login --username AWS --password-stdin ${AWS_ECR_REGISTRY_ID_PREPROD}.dkr.ecr.${ECR_REGION_PREPROD}.amazonaws.com
+      - when:
+          condition:
+            equal: [ PROD, << parameters.env_name >> ]
+          steps:
+            - aws-cli/setup:
+                role_arn: $ECR_ROLE_TO_ASSUME_PROD # this will use the env var
+                region: $ECR_REGION_PROD # this will use the env var
+            - run:
+                name: Login to PROD ECR
+                command: |
+                  aws ecr get-login-password --region $ECR_REGION_PROD | docker login --username AWS --password-stdin ${AWS_ECR_REGISTRY_ID_PROD}.dkr.ecr.${ECR_REGION_PROD}.amazonaws.com
       - setup_remote_docker:
           version: 20.10.11
           docker_layer_caching: true
