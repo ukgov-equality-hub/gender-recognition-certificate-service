@@ -154,14 +154,11 @@ jobs:
 
   deploy_image_to_dev:
     <<: *cloud_container
-    aws-cli-cred-setup:
-      executor: aws-cli/default
-      steps:
-        - aws-cli/setup:
-            role_arn: $ECR_ROLE_TO_ASSUME_DEV # this will use the env var
-            region: $ECR_REGION_DEV # this will use the env var
     steps:
       - checkout
+      - aws-cli/setup:
+          role_arn: $ECR_ROLE_TO_ASSUME_DEV # this will use the env var
+          region: $ECR_REGION_DEV # this will use the env var
       - setup_remote_docker:
           version: 20.10.11
           docker_layer_caching: true
