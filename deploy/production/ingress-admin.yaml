@@ -27,6 +27,6 @@ spec:
             pathType: ImplementationSpecific
             backend:
               service:
-                name: grc-admin-service
+                name: maintenance-page-svc
                 port:
                   number: 3001

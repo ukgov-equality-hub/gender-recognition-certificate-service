@@ -1,7 +1,8 @@
 version: 2.1
 orbs:
   browser-tools: circleci/browser-tools@1.4.0
-  aws-cli: circleci/aws-cli@2.0.6
+  aws-cli: circleci/aws-cli@4.0.0 # use v4 of this orb
+  aws-ecr: circleci/aws-ecr@8.2.1 # this orb doesn't support OIDC v2, so we use aws-cli to authenticate
 references:
   app_containers: &app_containers
     docker:
@@ -61,6 +62,39 @@ jobs:
           POSTGRES_PASSWORD: password
     steps:
       - checkout
+      - when:
+          condition:
+            equal: [ DEV, << parameters.env_name >> ]
+          steps:
+            - aws-cli/setup:
+                role_arn: $ECR_ROLE_TO_ASSUME_DEV # this will use the env var
+                region: $ECR_REGION_DEV # this will use the env var
+            - run:
+                name: Login to DEV ECR
+                command: |
+                  aws ecr get-login-password --region $ECR_REGION_DEV | docker login --username AWS --password-stdin ${AWS_ECR_REGISTRY_ID_DEV}.dkr.ecr.${ECR_REGION_DEV}.amazonaws.com
+      - when:
+          condition:
+            equal: [ PREPROD, << parameters.env_name >> ]
+          steps:
+            - aws-cli/setup:
+                role_arn: $ECR_ROLE_TO_ASSUME_PREPROD # this will use the env var
+                region: $ECR_REGION_PREPROD # this will use the env var
+            - run:
+                name: Login to PREPROD ECR
+                command: |
+                  aws ecr get-login-password --region $ECR_REGION_PREPROD | docker login --username AWS --password-stdin ${AWS_ECR_REGISTRY_ID_PREPROD}.dkr.ecr.${ECR_REGION_PREPROD}.amazonaws.com
+      - when:
+          condition:
+            equal: [ PROD, << parameters.env_name >> ]
+          steps:
+            - aws-cli/setup:
+                role_arn: $ECR_ROLE_TO_ASSUME_PROD # this will use the env var
+                region: $ECR_REGION_PROD # this will use the env var
+            - run:
+                name: Login to PROD ECR
+                command: |
+                  aws ecr get-login-password --region $ECR_REGION_PROD | docker login --username AWS --password-stdin ${AWS_ECR_REGISTRY_ID_PROD}.dkr.ecr.${ECR_REGION_PROD}.amazonaws.com
       - setup_remote_docker:
           version: 20.10.11
           docker_layer_caching: true
@@ -104,11 +138,6 @@ jobs:
             sudo apt-get --assume-yes install python3-pip
             sudo pip3 install awscli
 
-      - aws-cli/setup:
-          aws-access-key-id: AWS_ACCESS_KEY_ID_PREPROD
-          aws-secret-access-key: AWS_SECRET_ACCESS_KEY_PREPROD
-          aws-region: AWS_REGION_NAME
-
       - run:
           name: List AWS CLI Configuration
           command: aws configure list
@@ -119,9 +148,6 @@ jobs:
             pip install flask_migrate
             export BUILD_DATE=$(date -Is) >> $BASH_ENV
             source $BASH_ENV
-            echo "${AWS_DEFAULT_REGION}"
-            echo "${AWS_ACCESS_KEY_ID_PREPROD}"
-            echo "${AWS_SECRET_ACCESS_KEY_PREPROD}"
 
             docker build \
               --label build.git.sha=${CIRCLE_SHA1} \
@@ -246,8 +272,6 @@ commands:
         - run:
             name: Tag and push images to << parameters.env_name >> repo
             command: |
-              login="$(aws ecr get-login-password --region eu-west-2)"
-              echo ${login} | docker login --username AWS --password-stdin 754256621582.dkr.ecr.eu-west-2.amazonaws.com
 
               docker tag grc-admin "<< parameters.ecr_endpoint >>:grc-admin-${CIRCLE_SHA1}"
               docker tag grc-admin "<< parameters.ecr_endpoint >>:grc-admin-latest"
