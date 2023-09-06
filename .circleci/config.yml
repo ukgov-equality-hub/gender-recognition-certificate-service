@@ -64,7 +64,7 @@ jobs:
       - checkout
       - when:
           condition:
-            - equal: [ 'DEV', << parameters.env_name >> ]
+            - equal: [ DEV, << parameters.env_name >> ]
           steps:
             - aws-cli/setup:
                 role_arn: $ECR_ROLE_TO_ASSUME_DEV # this will use the env var
