@@ -64,7 +64,7 @@ jobs:
       - checkout
       - when:
           condition:
-            - equal: [ DEV, << parameters.env_name >> ]
+            equal: [ DEV, << parameters.env_name >> ]
           steps:
             - aws-cli/setup:
                 role_arn: $ECR_ROLE_TO_ASSUME_DEV # this will use the env var
@@ -272,6 +272,7 @@ workflows:
       - build:
           name: build-containers-dev
           env_name: DEV
+          dev_env: true
           ecr_endpoint: ${ECR_ENDPOINT_DEV}
           filters:
             branches:
