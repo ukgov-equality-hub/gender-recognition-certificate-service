@@ -62,14 +62,20 @@ jobs:
           POSTGRES_PASSWORD: password
     steps:
       - checkout
-      - aws-cli/setup:
-          role_arn: $ECR_ROLE_TO_ASSUME_DEV # this will use the env var
-          region: $ECR_REGION_DEV # this will use the env var
+      - when:
+          condition:
+            - equal: [ 'DEV', << parameters.env_name >> ]
+          steps:
+            - aws-cli/setup:
+                role_arn: $ECR_ROLE_TO_ASSUME_DEV # this will use the env var
+                region: $ECR_REGION_DEV # this will use the env var
+            - run:
+                name: Login to DEV ECR
+                command: |
+                  aws ecr get-login-password --region $ECR_REGION_DEV | docker login --username AWS --password-stdin ${AWS_ECR_REGISTRY_ID_DEV}.dkr.ecr.${ECR_REGION_DEV}.amazonaws.com
       - setup_remote_docker:
           version: 20.10.11
           docker_layer_caching: true
-      - run: |
-         aws ecr get-login-password --region $ECR_REGION_DEV | docker login --username AWS --password-stdin ${AWS_ECR_REGISTRY_ID_DEV}.dkr.ecr.${ECR_REGION_DEV}.amazonaws.com
       - run:
           name: Install dependencies
           command: |
