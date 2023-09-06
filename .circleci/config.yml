@@ -60,7 +60,6 @@ jobs:
           POSTGRES_DB: grc-application-test
           POSTGRES_PORT: 5432
           POSTGRES_PASSWORD: password
-    executor: aws-ecr/default
     steps:
       - checkout
       - aws-cli/setup:
@@ -69,6 +68,8 @@ jobs:
       - setup_remote_docker:
           version: 20.10.11
           docker_layer_caching: true
+      - run: |
+         aws ecr get-login-password --region $ECR_REGION_DEV | docker login --username AWS --password-stdin ${AWS_ECR_REGISTRY_ID_DEV}.dkr.ecr.${$ECR_REGION_DEV}.amazonaws.com
       - run:
           name: Install dependencies
           command: |
@@ -243,7 +244,6 @@ commands:
         - run:
             name: Tag and push images to << parameters.env_name >> repo
             command: |
-              aws ecr get-login-password --region $ECR_REGION_DEV | docker login --username AWS --password-stdin ${AWS_ECR_REGISTRY_ID_DEV}.dkr.ecr.${$ECR_REGION_DEV}.amazonaws.com
 
               docker tag grc-admin "<< parameters.ecr_endpoint >>:grc-admin-${CIRCLE_SHA1}"
               docker tag grc-admin "<< parameters.ecr_endpoint >>:grc-admin-latest"
