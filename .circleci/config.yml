@@ -20,6 +20,7 @@ references:
           REPO_NAME: grc-app
 jobs:
   build:
+    executor: aws-ecr/default
     parameters:
       env_name:
         type: string
@@ -228,7 +229,6 @@ commands:
           type: string
         ecr_endpoint:
           type: string
-      executor: aws-ecr/default
       steps:
         - aws-cli/setup:
             role_arn: $ECR_ROLE_TO_ASSUME_DEV # this will use the env var
