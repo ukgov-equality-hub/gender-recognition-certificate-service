@@ -32,7 +32,7 @@ spec:
             pathType: ImplementationSpecific
             backend:
               service:
-                name: maintenance-page-svc
+                name: grc-app-service
                 port: 
                   number: 3000
    
@@ -43,7 +43,7 @@ spec:
             pathType: ImplementationSpecific
             backend:
               service:
-                name: maintenance-page-svc
+                name: grc-dashboard-service
                 port: 
                   number: 3002
 
