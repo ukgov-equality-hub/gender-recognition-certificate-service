@@ -272,7 +272,6 @@ workflows:
       - build:
           name: build-containers-dev
           env_name: DEV
-          dev_env: true
           ecr_endpoint: ${ECR_ENDPOINT_DEV}
           filters:
             branches:
