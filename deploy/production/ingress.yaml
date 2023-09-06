@@ -6,8 +6,16 @@ metadata:
   annotations:
     external-dns.alpha.kubernetes.io/set-identifier: gender-recognition-service-grc-prod-green
     external-dns.alpha.kubernetes.io/aws-weight: "100"
+    nginx.ingress.kubernetes.io/enable-modsecurity: "true"
+    nginx.ingress.kubernetes.io/modsecurity-snippet: |
+      SecRuleEngine On
+    nginx.ingress.kubernetes.io/server-snippet: |
+      location @custom_403 {
+        return 403 "<h1>There is a problem:</h1><br><h3>Go back to the previous page using the back arrow and enter valid content</h3>";
+      }
+      error_page 403 @custom_403;
 spec:
-  ingressClassName: default
+  ingressClassName: modsec
   tls:
   - hosts:
     - apply-gender-recognition-certificate.service.gov.uk
@@ -24,7 +32,7 @@ spec:
             pathType: ImplementationSpecific
             backend:
               service:
-                name: grc-app-service
+                name: maintenance-page-svc
                 port: 
                   number: 3000
    
@@ -35,7 +43,7 @@ spec:
             pathType: ImplementationSpecific
             backend:
               service:
-                name: grc-dashboard-service
+                name: maintenance-page-svc
                 port: 
                   number: 3002
 
