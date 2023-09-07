@@ -12,6 +12,7 @@ spec:
       labels:
         app: grc-dashboard
     spec:
+      serviceAccountName: grc-dev
       containers:
       - name: grc-dashboard
         image: 754256621582.dkr.ecr.eu-west-2.amazonaws.com/pet/grc-dev-ecr:grc-dashboard-latest

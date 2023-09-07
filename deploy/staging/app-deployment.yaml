@@ -12,6 +12,7 @@ spec:
       labels:
         app: grc-app
     spec:
+      serviceAccountName: grc-preprod
       containers:
       - name: grc-app
         image: 754256621582.dkr.ecr.eu-west-2.amazonaws.com/pet/grc-preprod-ecr:grc-app-latest
@@ -21,16 +22,6 @@ spec:
         env:
           - name: AV_API
             value: grc-clamav-service.grc-preprod.svc.cluster.local
-          - name: AWS_ACCESS_KEY_ID
-            valueFrom:
-              secretKeyRef:
-                name: s3-bucket-output
-                key: access_key_id
-          - name: AWS_SECRET_ACCESS_KEY
-            valueFrom:
-              secretKeyRef:
-                name: s3-bucket-output
-                key: secret_access_key
           - name: AWS_REGION
             value: eu-west-2
           - name: BUCKET_NAME
