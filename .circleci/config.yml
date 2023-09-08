@@ -388,12 +388,14 @@ workflows:
           ecr_endpoint: ${ECR_ENDPOINT_DEV}
           filters:
             branches:
-              only: /^RST-.*/
+              #only: /^RST-.*/
+              only: /^UNCOMMENT ABOVE WHEN FINISHING TESTING$/
       - deploy_image_to_dev:
           name: build-dev
           filters:
             branches:
-              only: /^RST-.*/
+              #only: /^RST-.*/
+              only: /^UNCOMMENT ABOVE WHEN FINISHING TESTING$/
           requires:
             - build-containers-dev
       ### STAGING ###
