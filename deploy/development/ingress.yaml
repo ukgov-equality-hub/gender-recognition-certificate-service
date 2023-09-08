@@ -59,4 +59,4 @@ spec:
               service:
                 name: maintenance-page-svc
                 port: 
-                  number: 3002
+                  number: 8080

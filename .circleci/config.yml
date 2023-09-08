@@ -299,7 +299,7 @@ jobs:
               --build-arg APP_GIT_COMMIT=${CIRCLE_SHA1} \
               -t grc-maintenance-custom .
 
-      - tag_and_push_maintenance_images:
+      - tag_and_push_maintenance_image:
           env_name: << parameters.env_name >>
           ecr_endpoint: << parameters.ecr_endpoint >>
 
@@ -352,7 +352,7 @@ commands:
               docker push "<< parameters.ecr_endpoint >>:grc-dashboard-${CIRCLE_SHA1}"
               docker push "<< parameters.ecr_endpoint >>:grc-dashboard-latest"
 
-    tag_and_push_maintenance_images:
+    tag_and_push_maintenance_image:
       description: Tag and push maintenance page image
         parameters:
           env_name:
