@@ -284,6 +284,10 @@ jobs:
                 command: |
                   aws ecr get-login-password --region $ECR_REGION_DEV | docker login --username AWS --password-stdin ${AWS_ECR_REGISTRY_ID_DEV}.dkr.ecr.${ECR_REGION_DEV}.amazonaws.com
 
+      - setup_remote_docker:
+          version: 20.10.11
+          docker_layer_caching: true
+
       - run:
           name: build maintenance page image
           command: |
