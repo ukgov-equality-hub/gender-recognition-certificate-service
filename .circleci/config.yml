@@ -270,8 +270,7 @@ jobs:
     docker:
       - image: bitnami/nginx:latest
     steps:
-      - checkout:
-          path: ~/grc-app
+      - checkout
       - when:
           condition:
             equal: [ DEV, << parameters.env_name >> ]
