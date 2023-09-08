@@ -1,0 +1,13 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: maintenance-page-svc
+  labels:
+    app: maintenance-page-svc
+spec:
+  ports:
+  - port: 80
+    name: http
+    targetPort: 8080
+  selector:
+    app: maintenance-page
