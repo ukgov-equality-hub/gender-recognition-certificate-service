@@ -260,6 +260,71 @@ jobs:
             sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/production/dashboard-deployment.yaml
             kubectl apply -n grc-prod --record=false -f ./deploy/production
 
+  build_maintenance_page:
+    parameters:
+      env_name:
+        type: string
+      ecr_endpoint:
+        type: string
+
+    working_directory: ~/grc-app/maintenance
+
+    steps:
+      - checkout:
+          path: ~/grc-app
+      - when:
+          condition:
+            equal: [ DEV, << parameters.env_name >> ]
+          steps:
+            - aws-cli/setup:
+                role_arn: $ECR_ROLE_TO_ASSUME_DEV # this will use the env var
+                region: $ECR_REGION_DEV # this will use the env var
+            - run:
+                name: Login to DEV ECR
+                command: |
+                  aws ecr get-login-password --region $ECR_REGION_DEV | docker login --username AWS --password-stdin ${AWS_ECR_REGISTRY_ID_DEV}.dkr.ecr.${ECR_REGION_DEV}.amazonaws.com
+
+      - run:
+          name: build maintenance page image
+          command: |
+            export BUILD_DATE=$(date -Is) >> $BASH_ENV
+            source $BASH_ENV
+
+            docker build \
+              --label build.git.sha=${CIRCLE_SHA1} \
+              --label build.git.branch=${CIRCLE_BRANCH} \
+              --label build.date=${BUILD_DATE} \
+              --build-arg APP_BUILD_DATE=${BUILD_DATE} \
+              --build-arg APP_BUILD_TAG=${CIRCLE_BRANCH} \
+              --build-arg APP_GIT_COMMIT=${CIRCLE_SHA1} \
+              -t grc-maintenance-custom .
+
+      - tag_and_push_maintenance_images:
+          env_name: << parameters.env_name >>
+          ecr_endpoint: << parameters.ecr_endpoint >>
+
+    deploy_maintenance_page_dev:
+      <<: *cloud_container
+        steps:
+          - checkout
+          - run:
+              name: Authenticate to LIVE cluster
+              command: |
+                echo -n ${K8S_CLUSTER_CERT_DEV} | base64 -d > ./ca.crt
+                kubectl config set-cluster ${K8S_CLUSTER_NAME} --certificate-authority=./ca.crt --server=https://${K8S_CLUSTER_NAME}
+                kubectl config set-credentials circleci --token=${K8S_TOKEN_DEV}
+                kubectl config set-context ${K8S_CLUSTER_NAME} --cluster=${K8S_CLUSTER_NAME} --user=circleci --namespace=${K8S_NAMESPACE_DEV}
+                kubectl config use-context ${K8S_CLUSTER_NAME}
+          - deploy:
+              name: deploy maintenance page DEV
+              command: |
+                kubectl apply -n grc-dev --record=false -f ./deploy/development/maintenance
+          - deploy:
+              name: direct traffic to maintenance page
+              command: |
+                kubectl apply -n grc-dev --record=false -f ./deploy/development/ingress.yaml
+
+
 commands:
     tag_and_push_images:
       description: Tag and push images to relative ecr endpoint
@@ -286,6 +351,25 @@ commands:
               docker push "<< parameters.ecr_endpoint >>:grc-app-latest"
               docker push "<< parameters.ecr_endpoint >>:grc-dashboard-${CIRCLE_SHA1}"
               docker push "<< parameters.ecr_endpoint >>:grc-dashboard-latest"
+
+    tag_and_push_maintenance_images:
+      description: Tag and push maintenance page image
+        parameters:
+          env_name:
+            type: string
+          ecr_endpoint:
+            type: string
+        steps:
+          - run:
+              name: Tag and push maintenance page image for << parameters.env_name >>
+              command: |
+
+                docker tag grc-maintenance-custom "<< parameters.ecr_endpoint >>:grc-maintenance-custom-${CIRCLE_SHA1}"
+                docker tag grc-maintenance-custom "<< parameters.ecr_endpoint >>:grc-maintenance-custom"
+
+                docker push "<< parameters.ecr_endpoint >>:grc-maintenance-custom-${CIRCLE_SHA1}"
+                docker push "<< parameters.ecr_endpoint >>:grc-maintenance-custom"
+
 
 workflows:
   test-build-deploy:
@@ -343,6 +427,25 @@ workflows:
               only: /^master$/
           requires:
             - approve_production
+      ### DEV MAINTENANCE ###
+      - build_maintenance_page:
+          name: build-maintenance-page-dev
+          env_name: DEV
+          ecr_endpoint: ${ECR_ENDPOINT_DEV}
+          filters:
+            branches:
+              only: /^RST-5652-.*/
+      - approve_maintenance_page_dev:
+          type: approval
+          requires:
+            - build-maintenance-page-dev
+      - deploy_maintenance_page_dev:
+          name: deploy-maintenance-page-dev
+          filters:
+            branches:
+              only: /^RST-5652-.*/
+          requires:
+            - approve_maintenance_page_dev
 
 #  smoke-tests:
 #    jobs:
