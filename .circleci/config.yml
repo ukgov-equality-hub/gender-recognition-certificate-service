@@ -266,11 +266,12 @@ jobs:
         type: string
       ecr_endpoint:
         type: string
-    #working_directory: ~/grc-app/maintenance
+    working_directory: ~/grc-app/maintenance
     docker:
-      - image: bitnami/nginx:latest
+      - image: circleci/python:3.8
     steps:
-      - checkout
+      - checkout:
+          path: ~/grc-app
       - when:
           condition:
             equal: [ DEV, << parameters.env_name >> ]
