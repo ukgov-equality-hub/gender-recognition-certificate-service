@@ -365,11 +365,11 @@ jobs:
       - deploy:
           name: deploy maintenance page PREPROD
           command: |
-            kubectl apply -n grc-dev --record=false -f ./deploy/staging/maintenance
+            kubectl apply -n grc-preprod --record=false -f ./deploy/staging/maintenance
       - deploy:
           name: direct traffic to maintenance page
           command: |
-            kubectl apply -n grc-dev --record=false -f ./deploy/staging/ingress.yaml
+            kubectl apply -n grc-preprod --record=false -f ./deploy/staging/ingress.yaml
             
   deploy_maintenance_page_prod:
     <<: *cloud_container
@@ -386,11 +386,11 @@ jobs:
       - deploy:
           name: deploy maintenance page PROD
           command: |
-            kubectl apply -n grc-dev --record=false -f ./deploy/production/maintenance
+            kubectl apply -n grc-prod --record=false -f ./deploy/production/maintenance
       - deploy:
           name: direct traffic to maintenance page
           command: |
-            kubectl apply -n grc-dev --record=false -f ./deploy/production/ingress.yaml
+            kubectl apply -n grc-prod --record=false -f ./deploy/production/ingress.yaml
 
 
 commands:
