@@ -1,11 +1,14 @@
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+from flask import Blueprint
+from flask.cli import with_appcontext
 from sqlalchemy.sql import extract
 from grc.external_services.gov_uk_notify import GovUkNotify
 from grc.models import db, Application, ApplicationStatus, SecurityCode
 from grc.utils.application_files import ApplicationFiles
 from grc.utils.logger import Logger, LogLevel
 
+notify_applicants_inactive_apps = Blueprint('notify_applicants_inactive_apps', __name__)
 
 def application_notifications():
     days_between_last_update_and_deletion = 183  # approximately 6 months
@@ -55,7 +58,7 @@ def send_reminder_emails_before_application_deletion(days_between_last_update_an
             extract('day', Application.updated) == last_updated_date.day,
             extract('month', Application.updated) == last_updated_date.month,
             extract('year', Application.updated) == last_updated_date.year
-        )
+        ).all()
 
         for application_to_remind in applications_to_remind:
             existing_application = Application.query.filter(
@@ -138,6 +141,20 @@ def main():
     except Exception as e:
         logger = Logger()
         logger.log(LogLevel.ERROR, f'Error notifying applicants cron, message = {e}')
+
+
+@notify_applicants_inactive_apps.cli.command('run')
+@with_appcontext
+def main():
+    try:
+        print('running notify applicants inactive apps job')
+        applicants_notified = application_notifications()
+        assert applicants_notified == 200
+        print('finished notify applicants inactive apps job')
+    except Exception as e:
+        logger = Logger()
+        logger.log(LogLevel.ERROR, f'Error notifying applicants cron, message = {e}')
+        print(f'Error notifying applicants cron, message = {e}')
 
 
 if __name__ == '__main__':
