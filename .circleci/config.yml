@@ -354,21 +354,21 @@ commands:
 
     tag_and_push_maintenance_image:
       description: Tag and push maintenance page image
-        parameters:
-          env_name:
-            type: string
-          ecr_endpoint:
-            type: string
-        steps:
-          - run:
-              name: Tag and push maintenance page image for << parameters.env_name >>
-              command: |
+      parameters:
+        env_name:
+          type: string
+        ecr_endpoint:
+          type: string
+      steps:
+        - run:
+            name: Tag and push maintenance page image for << parameters.env_name >>
+            command: |
 
-                docker tag grc-maintenance-custom "<< parameters.ecr_endpoint >>:grc-maintenance-custom-${CIRCLE_SHA1}"
-                docker tag grc-maintenance-custom "<< parameters.ecr_endpoint >>:grc-maintenance-custom"
+              docker tag grc-maintenance-custom "<< parameters.ecr_endpoint >>:grc-maintenance-custom-${CIRCLE_SHA1}"
+              docker tag grc-maintenance-custom "<< parameters.ecr_endpoint >>:grc-maintenance-custom"
 
-                docker push "<< parameters.ecr_endpoint >>:grc-maintenance-custom-${CIRCLE_SHA1}"
-                docker push "<< parameters.ecr_endpoint >>:grc-maintenance-custom"
+              docker push "<< parameters.ecr_endpoint >>:grc-maintenance-custom-${CIRCLE_SHA1}"
+              docker push "<< parameters.ecr_endpoint >>:grc-maintenance-custom"
 
 
 workflows:
