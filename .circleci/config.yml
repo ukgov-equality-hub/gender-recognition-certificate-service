@@ -269,6 +269,9 @@ jobs:
 
     working_directory: ~/grc-app/maintenance
 
+    docker:
+       - image: bitnami/nginx:latest
+
     steps:
       - checkout:
           path: ~/grc-app
