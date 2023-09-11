@@ -22,7 +22,7 @@ spec:
         readinessProbe:
           httpGet:
             path: /
-            port: 3002
+            port: 3001
           initialDelaySeconds: 60
           periodSeconds: 3
           timeoutSeconds: 10
