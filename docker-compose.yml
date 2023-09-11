@@ -36,7 +36,7 @@ services:
       context: .
       dockerfile: admin.Dockerfile
     ports:
-      - 5001:5001
+      - 3001:3001
     env_file: .admin.env
     volumes:
       - ./:/admin
@@ -51,7 +51,7 @@ services:
       context: .
       dockerfile: dashboard.Dockerfile
     ports:
-      - 5002:5002
+      - 3002:3002
     env_file: .dashboard.env
     volumes:
       - ./:/dashboard

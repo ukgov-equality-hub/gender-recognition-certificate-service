@@ -21,6 +21,28 @@ def add_error_for_child_form(parent_form_field_list: FieldList, child_form: Flas
     print(f"field_list.errors: {parent_form_field_list.errors}", flush=True)
 
 
+def add_multiple_errors_for_child_form(parent_form_field_list: FieldList, child_form: FlaskForm,
+                                       child_form_field_names_with_errors: {str: str}):
+    print(f"field_list.errors: {parent_form_field_list.errors}", flush=True)
+    setup_field_list_to_accept_custom_errors(parent_form_field_list)
+
+    # Add the error to the child form
+    for field_name, error_message in child_form_field_names_with_errors.items():
+        child_form[field_name].errors.append(error_message)
+
+    # Add the error to the parent form
+    child_form_index = find_child_form_index(parent_form_field_list, child_form)
+    errors_for_child_form = parent_form_field_list.errors[child_form_index]
+
+    for field_name, error_message in child_form_field_names_with_errors.items():
+        if field_name not in errors_for_child_form:
+            errors_for_child_form[field_name] = []
+
+        errors_for_child_form_field = errors_for_child_form[field_name]
+        errors_for_child_form_field.append(error_message)
+    print(f"field_list.errors: {parent_form_field_list.errors}", flush=True)
+
+
 def setup_field_list_to_accept_custom_errors(field_list: FieldList):
     if not field_list.errors:
         # Add an empty error object for each child form

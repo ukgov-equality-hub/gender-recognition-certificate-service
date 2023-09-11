@@ -54,7 +54,7 @@
                     </li>
                     <li class="govuk-tabs__list-item" role="presentation">
                         <a class="govuk-tabs__tab" href="#completed" id="tab_complete" role="tab" aria-controls="completed" aria-selected="false" tabindex="-1">
-                            Complete applications
+                            Completed applications
                         </a>
                     </li>
                 </ul>
@@ -184,17 +184,14 @@
                                                 </li>
                                                 {% if 'userType' in session and session['userType'] == 'ADMIN' %}
                                                     <li>
-                                                        <a href="{{ url_for('applications.completed', reference_number=application.reference_number) }}"
-                                                           class="govuk-link">
-                                                            Mark application as complete
-                                                            <span class="govuk-visually-hidden">
-                                                                for
-                                                                {{ application_data.personal_details_data.title }}
-                                                                {{ application_data.personal_details_data.first_name }}
-                                                                {{ application_data.personal_details_data.middle_names_or_empty_string }}
-                                                                {{ application_data.personal_details_data.last_name }}
-                                                            </span>
-                                                        </a>
+                                                        <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+                                                            <div class="govuk-checkboxes__item">
+                                                                <input class="govuk-checkboxes__input" id="{{ application.reference_number }}" name="{{ application.reference_number }}" type="checkbox" onclick="selectOrDeselectApplication('{{ application.reference_number }}')">
+                                                                <label class="govuk-label govuk-checkboxes__label" for="{{ application.reference_number }}">
+                                                                    Application completed
+                                                                </label>
+                                                            </div>
+                                                        </div>
                                                     </li>
                                                 {% endif %}
                                             </ul>
@@ -211,6 +208,19 @@
                                     </tr>
                                     {% endif %}
                                 {% endfor %}
+                                <tr class="govuk-table__row">
+                                    <td colspan="5" class="govuk-table__cell" style="text-align: right">
+                                        <button id="submit-selected-apps-btn" disabled="disabled" class="govuk-button govuk-!-margin-bottom-0 govuk-button--disabled" data-module="govuk-button" onclick="submitBulkMarkAsComplete('{{ url_for('applications.completed') }}')">
+                                            Apply applications completed
+                                        </button>
+                                        <button class="govuk-button govuk-!-margin-bottom-0 govuk-button--secondary" data-module="govuk-button" onclick="selectAllApplications({{ downloaded_apps_references }})">
+                                            Select all as completed
+                                        </button>
+                                        <button class="govuk-button govuk-!-margin-bottom-0 govuk-button--secondary" data-module="govuk-button" onclick="clearAllApplications({{ downloaded_apps_references }})">
+                                            Clear all as completed
+                                        </button>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     {% endif %}
@@ -219,7 +229,7 @@
 
                 <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="completed" role="tabpanel"
                      aria-labelledby="tab_complete">
-                    <h2 class="govuk-heading-m">Complete applications</h2>
+                    <h2 class="govuk-heading-m">Completed applications</h2>
                     {% if completedApplications.count() == 0 %}
                         <div class="govuk-body">
                             <p>Complete applications are automatically removed after 7 days.</p>
@@ -289,4 +299,7 @@
 
         </div>
     </div>
+{% endblock %}
+{% block js %}
+    <script src="{{ url_for('static', filename='assets/js/applications.js') }}"></script>
 {% endblock %}

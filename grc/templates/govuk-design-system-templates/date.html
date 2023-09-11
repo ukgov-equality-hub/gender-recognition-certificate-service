@@ -1,0 +1,70 @@
+{% import "govuk-design-system-templates/error-message.html" as errorMessage %}
+{% import "govuk-design-system-templates/hint.html" as hint %}
+{% import "govuk-design-system-templates/label.html" as label %}
+
+{% macro renderFor(form, dateForOptions) %}
+
+    {% if form.errors %}
+        <div class="govuk-!-margin-top-3 govuk-!-margin-bottom-3">
+            {% for error in form.errors %}
+                {% if not form[error] | is_FieldList %}
+                    {% if error != dateForOptions.parentForm %}
+                        <p class="govuk-error-message govuk-!-margin-top-1 govuk-!-margin-bottom-1">
+                            <span id="{{ error }}-error">
+                                {% for e in form[error].errors %}
+                                    <span class="govuk-visually-hidden">Error:</span> {{ e }}<br>
+                                {% endfor %}
+                            </span>
+                        </p>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {{ label.render(dateForOptions.labelOptions) }}
+    {{ hint.render(dateForOptions.hintOptions) }}
+
+    <div class="govuk-date-input">
+        <div class="govuk-date-input__item">
+            <div class="govuk-form-group">
+                <label for="{{ form.day.name }}" class="govuk-label govuk-date-input__label">
+                    Day
+                </label>
+                <input type="text"
+                       id="{{ form.day.name }}" name="{{ form.day.name }}"
+                       value="{{ form.day.data if form.day.data is not none }}"
+                       pattern="[0-9]*"
+                       inputmode="numeric"
+                       class="govuk-input govuk-date-input__input govuk-input--width-2  {{ 'govuk-input--error' if form.day.errors }}">
+            </div>
+        </div>
+        <div class="govuk-date-input__item">
+            <div class="govuk-form-group">
+                <label for="{{ form.month.name }}" class="govuk-label govuk-date-input__label">
+                    Month
+                </label>
+                <input type="text"
+                       id="{{ form.month.name }}" name="{{ form.month.name }}"
+                       value="{{ form.month.data if form.month.data is not none }}"
+                       pattern="[0-9]*"
+                       inputmode="numeric"
+                       class="govuk-input govuk-date-input__input govuk-input--width-2  {{ 'govuk-input--error' if form.month.errors }}">
+            </div>
+        </div>
+        <div class="govuk-date-input__item">
+            <div class="govuk-form-group">
+                <label for="{{ form.year.name }}" class="govuk-label govuk-date-input__label">
+                    Year
+                </label>
+                <input type="text"
+                       id="{{ form.year.name }}" name="{{ form.year.name }}"
+                       value="{{ form.year.data if form.year.data is not none }}"
+                       pattern="[0-9]*"
+                       inputmode="numeric"
+                       class="govuk-input govuk-date-input__input govuk-input--width-4  {{ 'govuk-input--error' if form.year.errors }}">
+            </div>
+        </div>
+    </div>
+
+{% endmacro %}
