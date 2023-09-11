@@ -19,6 +19,13 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 3000
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 3002
+          initialDelaySeconds: 60
+          periodSeconds: 3
+          timeoutSeconds: 10
         env:
           - name: AV_API
             value: grc-clamav-service.grc-dev.svc.cluster.local
