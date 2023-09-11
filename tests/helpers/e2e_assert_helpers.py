@@ -87,6 +87,10 @@ class AssertHelpers:
         actual_value = await self.page.input_value(selector)
         assert_equal(actual_value, expected_value)
 
+    async def field_not_visible(self, field):
+        visible = await self.page.get_by_role('input', name=f'{field}').is_visible()
+        assert_equal(visible, False)
+
     async def is_checked(self, field: str, value: str):
         selector = f"input[type=\"radio\"][name=\"{field}\"][value=\"{value}\"], " \
                    f"input[type=\"checkbox\"][name=\"{field}\"][value=\"{value}\"]"

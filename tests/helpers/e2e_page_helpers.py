@@ -90,6 +90,9 @@ class PageHelpers:
         }]
         await self.page.set_input_files(f"input[type=\"file\"][name=\"{field}\"]", files)
 
+    async def go_to_page(self, page):
+        await self.page.goto(page)
+
 
 # Removes multiple sequential whitespace characters from the string
 def clean_string(value: str):

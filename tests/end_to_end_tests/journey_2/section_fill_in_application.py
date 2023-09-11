@@ -188,9 +188,14 @@ async def fill_in_application(page: Page, asserts: AssertHelpers, helpers: PageH
     await asserts.h1('If we need to contact you by post in the next 6 months, are there any dates we should avoid?')
     await asserts.number_of_errors(0)
 
-    # Enter some valid dates
-    await helpers.check_radio(field='contactDatesCheck', value='True')
-    await helpers.fill_textbox(field='dates', value=data.DATES_TO_AVOID)
+    # Enter a valid date range
+    await helpers.check_radio(field='contactDatesCheck', value='DATE_RANGE')
+    await helpers.fill_textbox(field='date_ranges-0-from_date_day', value=data.CONTACT_DATE_RANGE_1_FROM_DAY)
+    await helpers.fill_textbox(field='date_ranges-0-from_date_month', value=data.CONTACT_DATE_RANGE_1_FROM_MONTH)
+    await helpers.fill_textbox(field='date_ranges-0-from_date_year', value=data.CONTACT_DATE_RANGE_1_FROM_YEAR)
+    await helpers.fill_textbox(field='date_ranges-0-to_date_day', value=data.CONTACT_DATE_RANGE_1_TO_DAY)
+    await helpers.fill_textbox(field='date_ranges-0-to_date_month', value=data.CONTACT_DATE_RANGE_1_TO_MONTH)
+    await helpers.fill_textbox(field='date_ranges-0-to_date_year', value=data.CONTACT_DATE_RANGE_1_TO_YEAR)
     await helpers.click_button('Save and continue')
 
     # ------------------------------------------------
