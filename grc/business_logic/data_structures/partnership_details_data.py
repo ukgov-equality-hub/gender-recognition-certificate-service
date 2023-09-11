@@ -10,19 +10,31 @@ class CurrentlyInAPartnershipEnum(GrcEnum):
 
 
 class PartnershipDetailsData:
-    currently_in_a_partnership: CurrentlyInAPartnershipEnum = None
+    def __new__(cls, *args, **kwargs):
+        # This method has been added to address a limitation of jsonpickle.decode
+        # We use the jsonpickle library to convert these python classes to/from JSON to store in the database
+        # The instance-level fields are declared in the __init__ method
+        # When jsonpickle.decode re-creates a class, it calls __new__, but it does not call __init__
+        # We need it to call __init__ to make sure we have set up all the instance-level fields, so we call __init__ here manually
+        new_instance = super().__new__(cls)
+        new_instance.__init__()
+        return new_instance
 
-    plan_to_remain_in_a_partnership: bool = None
-    partner_agrees: bool = None
-    confirm_understood_interim_certificate: bool = None
+    def __init__(self):
+        self.currently_in_a_partnership: CurrentlyInAPartnershipEnum = None
 
-    partner_title: str = None
-    partner_first_name: str = None
-    partner_last_name: str = None
-    partner_postal_address: str = None
+        self.plan_to_remain_in_a_partnership: bool = None
+        self.partner_agrees: bool = None
+        self.confirm_understood_interim_certificate: bool = None
 
-    previous_partnership_partner_died: bool = None
-    previous_partnership_ended: bool = None
+        self.partner_title: str = None
+        self.partner_first_name: str = None
+        self.partner_last_name: str = None
+        self.partner_postal_address: str = None
+
+        self.previous_partnership_partner_died: bool = None
+        self.previous_partnership_ended: bool = None
+
 
     @property
     def is_married(self) -> bool:

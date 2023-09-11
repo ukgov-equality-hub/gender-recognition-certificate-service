@@ -2,6 +2,9 @@
 {% import "govuk-design-system-templates/error-summary.html" as error_summary %}
 {% import "govuk-design-system-templates/radios.html" as radios %}
 {% import "govuk-design-system-templates/textarea.html" as textarea %}
+{% import "govuk-design-system-templates/date.html" as date %}
+{% import "govuk-design-system-templates/date-range.html" as dateRange %}
+
 
 {% block title %}If we need to contact you by post in the next 6 months, are there any dates we should avoid?{% endblock %}
 
@@ -19,10 +22,9 @@
                 {{ form.csrf_token }}
 
                 {% macro insertDatesToAvoidHintText() %}
-                    Include the day, month and year. Write in any format, for example:<br>
-                    1-7 September 2022,<br>
-                    3rd Oct - 8th Nov 2022
+                    For example, 31 8 2023
                 {% endmacro %}
+
                 {{ radios.renderFor(
                     form,
                     fieldName='contactDatesCheck',
@@ -35,14 +37,22 @@
                                            departments such as HMRC might still contact you.'
                         },
                         'conditionalOptions': [
-                            (True,
-                            textarea.renderFor(
+                            ('SINGLE_DATE',
+                            date.renderFor(
                                 form,
-                                fieldName='dates',
-                                textareaForOptions={
+                                dateForOptions={
+                                    'labelOptions': { 'htmlOrText': "Insert date to avoid" },
+                                    'hintOptions': { 'htmlOrText': insertDatesToAvoidHintText() },
+                                    'parentForm': 'contactDatesCheck'
+                                }
+                            )),
+                            ('DATE_RANGE',
+                            dateRange.renderFor(
+                                form,
+                                dateForOptions={
                                     'labelOptions': { 'htmlOrText': "Insert dates to avoid" },
                                     'hintOptions': { 'htmlOrText': insertDatesToAvoidHintText() },
-                                    'rows': 3
+                                    'parentForm': 'contactDatesCheck'
                                 }
                             ))
                         ]

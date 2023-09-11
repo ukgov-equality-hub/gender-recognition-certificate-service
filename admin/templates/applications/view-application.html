@@ -408,20 +408,47 @@
                         alternativeCopyValue=(application_data.personal_details_data.address_with_line_breaks)
                     ) }}
 
-                    {{ summary_list_item(
-                        title="Unavailable over the next 6 months",
-                        value=(application_data.personal_details_data.contact_dates_should_avoid_formatted)
-                    ) }}
                     {% if application_data.personal_details_data.contact_dates_should_avoid %}
-                        {% macro unavailabilityDates() %}
-                            {# Note: The following <span> should all be on one line, to allow the line breaks to work correctly #}
-                            <span style="white-space: pre-line;">{{ application_data.personal_details_data.contact_dates_to_avoid }}</span>
-                        {% endmacro %}
                         {{ summary_list_item(
-                            title="Unavailability dates",
-                            value=(unavailabilityDates()),
-                            alternativeCopyValue=(application_data.personal_details_data.contact_dates_to_avoid)
+                            title="Unavailable over the next 6 months",
+                            value=(application_data.personal_details_data.contact_dates_should_avoid_formatted)
                         ) }}
+                        {% if application_data.personal_details_data.contact_dates_should_avoid %}
+                            {% macro unavailabilityDates() %}
+                                {# Note: The following <span> should all be on one line, to allow the line breaks to work correctly #}
+                                <span style="white-space: pre-line;">{{ application_data.personal_details_data.contact_dates_to_avoid }}</span>
+                            {% endmacro %}
+                            {{ summary_list_item(
+                                title="Unavailability dates",
+                                value=(unavailabilityDates()),
+                                alternativeCopyValue=(application_data.personal_details_data.contact_dates_to_avoid)
+                            ) }}
+                        {% endif %}
+                    {% endif %}
+
+                    {% if application_data.personal_details_data.contact_dates_to_avoid_option %}
+                        {{ summary_list_item(
+                            title="Unavailable over the next 6 months",
+                            value=(application_data.personal_details_data.contact_dates_to_avoid_option_formatted)
+                        ) }}
+                        {% macro unavailabilityDateOrDateRanges() %}
+                            {% if application_data.personal_details_data.contact_date_to_avoid %}
+                                {# Note: The following <span> should all be on one line, to allow the line breaks to work correctly #}
+                                <span style="white-space: pre-line;">{{ application_data.personal_details_data.contact_date_to_avoid_formatted_DD_MM_YYYY }}</span>
+                            {% endif %}
+                            {% if application_data.personal_details_data.contact_date_ranges_to_avoid %}
+                                {% for from_date, to_date in application_data.personal_details_data.contact_date_ranges_to_avoid_formatted_DD_MM_YYYY %}
+                                    <span style="white-space: pre-line;">From {{ from_date }} to {{ to_date }}</span>
+                                {% endfor %}
+                            {% endif %}
+                        {% endmacro %}
+
+                        {% if application_data.personal_details_data.contact_dates_to_avoid_option_bool %}
+                            {{ summary_list_item(
+                                title="Unavailability dates",
+                                value=(unavailabilityDateOrDateRanges())
+                            ) }}
+                        {% endif %}
                     {% endif %}
 
                     {{ summary_list_item(

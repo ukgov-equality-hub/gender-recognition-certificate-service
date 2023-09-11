@@ -2,7 +2,9 @@ from playwright.async_api import Page
 from tests.helpers.e2e_assert_helpers import AssertHelpers
 from tests.helpers.e2e_page_helpers import PageHelpers
 import tests.end_to_end_tests.journey_1.data as data
+import os
 
+TEST_URL = os.getenv('TEST_URL', 'http://localhost:5000')
 
 async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: PageHelpers):
 
@@ -249,6 +251,15 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(1)
     await asserts.error(field='transition_date_year', message='Enter a date within the last 100 years')
 
+    # Navigate to Overseas check page in Confirmation and change value to 'No' and return
+    await helpers.go_to_page(TEST_URL + '/overseas-check')
+    await asserts.url('/overseas-check')
+    await helpers.check_radio(field='overseasCheck', value='False')
+    await helpers.click_button('Continue')
+    await asserts.url('/declaration')
+    await helpers.go_to_page(TEST_URL + '/personal-details/transition-date')
+    await asserts.url('/personal-details/transition-date')
+
     # Enter a valid date that is not 2 years prior to application created date
     await helpers.fill_textbox(field='transition_date_month', value=data.TRANSITION_DATE_MONTH_PLUS_ONE)
     await helpers.fill_textbox(field='transition_date_year', value=data.TRANSITION_DATE_YEAR_MINUS_TWO)
@@ -258,6 +269,21 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.h1('When did you transition?')
     await asserts.number_of_errors(1)
     await asserts.error(field='transition_date_year', message='Enter a date at least 2 years before your application')
+
+    # Navigate to Overseas check page in Confirmation and change value to 'Yes' and return
+    await helpers.go_to_page(TEST_URL + '/overseas-check')
+    await asserts.url('/overseas-check')
+    await helpers.check_radio(field='overseasCheck', value='True')
+    await helpers.click_button('Continue')
+    await asserts.url('/overseas-approved-check')
+    await helpers.check_radio(field='overseasApprovedCheck', value='True')
+    await helpers.click_button('Continue')
+    await asserts.url('/declaration')
+    await helpers.check_checkbox(field='consent')
+    await helpers.click_button('Continue')
+    await asserts.url('/task-list')
+    await helpers.go_to_page(TEST_URL + '/personal-details/transition-date')
+    await asserts.url('/personal-details/transition-date')
 
     # Enter a valid date
     await helpers.fill_textbox(field='transition_date_month', value=data.TRANSITION_DATE_MONTH)
@@ -548,43 +574,109 @@ async def run_checks_on_section(page: Page, asserts: AssertHelpers, helpers: Pag
     await asserts.number_of_errors(1)
     await asserts.error(field='contactDatesCheck', message="Select if you don't want us to contact you at any point in the next 6 months")
 
-    # Choose "Yes", but don't enter any dates
-    await helpers.check_radio(field='contactDatesCheck', value='True')
+    # Choose "No dates"
+    await helpers.check_radio(field='contactDatesCheck', value='NO_DATES')
     await helpers.click_button('Save and continue')
-    await asserts.url('/personal-details/contact-dates')
+    await asserts.number_of_errors(0)
+    await asserts.url('/personal-details/contact-preferences')
     await asserts.accessibility()
-    await asserts.h1('If we need to contact you by post in the next 6 months, are there any dates we should avoid?')
-    await asserts.number_of_errors(1)
-    await asserts.error(field='dates', message="Enter the dates you don't want us to contact you by post")
+    await asserts.h1('How would you like to be contacted if we have any questions about your application?')
+    # "Back" link should take you to the Contact dates page
+    await helpers.click_button('Back')
 
-    # Enter some valid dates
-    await helpers.check_radio(field='contactDatesCheck', value='True')
-    await helpers.fill_textbox(field='dates', value=data.DATES_TO_AVOID)
+    # Choose "Single date" and enter a valid date
+    await helpers.check_radio(field='contactDatesCheck', value='SINGLE_DATE')
+    await helpers.fill_textbox(field='day', value=data.CONTACT_DATE_SINGLE_DAY)
+    await helpers.fill_textbox(field='month', value=data.CONTACT_DATE_SINGLE_MONTH)
+    await helpers.fill_textbox(field='year', value=data.CONTACT_DATE_SINGLE_YEAR)
     await helpers.click_button('Save and continue')
-
-    # ------------------------------------------------
-    # ---- Contact Preferences page
-    # ------------------------------------------------
     await asserts.url('/personal-details/contact-preferences')
     await asserts.accessibility()
     await asserts.h1('How would you like to be contacted if we have any questions about your application?')
     await asserts.number_of_errors(0)
-
-    # "Back" link should take you to the Contact Dates page
+    # "Back" link should take you to the Contact dates page
     await helpers.click_button('Back')
 
-    # ------------------------------------------------
-    # ---- Contact Dates page
-    # ------------------------------------------------
+    # Choose "Date range" and enter valid date range
+    await helpers.check_radio(field='contactDatesCheck', value='DATE_RANGE')
+    await helpers.fill_textbox(field='date_ranges-0-from_date_day', value=data.CONTACT_DATE_RANGE_1_FROM_DAY)
+    await helpers.fill_textbox(field='date_ranges-0-from_date_month', value=data.CONTACT_DATE_RANGE_1_FROM_MONTH)
+    await helpers.fill_textbox(field='date_ranges-0-from_date_year', value=data.CONTACT_DATE_RANGE_1_FROM_YEAR)
+    await helpers.fill_textbox(field='date_ranges-0-to_date_day', value=data.CONTACT_DATE_RANGE_1_TO_DAY)
+    await helpers.fill_textbox(field='date_ranges-0-to_date_month', value=data.CONTACT_DATE_RANGE_1_TO_MONTH)
+    await helpers.fill_textbox(field='date_ranges-0-to_date_year', value=data.CONTACT_DATE_RANGE_1_TO_YEAR)
+    await helpers.click_button('Save and continue')
+    await asserts.url('/personal-details/contact-preferences')
+    await asserts.accessibility()
+    await asserts.h1('How would you like to be contacted if we have any questions about your application?')
+    await asserts.number_of_errors(0)
+    # "Back" link should take you to the Contact dates page
+    await helpers.click_button('Back')
+
+    # Check that single date previously entered has been removed
+    await helpers.check_radio(field='contactDatesCheck', value='SINGLE_DATE')
+    await asserts.field_value(field='day', expected_value='')
+    await asserts.field_value(field='month', expected_value='')
+    await asserts.field_value(field='year', expected_value='')
+
+    # Add date range and check values
+    await helpers.check_radio(field='contactDatesCheck', value='DATE_RANGE')
+    await helpers.click_button('Add another date range')
+    await asserts.url('/personal-details/contact-dates')
+    await asserts.number_of_errors(0)
+    await asserts.field_value(field='date_ranges-0-from_date_day', expected_value=data.CONTACT_DATE_RANGE_1_FROM_DAY)
+    await asserts.field_value(field='date_ranges-0-from_date_month', expected_value=data.CONTACT_DATE_RANGE_1_FROM_MONTH)
+    await asserts.field_value(field='date_ranges-0-from_date_year', expected_value=data.CONTACT_DATE_RANGE_1_FROM_YEAR)
+    await asserts.field_value(field='date_ranges-0-to_date_day', expected_value=data.CONTACT_DATE_RANGE_1_TO_DAY)
+    await asserts.field_value(field='date_ranges-0-to_date_month', expected_value=data.CONTACT_DATE_RANGE_1_TO_MONTH)
+    await asserts.field_value(field='date_ranges-0-to_date_year', expected_value=data.CONTACT_DATE_RANGE_1_TO_YEAR)
+    await asserts.field_value(field='date_ranges-1-from_date_day', expected_value='')
+    await asserts.field_value(field='date_ranges-1-from_date_month', expected_value='')
+    await asserts.field_value(field='date_ranges-1-from_date_year', expected_value='')
+    await asserts.field_value(field='date_ranges-1-to_date_day', expected_value='')
+    await asserts.field_value(field='date_ranges-1-to_date_month', expected_value='')
+    await asserts.field_value(field='date_ranges-1-to_date_year', expected_value='')
+
+    # Add second date range and submit
+    await helpers.fill_textbox(field='date_ranges-1-from_date_day', value=data.CONTACT_DATE_RANGE_2_FROM_DAY)
+    await helpers.fill_textbox(field='date_ranges-1-from_date_month', value=data.CONTACT_DATE_RANGE_2_FROM_MONTH)
+    await helpers.fill_textbox(field='date_ranges-1-from_date_year', value=data.CONTACT_DATE_RANGE_2_FROM_YEAR)
+    await helpers.fill_textbox(field='date_ranges-1-to_date_day', value=data.CONTACT_DATE_RANGE_2_TO_DAY)
+    await helpers.fill_textbox(field='date_ranges-1-to_date_month', value=data.CONTACT_DATE_RANGE_2_TO_MONTH)
+    await helpers.fill_textbox(field='date_ranges-1-to_date_year', value=data.CONTACT_DATE_RANGE_2_TO_YEAR)
+    await helpers.click_button('Save and continue')
+    await asserts.url('/personal-details/contact-preferences')
+    await asserts.accessibility()
+    await asserts.h1('How would you like to be contacted if we have any questions about your application?')
+    await asserts.number_of_errors(0)
+    # "Back" link should take you to the Contact dates page
+    await helpers.click_button('Back')
+
+    # Remove latest date range
     await asserts.url('/personal-details/contact-dates')
     await asserts.accessibility()
     await asserts.h1('If we need to contact you by post in the next 6 months, are there any dates we should avoid?')
-    await asserts.number_of_errors(0)
+    await asserts.field_value(field='date_ranges-0-from_date_day', expected_value=data.CONTACT_DATE_RANGE_1_FROM_DAY)
+    await asserts.field_value(field='date_ranges-0-from_date_month', expected_value=data.CONTACT_DATE_RANGE_1_FROM_MONTH)
+    await asserts.field_value(field='date_ranges-0-from_date_year', expected_value=data.CONTACT_DATE_RANGE_1_FROM_YEAR)
+    await asserts.field_value(field='date_ranges-0-to_date_day', expected_value=data.CONTACT_DATE_RANGE_1_TO_DAY)
+    await asserts.field_value(field='date_ranges-0-to_date_month', expected_value=data.CONTACT_DATE_RANGE_1_TO_MONTH)
+    await asserts.field_value(field='date_ranges-0-to_date_year', expected_value=data.CONTACT_DATE_RANGE_1_TO_YEAR)
+    await asserts.field_value(field='date_ranges-1-from_date_day', expected_value=data.CONTACT_DATE_RANGE_2_FROM_DAY)
+    await asserts.field_value(field='date_ranges-1-from_date_month', expected_value=data.CONTACT_DATE_RANGE_2_FROM_MONTH)
+    await asserts.field_value(field='date_ranges-1-from_date_year', expected_value=data.CONTACT_DATE_RANGE_2_FROM_YEAR)
+    await asserts.field_value(field='date_ranges-1-to_date_day', expected_value=data.CONTACT_DATE_RANGE_2_TO_DAY)
+    await asserts.field_value(field='date_ranges-1-to_date_month', expected_value=data.CONTACT_DATE_RANGE_2_TO_MONTH)
+    await asserts.field_value(field='date_ranges-1-to_date_year', expected_value=data.CONTACT_DATE_RANGE_2_TO_YEAR)
+    await helpers.click_button('Remove date range')
 
-    # The fields should be pre-populated with the values we just entered
-    await asserts.is_checked(field='contactDatesCheck', value='True')
-    await asserts.not_checked(field='contactDatesCheck', value='False')
-    await asserts.field_value(field='dates', expected_value=data.DATES_TO_AVOID)
+    # Check date range 2 no longer exists
+    await asserts.field_not_visible(field='date_ranges-1-from_date_day')
+    await asserts.field_not_visible(field='date_ranges-1-from_date_month')
+    await asserts.field_not_visible(field='date_ranges-1-from_date_year')
+    await asserts.field_not_visible(field='date_ranges-1-to_date_day')
+    await asserts.field_not_visible(field='date_ranges-1-to_date_month')
+    await asserts.field_not_visible(field='date_ranges-1-to_date_year')
 
     # Click Save and continue to return to Contact Preferences page
     await helpers.click_button('Save and continue')
