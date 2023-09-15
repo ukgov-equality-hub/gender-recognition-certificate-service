@@ -19,13 +19,6 @@ references:
           GITHUB_TEAM_NAME_SLUG: pet
           REPO_NAME: grc-app
 jobs:
-  aws-cli-cred-setup:
-    executor: aws-cli/default
-    steps:
-      - aws-cli/setup:
-          aws-access-key-id: ${AWS_ACCESS_KEY_ID_PREPROD}
-          aws-secret-access-key: ${AWS_SECRET_ACCESS_KEY_PREPROD}
-          aws-region: ${AWS_REGION_NAME}
   build:
     parameters:
       env_name:
@@ -60,6 +53,7 @@ jobs:
           POSTGRES_DB: grc-application-test
           POSTGRES_PORT: 5432
           POSTGRES_PASSWORD: password
+    executor: aws-ecr/default
     steps:
       - checkout
       - when:
