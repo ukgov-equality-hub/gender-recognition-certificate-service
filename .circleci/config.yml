@@ -131,16 +131,6 @@ jobs:
             pytest -s --show-capture=all -v --html=report.html
       - store_artifacts:
           path: report.html
-      - run:
-          name: Set up aws
-          command: |
-            sudo apt-get update
-            sudo apt-get --assume-yes install python3-pip
-            sudo pip3 install awscli
-
-      - run:
-          name: List AWS CLI Configuration
-          command: aws configure list
 
       - run:
           name: build app image
@@ -211,10 +201,9 @@ jobs:
       - deploy:
           name: rolling update image
           command: |
-            sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/development/app-deployment.yaml
-            sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/development/admin-deployment.yaml
-            sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/development/dashboard-deployment.yaml
-            sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/development/grc-clamav-deployment.yaml
+            sed -i -e s/:grc-app-latest/:grc-app-$CIRCLE_SHA1/ deploy/development/app-deployment.yaml
+            sed -i -e s/:grc-admin-latest/:grc-admin-$CIRCLE_SHA1/ deploy/development/admin-deployment.yaml
+            sed -i -e s/:grc-dashboard-latest/:grc-dashboard-$CIRCLE_SHA1/ deploy/development/dashboard-deployment.yaml
             kubectl apply -n grc-dev --record=false -f ./deploy/development
 
   deploy_image_to_preprod:
@@ -233,10 +222,9 @@ jobs:
       - deploy:
           name: rolling update image
           command: |
-            sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/staging/app-deployment.yaml
-            sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/staging/admin-deployment.yaml
-            sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/staging/dashboard-deployment.yaml
-            sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/staging/grc-clamav-deployment.yaml
+            sed -i -e s/:grc-app-latest/:grc-app-$CIRCLE_SHA1/ deploy/staging/app-deployment.yaml
+            sed -i -e s/:grc-admin-latest/:grc-admin-$CIRCLE_SHA1/ deploy/staging/admin-deployment.yaml
+            sed -i -e s/:grc-dashboard-latest/:grc-dashboard-$CIRCLE_SHA1/ deploy/staging/dashboard-deployment.yaml
             kubectl apply -n grc-preprod --record=false -f ./deploy/staging
 
   deploy_image_to_production:
@@ -254,9 +242,9 @@ jobs:
       - deploy:
           name: rolling update image
           command: |
-            sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/production/app-deployment.yaml
-            sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/production/admin-deployment.yaml
-            sed -i -e s/:latest/:$CIRCLE_SHA1/ deploy/production/dashboard-deployment.yaml
+            sed -i -e s/:grc-app-latest/:grc-app-$CIRCLE_SHA1/ deploy/production/app-deployment.yaml
+            sed -i -e s/:grc-admin-latest/:grc-admin-$CIRCLE_SHA1/ deploy/production/admin-deployment.yaml
+            sed -i -e s/:grc-dashboard-latest/:grc-dashboard-$CIRCLE_SHA1/ deploy/production/dashboard-deployment.yaml
             kubectl apply -n grc-prod --record=false -f ./deploy/production
 
   build_maintenance_page:
