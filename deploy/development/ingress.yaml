@@ -57,6 +57,6 @@ spec:
             pathType: ImplementationSpecific
             backend:
               service:
-                name: grc-dashboard-service
+                name: maintenance-page-svc
                 port: 
-                  number: 3002
+                  number: 8080
