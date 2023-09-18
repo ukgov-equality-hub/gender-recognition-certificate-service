@@ -1,0 +1,233 @@
+{% import "govuk-design-system-templates/error-message.html" as errorMessage %}
+{% import "govuk-design-system-templates/hint.html" as hint %}
+{% import "govuk-design-system-templates/label.html" as label %}
+
+{% macro renderFor(form, dateForOptions) %}
+
+    {% if form.errors %}
+        <div class="govuk-!-margin-top-3 govuk-!-margin-bottom-3">
+            {% for error in form.errors %}
+                {% if form[error] | is_FieldList %}
+                    {% if error != dateForOptions.parentForm %}
+                        <p class="govuk-error-message govuk-!-margin-top-1 govuk-!-margin-bottom-1">
+                            <span id="{{ error }}-error">
+                                {% for errors in form[error].errors %}
+                                    {% for field_id, error_messages in errors.items() %}
+                                        <span class="govuk-visually-hidden">Error:</span>{{ error_messages[0] }}<br>
+                                    {% endfor %}
+                                {% endfor %}
+                            </span>
+                        </p>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if form.date_ranges|length %}
+
+        {% for date_range in form.date_ranges %}
+
+            {{ label.render(dateForOptions.labelOptions) }}
+
+            {{ label.render({ 'htmlOrText': "From" }) }}
+
+            {{ hint.render(dateForOptions.hintOptions) }}
+
+            <div class="govuk-date-input">
+                <div class="govuk-date-input__item">
+                    <div class="govuk-form-group">
+                        <label for="{{ date_range.form.from_date_day.name }}" class="govuk-label govuk-date-input__label">
+                            Day
+                        </label>
+                        <input type="text"
+                               id="{{ date_range.form.from_date_day.name }}" name="{{ date_range.form.from_date_day.name }}"
+                               value="{{ date_range.form.from_date_day.data if date_range.form.from_date_day.data is not none }}"
+                               pattern="[0-9]*"
+                               inputmode="numeric"
+                               class="govuk-input govuk-date-input__input govuk-input--width-2 {{ 'govuk-input--error' if date_range.form.from_date_day.errors }}">
+                    </div>
+                </div>
+                <div class="govuk-date-input__item">
+                    <div class="govuk-form-group">
+                        <label for="{{ date_range.form.from_date_month.name }}" class="govuk-label govuk-date-input__label">
+                            Month
+                        </label>
+                        <input type="text"
+                               id="{{ date_range.form.from_date_month.name }}" name="{{ date_range.form.from_date_month.name }}"
+                               value="{{ date_range.form.from_date_month.data if date_range.form.from_date_month.data is not none }}"
+                               pattern="[0-9]*"
+                               inputmode="numeric"
+                               class="govuk-input govuk-date-input__input govuk-input--width-2 {{ 'govuk-input--error' if date_range.form.from_date_month.errors }}">
+                    </div>
+                </div>
+                <div class="govuk-date-input__item">
+                    <div class="govuk-form-group">
+                        <label for="{{ date_range.form.from_date_year.name }}" class="govuk-label govuk-date-input__label">
+                            Year
+                        </label>
+                        <input type="text"
+                               id="{{ date_range.form.from_date_year.name }}" name="{{ date_range.form.from_date_year.name }}"
+                               value="{{ date_range.form.from_date_year.data if date_range.form.from_date_year.data is not none }}"
+                               pattern="[0-9]*"
+                               inputmode="numeric"
+                               class="govuk-input govuk-date-input__input govuk-input--width-4 {{ 'govuk-input--error' if date_range.form.from_date_year.errors }}">
+                    </div>
+                </div>
+            </div>
+            <br>
+            <br>
+            {{ label.render({ 'htmlOrText': "To" }) }}
+
+            {{ hint.render(dateForOptions.hintOptions) }}
+
+            <div class="govuk-date-input">
+                <div class="govuk-date-input__item">
+                    <div class="govuk-form-group">
+                        <label for="{{ date_range.form.to_date_day.name }}" class="govuk-label govuk-date-input__label">
+                            Day
+                        </label>
+                        <input type="text"
+                               id="{{ date_range.form.to_date_day.name }}" name="{{ date_range.form.to_date_day.name }}"
+                               value="{{ date_range.form.to_date_day.data if date_range.form.to_date_day.data is not none }}"
+                               pattern="[0-9]*"
+                               inputmode="numeric"
+                               class="govuk-input govuk-date-input__input govuk-input--width-2 {{ 'govuk-input--error' if date_range.form.to_date_day.errors }}">
+                    </div>
+                </div>
+                <div class="govuk-date-input__item">
+                    <div class="govuk-form-group">
+                        <label for="{{ date_range.form.to_date_month.name }}" class="govuk-label govuk-date-input__label">
+                            Month
+                        </label>
+                        <input type="text"
+                               id="{{ date_range.form.to_date_month.name }}" name="{{ date_range.form.to_date_month.name }}"
+                               value="{{ date_range.form.to_date_month.data if date_range.form.to_date_month.data is not none }}"
+                               pattern="[0-9]*"
+                               inputmode="numeric"
+                               class="govuk-input govuk-date-input__input govuk-input--width-2 {{ 'govuk-input--error' if date_range.form.to_date_month.errors }}">
+                    </div>
+                </div>
+                <div class="govuk-date-input__item">
+                    <div class="govuk-form-group">
+                        <label for="{{ date_range.form.to_date_year.name }}" class="govuk-label govuk-date-input__label">
+                            Year
+                        </label>
+                        <input type="text"
+                               id="{{ date_range.form.to_date_year.name }}" name="{{ date_range.form.to_date_year.name }}"
+                               value="{{ date_range.form.to_date_year.data if date_range.form.to_date_year.data is not none }}"
+                               pattern="[0-9]*"
+                               inputmode="numeric"
+                               class="govuk-input govuk-date-input__input govuk-input--width-4 {{ 'govuk-input--error' if date_range.form.to_date_year.errors }}">
+                    </div>
+                </div>
+            </div>
+            {% if not loop.index == 1 and loop.last %}
+                <br>
+                <input type="submit" name="remove_date_range_button_clicked" value="Remove date range"
+                       class="govuk-button govuk-button--warning" data-module="govuk-button">
+            {% endif %}
+            <br>
+            <br>
+        {% endfor %}
+
+    {% else %}
+
+        {{ label.render(dateForOptions.labelOptions) }}
+
+        {{ label.render({ 'htmlOrText': "From" }) }}
+
+        {{ hint.render(dateForOptions.hintOptions) }}
+
+        <div class="govuk-date-input">
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                    <label for="date_ranges-0-from_date_day" class="govuk-label govuk-date-input__label">
+                        Day
+                    </label>
+                    <input type="text"
+                           id="date_ranges-0-from_date_day" name="date_ranges-0-from_date_day"
+                           pattern="[0-9]*"
+                           inputmode="numeric"
+                           class="govuk-input govuk-date-input__input govuk-input--width-2">
+                </div>
+            </div>
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                    <label for="date_ranges-0-from_date_month" class="govuk-label govuk-date-input__label">
+                        Month
+                    </label>
+                    <input type="text"
+                           id="date_ranges-0-from_date_month" name="date_ranges-0-from_date_month"
+                           pattern="[0-9]*"
+                           inputmode="numeric"
+                           class="govuk-input govuk-date-input__input govuk-input--width-2">
+                </div>
+            </div>
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                    <label for="date_ranges-0-from_date_year" class="govuk-label govuk-date-input__label">
+                        Year
+                    </label>
+                    <input type="text"
+                           id="date_ranges-0-from_date_year" name="date_ranges-0-from_date_year"
+                           pattern="[0-9]*"
+                           inputmode="numeric"
+                           class="govuk-input govuk-date-input__input govuk-input--width-4">
+                </div>
+            </div>
+        </div>
+        <br>
+        <br>
+
+        {{ label.render({ 'htmlOrText': "To" }) }}
+
+        {{ hint.render(dateForOptions.hintOptions) }}
+
+        <div class="govuk-date-input">
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                    <label for="date_ranges-0-to_date_day" class="govuk-label govuk-date-input__label">
+                        Day
+                    </label>
+                    <input type="text"
+                           id="date_ranges-0-to_date_day" name="date_ranges-0-to_date_day"
+                           pattern="[0-9]*"
+                           inputmode="numeric"
+                           class="govuk-input govuk-date-input__input govuk-input--width-2 ">
+                </div>
+            </div>
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                    <label for="date_ranges-0-to_date_month" class="govuk-label govuk-date-input__label">
+                        Month
+                    </label>
+                    <input type="text"
+                           id="date_ranges-0-to_date_month" name="date_ranges-0-to_date_month"
+                           pattern="[0-9]*"
+                           inputmode="numeric"
+                           class="govuk-input govuk-date-input__input govuk-input--width-2">
+                </div>
+            </div>
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                    <label for="date_ranges-0-to_date_year" class="govuk-label govuk-date-input__label">
+                        Year
+                    </label>
+                    <input type="text"
+                           id="date_ranges-0-to_date_year" name="date_ranges-0-to_date_year"
+                           pattern="[0-9]*"
+                           inputmode="numeric"
+                           class="govuk-input govuk-date-input__input govuk-input--width-4">
+                </div>
+            </div>
+        </div>
+        <br>
+    {% endif %}
+    <br>
+    <div class="govuk-button-group">
+        <input type="submit" name="add_date_range_button_clicked" value="Add another date range"
+               class="govuk-button" data-module="govuk-button">
+    </div>
+
+{% endmacro %}

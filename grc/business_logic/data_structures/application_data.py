@@ -20,24 +20,26 @@ def any_duplicate_aws_file_names(uploads_files: List[EvidenceFile]):
 
 
 class ApplicationData:
-    reference_number: str = None
-    email_address: str = None
-    updated: datetime = None
-
-    confirmation_data: ConfirmationData
-    personal_details_data: PersonalDetailsData
-    birth_registration_data: BirthRegistrationData
-    partnership_details_data: PartnershipDetailsData
-    uploads_data: UploadsData
-    submit_and_pay_data: SubmitAndPayData
+    def __new__(cls, *args, **kwargs):
+        # This method has been added to address a limitation of jsonpickle.decode
+        # We use the jsonpickle library to convert these python classes to/from JSON to store in the database
+        # The instance-level fields are declared in the __init__ method
+        # When jsonpickle.decode re-creates a class, it calls __new__, but it does not call __init__
+        # We need it to call __init__ to make sure we have set up all the instance-level fields, so we call __init__ here manually
+        new_instance = super().__new__(cls)
+        new_instance.__init__()
+        return new_instance
 
     def __init__(self):
-        self.confirmation_data = ConfirmationData()
-        self.personal_details_data = PersonalDetailsData()
-        self.birth_registration_data = BirthRegistrationData()
-        self.partnership_details_data = PartnershipDetailsData()
-        self.uploads_data = UploadsData()
-        self.submit_and_pay_data = SubmitAndPayData()
+        self.reference_number: str = None
+        self.email_address: str = None
+        self.updated: datetime = None
+        self.confirmation_data: ConfirmationData = ConfirmationData()
+        self.personal_details_data: PersonalDetailsData = PersonalDetailsData()
+        self.birth_registration_data: BirthRegistrationData = BirthRegistrationData()
+        self.partnership_details_data: PartnershipDetailsData = PartnershipDetailsData()
+        self.uploads_data: UploadsData = UploadsData()
+        self.submit_and_pay_data: SubmitAndPayData = SubmitAndPayData()
 
     def _upload_section_status(self, section):
         if len(section) == 0:

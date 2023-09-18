@@ -51,7 +51,7 @@ services:
       context: .
       dockerfile: dashboard.Dockerfile
     ports:
-      - 5002:5002
+      - 3002:3002
     env_file: .dashboard.env
     volumes:
       - ./:/dashboard
