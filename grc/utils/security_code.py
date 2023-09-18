@@ -38,15 +38,31 @@ def validate_security_code(email, code):
         return True
 
 
-def send_security_code(email):
+def generate_security_code(email):
     security_code = security_code_generator(email)
     local = datetime.now().replace(tzinfo=tz.gettz('UTC')).astimezone(tz.gettz('Europe/London'))
     security_code_timeout = datetime.strftime(local + timedelta(hours=24), '%H:%M on %d %b %Y')
+    return security_code, security_code_timeout
 
+
+def send_security_code(email):
+    security_code, security_code_timeout = generate_security_code(email)
     response = GovUkNotify().send_email_security_code(
         email_address=email,
         security_code=security_code,
         security_code_timeout=security_code_timeout
+    )
+
+    return response
+
+
+def send_security_code_admin(email):
+    security_code, expires = generate_security_code(email)
+
+    response = GovUkNotify().send_email_admin_login_security_code(
+        email_address=email,
+        security_code=security_code,
+        expires=expires
     )
 
     return response
