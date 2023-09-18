@@ -1,8 +1,9 @@
 from flask_wtf import FlaskForm
-from wtforms import EmailField, StringField, RadioField, TelField, SelectField, SelectMultipleField
-from wtforms.validators import DataRequired, Email
-from grc.utils.form_custom_validators import StrictRequiredIf, validateNationalInsuranceNumber, validateAddressField, validatePostcode, validateDateOfTransiton, validatePhoneNumber, validateStatutoryDeclarationDate, Integer
-from grc.business_logic.data_structures.personal_details_data import AffirmedGender
+from wtforms import EmailField, StringField, RadioField, TelField, SelectField, SelectMultipleField, FieldList, FormField, SubmitField
+from wtforms.form import Form
+from wtforms.validators import DataRequired, Email, Optional
+from grc.utils.form_custom_validators import StrictRequiredIf, validateNationalInsuranceNumber, validateAddressField, validatePostcode, validateDateOfTransiton, validatePhoneNumber, validateStatutoryDeclarationDate, validate_single_date, Integer
+from grc.business_logic.data_structures.personal_details_data import AffirmedGender, ContactDatesAvoid
 
 
 class NameForm(FlaskForm):
@@ -321,18 +322,68 @@ class ContactPreferencesForm(FlaskForm):
     )
 
 
+class DateRangeForm(Form):
+
+    """
+    Can't use StrictIfRequired on this form as it is used as a subform therefore get errors when validating.
+    Validation needs to be checked in the controller after Flask validation on submit and errors dynamically
+     added to form errors.
+    """
+
+    from_date_day = StringField()
+
+    from_date_month = StringField()
+
+    from_date_year = StringField()
+
+    to_date_day = StringField()
+
+    to_date_month = StringField()
+
+    to_date_year = StringField()
+
+
 class ContactDatesForm(FlaskForm):
     contactDatesCheck = RadioField(
         choices=[
-            (True, 'Yes'),
-            (False, 'No')
+            (ContactDatesAvoid.SINGLE_DATE.name, 'A single date'),
+            (ContactDatesAvoid.DATE_RANGE.name, 'A range of dates'),
+            (ContactDatesAvoid.NO_DATES.name, 'No dates')
         ],
         validators=[DataRequired(message="Select if you don't want us to contact you at any point in the next 6 months")]
     )
 
-    dates = StringField(
-        validators=[StrictRequiredIf('contactDatesCheck', True, message="Enter the dates you don't want us to contact you by post")]
+    day = StringField(
+        validators=[
+            StrictRequiredIf('contactDatesCheck', 'SINGLE_DATE', message='Enter a day', validators=[
+                Integer(min=1, max=31, message='Enter a day as a number between 1 and 31')
+            ]),
+        ]
     )
+
+    month = StringField(
+        validators=[
+            StrictRequiredIf('contactDatesCheck', 'SINGLE_DATE', message='Enter a month', validators=[
+                Integer(min=1, max=12, message='Enter a month as a number between 1 and 12')
+            ])
+        ]
+    )
+
+    year = StringField(
+        validators=[
+            StrictRequiredIf('contactDatesCheck', 'SINGLE_DATE', message='Enter a year', validators=[
+                Integer(min=1000, message='Enter a year as a 4-digit number, like 2000', validators=[
+                    validate_single_date
+                ])
+            ])
+        ]
+    )
+
+    date_ranges = FieldList(FormField(DateRangeForm))
+
+    add_date_range_button_clicked = SubmitField()
+
+    remove_date_range_button_clicked = SubmitField()
 
 
 class HmrcForm(FlaskForm):

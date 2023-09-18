@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: maintenance-page
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app:  maintenance-page
+  template:
+    metadata:
+      labels:
+        app: maintenance-page
+    spec:
+      containers:
+      - name: maintenance-page
+        image:  754256621582.dkr.ecr.eu-west-2.amazonaws.com/pet/grc-preprod-ecr:grc-maintenance-custom
+        ports:
+        - containerPort: 8080

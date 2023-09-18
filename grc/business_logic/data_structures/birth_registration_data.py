@@ -11,28 +11,39 @@ class AdoptedInTheUkEnum(GrcEnum):
 
 
 class BirthRegistrationData:
-    first_name: str = None
-    middle_names: str = None
-    last_name: str = None
+    def __new__(cls, *args, **kwargs):
+        # This method has been added to address a limitation of jsonpickle.decode
+        # We use the jsonpickle library to convert these python classes to/from JSON to store in the database
+        # The instance-level fields are declared in the __init__ method
+        # When jsonpickle.decode re-creates a class, it calls __new__, but it does not call __init__
+        # We need it to call __init__ to make sure we have set up all the instance-level fields, so we call __init__ here manually
+        new_instance = super().__new__(cls)
+        new_instance.__init__()
+        return new_instance
 
-    date_of_birth: datetime.date = None
+    def __init__(self):
+        self.first_name: str = None
+        self.middle_names: str = None
+        self.last_name: str = None
 
-    birth_registered_in_uk: bool = None
-    country_of_birth: str = None
-    town_city_of_birth: str = None
+        self.date_of_birth: datetime.date = None
 
-    mothers_first_name: str = None
-    mothers_last_name: str = None
-    mothers_maiden_name: str = None
+        self.birth_registered_in_uk: bool = None
+        self.country_of_birth: str = None
+        self.town_city_of_birth: str = None
 
-    fathers_name_on_birth_certificate: bool = None
-    fathers_first_name: str = None
-    fathers_last_name: str = None
+        self.mothers_first_name: str = None
+        self.mothers_last_name: str = None
+        self.mothers_maiden_name: str = None
 
-    adopted: bool = None
-    adopted_in_the_uk: AdoptedInTheUkEnum = None
+        self.fathers_name_on_birth_certificate: bool = None
+        self.fathers_first_name: str = None
+        self.fathers_last_name: str = None
 
-    forces_registration: bool = None
+        self.adopted: bool = None
+        self.adopted_in_the_uk: AdoptedInTheUkEnum = None
+
+        self.forces_registration: bool = None
 
     @property
     def full_name(self) -> str:

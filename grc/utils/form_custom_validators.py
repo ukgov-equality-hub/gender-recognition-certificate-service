@@ -6,10 +6,10 @@ from wtforms.validators import DataRequired, ValidationError, StopValidation
 from werkzeug.datastructures import FileStorage
 from collections.abc import Iterable
 from datetime import datetime, date
+from grc.business_logic.data_store import DataStore
 from grc.utils.security_code import validate_security_code
 from grc.utils.reference_number import validate_reference_number
 from grc.models import db, Application
-
 
 class RequiredIf(DataRequired):
     """Validator which makes a field required if another field is set and has a truthy value.
@@ -50,6 +50,7 @@ class StrictRequiredIf(DataRequired):
         self.validators = validators
 
     def __call__(self, form, field):
+
         other_field = form[self.other_field_name]
 
         if other_field is None:
@@ -72,6 +73,7 @@ class Integer(DataRequired):
         self.validators = validators
 
     def __call__(self, form, field):
+
         string_value: str = field.data
 
         try:
@@ -187,9 +189,12 @@ def validateDateOfTransiton(form, field):
         earliest_date_of_transition_years = 100
         earliest_date_of_transition = date.today() - relativedelta(years=earliest_date_of_transition_years)
 
+        reference_number = session['reference_number']
         application_record = db.session.query(Application).filter_by(
-            reference_number=session['reference_number']
+            reference_number=reference_number
         ).first()
+        application_data = DataStore.load_application(reference_number)
+
         latest_transition_years = 2
         application_created_date = date(
             application_record.created.year,
@@ -204,7 +209,8 @@ def validateDateOfTransiton(form, field):
         if date_of_transition > date.today():
             raise ValidationError('Enter a date in the past')
 
-        if date_of_transition > latest_transition_date:
+        if date_of_transition > latest_transition_date \
+                and not application_data.confirmation_data.gender_recognition_outside_uk:
             raise ValidationError(f'Enter a date at least {latest_transition_years} years before your application')
 
 
@@ -295,6 +301,94 @@ def validateHWFReferenceNumber(form, field):
             raise ValidationError(f'Enter a valid \'Help with fees\' reference number')
 
 
+def validate_single_date(form, field):
+    if not form['day'].errors and not form['month'].errors:
+        try:
+            day = int(form['day'].data)
+            month = int(form['month'].data)
+            year = int(form['year'].data)
+            date_entered = date(year, month, day)
+        except Exception as e:
+            print(f"ERROR => {e}", flush=True)
+            raise ValidationError('Enter a valid date')
+
+        if date_entered < date.today():
+            raise ValidationError('Enter a date in the future')
+
+
+def validate_date_range_form(date_ranges_form):
+    form_errors = dict()
+    from_date_day_entered = True
+    from_date_month_entered = True
+    from_date_year_entered = True
+    to_date_day_entered = True
+    to_date_month_entered = True
+    to_date_year_entered = True
+
+    if not date_ranges_form.from_date_day.data:
+        form_errors['from_date_day'] = 'Enter a day'
+        from_date_day_entered = False
+
+    if not date_ranges_form.from_date_month.data:
+        form_errors['from_date_month'] = 'Enter a month'
+        from_date_month_entered = False
+
+    if not date_ranges_form.from_date_year.data:
+        form_errors['from_date_year'] = 'Enter a year'
+        from_date_year_entered = False
+
+    if not date_ranges_form.to_date_day.data:
+        form_errors['to_date_day'] = 'Enter a day'
+        to_date_day_entered = False
+
+    if not date_ranges_form.to_date_month.data:
+        form_errors['to_date_month'] = 'Enter a month'
+        to_date_month_entered = False
+
+    if not date_ranges_form.to_date_year.data:
+        form_errors['to_date_year'] = 'Enter a year'
+        to_date_year_entered = False
+
+    if from_date_day_entered and (int(date_ranges_form.from_date_day.data) < 1 or
+                                  int(date_ranges_form.from_date_day.data) > 31):
+        form_errors['from_date_day'] = 'Enter a day as a number between 1 and 31'
+
+    if to_date_day_entered and (int(date_ranges_form.to_date_day.data) < 1 or
+                                int(date_ranges_form.to_date_day.data) > 31):
+        form_errors['to_date_day'] = 'Enter a day as a number between 1 and 31'
+
+    if from_date_month_entered and (int(date_ranges_form.from_date_month.data) < 1 or
+                                    int(date_ranges_form.from_date_month.data) > 12):
+        form_errors['from_date_month'] = 'Enter a month as a number between 1 and 12'
+
+    if to_date_month_entered and (int(date_ranges_form.to_date_month.data) < 1 or
+                                  int(date_ranges_form.to_date_month.data) > 12):
+        form_errors['to_date_month'] = 'Enter a month as a number between 1 and 12'
+
+    if from_date_year_entered and int(date_ranges_form.from_date_year.data) < 1000:
+        form_errors['from_date_year'] = 'Enter a year as a 4-digit number, like 2000'
+
+    if to_date_year_entered and int(date_ranges_form.to_date_year.data) < 1000:
+        form_errors['to_date_year'] = 'Enter a year as a 4-digit number, like 2000'
+
+    return form_errors
+
+
+def validate_date_ranges(from_date, to_date):
+    form_errors = dict()
+
+    if from_date < date.today():
+        form_errors['from_date_year'] = '\'From\' date is in the past'
+
+    if to_date < date.today():
+        form_errors['to_date_year'] = '\'To\' date is in the past'
+
+    if from_date > to_date:
+        form_errors['to_date_year'] = '\'From\' date is after the \'To\' date'
+
+    return form_errors
+
+
 class MultiFileAllowed(object):
     def __init__(self, upload_set, message=None):
         self.upload_set = upload_set
@@ -342,26 +436,26 @@ def fileVirusScan(form, field):
         return
 
     print('Scanning %s' % current_app.config['AV_API'], flush=True)
+
     from pyclamd import ClamdNetworkSocket
-
-    uploaded = request.files[field.name]
-    uploaded.stream.seek(0)
-
     url = current_app.config['AV_API']
     url = url.replace('http://', '')
     url = url.replace('https://', '')
-
     cd = ClamdNetworkSocket(host=url, port=3310, timeout=None)
-    if not cd.ping():
-        print('Unable to communicate with virus scanner', flush=True)
-        return
-    results = cd.scan_stream(uploaded.stream.read())
-    if results is None:
-        uploaded.stream.seek(0)
-        return
-    else:
-        res_type, res_msg = results['stream']
-        if res_type == 'FOUND':
-            raise ValidationError('The selected file contains a virus')
+    uploaded_files = request.files.getlist(field.name)
+
+    for uploaded_file in uploaded_files:
+        uploaded_file.stream.seek(0)
+
+        if not cd.ping():
+            raise ValidationError('Unable to communicate with virus scanner')
+
+        results = cd.scan_stream(uploaded_file.stream.read())
+        if results is None:
+            uploaded_file.stream.seek(0)
         else:
-            print('Error scanning uploaded file', flush=True)
+            res_type, res_msg = results['stream']
+            if res_type == 'FOUND':
+                raise ValidationError('The selected file contains a virus')
+            else:
+                print('Error scanning uploaded file', flush=True)

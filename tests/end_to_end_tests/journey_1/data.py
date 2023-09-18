@@ -38,7 +38,28 @@ TRANSITION_DATE_MONTH_MINUS_ONE = '2'
 
 STATUTORY_DECLARATION_DATE_FORMATTED = f'05 March {STATUTORY_DECLARATION_DATE_YEAR}'
 
-DATES_TO_AVOID = '1st June - 2nd July\n3rd August - 4th September'
+CONTACT_DATE_SINGLE_DAY = '5'
+CONTACT_DATE_SINGLE_MONTH = '5'
+CONTACT_DATE_SINGLE_YEAR = str((date.today() + relativedelta(years=1)).year)
+
+CONTACT_DATE_RANGE_1_FROM_DAY = '5'
+CONTACT_DATE_RANGE_1_FROM_MONTH = '5'
+CONTACT_DATE_RANGE_1_FROM_YEAR = str((date.today() + relativedelta(years=1)).year)
+
+CONTACT_DATE_RANGE_1_TO_DAY = '5'
+CONTACT_DATE_RANGE_1_TO_MONTH = '6'
+CONTACT_DATE_RANGE_1_TO_YEAR = str((date.today() + relativedelta(years=1)).year)
+
+CONTACT_DATE_RANGE_2_FROM_DAY = '6'
+CONTACT_DATE_RANGE_2_FROM_MONTH = '6'
+CONTACT_DATE_RANGE_2_FROM_YEAR = str((date.today() + relativedelta(years=1)).year)
+
+CONTACT_DATE_RANGE_2_TO_DAY = '6'
+CONTACT_DATE_RANGE_2_TO_MONTH = '7'
+CONTACT_DATE_RANGE_2_TO_YEAR = str((date.today() + relativedelta(years=1)).year)
+
+# DATES_TO_AVOID = '1st June - 2nd July\n3rd August - 4th September'
+DATES_TO_AVOID = f'From 05/05/{CONTACT_DATE_RANGE_1_FROM_YEAR} to 05/06/{CONTACT_DATE_RANGE_1_TO_YEAR}'
 
 PHONE_NUMBER = '07700900000'
 
