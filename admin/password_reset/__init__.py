@@ -20,7 +20,7 @@ def index():
     for key, value in session.items():
             logger.log(LogLevel.INFO, f"Session entry: {key} = {value}")
 
-    if 'email' not in session:
+    if 'emailAddress' not in session and 'signedIn' not in session:
         logger.log(LogLevel.WARN, f"Forgotten password accessed for no user")
         return local_redirect(url_for('forgot_password.index'))
 
