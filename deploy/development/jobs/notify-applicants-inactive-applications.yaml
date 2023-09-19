@@ -21,6 +21,9 @@ spec:
               - /bin/sh
               - -c
               - flask jobs.notify_applicants_inactive_apps run
+            envFrom:
+              - configMapRef:
+                  name: grc-dev-ecr-circleci
             env:
               - name: AWS_REGION
                 value: eu-west-2
