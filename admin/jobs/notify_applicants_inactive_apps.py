@@ -100,7 +100,7 @@ def delete_completed_applications():
         Application.completed < earliest_allowed_application_completed_date
     )
 
-    print(f'Deleting {len(applications_to_anonymise)} completed applications\n', flush=True)
+    print(f'Deleting {applications_to_anonymise.count()} completed applications\n', flush=True)
 
     for application_to_anonymise in applications_to_anonymise:
         anonymise_application(application_to_anonymise, new_state=ApplicationStatus.DELETED)
@@ -133,7 +133,7 @@ def delete_expired_security_codes():
         SecurityCode.created < earliest_allowed_security_code_creation_time
     )
 
-    print(f'Deleting {len(security_codes_to_delete)} expired security codes\n', flush=True)
+    print(f'Deleting {security_codes_to_delete.count()} expired security codes\n', flush=True)
 
     for security_code_to_delete in security_codes_to_delete:
         db.session.delete(security_code_to_delete)
@@ -150,7 +150,6 @@ def calculate_earliest_allowed_security_code_creation_time(now, hours_between_se
 def main():
     try:
         print('running notify applicants inactive apps job', flush=True)
-        print('test')
         applicants_notified = application_notifications()
         assert applicants_notified == 200
         print('finished notify applicants inactive apps job', flush=True)
