@@ -22,6 +22,7 @@ def application_notifications():
 
 
 def abandon_application_after_period_of_inactivity(days_between_last_update_and_deletion):
+    print(f'\nAbandoning applications {days_between_last_update_and_deletion} days from last update\n', flush=True)
     now = datetime.now()
     earliest_allowed_inactive_application_updated_date = calculate_earliest_allowed_inactive_application_updated_date(now, days_between_last_update_and_deletion)
 
@@ -50,6 +51,9 @@ def send_reminder_emails_before_application_deletion(days_between_last_update_an
 
     for days_to_send_reminder_before_deletion in deletion_reminder_days_and_phrases.keys():
         period_of_time_until_deletion_phrase = deletion_reminder_days_and_phrases[days_to_send_reminder_before_deletion]
+
+        print(f'Sending reminder emails to applications {period_of_time_until_deletion_phrase} from being deleted\n',
+              flush=True)
 
         today = datetime.today()
         last_updated_date = calculate_last_updated_date(today, days_to_send_reminder_before_deletion, days_between_last_update_and_deletion)
@@ -85,6 +89,7 @@ def calculate_last_updated_date(today, days_to_send_reminder_before_deletion, da
 
 
 def delete_completed_applications():
+    print(f'\nDeleting completed applications', flush=True)
     days_between_application_completion_and_anonymisation = 7
 
     now = datetime.now()
@@ -94,6 +99,8 @@ def delete_completed_applications():
         Application.status == ApplicationStatus.COMPLETED,
         Application.completed < earliest_allowed_application_completed_date
     )
+
+    print(f'Deleting {len(applications_to_anonymise)} completed applications\n', flush=True)
 
     for application_to_anonymise in applications_to_anonymise:
         anonymise_application(application_to_anonymise, new_state=ApplicationStatus.DELETED)
@@ -116,6 +123,7 @@ def anonymise_application(application_to_anonymise, new_state: ApplicationStatus
 
 
 def delete_expired_security_codes():
+    print(f'\nDeleting expired security codes', flush=True)
     hours_between_security_code_creation_and_expiry = 24
 
     now = datetime.now()
@@ -124,6 +132,8 @@ def delete_expired_security_codes():
     security_codes_to_delete = SecurityCode.query.filter(
         SecurityCode.created < earliest_allowed_security_code_creation_time
     )
+
+    print(f'Deleting {len(security_codes_to_delete)} expired security codes\n', flush=True)
 
     for security_code_to_delete in security_codes_to_delete:
         db.session.delete(security_code_to_delete)
