@@ -12,6 +12,7 @@ spec:
       template:
         spec:
           restartPolicy: OnFailure
+          serviceAccountName: grc-dev
           containers:
           - name: admin-jobs
             image: 754256621582.dkr.ecr.eu-west-2.amazonaws.com/pet/grc-dev-ecr:grc-admin-latest
@@ -19,8 +20,7 @@ spec:
             command:
               - /bin/sh
               - -c
-              #- flask jobs.notify_applicants_inactive_apps run
-              - echo "Hello World"
+              - flask jobs.notify_applicants_inactive_apps run
             env:
               - name: AWS_REGION
                 value: eu-west-2
