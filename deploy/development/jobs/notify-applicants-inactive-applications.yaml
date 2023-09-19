@@ -12,6 +12,7 @@ spec:
       template:
         spec:
           restartPolicy: OnFailure
+          serviceAccountName: grc-dev
           containers:
           - name: admin-jobs
             image: 754256621582.dkr.ecr.eu-west-2.amazonaws.com/pet/grc-dev-ecr:grc-admin-latest
