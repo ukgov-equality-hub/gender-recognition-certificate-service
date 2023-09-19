@@ -150,6 +150,7 @@ def calculate_earliest_allowed_security_code_creation_time(now, hours_between_se
 def main():
     try:
         print('running notify applicants inactive apps job', flush=True)
+        print('test')
         applicants_notified = application_notifications()
         assert applicants_notified == 200
         print('finished notify applicants inactive apps job', flush=True)
