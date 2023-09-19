@@ -191,6 +191,12 @@ jobs:
             kubectl config set-context ${K8S_CLUSTER_NAME} --cluster=${K8S_CLUSTER_NAME} --user=circleci --namespace=${K8S_NAMESPACE_DEV}
             kubectl config use-context ${K8S_CLUSTER_NAME}
 
+      - run:
+          name: rolling update image jobs
+          command: |
+            sed -i -e s/:grc-admin-latest/:grc-admin-$CIRCLE_SHA1/ deploy/development/jobs/notify-applicants-inactive-applications.yaml
+            kubectl apply -n grc-dev --record=false -f ./deploy/development/jobs
+
       - deploy:
           name: rolling update image
           command: |
@@ -198,10 +204,6 @@ jobs:
             sed -i -e s/:grc-admin-latest/:grc-admin-$CIRCLE_SHA1/ deploy/development/admin-deployment.yaml
             sed -i -e s/:grc-dashboard-latest/:grc-dashboard-$CIRCLE_SHA1/ deploy/development/dashboard-deployment.yaml
             kubectl apply -n grc-dev --record=false -f ./deploy/development
-
-            # Jobs
-            sed -i -e s/:grc-admin-latest/:grc-admin-$CIRCLE_SHA1/ deploy/development/jobs/notify-applicants-inactive-applications.yaml
-            kubectl apply -n grc-dev --record=false -f ./deploy/development/jobs
 
 
   deploy_image_to_preprod:
