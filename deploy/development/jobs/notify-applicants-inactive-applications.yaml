@@ -18,7 +18,7 @@ spec:
           serviceAccountName: grc-dev
           containers:
           - name: admin-jobs
-            image: 754256621582.dkr.ecr.eu-west-2.amazonaws.com/pet/grc-dev-ecr:grc-admin-e3ce8b7c4f9feebb476b34ffa133ce6c1b0b5411
+            image: 754256621582.dkr.ecr.eu-west-2.amazonaws.com/pet/grc-dev-ecr:grc-admin-latest
             imagePullPolicy: Always
             command:
               - /bin/sh
