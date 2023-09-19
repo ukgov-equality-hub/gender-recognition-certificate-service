@@ -197,6 +197,10 @@ jobs:
             sed -i -e s/:grc-app-latest/:grc-app-$CIRCLE_SHA1/ deploy/development/app-deployment.yaml
             sed -i -e s/:grc-admin-latest/:grc-admin-$CIRCLE_SHA1/ deploy/development/admin-deployment.yaml
             sed -i -e s/:grc-dashboard-latest/:grc-dashboard-$CIRCLE_SHA1/ deploy/development/dashboard-deployment.yaml
+
+            # Jobs
+            sed -i -e s/:grc-admin-latest/:grc-admin-$CIRCLE_SHA1/ deploy/development/jobs/notify-applicants-inactive-applications.yaml
+
             kubectl apply -n grc-dev --record=false -f ./deploy/development
 
   deploy_image_to_preprod:
