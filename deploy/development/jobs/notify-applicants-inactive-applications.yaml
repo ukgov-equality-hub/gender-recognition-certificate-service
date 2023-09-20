@@ -4,7 +4,7 @@ metadata:
   name: notify-applicants-inactive-applications-dev
   namespace: grc-dev
 spec:
-  schedule: '*/2 * * * *'
+  schedule: '0 1 * * *'
   concurrencyPolicy: Forbid
   jobTemplate:
     spec:
