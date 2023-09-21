@@ -1,5 +1,5 @@
 import datetime
-from admin.jobs import calculate_earliest_allowed_inactive_application_updated_date, calculate_last_updated_date, calculate_earliest_allowed_security_code_creation_time
+from admin.jobs.notify_applicants_inactive_apps import calculate_earliest_allowed_inactive_application_updated_date, calculate_last_updated_date, calculate_earliest_allowed_security_code_creation_time
 
 
 days_between_last_update_and_deletion = 183  # approximately 6 months

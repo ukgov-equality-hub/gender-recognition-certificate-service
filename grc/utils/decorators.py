@@ -77,13 +77,3 @@ def Unauthorized(f):
             return local_redirect(url_for('taskList.index'))
         return f(*args, **kwargs)
     return decorated_function
-
-
-def JobTokenRequired(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if request.args.get('token') != current_app.config['JOB_TOKEN']:
-            logger.log(LogLevel.WARN, f"(JobTokenRequired) An unknown user has attempted to access {request.host_url}")
-            return abort(403)
-        return f(*args, **kwargs)
-    return decorated_function
