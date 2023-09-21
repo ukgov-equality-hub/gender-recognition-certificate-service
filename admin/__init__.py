@@ -2,6 +2,8 @@ import json
 import os
 from datetime import timedelta
 from flask import Flask, g
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from flask_migrate import Migrate
 from flask_uuid import FlaskUUID
 from grc.models import db
@@ -65,11 +67,20 @@ def create_app(test_config=None):
 
         return response
 
+    memory_storage_uri = os.environ.get('MEMORY_STORAGE_URL', 'memory://')
+    limiter = Limiter(
+        get_remote_address,
+        app=app,
+        default_limits=["200 per day", "50 per hour"],
+        storage_uri=memory_storage_uri
+    )
+
     # Filters
     app.register_blueprint(filters.blueprint)
 
     # Admin page
     from admin.admin import admin
+    limiter.limit('2 per minute')(admin)
     app.register_blueprint(admin)
 
     # Signout
@@ -78,6 +89,8 @@ def create_app(test_config=None):
 
     # Password reset
     from admin.password_reset import password_reset
+
+    limiter.limit('2 per minute')(password_reset)
     app.register_blueprint(password_reset)
 
     # Forgot password
