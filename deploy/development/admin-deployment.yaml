@@ -91,4 +91,5 @@ spec:
           - name: MEMORY_STORAGE_URL
             valueFrom:
               secretKeyRef:
-                name: url
+                name: elasticache-grc-dev
+                key: url
