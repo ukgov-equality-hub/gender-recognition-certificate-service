@@ -4,7 +4,7 @@ metadata:
   name: notify-applicants-inactive-applications-preprod
   namespace: grc-preprod
 spec:
-  schedule: '0 1 * * *'
+  schedule: '*/5 * * * *'
   concurrencyPolicy: Forbid
   jobTemplate:
     spec:
