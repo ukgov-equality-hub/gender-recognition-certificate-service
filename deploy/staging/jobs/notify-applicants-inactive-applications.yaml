@@ -4,7 +4,7 @@ metadata:
   name: notify-applicants-inactive-applications-preprod
   namespace: grc-preprod
 spec:
-  schedule: '0 1 * * *'
+  schedule: '*/5 * * * *'
   concurrencyPolicy: Forbid
   jobTemplate:
     spec:
@@ -18,7 +18,7 @@ spec:
           serviceAccountName: grc-preprod
           containers:
           - name: admin-jobs
-            image: 754256621582.dkr.ecr.eu-west-2.amazonaws.com/pet/grc-preprod-ecr:grc-admin-latest
+            image: 754256621582.dkr.ecr.eu-west-2.amazonaws.com/pet/grc-preprod-ecr:grc-admin-e4d879a586c22405203b0f6079eb267e0b92fd27
             imagePullPolicy: Always
             command:
               - /bin/sh
@@ -38,7 +38,7 @@ spec:
               - name: DATABASE_URL
                 valueFrom:
                   secretKeyRef:
-                    name: rds-postgresql-instance-output
+                    name: dps-rds-instance-output
                     key: url
               - name: DEFAULT_ADMIN_USER
                 value: mark.butler@HMCTS.net
@@ -82,7 +82,7 @@ spec:
               - name: SQLALCHEMY_DATABASE_URI
                 valueFrom:
                   secretKeyRef:
-                    name: rds-postgresql-instance-output
+                    name: dps-rds-instance-output
                     key: sql_alchemy_url
               - name: SQLALCHEMY_KEY
                 valueFrom:
