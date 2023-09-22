@@ -131,7 +131,7 @@ def delete_expired_security_codes():
 
     security_codes_to_delete = SecurityCode.query.filter(
         SecurityCode.created < earliest_allowed_security_code_creation_time
-    ).all()
+    )
 
     print(f'Deleting {security_codes_to_delete.count()} expired security codes\n', flush=True)
 
