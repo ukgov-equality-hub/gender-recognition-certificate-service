@@ -18,7 +18,7 @@ spec:
           serviceAccountName: grc-preprod
           containers:
           - name: admin-jobs
-            image: 754256621582.dkr.ecr.eu-west-2.amazonaws.com/pet/grc-preprod-ecr:grc-admin-e4d879a586c22405203b0f6079eb267e0b92fd27
+            image: 754256621582.dkr.ecr.eu-west-2.amazonaws.com/pet/grc-preprod-ecr:grc-admin-latest
             imagePullPolicy: Always
             command:
               - /bin/sh
