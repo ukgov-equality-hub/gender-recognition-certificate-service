@@ -10,6 +10,7 @@ from grc.models import db
 from grc.utils import filters
 from admin.config import Config, DevConfig, TestConfig
 from grc.utils.http_basic_authentication import HttpBasicAuthentication
+from grc.utils.custom_error_handlers import CustomErrorHandlers
 
 migrate = Migrate()
 flask_uuid = FlaskUUID()
@@ -32,6 +33,8 @@ def create_app(test_config=None):
     # Require HTTP Basic Authentication if both the username and password are set
     if app.config['BASIC_AUTH_USERNAME'] and app.config['BASIC_AUTH_PASSWORD']:
         HttpBasicAuthentication(app)
+
+    CustomErrorHandlers(app)
 
     # Load build info from JSON file
     f = open('build-info.json')
@@ -80,7 +83,7 @@ def create_app(test_config=None):
 
     # Admin page
     from admin.admin import admin
-    limiter.limit('2 per minute')(admin)
+    limiter.limit('5 per minute', error_message=)(admin)
     app.register_blueprint(admin)
 
     # Signout
@@ -90,7 +93,7 @@ def create_app(test_config=None):
     # Password reset
     from admin.password_reset import password_reset
 
-    limiter.limit('2 per minute')(password_reset)
+    limiter.limit('5 per minute')(password_reset)
     app.register_blueprint(password_reset)
 
     # Forgot password
