@@ -92,3 +92,8 @@ spec:
               secretKeyRef:
                 name: basic-auth
                 key: alchemy-key
+          - name: MEMORY_STORAGE_URL
+            valueFrom:
+              secretKeyRef:
+                name: elasticache-grc-dev
+                key: url
