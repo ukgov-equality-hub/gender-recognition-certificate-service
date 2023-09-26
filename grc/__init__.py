@@ -5,7 +5,7 @@ from flask import Flask, g
 from flask_migrate import Migrate
 from flask_uuid import FlaskUUID
 from grc.models import db
-from grc.utils import filters
+from grc.utils import filters, limiter
 from grc.config import Config, DevConfig, TestConfig
 from grc.utils.http_basic_authentication import HttpBasicAuthentication
 from grc.utils.maintenance_mode import Maintenance
@@ -76,11 +76,16 @@ def create_app(test_config=None):
 
         return response
 
+    # Rate limiter
+    rate_limiter = limiter.limiter(app)
+
     # Filters
     app.register_blueprint(filters.blueprint)
 
     # Homepage
     from grc.start_application import startApplication
+    if rate_limiter:
+        rate_limiter.limit('5 per minute')(startApplication)
     app.register_blueprint(startApplication)
 
     # Save And Return
