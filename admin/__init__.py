@@ -83,7 +83,7 @@ def create_app(test_config=None):
 
     # Admin page
     from admin.admin import admin
-    limiter.limit('5 per minute', error_message=)(admin)
+    limiter.limit('5 per minute')(admin)
     app.register_blueprint(admin)
 
     # Signout
