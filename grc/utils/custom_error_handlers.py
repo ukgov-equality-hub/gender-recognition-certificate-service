@@ -29,7 +29,7 @@ class CustomErrorHandlers:
     def error_429(e):
         print(f"error 429: {e}", flush=True)
         capture_exception(e)
-        return render_template('custom-error-templates/429.html')
+        return render_template('custom-error-templates/429.html'), 429
 
     @staticmethod
     def error_503(e):
