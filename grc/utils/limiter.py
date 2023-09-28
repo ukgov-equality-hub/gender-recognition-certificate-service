@@ -8,11 +8,12 @@ def limiter(app):
     print(f'MEMORY_STORAGE_URL APP = {app.config["MEMORY_STORAGE_URL"]}')
     if not app.config['MEMORY_STORAGE_URL']:
         return None
-
+    storage_uri = app.config['MEMORY_STORAGE_URL'].replace('rediss://', 'rediss+cluster://')
+    print(f'storage_uri = {app.config["MEMORY_STORAGE_URL"]}', flush=True)
     return Limiter(
         get_remote_address,
         app=app,
         meta_limits=["5 per minute"],
         default_limits=["200 per day", "50 per hour"],
-        storage_uri=app.config['MEMORY_STORAGE_URL']
+        storage_uri=storage_uri
     )
