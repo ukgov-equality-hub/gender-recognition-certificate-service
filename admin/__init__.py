@@ -77,7 +77,7 @@ def create_app(test_config=None):
     # Admin page
     from admin.admin import admin
     if rate_limiter:
-        rate_limiter.meta_limits = ["5 per minute"]
+        # rate_limiter.meta_limits = ["5 per minute"]
         rate_limiter.limit('5 per minute')(admin)
     app.register_blueprint(admin)
 
@@ -88,7 +88,7 @@ def create_app(test_config=None):
     # Password reset
     from admin.password_reset import password_reset
     if rate_limiter:
-        rate_limiter.meta_limits = ["5 per minute"]
+        # rate_limiter.meta_limits = ["5 per minute"]
         rate_limiter.limit('5 per minute')(password_reset)
     app.register_blueprint(password_reset)
 
