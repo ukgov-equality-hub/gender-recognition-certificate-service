@@ -20,8 +20,6 @@ def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
 
-    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1)
-
     if os.environ['FLASK_ENV'] == 'production':
         config_object = Config
     elif os.environ['FLASK_ENV'] == 'development':
@@ -70,6 +68,9 @@ def create_app(test_config=None):
                                                         "form-action 'self'"
 
         return response
+
+    # Wrap app wsgi with proxy fix to reliably get user address without ip spoofing via headers
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1)
 
     # Rate limiter
     rate_limiter = limiter.limiter(app)
