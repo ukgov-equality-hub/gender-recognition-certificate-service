@@ -28,7 +28,6 @@ RUN npm run build
 
 #RUN rm /app/grc -r
 RUN chmod 777 /app/run_admin.sh
-RUN chmod +x /app/rp_test.sh
 
 # Don't run as root user
 USER 1000

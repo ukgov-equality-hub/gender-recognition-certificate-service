@@ -30,7 +30,6 @@ RUN npm install
 RUN npm run build
 
 #RUN rm /app/admin -r
-RUN chmod +x /app/rp_test.sh
 
 # Don't run as root user
 USER 1000
