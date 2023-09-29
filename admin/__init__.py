@@ -81,7 +81,7 @@ def create_app(test_config=None):
     # Admin page
     from admin.admin import admin
     if rate_limiter:
-        rate_limiter.limit('5 per 2 minutes')(admin)
+        rate_limiter.limit('5 per minute')(admin)
     app.register_blueprint(admin)
 
     # Signout
@@ -91,7 +91,7 @@ def create_app(test_config=None):
     # Password reset
     from admin.password_reset import password_reset
     if rate_limiter:
-        rate_limiter.limit('5 per 2 minutes')(password_reset)
+        rate_limiter.limit('5 per minute')(password_reset)
     app.register_blueprint(password_reset)
 
     # Forgot password

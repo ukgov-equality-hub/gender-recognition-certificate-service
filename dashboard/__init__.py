@@ -82,7 +82,7 @@ def create_app(test_config=None):
     # Dashboard page
     from dashboard.stats import stats
     if rate_limiter:
-        rate_limiter.limit('5 per 2 minutes')(stats)
+        rate_limiter.limit('5 per minute')(stats)
     app.register_blueprint(stats)
 
     # Feedback page
