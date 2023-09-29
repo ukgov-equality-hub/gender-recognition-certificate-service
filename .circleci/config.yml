@@ -94,16 +94,16 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            #python -m venv venv
-            #. venv/bin/activate
-            #pip install -r requirements.txt
+            python -m venv venv
+            . venv/bin/activate
+            pip install -r requirements.txt
       - run:
           name: Install Playwright and browsers
           command: |
-            #. venv/bin/activate
-            #pip install playwright pytest-playwright asyncio pytest-html
-            #pip install -e .
-            #python -m playwright install --with-deps
+            . venv/bin/activate
+            pip install playwright pytest-playwright asyncio pytest-html
+            pip install -e .
+            python -m playwright install --with-deps
       - run:
           name: Database init
           command: |
@@ -112,16 +112,16 @@ jobs:
       - run:
           name: Database migration
           command: |
-            #. venv/bin/activate
-            #flask db stamp head
-            #flask db migrate
-            #flask db upgrade
+            . venv/bin/activate
+            flask db stamp head
+            flask db migrate
+            flask db upgrade
       - run:
           name: Start site and test with pytest
           command: |
-            #. venv/bin/activate
-            #waitress-serve --call --port=8080 'grc:create_app' &
-            #pytest -s --show-capture=all -v --html=report.html
+            . venv/bin/activate
+            waitress-serve --call --port=8080 'grc:create_app' &
+            pytest -s --show-capture=all -v --html=report.html
       - store_artifacts:
           path: report.html
 
