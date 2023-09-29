@@ -9,6 +9,7 @@ from grc.utils import filters, limiter
 from admin.config import Config, DevConfig, TestConfig
 from grc.utils.http_basic_authentication import HttpBasicAuthentication
 from grc.utils.custom_error_handlers import CustomErrorHandlers
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 migrate = Migrate()
 flask_uuid = FlaskUUID()
@@ -18,6 +19,8 @@ def create_app(test_config=None):
 
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
+
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1)
 
     if os.environ['FLASK_ENV'] == 'production':
         config_object = Config
@@ -76,9 +79,8 @@ def create_app(test_config=None):
 
     # Admin page
     from admin.admin import admin
-    # if rate_limiter:
-    #     # rate_limiter.meta_limits = ["5 per minute"]
-    #     rate_limiter.limit('5 per 2 minutes')(admin)
+    if rate_limiter:
+        rate_limiter.limit('5 per 2 minutes')(admin)
     app.register_blueprint(admin)
 
     # Signout
@@ -87,9 +89,8 @@ def create_app(test_config=None):
 
     # Password reset
     from admin.password_reset import password_reset
-    # if rate_limiter:
-    #     # rate_limiter.meta_limits = ["5 per minute"]
-    #     rate_limiter.limit('5 per 2 minutes')(password_reset)
+    if rate_limiter:
+        rate_limiter.limit('5 per 2 minutes')(password_reset)
     app.register_blueprint(password_reset)
 
     # Forgot password

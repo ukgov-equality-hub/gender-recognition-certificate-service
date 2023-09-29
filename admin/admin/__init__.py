@@ -11,27 +11,12 @@ from grc.utils.redirect import local_redirect
 from grc.utils.logger import LogLevel, Logger
 from grc.utils.security_code import security_code_generator, send_security_code_admin
 from grc.start_application.forms import SecurityCodeForm
-# from grc.utils.limiter import limiter
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
-from admin import create_app
 
 admin = Blueprint('admin', __name__)
 logger = Logger()
-print(create_app().config, flush=True)
-rate_limiter = Limiter(
-        get_remote_address,
-        app=create_app(),
-        meta_limits=["5 per minute"],
-        default_limits=["200 per day", "50 per hour"],
-        storage_uri=create_app().config['MEMORY_STORAGE_URL'],
-        strategy="fixed-window"
-    )
-print(rate_limiter, flush=True)
 
 
 @admin.route('/', methods=['GET', 'POST'])
-@rate_limiter.limit('5/minute')
 def index():
     form = LoginForm()
 
@@ -92,7 +77,6 @@ def index():
 
 
 @admin.route('/sign-in-with-security_code', methods=['GET', 'POST'])
-@rate_limiter.limit('5 per minute')
 def sign_in_with_security_code():
     form = SecurityCodeForm()
     email_address = session['email']
