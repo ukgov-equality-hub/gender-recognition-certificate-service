@@ -5,10 +5,12 @@ from flask import Flask, g
 from flask_migrate import Migrate
 from flask_uuid import FlaskUUID
 from grc.models import db
-from grc.utils import filters
+from grc.utils import filters, limiter
 from dashboard.config import Config, DevConfig, TestConfig
 from grc.utils.http_basic_authentication import HttpBasicAuthentication
 from grc.utils.http_ip_whitelist import HttpIPWhitelist
+from grc.utils.custom_error_handlers import CustomErrorHandlers
+
 
 migrate = Migrate()
 flask_uuid = FlaskUUID()
@@ -34,6 +36,8 @@ def create_app(test_config=None):
     # Require HTTP Basic Authentication if both the username and password are set
     if app.config['BASIC_AUTH_USERNAME'] and app.config['BASIC_AUTH_PASSWORD']:
         HttpBasicAuthentication(app)
+
+    CustomErrorHandlers(app)
 
     # Load build info from JSON file
     f = open('build-info.json')
@@ -69,11 +73,16 @@ def create_app(test_config=None):
 
         return response
 
+    # Rate limiter
+    rate_limiter = limiter.limiter(app)
+
     # Filters
     app.register_blueprint(filters.blueprint)
 
     # Dashboard page
     from dashboard.stats import stats
+    if rate_limiter:
+        rate_limiter.limit('5 per minute')(stats)
     app.register_blueprint(stats)
 
     # Feedback page
