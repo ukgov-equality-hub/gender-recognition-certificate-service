@@ -44,10 +44,10 @@ spec:
                 name: basic-auth
                 key: csrf
           - name: SQLALCHEMY_DATABASE_URI
-              valueFrom:
-                secretKeyRef:
-                  name: dps-rds-instance-output
-                  key: sql_alchemy_url
+            valueFrom:
+              secretKeyRef:
+                name: dps-rds-instance-output
+                key: sql_alchemy_url
           - name: SQLALCHEMY_KEY
             valueFrom:
               secretKeyRef:
