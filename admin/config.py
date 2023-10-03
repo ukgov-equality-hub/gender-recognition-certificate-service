@@ -51,6 +51,8 @@ class Config:
     JOB_TOKEN = os.environ.get("JOB_TOKEN")
     BASIC_AUTH_USERNAME = os.environ.get("BASIC_AUTH_USERNAME")
     BASIC_AUTH_PASSWORD = os.environ.get("BASIC_AUTH_PASSWORD")
+    SENTRY_URL = os.environ.get("SENTRY_URL")
+    MEMORY_STORAGE_URL = os.environ.get('MEMORY_STORAGE_URL')
 
 
 class DevConfig(Config):
