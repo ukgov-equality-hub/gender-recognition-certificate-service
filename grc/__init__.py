@@ -114,6 +114,8 @@ def create_app(test_config=None):
 
     # Upload
     from grc.upload import upload
+    if rate_limiter:
+        rate_limiter.exempt(upload)
     app.register_blueprint(upload)
 
     # Submit and pay
