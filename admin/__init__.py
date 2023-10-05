@@ -66,6 +66,8 @@ def create_app(test_config=None):
                                                         "font-src 'self'; " \
                                                         "connect-src 'self'; " \
                                                         "form-action 'self'"
+        response.headers['Cache-Control'] = 'no-cache, no-store'
+        response.headers['Expires'] = '-1'
 
         return response
 
