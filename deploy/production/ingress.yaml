@@ -9,6 +9,13 @@ metadata:
     nginx.ingress.kubernetes.io/enable-modsecurity: "true"
     nginx.ingress.kubernetes.io/modsecurity-snippet: |
       SecRuleEngine On
+      SecDefaultAction "phase:2,pass,log,tag:github_team=pet"
+      SecRule REQUEST_URI "@beginsWith /upload" \
+        "id:1000,\
+        phase:1,\
+        pass,\
+        nolog,\
+        ctl:ruleRemoveById=951240"
     nginx.ingress.kubernetes.io/server-snippet: |
       location @custom_403 {
         return 403 "<h1>There is a problem:</h1><br><h3>Go back to the previous page using the back arrow and enter valid content</h3>";
