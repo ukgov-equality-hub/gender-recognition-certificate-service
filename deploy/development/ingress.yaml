@@ -11,11 +11,11 @@ metadata:
       SecRuleEngine On
       SecDefaultAction "phase:2,pass,log,tag:github_team=pet"
       SecRule REQUEST_URI "@beginsWith /upload" \
-          "id:1000,\
-          phase:1,\
-          pass,\
-          nolog,\
-          ctl:ruleRemoveById=951240"
+        "id:1000,\
+        phase:1,\
+        pass,\
+        nolog,\
+        ctl:ruleRemoveById=951240"
 
     nginx.ingress.kubernetes.io/server-snippet: |
       location @custom_403 {
