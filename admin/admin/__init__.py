@@ -81,6 +81,8 @@ def sign_in_with_security_code():
     form = SecurityCodeForm()
     email_address = session['email']
 
+    print('\n============\nIN SIGN IN WITH SECURITY CODE\n============\n', flush=True)
+
     # 2FA link
     if request.method == 'POST':
         if form.validate_on_submit():
