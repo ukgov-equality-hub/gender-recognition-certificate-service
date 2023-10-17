@@ -1,12 +1,14 @@
-import jwt
-import random, string
+import random
+import string
 from datetime import datetime, timedelta
 from dateutil import tz
+from dateutil.relativedelta import relativedelta
 from flask import Blueprint, render_template, request, url_for, current_app, session, flash
 from werkzeug.security import check_password_hash, generate_password_hash
 from admin.admin.forms import LoginForm
 from grc.external_services.gov_uk_notify import GovUkNotify
 from grc.models import db, AdminUser
+from grc.utils.date_utils import DateUtil
 from grc.utils.redirect import local_redirect
 from grc.utils.logger import LogLevel, Logger
 from grc.utils.security_code import security_code_generator, send_security_code_admin
@@ -36,8 +38,15 @@ def index():
                     session['email'] = email_address
                     if user.passwordResetRequired:
                         logger.log(LogLevel.INFO, f"{logger.mask_email_address(email_address)} password reset required")
-
                         return local_redirect(url_for('password_reset.index'))
+
+                    last_login_date = DateUtil(date_to_check=user.dateLastLogin, date_format='%d/%m/%Y %H:%M:%S',
+                                               minutes=2)
+                    if not last_login_date.is_date_before_timeframe_specified():
+                        session['signedIn'] = email_address
+                        session['userType'] = user.userType
+                        return local_redirect(url_for('applications.index'))
+
                     else:
                         # Email out 2FA link
                         try:
@@ -80,8 +89,6 @@ def index():
 def sign_in_with_security_code():
     form = SecurityCodeForm()
     email_address = session['email']
-
-    print('\n============\nIN SIGN IN WITH SECURITY CODE\n============\n', flush=True)
 
     # 2FA link
     if request.method == 'POST':

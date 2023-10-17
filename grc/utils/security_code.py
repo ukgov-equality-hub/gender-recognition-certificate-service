@@ -26,11 +26,8 @@ def security_code_generator(email):
 
 
 def validate_security_code(email, code):
-    print('\n============\nIN VALIDATE SECURITY CODE\n============\n', flush=True)
     code_record = SecurityCode.query.filter_by(code=code, email=email).first()
-    print(f'\n============\ncode_record = {code_record}\n============\n', flush=True)
     validPastTime = datetime.now() - timedelta(hours=24)
-    print(f'\n============\nvalidPastTime = {validPastTime}\n============\n', flush=True)
 
     if code_record is None or validPastTime > code_record.created:
         print("The code has expired")
