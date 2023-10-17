@@ -41,7 +41,7 @@ def index():
                         return local_redirect(url_for('password_reset.index'))
 
                     last_login_date = DateUtil(date_to_check=user.dateLastLogin, date_format='%d/%m/%Y %H:%M:%S',
-                                               minutes=2)
+                                               hours=24)
                     if not last_login_date.is_date_before_timeframe_specified():
                         session['signedIn'] = email_address
                         session['userType'] = user.userType
