@@ -105,7 +105,7 @@ def validateSecurityCode(form, field):
     if is_test and field.data == '11111':
         return
 
-    is_admin = True if session['userType'] else False
+    is_admin = True if 'userType' in session else False
     if validate_security_code(session['email'], field.data, is_admin) is False:
         raise ValidationError('Enter the security code that we emailed you')
 
