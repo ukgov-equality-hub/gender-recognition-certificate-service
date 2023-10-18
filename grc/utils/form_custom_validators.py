@@ -103,8 +103,10 @@ def validateSecurityCode(form, field):
     is_test = True if os.getenv('TEST_URL', '') != '' or os.getenv('FLASK_ENV', '') == 'development' else False
 
     if is_test and field.data == '11111':
-        pass
-    elif validate_security_code(session['email'], field.data) is False:
+        return
+
+    is_admin = True if session['userType'] else False
+    if validate_security_code(session['email'], field.data, is_admin) is False:
         raise ValidationError('Enter the security code that we emailed you')
 
 

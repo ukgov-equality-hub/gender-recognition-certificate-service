@@ -1,17 +1,16 @@
 import random
 import string
 from datetime import datetime, timedelta
-from dateutil import tz
-from dateutil.relativedelta import relativedelta
 from flask import Blueprint, render_template, request, url_for, current_app, session, flash
 from werkzeug.security import check_password_hash, generate_password_hash
 from admin.admin.forms import LoginForm
 from grc.external_services.gov_uk_notify import GovUkNotify
-from grc.models import db, AdminUser
-from grc.utils.date_utils import DateUtil
+from grc.models import db, AdminUser, SecurityCode
+from grc.utils.date_utils import convert_date_to_local_timezone
 from grc.utils.redirect import local_redirect
 from grc.utils.logger import LogLevel, Logger
-from grc.utils.security_code import security_code_generator, send_security_code_admin
+from grc.utils.security_code import security_code_generator, send_security_code_admin,\
+    has_last_security_code_been_used, has_security_code_expired
 from grc.start_application.forms import SecurityCodeForm
 
 admin = Blueprint('admin', __name__)
@@ -36,34 +35,58 @@ def index():
             if user is not None:
                 if check_password_hash(user.password, form.password.data):
                     session['email'] = email_address
+                    session['userType'] = user.userType
+
                     if user.passwordResetRequired:
                         logger.log(LogLevel.INFO, f"{logger.mask_email_address(email_address)} password reset required")
                         return local_redirect(url_for('password_reset.index'))
 
-                    last_login_date = DateUtil(date_to_check=user.dateLastLogin, date_format='%d/%m/%Y %H:%M:%S',
-                                               hours=24)
-                    if not last_login_date.is_date_before_timeframe_specified():
-                        session['signedIn'] = email_address
-                        session['userType'] = user.userType
-                        return local_redirect(url_for('applications.index'))
+                    now_local = convert_date_to_local_timezone(datetime.now())
 
-                    else:
-                        # Email out 2FA link
-                        try:
-                            local = datetime.now().replace(tzinfo=tz.gettz('UTC')).astimezone(tz.gettz('Europe/London'))
-                            expires = datetime.strftime(local + timedelta(hours=24), '%H:%M on %d %b %Y')
-                            security_code = security_code_generator(email_address)
-                            GovUkNotify().send_email_admin_login_security_code(
-                                email_address=user.email,
-                                expires=expires,
-                                security_code=security_code
-                            )
-                            logger.log(LogLevel.INFO, f"login link sent to {logger.mask_email_address(user.email)}")
+                    security_code = SecurityCode.query.filter_by(email=email_address).first()
+                    if security_code:
+                        security_code_created_local = convert_date_to_local_timezone(security_code.created)
+                        security_code_expiry_date = security_code_created_local + timedelta(hours=24)
 
-                            return local_redirect(url_for('admin.sign_in_with_security_code'))
+                        # Have to minus an hour as must convert to timezone to make datetime aware (not naive)
+                        # And this seems to increase the time by an extra hour
+                        last_logged_in_local = convert_date_to_local_timezone(
+                            datetime.strptime(user.dateLastLogin, '%d/%m/%Y %H:%M:%S') - timedelta(hours=1)
+                        )
 
-                        except Exception as e:
-                            print(e, flush=True)
+                        last_security_code_has_been_used = has_last_security_code_been_used(
+                            last_logged_in_local, security_code_created_local
+                        )
+
+                        security_code_has_expired = has_security_code_expired(security_code_expiry_date, now_local)
+
+                        if not security_code_has_expired and last_security_code_has_been_used:
+                            print(f"Security code hasn't expired and"
+                                  f" user ({logger.mask_email_address(email_address)}) last logged in"
+                                  f" ({last_logged_in_local.date()}, {last_logged_in_local.time()}) and last security"
+                                  f" code created at {security_code_created_local.date()},"
+                                  f" {security_code_created_local.time()} has been used. No security code required")
+
+                            user.dateLastLogin = datetime.strftime(now_local, '%d/%m/%Y %H:%M:%S')
+                            db.session.commit()
+                            session['signedIn'] = email_address
+                            return local_redirect(url_for('applications.index'))
+
+                    # Email out 2FA link
+                    try:
+                        expires = datetime.strftime(now_local + timedelta(hours=24), '%H:%M on %d %b %Y')
+                        security_code = security_code_generator(email_address)
+                        GovUkNotify().send_email_admin_login_security_code(
+                            email_address=user.email,
+                            expires=expires,
+                            security_code=security_code
+                        )
+                        logger.log(LogLevel.INFO, f"login link sent to {logger.mask_email_address(user.email)}")
+
+                        return local_redirect(url_for('admin.sign_in_with_security_code'))
+
+                    except Exception as e:
+                        print(e, flush=True)
 
                 else:
                     form.password.errors.append("Your password was incorrect. Please try re-entering your password")
@@ -102,7 +125,7 @@ def sign_in_with_security_code():
                 message = "We could not find your user details. Please try logging in again"
                 return render_template('login/login-security-code-error.html', message=message)
 
-            local = datetime.now().replace(tzinfo=tz.gettz('UTC')).astimezone(tz.gettz('Europe/London'))
+            local = convert_date_to_local_timezone(datetime.now())
             user.dateLastLogin = datetime.strftime(local, '%d/%m/%Y %H:%M:%S')
             db.session.commit()
 
