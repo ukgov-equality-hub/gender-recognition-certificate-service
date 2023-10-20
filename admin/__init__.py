@@ -36,10 +36,6 @@ def create_app(test_config=None):
 
     CustomErrorHandlers(app)
 
-    # Health check
-    health_check = HealthCheckBase(app=app, flask_app=os.environ.get('FLASK_APP'))
-    health_check.add_rule()
-
     # Load build info from JSON file
     f = open('build-info.json')
     build_info_string = f.read()
@@ -127,6 +123,8 @@ def create_app(test_config=None):
 
     # Health Check
     from admin.health_check import health_check
+    if rate_limiter:
+        rate_limiter.exempt(health_check)
     app.register_blueprint(health_check)
 
     return app

@@ -74,10 +74,6 @@ def create_app(test_config=None):
 
         return response
 
-    # Health check
-    health_check = HealthCheckBase(app=app, flask_app=os.environ.get('FLASK_APP'))
-    health_check.add_rule()
-
     # Rate limiter
     rate_limiter = limiter.limiter(app)
 
@@ -96,6 +92,8 @@ def create_app(test_config=None):
 
     # Health Check
     from dashboard.health_check import health_check
+    if rate_limiter:
+        rate_limiter.exempt(health_check)
     app.register_blueprint(health_check)
 
     return app
