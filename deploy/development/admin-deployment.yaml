@@ -15,7 +15,7 @@ spec:
       serviceAccountName: grc-dev
       containers:
       - name: grc-admin
-        image: 754256621582.dkr.ecr.eu-west-2.amazonaws.com/pet/grc-dev-ecr:grc-admin-cb771212420b581f746ff635f0fa1f5ae1f0daf5
+        image: 754256621582.dkr.ecr.eu-west-2.amazonaws.com/pet/grc-dev-ecr:grc-admin-latest
         imagePullPolicy: Always
         ports:
         - containerPort: 3001
