@@ -10,6 +10,7 @@ from grc.config import Config, DevConfig, TestConfig
 from grc.utils.http_basic_authentication import HttpBasicAuthentication
 from grc.utils.maintenance_mode import Maintenance
 from grc.utils.custom_error_handlers import CustomErrorHandlers
+from health.health_check import HealthCheckBase
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 migrate = Migrate()
@@ -79,6 +80,10 @@ def create_app(test_config=None):
 
     # Wrap app wsgi with proxy fix to reliably get user address without ip spoofing via headers
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1)
+
+    # Health check
+    health_check = HealthCheckBase(app=app, flask_app=os.environ.get('FLASK_APP'))
+    health_check.add_rule()
 
     # Rate limiter
     rate_limiter = limiter.limiter(app)

@@ -10,6 +10,7 @@ from dashboard.config import Config, DevConfig, TestConfig
 from grc.utils.http_basic_authentication import HttpBasicAuthentication
 from grc.utils.http_ip_whitelist import HttpIPWhitelist
 from grc.utils.custom_error_handlers import CustomErrorHandlers
+from health.health_check import HealthCheckBase
 
 
 migrate = Migrate()
@@ -72,6 +73,10 @@ def create_app(test_config=None):
                                                         "form-action 'self'"
 
         return response
+
+    # Health check
+    health_check = HealthCheckBase(app=app, flask_app=os.environ.get('FLASK_APP'))
+    health_check.add_rule()
 
     # Rate limiter
     rate_limiter = limiter.limiter(app)
