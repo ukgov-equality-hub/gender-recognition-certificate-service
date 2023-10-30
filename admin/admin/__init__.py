@@ -52,17 +52,11 @@ def index():
                             datetime.strptime(user.dateLastLogin, '%d/%m/%Y %H:%M:%S')
                         )
 
-                        print(f'LAST LOGIN TIME = {last_logged_in_local}', flush=True)
-                        print(f'SC CREATED = {security_code_created_local}', flush=True)
-
                         last_security_code_has_been_used = has_last_security_code_been_used(
                             last_logged_in_local, security_code_created_local
                         )
 
                         security_code_has_expired = has_security_code_expired(security_code_expiry_date, now_local)
-
-                        print(f'SC EXPIRED = {security_code_has_expired}', flush=True)
-                        print(f'SC USED = {last_security_code_has_been_used}', flush=True)
 
                         if not security_code_has_expired and last_security_code_has_been_used:
                             print(f"Security code hasn't expired and"
