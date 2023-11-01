@@ -134,4 +134,10 @@ def create_app(test_config=None):
     from grc.document_checker import documentChecker
     app.register_blueprint(documentChecker)
 
+    # Health Check
+    from grc.health_check import health_check
+    if rate_limiter:
+        rate_limiter.exempt(health_check)
+    app.register_blueprint(health_check)
+
     return app

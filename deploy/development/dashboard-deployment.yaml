@@ -21,7 +21,7 @@ spec:
         - containerPort: 3002
         readinessProbe:
           httpGet:
-            path: /
+            path: /health
             port: 3002
           initialDelaySeconds: 10
           periodSeconds: 20
