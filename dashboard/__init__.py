@@ -10,6 +10,7 @@ from dashboard.config import Config, DevConfig, TestConfig
 from grc.utils.http_basic_authentication import HttpBasicAuthentication
 from grc.utils.http_ip_whitelist import HttpIPWhitelist
 from grc.utils.custom_error_handlers import CustomErrorHandlers
+from health.health_check import HealthCheckBase
 
 
 migrate = Migrate()
@@ -91,6 +92,8 @@ def create_app(test_config=None):
 
     # Health Check
     from dashboard.health_check import health_check
+    if rate_limiter:
+        rate_limiter.exempt(health_check)
     app.register_blueprint(health_check)
 
     return app
