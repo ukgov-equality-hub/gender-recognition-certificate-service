@@ -50,6 +50,11 @@ class AssertHelpers:
         actual_h1_text = clean_string(await self.page.inner_text('h1'))
         assert_equal(actual_h1_text, expected_h1_text)
 
+    async def a(self, expected_link_text: str):
+        link_element = await self.page.locator(f'a:has-text("{expected_link_text}")').element_handle()
+        actual_link_text = (await link_element.text_content()).strip()
+        assert_equal(actual_link_text, expected_link_text)
+
     async def fieldset_legend(self, expected_fieldset_legend_text: str):
         actual_fieldset_legend_text = clean_string(await self.page.inner_text('.govuk-fieldset__legend'))
         assert_equal(actual_fieldset_legend_text, expected_fieldset_legend_text)
