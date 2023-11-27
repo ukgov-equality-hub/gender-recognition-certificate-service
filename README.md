@@ -1,5 +1,16 @@
 
-# Gender Recognition Certificate service
+# ~Gender Recognition Certificate service~ (OLD)
+
+> **Note:** This was the original GitHub repository for the Gender Recognition Certificate service.
+>
+> The Gender Recognition Certificate service was original built by the Government's [Equality Hub](https://www.gov.uk/government/organisations/the-equality-hub)
+>
+> In February 2023, the service ownership was transferred to [HMCTS](https://www.gov.uk/government/organisations/hm-courts-and-tribunals-service)
+>
+> HMCTS maintain [their own fork of this repo](https://github.com/ministryofjustice/grc-app)
+>
+> This GitHub repository will be archived and all new changes should be made to the HMCTS fork.
+
 This is the code for the UK Government's Gender Recognition Certificate service.
 
 The service is owned by the Gender Equalities Office (GEO) who have developed a public-facing application form to allow citizens to apply for a legally recognised certificate that acknowledges their acquired gender.
